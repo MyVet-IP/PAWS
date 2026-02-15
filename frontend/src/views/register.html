@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,7 @@
     }
     </style>
 </head>
+
 <body class="min-h-screen bg-gradient-to-br from-purple/20 to-blue/20 flex items-center justify-center">
     <main class="bg-white rounded-3xl shadow-xl w-full max-w-lg p-8">
         <!--header-->
@@ -37,48 +39,86 @@
                 Informacion
             </div>
             <div class="flex items-center gap-2 text-gray-500">
-                <span class="w-6 h-6 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs">2</span>
+                <span
+                    class="w-6 h-6 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs">2</span>
                 Tipo de perfil
             </div>
         </div>
-        <form class="space-y-4">
+        <form id="registerForm" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="text-gray text-sm">Nombre Completo</label>
-                    <input type="text" placeholder="Ej. Mariana Lopez" 
-                    class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                    <input id="name" type="text" placeholder="Ej. Mariana Lopez"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
                 </div>
                 <div>
                     <label class=" text-sm">Correo Electronico</label>
-                    <input type="email" placeholder="ejemplo@gmail.com" 
-                    class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                    <input id="email" type="email" placeholder="ejemplo@gmail.com"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
                 </div>
                 <div>
                     <label class=" text-sm">Contrasena</label>
-                    <input type="password" placeholder="********" 
-                    class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                    <input id="password" type="password" placeholder="********"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
                 </div>
                 <div>
                     <label class=" text-sm">Confirmar contrasena</label>
-                    <input type="password" placeholder="********" 
-                    class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                    <input id="confirmPassword" type="password" placeholder="********"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
                 </div>
             </div>
             <hr class="my-6 border-gray-300 ">
-            <h2 class="text-center text-gray-700 font-semibold mb-1">¿Como te unes a nosotros?</h2>
+            <h2 class="text-center text-gray-700 font-semibold mb-1">
+                ¿Cómo te unes a nosotros?
+            </h2>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                <div class="border-2 border-pink rounded-2xl p-4 text-center cursor-pointer hover:shadow">
-                    <div class="text-2xl mb-2">(perro icon)</div>
-                    <h3 class="font-semibold">Soy Dueño</h3>
-                    <p class="text-xs text-gray mt-3">Busco los mejores servicios para mi hijo</p>
-                </div>
-                <div class="border-2 border-pink rounded-2xl p-4 text-center cursor-pointer hover:shadow">
-                    <div class="text-2xl mb-2">(vet icon)</div>
-                    <h3 class="font-semibold">veterinaria</h3>
-                    <p class="text-xs text-gray mt-3">Quiero ofrecer mis servicios y clinicas</p>
-                </div>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="role" value="owner" class="hidden peer" required>
+
+                    <div class="border-2 border-pink rounded-2xl p-4 text-center 
+                    hover:shadow transition
+                    peer-checked:border-purple 
+                    peer-checked:bg-purple/10 
+                    peer-checked:shadow-lg
+                    peer-checked:ring-2 
+                    peer-checked:ring-purple
+                    peer-checked:scale-105">
+
+                        <div class="text-2xl mb-2">(perro icon)</div>
+                        <h3 class="font-semibold">Soy Dueño</h3>
+                        <p class="text-xs text-gray mt-3">
+                            Busco los mejores servicios para mi mascota
+                        </p>
+
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="role" value="vet" class="hidden peer" required>
+
+                    <div class="border-2 border-pink rounded-2xl p-4 text-center 
+                    hover:shadow transition
+                    peer-checked:border-purple 
+                    peer-checked:bg-purple/10 
+                    peer-checked:shadow-lg
+                    peer-checked:ring-2 
+                    peer-checked:ring-purple
+                    peer-checked:scale-105">
+
+                        <div class="text-2xl mb-2">(vet icon)</div>
+                        <h3 class="font-semibold">Veterinaria</h3>
+                        <p class="text-xs text-gray mt-3">
+                            Quiero ofrecer mis servicios y clínicas
+                        </p>
+
+                    </div>
+                </label>
             </div>
-            <button class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
+            <div id="formMessage" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
+            <button
+                class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
                 Registrarme →
             </button>
             <p class="text-center text-sm mt-4">
@@ -97,5 +137,7 @@
             </div>
         </form>
     </main>
+    <script src="../../js/register.js"></script>
 </body>
+
 </html>
