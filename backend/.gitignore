@@ -1,0 +1,5 @@
+# Ignorar archivos de configuración sensibles
+.env
+
+# También puedes ignorar node_modules si no lo has hecho
+node_modules/

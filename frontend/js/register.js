@@ -76,15 +76,9 @@ form.addEventListener("submit", async (e) => {
             return;
         }
 
-        showSuccess("Registro exitoso 🎉");
+        showSuccess("Registro exitoso");
 
-        setTimeout(() => {
-            if (role === "vet") {
-                window.location.href = "../views/ingresarVet.html";
-            } else {
-                window.location.href = "../views/ingresarOwner.html";
-            }
-        }, 1200);
+        window.location.href = "login.html";
 
     } catch (error) {
         showErrors(["Error conectando con el servidor"]);
@@ -106,6 +100,10 @@ function showErrors(errors) {
     messageBox.classList.add("bg-red-100", "text-red-700");
 
     messageBox.innerHTML = errors.map(error => `<div>• ${error}</div>`).join("");
+
+    setTimeout(() => {
+        messageBox.classList.add("hidden");
+    }, 4000);
 }
 
 
@@ -116,6 +114,10 @@ function showSuccess(message) {
     messageBox.classList.add("bg-green-100", "text-green-700");
 
     messageBox.textContent = message;
+
+    setTimeout(() => {
+        messageBox.classList.add("hidden");
+    }, 4000);
 }
 
 

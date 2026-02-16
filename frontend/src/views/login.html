@@ -20,7 +20,7 @@
     }
     </style>
 </head>
-<body class="min-h-screen bg-ping-light font-sans">
+<body class="min-h-screen bg-pink-light font-sans">
     <main class="flex min-h-screen">
         <!--left -->
         <section class="hidden md:flex w-2/3 bg-green-light items-center justify-center">
@@ -48,31 +48,33 @@
                     Ingresa tus credenciales para acceder a tu cuenta
                 </p>
                 <!--Form-->
-                <form class="space-y-4">
+                <form id="loginForm" class="space-y-4">
                     <div>
                         <label class="text-sm ">Correo electronico</label>
-                        <input type="email" placeholder="mail@ejemplo.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                        <input id="email" type="email" placeholder="mail@ejemplo.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
                     </div>
                     <div>
-                        <label class="text-sm ">Contrasena</label>
-                        <input type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                        <label  class="text-sm ">Contrasena</label>
+                        <input id="password" type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
                     </div>
                     <div class="flex justify-between items-center items-center text-sm">
                         <label class="flex-items-center gap-2">
-                            <input type="checkbox">
+                            <input type="checkbox" id="rememberMe">
                             Recordarme
                         </label>
                         <a href="#" class="text-pink hover:underline">
                             ¿Olvidaste tu contraseña?
                         </a>
                     </div>
+                    <div id="formMessage" class="hidden mt-3 p-3 rounded text-sm"></div>
                     <button class="w-full py-2 rounded-full bg-pink text-white font-semibold hover:opacity-90 transition">
                         Iniciar Sesion
                     </button>
                     <div class="text-center text-xs text-gray">O continua con</div>
-                    <div class="flex gap-3">
-                        <button class="flex-1 border rounded-full py-2">Google</button>
-                    </div>
+
+                    <a class="flex gap-3" href="http://localhost:4000/auth/google">
+                        <button type="button" class="flex-1 border rounded-full py-2">Google</button>
+                    </a>
                     <p class="text-center text-sm mt-4">
                         ¿No tienes cuenta?
                         <a href="../views/register.html" class="text-pink font-semibold">Registrarse</a>
@@ -84,5 +86,6 @@
             </div>
         </section>
     </main>
+    <script src="../../js/login.js"></script>
 </body>
 </html>
