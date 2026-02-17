@@ -3,9 +3,11 @@ import { DashboardView } from "./views/user-dashboard.js";
 import { loadLandingPage } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage } from "./views/login.js";
+import { loadRegisterPage } from "./views/register.js";
 
 const routes = {
   "/": loadLandingPage,
+  "/register": loadRegisterPage,
   "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
