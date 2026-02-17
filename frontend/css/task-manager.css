@@ -1,0 +1,43 @@
+.petProfile {
+  display: flex;
+  height: 100vh;
+  background: #f5f6fa;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 280px;
+  background: white;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+}
+
+.petCard {
+  text-align: center;
+}
+
+.petCard img {
+  width: 120px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 30px;
+}
+
+.reminders,
+.history {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
