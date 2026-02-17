@@ -2,9 +2,11 @@ import { PetProfileView } from "./views/pet-profile.js";
 import { DashboardView } from "./views/user-dashboard.js";
 import { loadLandingPage } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
+import { loadLoginPage } from "./views/login.js";
 
 const routes = {
   "/": loadLandingPage,
+  "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
   "/clinicas": ClinicsView,

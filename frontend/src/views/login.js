@@ -1,29 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--tailwind display CDN-->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Login | MedellinVet</title>
-    <!--root tailwind-->
-    <style type="text/tailwindcss">
-        @theme {
-        --color-purple: #cdb4db;
-        --color-green-light: #C8E6C9;
-        --color-pink: #ffafcc;
-        --color-blue-light: #bde0fe;
-        --color-blue: #a2d2ff;
-
-        --color-white: #ffffff;
-        --color-gray: #6b7280;
-    }
-    </style>
-</head>
-<body class="min-h-screen bg-ping-light font-sans">
+export function loadLoginPage() {
+  return `
+  <section class="min-h-screen bg-pink font-sans">
     <main class="flex min-h-screen">
         <!--left -->
-        <section class="hidden md:flex w-2/3 bg-green-light items-center justify-center">
+        <section class="hidden md:flex w-2/3 bg-green items-center justify-center">
             <div class="text-center max-w-sm">
                 <!--3D model-->
                 <div class="bg-gradient-to-b from-teal-700 to-teal-900 p-6 rounded-3xl shadow-lg ">
@@ -38,7 +18,7 @@
             <div class="w-full max-w-md px-8">
                 <!--logo-->
                 <div class="flex items-center gap-2 mb-6">
-                    <span class="px-3 py-1 rounded-full bg-blue-light text-blue text-xs">
+                    <span class="px-3 py-1 rounded-full bg-lightblue text-blue text-xs">
                         medical_services
                     </span>
                     <span class="font-semibold text-purple">MedellinVet</span>
@@ -84,5 +64,5 @@
             </div>
         </section>
     </main>
-</body>
-</html>
+</section>
+`}

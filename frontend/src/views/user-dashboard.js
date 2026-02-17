@@ -45,7 +45,7 @@ export function DashboardView() {
         <p class="text-white/90 mb-3">
         Unlimited consultations in Medellín
         </p>
-        <button class="bg-white text-pinkcustom w-full py-2 rounded-full font-semibold">
+        <button class="bg-white text-pink w-full py-2 rounded-full font-semibold">
         Upgrade
         </button>
     </div>
@@ -67,7 +67,7 @@ export function DashboardView() {
           </p>
         </div>
 
-        <button class="bg-pinkcustom text-white px-6 py-3 rounded-full font-semibold shadow hover:scale-105 transition">
+        <button class="bg-pink text-white px-6 py-3 rounded-full font-semibold shadow hover:scale-105 transition">
           + Add New Pet
         </button>
       </div>
@@ -148,7 +148,7 @@ export function DashboardView() {
         </div>
 
         <!-- ADD PET CARD -->
-        <div class="w-64 border-2 border-dashed border-bluecustom rounded-2xl flex flex-col items-center justify-center text-gray-400">
+        <div class="w-64 border-2 border-dashed border-blue rounded-2xl flex flex-col items-center justify-center text-gray-400">
           <span class="text-3xl mb-2">＋</span>
           <p>Add another pet</p>
         </div>

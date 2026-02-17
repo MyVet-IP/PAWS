@@ -74,7 +74,7 @@ export function PetProfileView() {
 
       <!-- TOP ACTIONS -->
       <div class="flex justify-end gap-4 mb-6">
-        <button class="border border-pinkcustom text-gray-700 px-5 py-2 rounded-full">
+        <button class="border border-pink text-gray-700 px-5 py-2 rounded-full">
           Medical Report
         </button>
 
@@ -91,7 +91,7 @@ export function PetProfileView() {
       <div class="grid grid-cols-2 gap-6 mb-10">
 
         <div class="bg-softpink/30 p-6 rounded-2xl">
-          <p class="text-sm text-pinkcustom font-semibold mb-2">
+          <p class="text-sm text-pink font-semibold mb-2">
             IN 12 DAYS
           </p>
           <h3 class="font-bold text-lg text-gray-800">
@@ -101,13 +101,13 @@ export function PetProfileView() {
             Annual mandatory vaccination.
           </p>
 
-          <button class="text-pinkcustom mt-3 font-semibold">
+          <button class="text-pink mt-3 font-semibold">
             Confirm Appointment →
           </button>
         </div>
 
         <div class="bg-lightblue/40 p-6 rounded-2xl">
-          <p class="text-sm text-bluecustom font-semibold mb-2">
+          <p class="text-sm text-blue font-semibold mb-2">
             IN 3 WEEKS
           </p>
           <h3 class="font-bold text-lg text-gray-800">
@@ -117,7 +117,7 @@ export function PetProfileView() {
             Monthly treatment reminder.
           </p>
 
-          <button class="text-bluecustom mt-3 font-semibold">
+          <button class="text-blue mt-3 font-semibold">
             Add to Calendar →
           </button>
         </div>
@@ -132,7 +132,7 @@ export function PetProfileView() {
       <div class="space-y-6">
 
         <div class="bg-white p-6 rounded-2xl shadow-sm">
-          <p class="text-sm text-pinkcustom font-semibold mb-1">
+          <p class="text-sm text-pink font-semibold mb-1">
             JAN 20, 2024
           </p>
           <h3 class="font-bold text-lg text-gray-800">
@@ -144,7 +144,7 @@ export function PetProfileView() {
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm">
-          <p class="text-sm text-bluecustom font-semibold mb-1">
+          <p class="text-sm text-blue font-semibold mb-1">
             NOV 15, 2023
           </p>
           <h3 class="font-bold text-lg text-gray-800">
