@@ -5,7 +5,6 @@ import { ClinicsView } from "./views/clinics-view.js";
 
 const routes = {
   "/": loadLandingPage,
-  "/landing": loadLandingPage,
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
   "/clinicas": ClinicsView,
@@ -35,21 +34,21 @@ function initializePageEvents() {
   // Botones de navegación del landing
   const loginBtn = document.querySelector('.btn-primary');
   const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');
-  
+
   if (loginBtn && loginBtn.textContent.includes('Ingresar')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.hash = '#/user-dashboard';
     });
   }
-  
+
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.hash = '#/clinicas';
     });
   }
-  
+
   // Enlaces del navbar
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
