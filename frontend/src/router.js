@@ -1,10 +1,12 @@
 import { PetProfileView } from "./views/pet-profile.js";
 import { DashboardView } from "./views/user-dashboard.js";
+import { VetDashboardView } from "./views/vet-dashboard.js";
 
 const routes = {
   "/": () => "<h1>pending for the landing</h1>",
   "/pet-profile": PetProfileView,
-  "/user-dashboard": DashboardView
+  "/user-dashboard": DashboardView,
+  "/vet-dashboard": VetDashboardView
 };
 
 export function router() {
