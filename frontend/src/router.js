@@ -4,6 +4,7 @@ import { loadLandingPage } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage } from "./views/login.js";
 import { loadRegisterPage } from "./views/register.js";
+import { VetDashboardView } from "./views/vet-dashboard.js";
 
 const routes = {
   "/": loadLandingPage,
@@ -11,9 +12,7 @@ const routes = {
   "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
-  "/clinicas": ClinicsView,
-  "/emergencias": () => "<h1>Emergencias 24/7 - En desarrollo</h1>",
-  "/tips": () => "<h1>Tips de Salud - En desarrollo</h1>"
+  "/vet-dashboard": VetDashboardView
 };
 
 export function router() {
