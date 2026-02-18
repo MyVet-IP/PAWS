@@ -5,8 +5,7 @@
 ## 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU-USUARIO/TU-REPO.git
-cd TU-REPO
+git clone https://github.com/MyVet-IP/MyVet.git
 ```
 
 ---
