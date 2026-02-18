@@ -5,5 +5,12 @@
     "email": "and.guz8a@gmail.com",
     "password": "$2b$10$a5wgGJMXdk0/2rOsHjXBPOkzYRkCaxIrM72NG1j0DGwXuCuRURxf.",
     "role": "owner"
+  },
+  {
+    "id": 1771384936542,
+    "name": "Anderson Guzman",
+    "email": "andre@gmail.com",
+    "password": "$2b$10$oAcGh/XO2GRKP0pagZuCSuzqU6id2ZhZa5NOnDJ8UwSSv9ML/V8JO",
+    "role": "owner"
   }
 ]

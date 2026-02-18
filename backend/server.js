@@ -150,7 +150,7 @@ app.get("/auth/google",
 );
 
 app.get("/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/login.html" }),
+    passport.authenticate("google", { failureRedirect: "/index.html" }),
     (req, res) => {
         res.redirect("http://127.0.0.1:5500/dashboard-user.html");
     }
