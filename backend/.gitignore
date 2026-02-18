@@ -1,6 +1,6 @@
 # Ignorar archivos de configuración sensibles
 .env
 
-# También puedes ignorar node_modules si no lo has hecho
+#ignorar archivos 
 node_modules/
 backend/node_modules/
