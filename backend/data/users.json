@@ -12,5 +12,12 @@
     "email": "andre@gmail.com",
     "password": "$2b$10$oAcGh/XO2GRKP0pagZuCSuzqU6id2ZhZa5NOnDJ8UwSSv9ML/V8JO",
     "role": "owner"
+  },
+  {
+    "id": 1771510329552,
+    "name": "andreina arevalo",
+    "email": "andrea@gmail.com",
+    "password": "$2b$10$401nyjFWi4TfWY63Mkq8uu1zPgwkW52UNZStoCaasBez40J2mFkNa",
+    "role": "owner"
   }
 ]
