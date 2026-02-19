@@ -11,7 +11,9 @@ const routes = {
   "/register": loadRegisterPage,
   "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
-  "/user-dashboard": DashboardView
+  "/user-dashboard": DashboardView,
+  "/clinics-view": ClinicsView,
+  "/vet-dashboard": VetDashboardView
 };
 
 export function router() {
