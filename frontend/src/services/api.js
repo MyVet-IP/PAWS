@@ -62,36 +62,79 @@ class ApiService {
     });
   }
 
-  // Método para simular datos (mientras no hay backend)
-  getMockClinics() {
-    return Promise.resolve([
-      {
-        id: 1,
-        name: 'Paws & Hearts Wellness',
-        location: 'Polanco, Ciudad de México',
-        rating: 4.9,
-        specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
-        image: './frontend/assets/images/lllll.jpg'
-      },
-      {
-        id: 2,
-        name: 'Centro Médico Animal',
-        location: 'Santa Fe, Ciudad de México',
-        rating: 4.8,
-        specialties: ['CARDIOLOGÍA', 'VACUNAS'],
-        image: './frontend/assets/images/lllll.jpg',
-        emergency: true
-      },
-      {
-        id: 3,
-        name: 'San Francisco Hospital',
-        location: 'Condesa, Ciudad de México',
-        rating: 5.0,
-        specialties: ['LABORATORIO', 'FISIOTERAPIA'],
-        image: './frontend/assets/images/lllll.jpg'
-      }
-    ]);
-  }
+// Método para simular datos (mientras no hay backend)
+  getMockClinics(animalType = '') {
+  const clinics = [
+    {
+      id: 1,
+      name: 'Paws & Hearts Wellness',
+      location: 'Polanco, CDMX',
+      rating: 4.9,
+      reviewCount: 127,
+      emergency: false,
+      isSpecialist: true,
+      specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
+      animalTypes: ['dog', 'cat', 'bird']
+    },
+    {
+      id: 2,
+      name: 'Centro Médico Animal',
+      location: 'Santa Fe, CDMX',
+      rating: 4.8,
+      reviewCount: 89,
+      emergency: true,
+      isSpecialist: false,
+      specialties: ['CARDIOLOGÍA', 'VACUNAS'],
+      animalTypes: ['dog', 'cat']
+    },
+    {
+      id: 3,
+      name: 'Clínica Especializada en Felinos',
+      location: 'Doctores, CDMX',
+      rating: 4.9,
+      reviewCount: 156,
+      emergency: false,
+      isSpecialist: true,
+      specialties: ['FELINOS', 'COMPORTAMIENTO'],
+      animalTypes: ['cat']  // solo atiende gatos
+    },
+    {
+      id: 4,
+      name: 'Hospital Veterinario 24/7',
+      location: 'Del Valle, CDMX',
+      rating: 4.6,
+      reviewCount: 312,
+      emergency: true,
+      isSpecialist: false,
+      specialties: ['URGENCIAS', 'CIRUGÍA'],
+      animalTypes: ['dog', 'cat', 'exotic']
+    },
+    {
+      id: 5,
+      name: 'Aviario & Exóticos del Sur',
+      location: 'Coyoacán, CDMX',
+      rating: 4.7,
+      reviewCount: 74,
+      emergency: false,
+      isSpecialist: true,
+      specialties: ['AVES', 'REPTILES', 'EXÓTICOS'],
+      animalTypes: ['bird', 'exotic']  // ni perros ni gatos
+    }
+  ];
+
+  // Si no hay filtro, devuelve todas
+  // Si hay filtro, solo devuelve las que atienden ese animal
+  const results = animalType
+    ? clinics.filter(clinic => clinic.animalTypes.includes(animalType.toLowerCase()))
+    : clinics;
+
+  return Promise.resolve({
+    success: true,
+    count: results.length,
+    filter: animalType || 'all',
+    data: results
+  });
+}
 }
 
 // Exportar instancia única
