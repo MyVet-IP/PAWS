@@ -1,4 +1,5 @@
-﻿export function loadLandingPage() {
+﻿// Por favor traten de no tocar mucho los estilos, me demore arreglandolo, gracias
+export function loadLandingPage() {
     return `
         <div class="hero-gradient min-h-screen">
         <nav class="main-nav bg-white/80 border-b border-gray-200/50 sticky-nav">

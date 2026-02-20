@@ -4,6 +4,7 @@ import { loadLandingPage, initLanding } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage, initLogin } from "./views/login.js";
 import { loadRegisterPage } from "./views/register.js";
+import { EmergencyView, initEmergency } from "./views/emergency.js";
 
 const routes = {
   "/": loadLandingPage,
@@ -12,7 +13,7 @@ const routes = {
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
   "/clinicas": ClinicsView,
-  "/emergencias": () => "<h1>Emergencias 24/7 - En desarrollo</h1>",
+  "/emergencias": EmergencyView,
   "/tips": () => "<h1>Tips de Salud - En desarrollo</h1>"
 };
 
@@ -29,6 +30,7 @@ export function router() {
       if (path === '/')               initLanding();
       if (path === '/login')          initLogin();
       if (path === '/user-dashboard') initDashboard();
+      if (path === '/emergencias')    initEmergency();
     } else {
       app.innerHTML = "<h1>Página no encontrada</h1>";
     }
