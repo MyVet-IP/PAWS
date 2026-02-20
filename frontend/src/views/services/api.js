@@ -1,4 +1,3 @@
-// API Service para VetCare
 const API_BASE_URL = 'http://localhost:3000/api'; // Cambiar por tu URL del backend
 
 class ApiService {
@@ -31,7 +30,6 @@ class ApiService {
     }
   }
 
-  // === CLIENTES/USUARIOS ===
   
   async getAllClientes() {
     return this.request('/clientes');
@@ -55,7 +53,6 @@ class ApiService {
     });
   }
 
-  // === VETERINARIAS/CLÍNICAS ===
   
   async getClinics(location = '') {
     return this.request(`/clinics${location ? `?location=${encodeURIComponent(location)}` : ''}`);
@@ -72,7 +69,6 @@ class ApiService {
     });
   }
 
-  // === SERVICIOS ===
   
   async getAllServicios() {
     return this.request('/servicios');
@@ -85,7 +81,6 @@ class ApiService {
     });
   }
 
-  // === MASCOTAS ===
   
   async getAllMascotas() {
     return this.request('/mascotas');
@@ -109,7 +104,6 @@ class ApiService {
     });
   }
 
-  // === VISITAS ===
   
   async getAllVisitas() {
     return this.request('/visitas');
@@ -126,7 +120,6 @@ class ApiService {
     });
   }
 
-  // === EMERGENCIAS ===
   
   async getAllEmergencias() {
     return this.request('/emergencias');
@@ -139,7 +132,6 @@ class ApiService {
     });
   }
 
-  // === DASHBOARD Y CITAS ===
   
   async getUserDashboard(userId) {
     return this.request(`/users/${userId}/dashboard`);
@@ -152,13 +144,12 @@ class ApiService {
     });
   }
 
-  // === HEALTH CHECK ===
   
   async checkHealth() {
     return this.request('/health');
   }
 
-  // Método para simular datos (respaldo si el backend no está disponible)
+  // Método para simular datos
   getMockClinics() {
     return Promise.resolve([
       {
@@ -190,5 +181,4 @@ class ApiService {
   }
 }
 
-// Exportar instancia única
 export const apiService = new ApiService();

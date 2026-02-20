@@ -1,6 +1,6 @@
 import { PetProfileView } from "./views/pet-profile.js";
 import { DashboardView, initDashboard } from "./views/user-dashboard.js";
-import { loadLandingPage } from "./views/landing-page.js";
+import { loadLandingPage, initLanding } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage, initLogin } from "./views/login.js";
 import { loadRegisterPage } from "./views/register.js";
@@ -28,6 +28,7 @@ export function router() {
     if (view) {
       app.innerHTML = view();
       initializePageEvents();
+      if (path === '/')               initLanding();
       if (path === '/login')          initLogin();
       if (path === '/user-dashboard') initDashboard();
     } else {
