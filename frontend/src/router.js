@@ -17,7 +17,7 @@ const routes = {
 };
 
 export function router() {
-  console.log("Router funcionando");
+  console.log("Router working");
 
   const path = window.location.hash.slice(1) || "/";
   const app = document.getElementById("app");
