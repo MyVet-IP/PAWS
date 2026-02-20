@@ -122,18 +122,30 @@ class ApiService {
     }
   ];
 
-  // Si no hay filtro, devuelve todas
-  // Si hay filtro, solo devuelve las que atienden ese animal
+  // without filter, drop all
+  // if there filter, drop the vets that relationed w the filter
   const results = animalType
     ? clinics.filter(clinic => clinic.animalTypes.includes(animalType.toLowerCase()))
     : clinics;
-
+  // standard form for connection between frontend and backend
+  try{
   return Promise.resolve({
     success: true,
     count: results.length,
     filter: animalType || 'all',
     data: results
-  });
+    });
+  }
+  catch(error){
+    return Promise.resolve({
+      success: false,
+      error: {
+        code: 500,
+        message: "error retrieving clinics"
+      }
+      
+    })
+  }
 }
 }
 
