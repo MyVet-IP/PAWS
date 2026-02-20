@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS emergencias (
   FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT
 );
 
--- Tabla de mensajes de emergencia enviados a clínicas
+-- Guarda los mensajes enviados desde el botón de emergencia
 CREATE TABLE IF NOT EXISTS emergency_messages (
   id_mensaje SERIAL PRIMARY KEY,
   mensaje TEXT NOT NULL,
@@ -94,7 +94,6 @@ CREATE TABLE IF NOT EXISTS emergency_messages (
   FOREIGN KEY (id_emergencia) REFERENCES emergencias(id_emergencia) ON DELETE SET NULL
 );
 
--- Tabla de relación muchos a muchos entre veterinarias y servicios
 CREATE TABLE IF NOT EXISTS veterinaria_servicios (
   id_veterinaria INTEGER NOT NULL,
   id_servicio INTEGER NOT NULL,
@@ -103,7 +102,6 @@ CREATE TABLE IF NOT EXISTS veterinaria_servicios (
   FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio) ON DELETE CASCADE
 );
 
--- Índices para mejorar el rendimiento
 CREATE INDEX IF NOT EXISTS idx_mascotas_cliente ON mascotas(id_cliente);
 CREATE INDEX IF NOT EXISTS idx_visitas_mascota ON visitas(id_mascota);
 CREATE INDEX IF NOT EXISTS idx_visitas_veterinaria ON visitas(id_veterinaria);

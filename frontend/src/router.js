@@ -1,8 +1,8 @@
 import { PetProfileView } from "./views/pet-profile.js";
-import { DashboardView } from "./views/user-dashboard.js";
+import { DashboardView, initDashboard } from "./views/user-dashboard.js";
 import { loadLandingPage } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
-import { loadLoginPage } from "./views/login.js";
+import { loadLoginPage, initLogin } from "./views/login.js";
 import { loadRegisterPage } from "./views/register.js";
 
 const routes = {
@@ -24,12 +24,18 @@ export function router() {
 
   const view = routes[path];
 
-  if (view) {
-    app.innerHTML = view();
-    // Inicializar eventos después de cargar la vista
-    initializePageEvents();
-  } else {
-    app.innerHTML = "<h1>Página no encontrada</h1>";
+  try {
+    if (view) {
+      app.innerHTML = view();
+      initializePageEvents();
+      if (path === '/login')          initLogin();
+      if (path === '/user-dashboard') initDashboard();
+    } else {
+      app.innerHTML = "<h1>Página no encontrada</h1>";
+    }
+  } catch (err) {
+    console.error("Error cargando vista:", err);
+    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error al cargar la vista:</b><pre>${err.message}</pre></div>`;
   }
 }
 
@@ -42,7 +48,7 @@ function initializePageEvents() {
   if (loginBtn && loginBtn.textContent.includes('Ingresar')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '#/user-dashboard';
+      window.location.hash = '#/login';
     });
   }
 

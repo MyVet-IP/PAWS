@@ -1,9 +1,10 @@
-// Middleware para rutas no encontradas (404)
-
 function notFound(req, res, next) {
-  const error = new Error(`Ruta no encontrada: ${req.method} ${req.originalUrl}`);
-  error.status = 404;
-  next(error);
+  // Chrome DevTools hace esta petición automáticamente, la ignoramos
+  if (req.path.startsWith('/.well-known/')) return res.status(204).end();
+
+  const err = new Error(`${req.method} ${req.originalUrl} — no existe`);
+  err.status = 404;
+  next(err);
 }
 
 module.exports = notFound;

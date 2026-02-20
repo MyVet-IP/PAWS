@@ -244,51 +244,38 @@ app.post('/api/visitas', async (req, res) => {
   }
 });
 
-// === RUTAS DE EMERGENCY MESSAGES ===
-
 app.get('/api/emergency-messages', async (req, res, next) => {
   try {
     const messages = await storage.getAllEmergencyMessages();
     res.json(messages);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 
-// POST /api/emergency — guarda emergencia + mensaje + genera link WhatsApp
 app.post('/api/emergency', validateBody(['mensaje', 'nombre_contacto', 'id_veterinaria']), async (req, res, next) => {
   try {
     const { mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia } = req.body;
 
-    // Obtener datos de la clínica para el link de WhatsApp
-    const veterinaria = await storage.getVeterinariaById(id_veterinaria);
-    if (!veterinaria) {
-      return res.status(404).json({ error: 'Clínica no encontrada' });
-    }
+    const vet = await storage.getVeterinariaById(id_veterinaria);
+    if (!vet) return res.status(404).json({ error: 'Clinica no encontrada' });
 
-    // Guardar el mensaje en la base de datos
-    const emergencyMsg = await storage.createEmergencyMessage(
+    const registro = await storage.createEmergencyMessage(
       mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia || null
     );
 
-    // Generar link de WhatsApp si la clínica tiene número
     let whatsappLink = null;
-    if (veterinaria.whatsapp) {
-      const texto = encodeURIComponent(`[EMERGENCIA] ${nombre_contacto}: ${mensaje}`);
-      whatsappLink = `https://wa.me/${veterinaria.whatsapp}?text=${texto}`;
+    if (vet.whatsapp) {
+      whatsappLink = `https://wa.me/${vet.whatsapp}?text=${encodeURIComponent(`EMERGENCIA - ${nombre_contacto}: ${mensaje}`)}`;
     }
 
     res.status(201).json({
-      mensaje: emergencyMsg,
+      mensaje: registro,
       whatsappLink,
-      veterinaria: {
-        nombre: veterinaria.nombre,
-        telefono: veterinaria.telefono,
-        whatsapp: veterinaria.whatsapp
-      }
+      veterinaria: { nombre: vet.nombre, telefono: vet.telefono, whatsapp: vet.whatsapp }
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -347,9 +334,25 @@ app.post('/api/appointments', async (req, res) => {
   }
 });
 
-// === RUTA PARA SERVIR EL FRONTEND ===
+app.post('/api/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email y contrasena requeridos' });
 
-app.get('*', (req, res) => {
+    const cliente = await storage.getClienteByEmail(email);
+    if (!cliente || cliente.password !== password) {
+      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    }
+
+    const { password: _, ...user } = cliente;
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Rutas del frontend: solo para paths sin extensión (no archivos .js, .css, etc.)
+app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 

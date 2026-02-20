@@ -285,29 +285,27 @@ class Storage {
     return await this.getEmergenciaById(result.id_emergencia);
   }
 
-  // === EMERGENCY MESSAGES ===
-
   async createEmergencyMessage(mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia = null) {
-    const result = await db.get(
+    const row = await db.get(
       `INSERT INTO emergency_messages (mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia)
        VALUES ($1, $2, $3, $4, $5) RETURNING id_mensaje`,
       [mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia]
     );
-    return await db.get('SELECT * FROM emergency_messages WHERE id_mensaje = $1', [result.id_mensaje]);
+    return await db.get('SELECT * FROM emergency_messages WHERE id_mensaje = $1', [row.id_mensaje]);
   }
 
   async getAllEmergencyMessages() {
     return await db.all(
       `SELECT em.*, v.nombre AS veterinaria_nombre, v.whatsapp
        FROM emergency_messages em
-       INNER JOIN veterinarias v ON v.id_veterinaria = em.id_veterinaria
+       JOIN veterinarias v ON v.id_veterinaria = em.id_veterinaria
        ORDER BY em.fecha DESC`
     );
   }
 
   async getEmergencyMessagesByVeterinaria(id_veterinaria) {
     return await db.all(
-      `SELECT * FROM emergency_messages WHERE id_veterinaria = $1 ORDER BY fecha DESC`,
+      'SELECT * FROM emergency_messages WHERE id_veterinaria = $1 ORDER BY fecha DESC',
       [id_veterinaria]
     );
   }

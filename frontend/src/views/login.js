@@ -1,3 +1,31 @@
+export function initLogin() {
+  const form = document.getElementById('login-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errBox   = document.getElementById('login-error');
+    errBox.textContent = '';
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) { errBox.textContent = data.error; return; }
+
+      localStorage.setItem('currentUser', JSON.stringify(data));
+      window.location.hash = '#/user-dashboard';
+    } catch {
+      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+  });
+}
+
 export function loadLoginPage() {
     return `
     <section class="min-h-screen bg-pink font-sans">
@@ -28,14 +56,15 @@ export function loadLoginPage() {
                         Ingresa tus credenciales para acceder a tu cuenta
                     </p>
                     <!--Form-->
-                    <form class="space-y-4">
+                    <p id="login-error" class="text-red-500 text-sm mb-2"></p>
+                    <form id="login-form" class="space-y-4">
                         <div>
                             <label class="text-sm ">Correo electronico</label>
-                            <input type="email" placeholder="mail@ejemplo.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                            <input id="login-email" type="email" placeholder="mail@ejemplo.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
                         <div>
                             <label class="text-sm ">Contrasena</label>
-                            <input type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                            <input id="login-password" type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
                         <div class="flex justify-between items-center items-center text-sm">
                             <label class="flex-items-center gap-2">
@@ -55,7 +84,7 @@ export function loadLoginPage() {
                         </div>
                         <p class="text-center text-sm mt-4">
                             ¿No tienes cuenta?
-                            <a href="../views/register.html" class="text-pink font-semibold">Registrarse</a>
+                            <a href="#/register" class="text-pink font-semibold">Registrarse</a>
                         </p>
                         <div class="mt-6 text-xs text-center text-gray">
                             MedellinVet | privacidad | terminos | soporte

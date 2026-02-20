@@ -1,6 +1,6 @@
 import { router } from "./router.js";
 import { navbarController } from "./controllers/navbar.js";
-import { apiService } from "./services/api.js";
+import { apiService } from "./views/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
 // Funciones globales para usar en HTML
@@ -31,18 +31,8 @@ window.searchClinics = function() {
   }
 };
 
-// Inicializar aplicación
-function initApp() {
-  console.log('VetCare App iniciada');
-  
-  // Cargar router
-  router();
-  
-  // Inicializar controladores
-  navbarController;
-}
+// Los módulos ES son diferidos, el DOM ya está listo cuando llega aquí
+router();
+navbarController;
 
-// Event listeners
-window.addEventListener("DOMContentLoaded", initApp);
-window.addEventListener("load", router);
 window.addEventListener("hashchange", router);
