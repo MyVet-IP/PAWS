@@ -1,15 +1,9 @@
 import { PetProfileView } from "./views/pet-profile.js";
 import { DashboardView } from "./views/user-dashboard.js";
 import { ClinicsView } from "./views/clinics-view.js";
-<<<<<<< Updated upstream
-import { loadLoginPage } from "./views/login.js";
-import { loadRegisterPage } from "./views/register.js";
-import { VetDashboardView } from "./views/vet-dashboard.js";
-=======
 import { loadLandingPage, landingEvents } from "./views/landing-page.js";
-import { loadLoginPage, initLoginEvents } from "./views/login.js";
-import { loadRegisterPage, initRegisterEvents } from "./views/register.js";
->>>>>>> Stashed changes
+import { loadLoginPage, loginEvents } from "./views/login.js";
+import { loadRegisterPage, registerEvents } from "./views/register.js";
 
 const routes = {
   "/": loadLandingPage,
@@ -17,7 +11,9 @@ const routes = {
   "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
-  "/vet-dashboard": VetDashboardView
+  "/clinicas": ClinicsView,
+  "/emergencias": () => "<h1>Emergencias 24/7 - En desarrollo</h1>",
+  "/tips": () => "<h1>Tips de Salud - En desarrollo</h1>"
 };
 
 export function router() {
@@ -38,11 +34,11 @@ export function router() {
     }
 
     if (path === "/login") {
-      initLoginEvents();
+      loginEvents();
     }
 
     if (path === "/register") {
-      initRegisterEvents();
+      registerEvents();
     }
 
   } else {
