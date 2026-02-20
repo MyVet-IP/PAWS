@@ -1,10 +1,8 @@
-// Módulo de conexión a base de datos PostgreSQL
 require('dotenv').config();
 const { Pool } = require('pg');
 const path = require('path');
 const fs = require('fs');
 
-// Configuración de la base de datos PostgreSQL
 const DB_CONFIG = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
@@ -20,20 +18,17 @@ class Database {
     this.pool = null;
   }
 
-  // Conectar a la base de datos
   connect() {
     return new Promise((resolve, reject) => {
       try {
         this.pool = new Pool(DB_CONFIG);
-        
-        // Probar la conexión
         this.pool.query('SELECT NOW()', (err, result) => {
           if (err) {
-            console.error('Error al conectar a la base de datos PostgreSQL:', err);
+            console.error('Failed to connect to PostgreSQL:', err);
             reject(err);
           } else {
-            console.log('✅ Conexión exitosa a la base de datos PostgreSQL');
-            console.log(`📊 Base de datos: ${DB_CONFIG.database}`);
+            console.log('✅ Connected to PostgreSQL');
+            console.log(`📊 Database: ${DB_CONFIG.database}`);
             resolve();
           }
         });
@@ -43,40 +38,36 @@ class Database {
     });
   }
 
-  // Inicializar la base de datos con el schema si no existe
   async initialize() {
     try {
       await this.connect();
 
-      // Verificar si las tablas ya existen
       const tableCheck = await this.get(
         "SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
       );
 
       if (parseInt(tableCheck.count) === 0) {
-        console.log('🔧 Inicializando schema de base de datos...');
+        console.log('🔧 Initializing database schema...');
         const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
         await this.exec(schema);
-        console.log('✅ Schema inicializado correctamente');
+        console.log('✅ Schema initialized');
       } else {
-        console.log(`📋 Base de datos ya contiene ${tableCheck.count} tablas`);
+        console.log(`📋 Database has ${tableCheck.count} tables`);
       }
 
       return this;
     } catch (error) {
-      console.error('❌ Error al inicializar la base de datos:', error);
+      console.error('❌ Error initializing database:', error);
       throw error;
     }
   }
 
-  // Ejecutar una consulta que no devuelve resultados (INSERT, UPDATE, DELETE)
   run(sql, params = []) {
     return new Promise((resolve, reject) => {
       this.pool.query(sql, params, (err, result) => {
         if (err) {
           reject(err);
         } else {
-          // Para compatibilidad con SQLite, devolver lastID y changes
           const lastID = result.rows && result.rows[0] ? result.rows[0].id : result.insertId || null;
           resolve({ 
             lastID: lastID,
@@ -87,7 +78,6 @@ class Database {
     });
   }
 
-  // Ejecutar una consulta que devuelve una sola fila
   get(sql, params = []) {
     return new Promise((resolve, reject) => {
       this.pool.query(sql, params, (err, result) => {
@@ -100,7 +90,6 @@ class Database {
     });
   }
 
-  // Ejecutar una consulta que devuelve múltiples filas
   all(sql, params = []) {
     return new Promise((resolve, reject) => {
       this.pool.query(sql, params, (err, result) => {
@@ -113,7 +102,6 @@ class Database {
     });
   }
 
-  // Ejecutar múltiples sentencias SQL
   async exec(sql) {
     try {
       await this.pool.query(sql);
@@ -123,7 +111,6 @@ class Database {
     }
   }
 
-  // Cerrar la conexión
   close() {
     return new Promise((resolve, reject) => {
       if (this.pool) {
@@ -131,7 +118,7 @@ class Database {
           if (err) {
             reject(err);
           } else {
-            console.log('🔒 Conexión a base de datos cerrada');
+            console.log('🔒 Database connection closed');
             resolve();
           }
         });
@@ -142,7 +129,6 @@ class Database {
   }
 }
 
-// Exportar instancia única
 const database = new Database();
 
 module.exports = database;

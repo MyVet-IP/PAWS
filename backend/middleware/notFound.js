@@ -1,8 +1,7 @@
 function notFound(req, res, next) {
-  // Chrome DevTools hace esta petición automáticamente, la ignoramos
   if (req.path.startsWith('/.well-known/')) return res.status(204).end();
 
-  const err = new Error(`${req.method} ${req.originalUrl} — no existe`);
+  const err = new Error(`${req.method} ${req.originalUrl} — not found`);
   err.status = 404;
   next(err);
 }

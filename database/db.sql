@@ -1,6 +1,5 @@
--- Schema de base de datos Veterinaria para PostgreSQL
+-- MyVet database schema -- PostgreSQL
 
--- Tabla de clientes/usuarios
 CREATE TABLE IF NOT EXISTS clientes (
   id_cliente SERIAL PRIMARY KEY,
   nombre VARCHAR(120) NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE IF NOT EXISTS clientes (
   telefono VARCHAR(30)
 );
 
--- Tabla de veterinarias/clínicas
 CREATE TABLE IF NOT EXISTS veterinarias (
   id_veterinaria SERIAL PRIMARY KEY,
   nombre VARCHAR(140) NOT NULL,
@@ -21,14 +19,12 @@ CREATE TABLE IF NOT EXISTS veterinarias (
   imagen VARCHAR(255)
 );
 
--- Tabla de servicios que pueden ofrecer las veterinarias
 CREATE TABLE IF NOT EXISTS servicios (
   id_servicio SERIAL PRIMARY KEY,
   nombre VARCHAR(120) NOT NULL,
   descripcion VARCHAR(255)
 );
 
--- Tabla de guarderías
 CREATE TABLE IF NOT EXISTS guarderias (
   id_guarderia SERIAL PRIMARY KEY,
   nombre VARCHAR(140) NOT NULL,
@@ -36,7 +32,6 @@ CREATE TABLE IF NOT EXISTS guarderias (
   telefono VARCHAR(30)
 );
 
--- Tabla de refugios
 CREATE TABLE IF NOT EXISTS refugios (
   id_refugio SERIAL PRIMARY KEY,
   nombre VARCHAR(140) NOT NULL,
@@ -44,7 +39,6 @@ CREATE TABLE IF NOT EXISTS refugios (
   telefono VARCHAR(30)
 );
 
--- Tabla de mascotas
 CREATE TABLE IF NOT EXISTS mascotas (
   id_mascota SERIAL PRIMARY KEY,
   nombre VARCHAR(120) NOT NULL,
@@ -55,7 +49,6 @@ CREATE TABLE IF NOT EXISTS mascotas (
   FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
 );
 
--- Tabla de visitas a veterinarias
 CREATE TABLE IF NOT EXISTS visitas (
   id_visita SERIAL PRIMARY KEY,
   fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -68,7 +61,6 @@ CREATE TABLE IF NOT EXISTS visitas (
   FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT
 );
 
--- Tabla de emergencias
 CREATE TABLE IF NOT EXISTS emergencias (
   id_emergencia SERIAL PRIMARY KEY,
   fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -79,7 +71,6 @@ CREATE TABLE IF NOT EXISTS emergencias (
   FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT
 );
 
--- Guarda los mensajes enviados desde el botón de emergencia
 CREATE TABLE IF NOT EXISTS emergency_messages (
   id_mensaje SERIAL PRIMARY KEY,
   mensaje TEXT NOT NULL,
@@ -110,9 +101,7 @@ CREATE INDEX IF NOT EXISTS idx_emergencias_veterinaria ON emergencias(id_veterin
 CREATE INDEX IF NOT EXISTS idx_emergency_messages_veterinaria ON emergency_messages(id_veterinaria);
 CREATE INDEX IF NOT EXISTS idx_emergency_messages_emergencia ON emergency_messages(id_emergencia);
 
--- ============================================================
--- DATOS REALES DE PRUEBA - Medellin, Colombia
--- ============================================================
+-- Seed data
 
 INSERT INTO clientes (nombre, email, password, telefono) VALUES
   ('Andres Restrepo',  'andres.restrepo@gmail.com',   '123456', '3046712893'),
@@ -133,16 +122,16 @@ INSERT INTO veterinarias (nombre, direccion, telefono, whatsapp, estado, rating,
 ON CONFLICT DO NOTHING;
 
 INSERT INTO servicios (nombre, descripcion) VALUES
-  ('Vacunacion',   'Aplicacion de vacunas preventivas'),
-  ('Peluqueria',   'Corte y bano para mascotas'),
-  ('Cirugia',      'Procedimientos quirurgicos'),
-  ('Rayos X',      'Radiografias y diagnostico'),
-  ('Dental',       'Limpieza y cuidado dental'),
-  ('Cardiologia',  'Cuidado cardiovascular'),
-  ('Laboratorio',  'Analisis clinicos'),
-  ('Fisioterapia', 'Rehabilitacion fisica'),
-  ('Urgencias',    'Atencion de emergencias 24/7'),
-  ('Hospedaje',    'Estancia temporal para mascotas')
+  ('Vacunacion',   'Preventive vaccines'),
+  ('Peluqueria',   'Grooming and bath'),
+  ('Cirugia',      'Surgical procedures'),
+  ('Rayos X',      'X-rays and imaging'),
+  ('Dental',       'Dental cleaning and care'),
+  ('Cardiologia',  'Cardiovascular care'),
+  ('Laboratorio',  'Clinical lab tests'),
+  ('Fisioterapia', 'Physical rehabilitation'),
+  ('Urgencias',    '24/7 emergency care'),
+  ('Hospedaje',    'Pet boarding')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO veterinaria_servicios (id_veterinaria, id_servicio)

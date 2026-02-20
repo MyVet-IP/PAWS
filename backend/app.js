@@ -1,4 +1,3 @@
-// Servidor Express para la API de VetCare
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -9,24 +8,18 @@ const { errorHandler, notFound, validateBody } = require('./middleware');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos del frontend y raíz
 const frontendPath = path.join(__dirname, '..', 'frontend');
 const rootPath = path.join(__dirname, '..');
 app.use(express.static(rootPath));
 app.use(express.static(frontendPath));
 
-// === RUTAS DE HEALTH CHECK ===
-
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'API funcionando correctamente' });
+  res.json({ ok: true, message: 'API running' });
 });
-
-// === RUTAS DE CLIENTES ===
 
 app.get('/api/clientes', async (req, res) => {
   try {
@@ -41,7 +34,7 @@ app.get('/api/clientes/:id', async (req, res) => {
   try {
     const cliente = await storage.getClienteById(req.params.id);
     if (!cliente) {
-      return res.status(404).json({ error: 'Cliente no encontrado' });
+      return res.status(404).json({ error: 'Client not found' });
     }
     res.json(cliente);
   } catch (error) {
@@ -54,14 +47,14 @@ app.post('/api/clientes', async (req, res) => {
     const { nombre, email, password, telefono } = req.body;
     
     if (!nombre || !email || !password) {
-      return res.status(400).json({ error: 'nombre, email y password son obligatorios' });
+      return res.status(400).json({ error: 'nombre, email and password are required' });
     }
     
     const cliente = await storage.createCliente(nombre, email, password, telefono);
     res.status(201).json(cliente);
   } catch (error) {
     if (error.message.includes('UNIQUE constraint failed')) {
-      return res.status(400).json({ error: 'El email ya está registrado' });
+      return res.status(400).json({ error: 'Email already registered' });
     }
     res.status(500).json({ error: error.message });
   }
@@ -76,8 +69,6 @@ app.put('/api/clientes/:id', async (req, res) => {
   }
 });
 
-// === RUTAS DE VETERINARIAS/CLÍNICAS ===
-
 app.get('/api/clinics', async (req, res) => {
   try {
     const { location } = req.query;
@@ -89,7 +80,6 @@ app.get('/api/clinics', async (req, res) => {
       veterinarias = await storage.getAllVeterinarias();
     }
     
-    // Formatear servicios como array de nombres
     veterinarias = veterinarias.map(vet => ({
       ...vet,
       specialties: vet.servicios.map(s => s.nombre.toUpperCase()),
@@ -107,10 +97,9 @@ app.get('/api/clinics/:id', async (req, res) => {
   try {
     const veterinaria = await storage.getVeterinariaById(req.params.id);
     if (!veterinaria) {
-      return res.status(404).json({ error: 'Veterinaria no encontrada' });
+      return res.status(404).json({ error: 'Clinic not found' });
     }
     
-    // Formatear para compatibilidad con frontend
     veterinaria.specialties = veterinaria.servicios.map(s => s.nombre.toUpperCase());
     veterinaria.image = veterinaria.imagen;
     veterinaria.location = veterinaria.direccion;
@@ -126,7 +115,7 @@ app.post('/api/veterinarias', async (req, res) => {
     const { nombre, direccion, telefono, estado, rating, imagen } = req.body;
     
     if (!nombre || !direccion) {
-      return res.status(400).json({ error: 'nombre y direccion son obligatorios' });
+      return res.status(400).json({ error: 'nombre and direccion are required' });
     }
     
     const veterinaria = await storage.createVeterinaria(nombre, direccion, telefono, estado, rating, imagen);
@@ -135,8 +124,6 @@ app.post('/api/veterinarias', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// === RUTAS DE SERVICIOS ===
 
 app.get('/api/servicios', async (req, res) => {
   try {
@@ -152,7 +139,7 @@ app.post('/api/servicios', async (req, res) => {
     const { nombre, descripcion } = req.body;
     
     if (!nombre) {
-      return res.status(400).json({ error: 'nombre es obligatorio' });
+      return res.status(400).json({ error: 'nombre is required' });
     }
     
     const servicio = await storage.createServicio(nombre, descripcion);
@@ -161,8 +148,6 @@ app.post('/api/servicios', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// === RUTAS DE MASCOTAS ===
 
 app.get('/api/mascotas', async (req, res) => {
   try {
@@ -177,7 +162,7 @@ app.get('/api/pets/:id', async (req, res) => {
   try {
     const mascota = await storage.getMascotaById(req.params.id);
     if (!mascota) {
-      return res.status(404).json({ error: 'Mascota no encontrada' });
+      return res.status(404).json({ error: 'Pet not found' });
     }
     res.json(mascota);
   } catch (error) {
@@ -190,7 +175,7 @@ app.post('/api/mascotas', async (req, res) => {
     const { nombre, especie, raza, edad, id_cliente } = req.body;
     
     if (!nombre || !especie || !id_cliente) {
-      return res.status(400).json({ error: 'nombre, especie e id_cliente son obligatorios' });
+      return res.status(400).json({ error: 'nombre, especie and id_cliente are required' });
     }
     
     const mascota = await storage.createMascota(nombre, especie, raza, edad, id_cliente);
@@ -208,8 +193,6 @@ app.put('/api/pets/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// === RUTAS DE VISITAS ===
 
 app.get('/api/visitas', async (req, res) => {
   try {
@@ -234,7 +217,7 @@ app.post('/api/visitas', async (req, res) => {
     const { diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria } = req.body;
     
     if (!id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'id_mascota e id_veterinaria son obligatorios' });
+      return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
     }
     
     const visita = await storage.createVisita(diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria);
@@ -258,7 +241,7 @@ app.post('/api/emergency', validateBody(['mensaje', 'nombre_contacto', 'id_veter
     const { mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia } = req.body;
 
     const vet = await storage.getVeterinariaById(id_veterinaria);
-    if (!vet) return res.status(404).json({ error: 'Clinica no encontrada' });
+    if (!vet) return res.status(404).json({ error: 'Clinic not found' });
 
     const registro = await storage.createEmergencyMessage(
       mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia || null
@@ -279,8 +262,6 @@ app.post('/api/emergency', validateBody(['mensaje', 'nombre_contacto', 'id_veter
   }
 });
 
-// === RUTAS DE EMERGENCIAS ===
-
 app.get('/api/emergencias', async (req, res) => {
   try {
     const emergencias = await storage.getAllEmergencias();
@@ -295,7 +276,7 @@ app.post('/api/emergencias', async (req, res) => {
     const { descripcion, id_mascota, id_veterinaria } = req.body;
     
     if (!descripcion || !id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'descripcion, id_mascota e id_veterinaria son obligatorios' });
+      return res.status(400).json({ error: 'descripcion, id_mascota and id_veterinaria are required' });
     }
     
     const emergencia = await storage.createEmergencia(descripcion, id_mascota, id_veterinaria);
@@ -304,8 +285,6 @@ app.post('/api/emergencias', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// === RUTAS DE DASHBOARD ===
 
 app.get('/api/users/:id/dashboard', async (req, res) => {
   try {
@@ -316,18 +295,15 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
   }
 });
 
-// === RUTA DE CITAS/APPOINTMENTS ===
-
 app.post('/api/appointments', async (req, res) => {
   try {
-    // Crear una visita como cita
     const { id_mascota, id_veterinaria, fecha, motivo } = req.body;
     
     if (!id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'id_mascota e id_veterinaria son obligatorios' });
+      return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
     }
     
-    const visita = await storage.createVisita(motivo || 'Cita programada', null, null, id_mascota, id_veterinaria);
+    const visita = await storage.createVisita(motivo || 'Scheduled appointment', null, null, id_mascota, id_veterinaria);
     res.status(201).json(visita);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -337,11 +313,11 @@ app.post('/api/appointments', async (req, res) => {
 app.post('/api/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Email y contrasena requeridos' });
+    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
     const cliente = await storage.getClienteByEmail(email);
     if (!cliente || cliente.password !== password) {
-      return res.status(401).json({ error: 'Credenciales incorrectas' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const { password: _, ...user } = cliente;
@@ -351,51 +327,41 @@ app.post('/api/login', async (req, res, next) => {
   }
 });
 
-// Rutas del frontend: solo para paths sin extensión (no archivos .js, .css, etc.)
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// === MIDDLEWARE DE MANEJO DE ERRORES ===
-
 app.use(notFound);
 app.use(errorHandler);
 
-// === INICIALIZACIÓN DEL SERVIDOR ===
-
 async function startServer() {
   try {
-    // Inicializar la base de datos
     await db.initialize();
-    
-    // Iniciar el servidor
     app.listen(PORT, () => {
       console.log(`\n========================================`);
-      console.log(`🐾 Servidor VetCare iniciado`);
-      console.log(`📍 URL: http://localhost:${PORT}`);
-      console.log(`📊 API: http://localhost:${PORT}/api/health`);
+      console.log(` VetCare server started`);
+      console.log(` URL: http://localhost:${PORT}`);
+      console.log(` API: http://localhost:${PORT}/api/health`);
       console.log(`========================================\n`);
     });
   } catch (error) {
-    console.error('Error al iniciar el servidor:', error);
+    console.error('Error starting server:', error);
     process.exit(1);
   }
 }
 
-// Manejar cierre graceful
 process.on('SIGINT', async () => {
-  console.log('\n\nCerrando servidor...');
+  console.log('\n\nShutting down...');
   await db.close();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n\nCerrando servidor...');
+  console.log('\n\nShutting down...');
   await db.close();
   process.exit(0);
 });
 
-// Iniciar el servidor
 startServer();
 
 module.exports = app;

@@ -1,15 +1,15 @@
 function errorHandler(err, req, res, next) {
   const status = err.status || err.statusCode || 500;
-  const msg = err.message || 'Error interno del servidor';
+  const msg = err.message || 'Internal server error';
 
   if (err.code === '23505') {
-    return res.status(400).json({ error: 'Ya existe un registro con ese valor', detail: err.detail || null });
+    return res.status(400).json({ error: 'A record with that value already exists', detail: err.detail || null });
   }
   if (err.code === '23503') {
-    return res.status(400).json({ error: 'El registro relacionado no existe', detail: err.detail || null });
+    return res.status(400).json({ error: 'Related record does not exist', detail: err.detail || null });
   }
   if (err.code === '23502') {
-    return res.status(400).json({ error: 'Falta un campo requerido', detail: err.detail || null });
+    return res.status(400).json({ error: 'A required field is missing', detail: err.detail || null });
   }
 
   console.error(`[${status}] ${req.method} ${req.originalUrl} - ${msg}`);

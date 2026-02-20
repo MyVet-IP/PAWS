@@ -1,9 +1,6 @@
-// Módulo de operaciones de almacenamiento/consultas
 const db = require('./db');
 
 class Storage {
-  // === CLIENTES ===
-  
   async getAllClientes() {
     return await db.all(
       'SELECT id_cliente, nombre, email, telefono FROM clientes ORDER BY id_cliente ASC'
@@ -60,14 +57,11 @@ class Storage {
     return await this.getClienteById(id);
   }
 
-  // === VETERINARIAS ===
-  
   async getAllVeterinarias() {
     const veterinarias = await db.all(
       'SELECT * FROM veterinarias ORDER BY id_veterinaria ASC'
     );
     
-    // Obtener servicios para cada veterinaria
     for (let vet of veterinarias) {
       vet.servicios = await this.getServiciosByVeterinaria(vet.id_veterinaria);
     }
@@ -109,8 +103,6 @@ class Storage {
     return await this.getVeterinariaById(result.id_veterinaria);
   }
 
-  // === SERVICIOS ===
-  
   async getAllServicios() {
     return await db.all('SELECT * FROM servicios ORDER BY id_servicio ASC');
   }
@@ -144,8 +136,6 @@ class Storage {
     return { success: true };
   }
 
-  // === MASCOTAS ===
-  
   async getAllMascotas() {
     return await db.all(
       `SELECT m.*, c.nombre AS cliente_nombre
@@ -212,8 +202,6 @@ class Storage {
     return await this.getMascotaById(id);
   }
 
-  // === VISITAS ===
-  
   async getAllVisitas() {
     return await db.all(
       `SELECT v.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
@@ -254,8 +242,6 @@ class Storage {
     return await this.getVisitaById(result.id_visita);
   }
 
-  // === EMERGENCIAS ===
-  
   async getAllEmergencias() {
     return await db.all(
       `SELECT e.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
@@ -310,13 +296,10 @@ class Storage {
     );
   }
 
-  // === DASHBOARD ===
-  
   async getUserDashboard(id_cliente) {
     const cliente = await this.getClienteById(id_cliente);
     const mascotas = await this.getMascotasByCliente(id_cliente);
     
-    // Obtener visitas para cada mascota
     for (let mascota of mascotas) {
       mascota.visitas = await this.getVisitasByMascota(mascota.id_mascota);
     }
