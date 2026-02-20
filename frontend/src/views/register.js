@@ -26,7 +26,7 @@ export function loadRegisterPage() {
                 </div>
             </div>
 
-            <form id="registerForm" class="space-y-4">
+            <form id="register-form" class="space-y-4">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -108,7 +108,7 @@ export function loadRegisterPage() {
 
                 </div>
 
-                <div id="formMessage" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
+                <div id="form-message" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
 
                 <button
                     class="w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
@@ -117,7 +117,7 @@ export function loadRegisterPage() {
 
                 <p class="text-center text-sm mt-4">
                     ¿Ya tienes una cuenta?
-                    <a href="#" id="goToLogin" class="text-pink font-semibold">
+                    <a href="#" id="login-link" class="text-pink font-semibold">
                         Inicia Sesion
                     </a>
                 </p>
@@ -142,15 +142,15 @@ export function loadRegisterPage() {
 
 export function registerEvents() {
 
-    const registerForm = document.getElementById("registerForm");
-    const registerMessage = document.getElementById("formMessage");
+    const registerForm = document.getElementById("register-form");
+    const registerMessage = document.getElementById("form-message");
 
     if (!registerForm) return;
 
-    const goToLogin = document.querySelector("#goToLogin");
+    const loginLink = document.querySelector("#login-link");
 
-    if (goToLogin) {
-        goToLogin.addEventListener("click", (e) => {
+    if (loginLink) {
+        loginLink.addEventListener("click", (e) => {
             e.preventDefault();
             window.location.hash = "#/login";
         });

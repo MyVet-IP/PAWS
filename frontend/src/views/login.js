@@ -32,7 +32,7 @@ export function loadLoginPage() {
                         Ingresa tus credenciales para acceder a tu cuenta
                     </p>
 
-                    <form id="loginForm" class="space-y-4">
+                    <form id="login-form" class="space-y-4">
                         <div>
                             <label class="text-sm ">Correo electronico</label>
                             <input id="email" type="email" placeholder="mail@ejemplo.com"
@@ -55,7 +55,7 @@ export function loadLoginPage() {
                             </a>
                         </div>
 
-                        <div id="formMessage" class="hidden mt-3 p-3 rounded text-sm"></div>
+                        <div id="form-message" class="hidden mt-3 p-3 rounded text-sm"></div>
 
                         <button
                             class="w-full py-2 rounded-full bg-pink text-white font-semibold hover:opacity-90 transition">
@@ -72,7 +72,7 @@ export function loadLoginPage() {
 
                         <p class="text-center text-sm mt-4">
                             ¿No tienes cuenta?
-                            <a href="#" id="goToRegister" class="text-pink font-semibold">
+                            <a href="#" id="register-link" class="text-pink font-semibold">
                                 Registrarse
                             </a>
                         </p>
@@ -91,15 +91,15 @@ export function loadLoginPage() {
 
 export function loginEvents() {
 
-    const loginForm = document.getElementById("loginForm");
-    const loginMessage = document.getElementById("formMessage");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("form-message");
 
     if (!loginForm) return;
 
-    const goToRegister = document.querySelector("#goToRegister");
+    const registerLink = document.querySelector("#register-link");
 
-    if (goToRegister) {
-        goToRegister.addEventListener("click", (e) => {
+    if (registerLink) {
+        registerLink.addEventListener("click", (e) => {
             e.preventDefault();
             window.location.hash = "#/register";
         });
