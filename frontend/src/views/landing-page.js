@@ -1,4 +1,4 @@
-﻿// Por favor traten de no tocar mucho los estilos, me demore arreglandolo, gracias
+﻿// Please try not to modify the styles too much, it took me a while to fix them, thanks
 export function loadLandingPage() {
     return `
         <div class="hero-gradient min-h-screen">
@@ -13,9 +13,9 @@ export function loadLandingPage() {
                     </div>
 
                     <div class="hidden md:flex items-center gap-8">
-                        <a href="#/clinicas" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Clínicas</a>
-                        <a href="#/emergencias" class="text-red-500 hover:text-red-600 font-medium transition-colors">Emergencias</a>
-                        <a href="#/tips" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Tips de Salud</a>
+                        <a href="#/clinicas" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Clinics</a>
+                        <a href="#/emergencias" class="text-red-500 hover:text-red-600 font-medium transition-colors">Emergencies</a>
+                        <a href="#/tips" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Health Tips</a>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -23,9 +23,9 @@ export function loadLandingPage() {
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
-                            <input type="text" placeholder="Buscar especialista..." class="bg-transparent border-none outline-none text-sm w-40 search-input-min">
+                            <input type="text" placeholder="Search specialist..." class="bg-transparent border-none outline-none text-sm w-40 search-input-min">
                         </div>
-                        <button id="btn-ingresar" class="btn-primary font-semibold px-6 py-2 rounded-full">Ingresar</button>
+                        <button id="btn-ingresar" class="btn-primary font-semibold px-6 py-2 rounded-full">Sign In</button>
                     </div>
                 </div>
             </div>
@@ -38,15 +38,15 @@ export function loadLandingPage() {
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        CUIDADO PROFESIONAL GARANTIZADO
+                        GUARANTEED PROFESSIONAL CARE
                     </div>
 
                     <h1 class="text-5xl md:text-6xl font-bold text-gray-800 leading-tight">
-                        Encuentra el mejor <span class="text-purple-400">cuidado</span> para tu mascota
+                        Find the best <span class="text-purple-400">care</span> for your pet
                     </h1>
 
                     <p class="text-gray-600 text-lg">
-                        Conectamos a dueños de mascotas con las clínicas veterinarias más calificadas y especialistas de confianza. Tu mejor amigo merece una atención excepcional.
+                        We connect pet owners with the most qualified veterinary clinics and trusted specialists. Your best friend deserves exceptional care.
                     </p>
 
                     <div class="flex items-center gap-3 bg-white rounded-3xl shadow-custom p-2">
@@ -55,10 +55,10 @@ export function loadLandingPage() {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <input type="text" id="searchInput" placeholder="Ciudad o código postal" class="flex-1 border-none outline-none py-3">
+                            <input type="text" id="searchInput" placeholder="City or zip code" class="flex-1 border-none outline-none py-3">
                         </div>
                         <button id="btn-search" class="btn-primary font-semibold px-8 py-3 rounded-2xl flex items-center gap-2">
-                            Buscar
+                            Search
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
@@ -71,13 +71,13 @@ export function loadLandingPage() {
                             <div class="w-10 h-10 rounded-full border-2 border-white avatar-gradient-2"></div>
                             <div class="w-10 h-10 rounded-full border-2 border-white avatar-gradient-3"></div>
                         </div>
-                        <span class="text-sm text-gray-600 font-medium">+2k mascotas atendidas este mes</span>
+                        <span class="text-sm text-gray-600 font-medium">+2k pets treated this month</span>
                     </div>
                 </div>
 
                 <div class="relative">
                     <div class="rounded-3xl shadow-2xl overflow-hidden relative">
-                        <img src="./frontend/assets/images/lllll.jpg" alt="Veterinaria profesional atendiendo mascota" class="w-full h-96 object-cover">
+                        <img src="./frontend/assets/images/lllll.jpg" alt="Professional veterinarian caring for pet" class="w-full h-96 object-cover">
 
                         <div class="absolute top-8 right-8 bg-sky-100 rounded-2xl p-4 shadow-card max-w-xs">
                             <div class="flex items-start gap-3">
@@ -87,8 +87,8 @@ export function loadLandingPage() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 text-sm">Cuidado Experto</p>
-                                    <p class="text-xs text-gray-600">Más de 500 clínicas verificadas</p>
+                                    <p class="font-bold text-gray-800 text-sm">Expert Care</p>
+                                    <p class="text-xs text-gray-600">Over 500 verified clinics</p>
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ export function loadLandingPage() {
                                 </svg>
                                 <span class="ml-1 text-sm font-bold text-gray-800">4.9/5</span>
                             </div>
-                            <p class="text-xs text-gray-700">"El mejor servicio para mi gato Luna"</p>
+                            <p class="text-xs text-gray-700">"The best service for my cat Luna"</p>
                         </div>
                     </div>
                 </div>
@@ -121,11 +121,11 @@ export function loadLandingPage() {
             <section class="mt-24">
                 <div class="flex items-start justify-between mb-8">
                     <div>
-                        <h2 class="text-4xl font-bold text-gray-800 mb-2">Clínicas Destacadas</h2>
-                        <p class="text-gray-600">Seleccionamos cuidadosamente las clínicas con mejores valoraciones y<br>servicios especializados para la tranquilidad de tu familia.</p>
+                        <h2 class="text-4xl font-bold text-gray-800 mb-2">Featured Clinics</h2>
+                        <p class="text-gray-600">We carefully select clinics with the best ratings and<br>specialized services for your family's peace of mind.</p>
                     </div>
                     <a href="#/clinicas" class="text-purple-400 hover:text-purple-500 font-medium flex items-center gap-1">
-                        Ver todas las clínicas
+                        View all clinics
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -133,14 +133,14 @@ export function loadLandingPage() {
                 </div>
 
                 <div id="clinicCards" class="grid md:grid-cols-3 gap-6">
-                    <div class="col-span-3 text-center py-12 text-gray-400">Cargando clínicas...</div>
+                    <div class="col-span-3 text-center py-12 text-gray-400">Loading clinics...</div>
                 </div>
             </section>
 
             <section class="mt-24">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">¿Por qué elegir VetCare?</h2>
-                    <p class="text-gray-500 max-w-2xl mx-auto">Diseñamos una experiencia sin estrés para que encontrar la mejor atención médica sea tan fácil como dar un paseo en el parque</p>
+                    <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">Why choose VetCare?</h2>
+                    <p class="text-gray-500 max-w-2xl mx-auto">We design a stress-free experience so finding the best medical care is as easy as a walk in the park</p>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-8 mb-16">
@@ -150,8 +150,8 @@ export function loadLandingPage() {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Veterinarios Verificados</h3>
-                        <p class="text-gray-500 text-sm">Cada especialista y clínica en nuestra red pasa por un riguroso proceso de validación de licencias y certificaciones</p>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Verified Veterinarians</h3>
+                        <p class="text-gray-500 text-sm">Every specialist and clinic in our network undergoes a rigorous license and certification validation process</p>
                     </div>
 
                     <div class="bg-white rounded-3xl shadow-sm p-8 text-center">
@@ -160,8 +160,8 @@ export function loadLandingPage() {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Agenda al Instante</h3>
-                        <p class="text-gray-500 text-sm">Olvídate de las llamadas eternas. Reserva tu cita directamente desde nuestra plataforma en segundos, 24/7</p>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Instant Scheduling</h3>
+                        <p class="text-gray-500 text-sm">Forget endless phone calls. Book your appointment directly from our platform in seconds, 24/7</p>
                     </div>
 
                     <div class="bg-white rounded-3xl shadow-sm p-8 text-center">
@@ -170,17 +170,17 @@ export function loadLandingPage() {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Soporte Continuo</h3>
-                        <p class="text-gray-500 text-sm">Nuestro equipo está disponible para ayudarte a encontrar especialistas o resolver dudas sobre tu reserva en cualquier momento</p>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Continuous Support</h3>
+                        <p class="text-gray-500 text-sm">Our team is available to help you find specialists or answer questions about your booking at any time</p>
                     </div>
                 </div>
 
                 <div class="bg-gradient-to-br from-purple-200 to-purple-300 rounded-[3rem] p-12 md:p-16 relative overflow-hidden">
                     <div class="relative z-10 text-center max-w-3xl mx-auto">
-                        <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-8">¿Listo para darle a tu mascota<br>el cuidado que merece?</h2>
+                        <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 mb-8">Ready to give your pet<br>the care they deserve?</h2>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button onclick="window.location.hash='#/register'" class="bg-gray-800 text-white px-8 py-4 rounded-2xl font-medium hover:bg-gray-700 transition">Empieza hoy gratis</button>
-                            <button class="bg-white text-gray-800 px-8 py-4 rounded-2xl font-medium hover:bg-gray-50 transition">Soy una clínica</button>
+                            <button onclick="window.location.hash='#/register'" class="bg-gray-800 text-white px-8 py-4 rounded-2xl font-medium hover:bg-gray-700 transition">Start today free</button>
+                            <button class="bg-white text-gray-800 px-8 py-4 rounded-2xl font-medium hover:bg-gray-50 transition">I'm a clinic</button>
                         </div>
                     </div>
                     <div class="absolute right-12 top-1/2 -translate-y-1/2 opacity-20 hidden md:block">
@@ -203,7 +203,7 @@ export function loadLandingPage() {
                             <span class="text-xl font-bold">VetCare</span>
                         </div>
                         <p class="text-gray-300 text-sm mb-6 footer-desc">
-                            La plataforma líder en búsqueda y gestión de salud para mascotas en Latinoamérica. Tu mascota, nuestra prioridad.
+                            The leading platform for pet health search and management in Latin America. Your pet, our priority.
                         </p>
                         <div class="flex gap-3">
                             <a href="#twitter" class="w-10 h-10 bg-gray-900 hover:bg-purple-400 rounded-full flex items-center justify-center transition" aria-label="Twitter">
@@ -220,32 +220,32 @@ export function loadLandingPage() {
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-lg mb-4">Plataforma</h3>
+                        <h3 class="font-bold text-lg mb-4">Platform</h3>
                         <ul class="space-y-3">
-                            <li><a href="#/clinicas" class="footer-link text-gray-300 text-sm">Encontrar Clínicas</a></li>
-                            <li><a href="#/emergencias" class="footer-link text-gray-300 text-sm">Servicios 24h</a></li>
-                            <li><a href="#/especialistas" class="footer-link text-gray-300 text-sm">Especialistas</a></li>
-                            <li><a href="#/tips" class="footer-link text-gray-300 text-sm">Blog de Salud</a></li>
+                            <li><a href="#/clinicas" class="footer-link text-gray-300 text-sm">Find Clinics</a></li>
+                            <li><a href="#/emergencias" class="footer-link text-gray-300 text-sm">24/7 Services</a></li>
+                            <li><a href="#/especialistas" class="footer-link text-gray-300 text-sm">Specialists</a></li>
+                            <li><a href="#/tips" class="footer-link text-gray-300 text-sm">Health Blog</a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-lg mb-4">Compañía</h3>
+                        <h3 class="font-bold text-lg mb-4">Company</h3>
                         <ul class="space-y-3">
-                            <li><a href="#/nosotros" class="footer-link text-gray-300 text-sm">Sobre Nosotros</a></li>
-                            <li><a href="#/trabajo" class="footer-link text-gray-300 text-sm">Trabaja con nosotros</a></li>
-                            <li><a href="#/contacto" class="footer-link text-gray-300 text-sm">Contacto</a></li>
-                            <li><a href="#/prensa" class="footer-link text-gray-300 text-sm">Prensa</a></li>
+                            <li><a href="#/nosotros" class="footer-link text-gray-300 text-sm">About Us</a></li>
+                            <li><a href="#/trabajo" class="footer-link text-gray-300 text-sm">Work with us</a></li>
+                            <li><a href="#/contacto" class="footer-link text-gray-300 text-sm">Contact</a></li>
+                            <li><a href="#/prensa" class="footer-link text-gray-300 text-sm">Press</a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-lg mb-4">Suscríbete</h3>
-                        <p class="text-gray-300 text-sm mb-4">Recibe consejos de salud semanales para tus mascotas.</p>
+                        <h3 class="font-bold text-lg mb-4">Subscribe</h3>
+                        <p class="text-gray-300 text-sm mb-4">Receive weekly health tips for your pets.</p>
                         <form>
-                            <input type="email" placeholder="tu@email.com" class="w-full px-4 py-3 rounded-full bg-gray-800 border border-gray-700 text-white placeholder-gray-400 text-sm mb-3">
+                            <input type="email" placeholder="your@email.com" class="w-full px-4 py-3 rounded-full bg-gray-800 border border-gray-700 text-white placeholder-gray-400 text-sm mb-3">
                             <button type="submit" class="w-full bg-purple-400 hover:bg-purple-500 text-gray-900 font-semibold px-6 py-3 rounded-full transition">
-                                Unirse
+                                Join
                             </button>
                         </form>
                     </div>
@@ -253,10 +253,10 @@ export function loadLandingPage() {
 
                 <div class="border-t border-white/10 pt-8">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p class="text-gray-400 text-sm">© 2026 VetCare. Todos los derechos reservados.</p>
+                        <p class="text-gray-400 text-sm">© 2026 VetCare. All rights reserved.</p>
                         <div class="flex gap-6">
-                            <a href="#/terminos" class="footer-link text-gray-400 text-sm">Términos y Condiciones</a>
-                            <a href="#/privacidad" class="footer-link text-gray-400 text-sm">Privacidad</a>
+                            <a href="#/terminos" class="footer-link text-gray-400 text-sm">Terms & Conditions</a>
+                            <a href="#/privacidad" class="footer-link text-gray-400 text-sm">Privacy</a>
                             <a href="#/cookies" class="footer-link text-gray-400 text-sm">Cookies</a>
                         </div>
                     </div>
@@ -264,7 +264,7 @@ export function loadLandingPage() {
             </div>
         </footer>
 
-        <button id="btn-emergency-fab" class="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg z-40 emergency-fab" aria-label="Emergencias">
+        <button id="btn-emergency-fab" class="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg z-40 emergency-fab" aria-label="Emergencies">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
@@ -320,7 +320,7 @@ function renderClinicCards(clinics) {
             <div class="relative h-48">
                 <img src="${clinic.imagen || './frontend/assets/images/lllll.jpg'}" alt="${clinic.nombre}" class="w-full h-full object-cover">
                 ${clinic.estado === 'Abierto' ? `
-                    <span class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Abierto ahora</span>
+                    <span class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Open now</span>
                 ` : ''}
             </div>
             <div class="p-6">
@@ -335,7 +335,7 @@ function renderClinicCards(clinics) {
                 </div>
                 <p class="text-gray-600 text-sm mb-4">${clinic.direccion}</p>
                 <button onclick="window.location.hash='#/clinicas'" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-600 font-semibold py-2 rounded-xl transition">
-                    Ver detalles
+                    View details
                 </button>
             </div>
         </div>

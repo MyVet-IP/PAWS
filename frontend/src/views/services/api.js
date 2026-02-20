@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api'; // Cambiar por tu URL del backend
+const API_BASE_URL = 'http://localhost:3000/api'; // Cambiar por la URL del backend
 
 class ApiService {
   constructor() {
