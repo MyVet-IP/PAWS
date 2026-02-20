@@ -7,7 +7,6 @@ import { showToast, showLoading, hideLoading } from "./utils.js";
 window.viewClinicDetails = function(clinicId) {
   showToast(`Viendo detalles de la clínica ${clinicId}`, 'info');
   // Aquí podrías navegar a una vista de detalle
-  console.log('Ver detalles de clínica:', clinicId);
 };
 
 window.bookAppointment = function(clinicId) {
@@ -16,7 +15,6 @@ window.bookAppointment = function(clinicId) {
     hideLoading();
     showToast('¡Cita reservada exitosamente!', 'success');
   }, 1500);
-  console.log('Reservar cita en clínica:', clinicId);
 };
 
 window.searchClinics = function() {

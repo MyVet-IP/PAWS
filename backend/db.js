@@ -27,8 +27,8 @@ class Database {
             console.error('Failed to connect to PostgreSQL:', err);
             reject(err);
           } else {
-            console.log('✅ Connected to PostgreSQL');
-            console.log(`📊 Database: ${DB_CONFIG.database}`);
+            console.log('Connected to PostgreSQL');
+            console.log(`Database: ${DB_CONFIG.database}`);
             resolve();
           }
         });
@@ -47,17 +47,17 @@ class Database {
       );
 
       if (parseInt(tableCheck.count) === 0) {
-        console.log('🔧 Initializing database schema...');
+        console.log('Initializing database schema...');
         const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
         await this.exec(schema);
-        console.log('✅ Schema initialized');
+        console.log('Schema initialized');
       } else {
-        console.log(`📋 Database has ${tableCheck.count} tables`);
+        console.log(`Database has ${tableCheck.count} tables`);
       }
 
       return this;
     } catch (error) {
-      console.error('❌ Error initializing database:', error);
+      console.error('Error initializing database:', error);
       throw error;
     }
   }
@@ -118,7 +118,7 @@ class Database {
           if (err) {
             reject(err);
           } else {
-            console.log('🔒 Database connection closed');
+            console.log('Database connection closed');
             resolve();
           }
         });

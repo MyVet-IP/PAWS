@@ -110,12 +110,10 @@ export function ClinicsView() {
       });
 
       function filterClinics(filter) {
-        console.log('Filtrando por:', filter);
         // Implementar filtrado aquí
       }
 
       function loadMoreClinics() {
-        console.log('Cargando más clínicas...');
         // Implementar carga de más clínicas
       }
 
