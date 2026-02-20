@@ -74,7 +74,7 @@ class ApiService {
       emergency: false,
       isSpecialist: true,
       specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
-      animalTypes: ['dog', 'cat', 'bird']
+      animalTypes: ['dog', 'cat', 'exotic']
     },
     {
       id: 2,
@@ -96,7 +96,7 @@ class ApiService {
       emergency: false,
       isSpecialist: true,
       specialties: ['FELINOS', 'COMPORTAMIENTO'],
-      animalTypes: ['cat']  // solo atiende gatos
+      animalTypes: ['cat'] 
     },
     {
       id: 4,
@@ -118,7 +118,7 @@ class ApiService {
       emergency: false,
       isSpecialist: true,
       specialties: ['AVES', 'REPTILES', 'EXÓTICOS'],
-      animalTypes: ['bird', 'exotic']  // ni perros ni gatos
+      animalTypes: ['exotic']  // just exotics
     }
   ];
 

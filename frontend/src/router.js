@@ -4,6 +4,7 @@ import { loadLandingPage } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage } from "./views/login.js";
 import { loadRegisterPage } from "./views/register.js";
+import { ClinicsController } from "./controllers/clinicController.js";
 
 const routes = {
   "/": loadLandingPage,
@@ -23,6 +24,10 @@ export function router() {
   const app = document.getElementById("app");
 
   const view = routes[path];
+
+  if (path === '/clinicas'){
+    ClinicsController();
+  }
 
   if (view) {
     app.innerHTML = view();

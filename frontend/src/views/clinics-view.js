@@ -54,10 +54,12 @@ export function ClinicsView() {
             <button class="filter-btn" data-filter="cardiology">Cardiología</button>
             <button class="filter-btn" data-filter="dental">Dental</button>
             <button class="filter-btn" data-filter="lab">Laboratorio</button>
+            <button class="filter-btn" data-filter="dog">Dogs</button>
+            <button class="filter-btn" data-filter="cat"> Gatos</button>
+            <button class="filter-btn" data-filter="exotic">Exotics</button>
           </div>
         </div>
       </section>
-
       <!-- Results -->
       <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-6 flex items-center justify-between">
@@ -84,49 +86,6 @@ export function ClinicsView() {
         </div>
       </main>
     </div>
-
-    <script>
-      // Función para buscar clínicas desde esta página
-      function searchClinicsHere() {
-        const location = document.getElementById('clinic-search').value;
-        if (location.trim()) {
-          window.location.hash = \`#/clinicas?location=\${encodeURIComponent(location)}\`;
-        } else {
-          window.location.hash = '#/clinicas';
-        }
-      }
-
-      // Filtros
-      document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('filter-btn')) {
-          // Remover active de todos los botones
-          document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-          // Agregar active al botón clickeado
-          e.target.classList.add('active');
-          
-          // Aquí podrías filtrar las clínicas
-          filterClinics(e.target.dataset.filter);
-        }
-      });
-
-      function filterClinics(filter) {
-        console.log('Filtrando por:', filter);
-        // Implementar filtrado aquí
-      }
-
-      function loadMoreClinics() {
-        console.log('Cargando más clínicas...');
-        // Implementar carga de más clínicas
-      }
-
-      // Búsqueda con Enter
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && document.getElementById('clinic-search') === document.activeElement) {
-          searchClinicsHere();
-        }
-      });
-    </script>
-
     <style>
       .filter-btn {
         @apply px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors cursor-pointer;
@@ -150,7 +109,8 @@ function generateClinicCards() {
       specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
       image: './frontend/assets/images/lllll.jpg',
       isSpecialist: true,
-      distance: '2.3 km'
+      distance: '2.3 km',
+      animalTypes: ['dog', 'cat', 'exotic']
     },
     {
       id: 2,
@@ -161,7 +121,8 @@ function generateClinicCards() {
       specialties: ['CARDIOLOGÍA', 'VACUNAS'],
       image: './frontend/assets/images/lllll.jpg',
       emergency: true,
-      distance: '1.8 km'
+      distance: '1.8 km',
+      animalTypes: ['dog', 'cat']
     },
     {
       id: 3,
@@ -171,7 +132,8 @@ function generateClinicCards() {
       reviewCount: 95,
       specialties: ['LABORATORIO', 'FISIOTERAPIA'],
       image: './frontend/assets/images/lllll.jpg',
-      distance: '3.1 km'
+      distance: '3.1 km',
+      animalTypes: ['cat', 'exotic']
     },
     {
       id: 4,
@@ -181,7 +143,8 @@ function generateClinicCards() {
       reviewCount: 203,
       specialties: ['CONSULTA', 'VACUNAS', 'GROOMING'],
       image: './frontend/assets/images/lllll.jpg',
-      distance: '1.2 km'
+      distance: '1.2 km',
+      animalTypes: ['dog','exotic']
     },
     {
       id: 5,
@@ -192,7 +155,8 @@ function generateClinicCards() {
       specialties: ['FELINOS', 'COMPORTAMIENTO'],
       image: './frontend/assets/images/lllll.jpg',
       isSpecialist: true,
-      distance: '4.5 km'
+      distance: '4.5 km',
+      animalTypes: ['dog']
     },
     {
       id: 6,
@@ -203,12 +167,13 @@ function generateClinicCards() {
       specialties: ['URGENCIAS', 'CIRUGÍA', 'RAYOS X'],
       image: './frontend/assets/images/lllll.jpg',
       emergency: true,
-      distance: '2.9 km'
+      distance: '2.9 km',
+      animalTypes: ['exotic']
     }
   ];
 
   return clinics.map(clinic => `
-    <div class="clinic-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div class="clinic-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300" data-animals='${JSON.stringify(clinic.animalTypes || [])}'>
       <div class="relative h-48">
         <img src="${clinic.image}" alt="${clinic.name}" class="w-full h-full object-cover">
         <div class="absolute top-4 left-4 flex gap-2">
