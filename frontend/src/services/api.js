@@ -143,7 +143,6 @@ class ApiService {
         code: 500,
         message: "error retrieving clinics"
       }
-      
     })
   }
 }
