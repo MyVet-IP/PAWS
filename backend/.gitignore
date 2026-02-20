@@ -1,0 +1,7 @@
+# Ignorar archivos de configuración sensibles
+.env
+
+# ignorar node_modules
+>>>>>>> c4b489f (login and register with full spa)
+node_modules/
+backend/node_modules/
