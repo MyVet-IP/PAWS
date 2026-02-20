@@ -69,15 +69,48 @@ MyVet/
 
 ## 🚀 **Cómo usar**
 
-### 1. **Iniciar la aplicación**
+### 1. **Configurar la Base de Datos (PostgreSQL)**
+
+#### Instalación y configuración:
 ```bash
-# Solo abrir index.html en el navegador
-# O usar un servidor local:
-python -m http.server 8000
-# Luego ir a: http://localhost:8000
+# 1. Crear la base de datos
+createdb -U postgres myvet_db
+
+# 2. Copiar archivo de configuración
+cp .env.example .env
+
+# 3. Editar .env con tus credenciales de PostgreSQL
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=myvet_db
+# DB_USER=postgres
+# DB_PASSWORD=tu_contraseña
+
+# 4. Instalar dependencias
+npm install
+
+# 5. Probar conexión
+node test-connection.js
 ```
 
-### 2. **Navegación**
+📚 **Ver [README-DATABASE.md](README-DATABASE.md) para instrucciones detalladas**
+
+### 2. **Iniciar el servidor backend**
+```bash
+# Modo desarrollo con auto-reload
+npm run dev
+
+# Modo producción
+npm start
+
+# El servidor estará en: http://localhost:3000
+```
+
+### 3. **Abrir la aplicación**
+- Navega a: http://localhost:3000
+- El servidor Express sirve automáticamente el frontend
+
+### 4. **Navegación**
 - **Desde Landing**: Botones "Ingresar", "Buscar", enlaces del navbar
 - **Búsqueda**: Campo de búsqueda funcional con parámetros URL
 - **Clínicas**: Filtros, vista de detalles, reservas
@@ -108,8 +141,9 @@ window.bookAppointment(clinicId);
 - **Frontend**: Vanilla JavaScript ES6+, HTML5, CSS3
 - **Styling**: Tailwind CSS
 - **Architecture**: SPA con routing hash-based
-- **Backend**: Node.js (preparado en `/backend`)
-- **Database**: SQL (esquema en `/database`)
+- **Backend**: Node.js + Express
+- **Database**: PostgreSQL
+- **Dependencias**: pg, cors, dotenv, express
 
 ## 🎨 **Componentes implementados**
 
