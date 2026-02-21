@@ -4,13 +4,13 @@ import { apiService } from "./services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
 // Funciones globales para usar en HTML
-window.viewClinicDetails = function(clinicId) {
+window.viewClinicDetails = function (clinicId) {
   showToast(`Viendo detalles de la clínica ${clinicId}`, 'info');
   // Aquí podrías navegar a una vista de detalle
   console.log('Ver detalles de clínica:', clinicId);
 };
 
-window.bookAppointment = function(clinicId) {
+window.bookAppointment = function (clinicId) {
   showLoading();
   setTimeout(() => {
     hideLoading();
@@ -19,7 +19,7 @@ window.bookAppointment = function(clinicId) {
   console.log('Reservar cita en clínica:', clinicId);
 };
 
-window.searchClinics = function() {
+window.searchClinics = function () {
   const input = document.getElementById('search-location');
   if (input) {
     const location = input.value;
@@ -34,10 +34,10 @@ window.searchClinics = function() {
 // Inicializar aplicación
 function initApp() {
   console.log('VetCare App iniciada');
-  
+
   // Cargar router
   router();
-  
+
   // Inicializar controladores
   navbarController;
 }

@@ -241,9 +241,9 @@ function generateClinicCards() {
         </div>
         
         <div class="flex gap-2 flex-wrap mb-4">
-          ${clinic.specialties.map(specialty => 
-            `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium">${specialty}</span>`
-          ).join('')}
+          ${clinic.specialties.map(specialty =>
+    `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium">${specialty}</span>`
+  ).join('')}
         </div>
         
         <div class="flex gap-3">
