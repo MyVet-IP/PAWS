@@ -46,27 +46,27 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:4000/auth/google/callback"
 },
 
-async (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
 
-    const users = readUsers();
+        const users = readUsers();
 
-    let user = users.find(u => u.email === profile.emails[0].value);
+        let user = users.find(u => u.email === profile.emails[0].value);
 
-    if (!user) {
-        user = {
-            id: Date.now(),
-            name: profile.displayName,
-            email: profile.emails[0].value,
-            password: null,
-            role: "owner"
-        };
+        if (!user) {
+            user = {
+                id: Date.now(),
+                name: profile.displayName,
+                email: profile.emails[0].value,
+                password: null,
+                role: "owner"
+            };
 
-        users.push(user);
-        saveUsers(users);
-    }
+            users.push(user);
+            saveUsers(users);
+        }
 
-    return done(null, user);
-}));
+        return done(null, user);
+    }));
 
 passport.serializeUser((user, done) => {
     done(null, user);
