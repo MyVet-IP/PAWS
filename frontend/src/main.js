@@ -3,17 +3,17 @@ import { navbarController } from "./controllers/navbar.js";
 import { apiService } from "./views/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
-// Funciones globales para usar en HTML
+// Global functions to use in HTML
 window.viewClinicDetails = function(clinicId) {
-  showToast(`Viendo detalles de la clínica ${clinicId}`, 'info');
-  // Aquí podrías navegar a una vista de detalle
+  showToast(`Viewing clinic details ${clinicId}`, 'info');
+  // Here you could navigate to a detail view
 };
 
 window.bookAppointment = function(clinicId) {
   showLoading();
   setTimeout(() => {
     hideLoading();
-    showToast('¡Cita reservada exitosamente!', 'success');
+    showToast('Appointment booked successfully!', 'success');
   }, 1500);
 };
 
@@ -29,7 +29,7 @@ window.searchClinics = function() {
   }
 };
 
-// Los módulos ES son diferidos, el DOM ya está listo cuando llega aquí
+// ES modules are deferred, the DOM is already ready when it gets here
 router();
 navbarController;
 

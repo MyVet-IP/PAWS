@@ -14,7 +14,7 @@ const routes = {
   "/user-dashboard": DashboardView,
   "/clinicas": ClinicsView,
   "/emergencias": EmergencyView,
-  "/tips": () => "<h1>Tips de Salud - En desarrollo</h1>"
+  "/tips": () => "<h1>Health Tips - In development</h1>"
 };
 
 export function router() {
@@ -32,21 +32,21 @@ export function router() {
       if (path === '/user-dashboard') initDashboard();
       if (path === '/emergencias')    initEmergency();
     } else {
-      app.innerHTML = "<h1>Página no encontrada</h1>";
+      app.innerHTML = "<h1>Page not found</h1>";
     }
   } catch (err) {
-    console.error("Error cargando vista:", err);
-    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error al cargar la vista:</b><pre>${err.message}</pre></div>`;
+    console.error("Error loading view:", err);
+    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error loading view:</b><pre>${err.message}</pre></div>`;
   }
 }
 
-// Función para inicializar eventos de navegación
+// Function to initialize navigation events
 function initializePageEvents() {
-  // Botones de navegación del landing
+  // Landing page navigation buttons
   const loginBtn = document.querySelector('.btn-primary');
   const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');
 
-  if (loginBtn && loginBtn.textContent.includes('Ingresar')) {
+  if (loginBtn && loginBtn.textContent.includes('Sign In')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
       window.location.hash = '#/login';
@@ -60,7 +60,7 @@ function initializePageEvents() {
     });
   }
 
-  // Enlaces del navbar
+  // Navbar links
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');

@@ -1,31 +1,31 @@
-// Utilidades generales para la aplicación
+// General utilities for the application
 
-// Formatear fecha
+// Format date
 export function formatDate(date) {
-  return new Date(date).toLocaleDateString('es-ES', {
+  return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
 }
 
-// Validar email
+// Validate email
 export function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
 
-// Capitalizar primera letra
+// Capitalize first letter
 export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-// Generar ID único
+// Generate unique ID
 export function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// Debounce para búsquedas
+// Debounce for searches
 export function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

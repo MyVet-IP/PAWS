@@ -21,7 +21,7 @@ export function initLogin() {
       localStorage.setItem('currentUser', JSON.stringify(data));
       window.location.hash = '#/user-dashboard';
     } catch {
-      errBox.textContent = 'Error de conexión. Intenta de nuevo.';
+      errBox.textContent = 'Connection error. Please try again.';
     }
   });
 }
@@ -37,8 +37,8 @@ export function loadLoginPage() {
                     <div class="bg-gradient-to-b from-teal-700 to-teal-900 p-6 rounded-3xl shadow-lg ">
                         <div class="3modelcontainer"></div>
                     </div>
-                    <h2 class="mt-6 text-xl font-semibold text-blue">Cuidamos lo que amas</h2>
-                    <p class="mt-2 text-sm text-gray"> conectando a los duenos de mascotas en medellin con los mejores profesionales veterianrios</p>
+                    <h2 class="mt-6 text-xl font-semibold text-blue">We care for what you love</h2>
+                    <p class="mt-2 text-sm text-gray"> connecting pet owners in Medellin with the best veterinary professionals</p>
                 </div>
             </section>
             <!--right panel-->
@@ -51,43 +51,43 @@ export function loadLoginPage() {
                         </span>
                         <span class="font-semibold text-purple">MedellinVet</span>
                     </div>
-                    <h1 class="text-2xl font-bold mb-1">¡Hola de nuevo!</h1>
+                    <h1 class="text-2xl font-bold mb-1">Welcome back!</h1>
                     <p class="text-sm text-gray mb-6">
-                        Ingresa tus credenciales para acceder a tu cuenta
+                        Enter your credentials to access your account
                     </p>
                     <!--Form-->
                     <p id="login-error" class="text-red-500 text-sm mb-2"></p>
                     <form id="login-form" class="space-y-4">
                         <div>
-                            <label class="text-sm ">Correo electronico</label>
-                            <input id="login-email" type="email" placeholder="mail@ejemplo.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
+                            <label class="text-sm ">Email</label>
+                            <input id="login-email" type="email" placeholder="mail@example.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
                         <div>
-                            <label class="text-sm ">Contrasena</label>
+                            <label class="text-sm ">Password</label>
                             <input id="login-password" type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
                         <div class="flex justify-between items-center items-center text-sm">
                             <label class="flex-items-center gap-2">
                                 <input type="checkbox">
-                                Recordarme
+                                Remember me
                             </label>
                             <a href="#" class="text-pink hover:underline">
-                                ¿Olvidaste tu contraseña?
+                                Forgot your password?
                             </a>
                         </div>
                         <button class="w-full py-2 rounded-full bg-pink text-white font-semibold hover:opacity-90 transition">
-                            Iniciar Sesion
+                            Sign In
                         </button>
-                        <div class="text-center text-xs text-gray">O continua con</div>
+                        <div class="text-center text-xs text-gray">Or continue with</div>
                         <div class="flex gap-3">
                             <button class="flex-1 border rounded-full py-2">Google</button>
                         </div>
                         <p class="text-center text-sm mt-4">
-                            ¿No tienes cuenta?
-                            <a href="#/register" class="text-pink font-semibold">Registrarse</a>
+                            Don't have an account?
+                            <a href="#/register" class="text-pink font-semibold">Sign Up</a>
                         </p>
                         <div class="mt-6 text-xs text-center text-gray">
-                            MedellinVet | privacidad | terminos | soporte
+                            MedellinVet | privacy | terms | support
                         </div>
                     </form>
                 </div>

@@ -1,11 +1,11 @@
-const API_BASE_URL = 'http://localhost:3000/api'; // Cambiar por la URL del backend
+const API_BASE_URL = 'http://localhost:3000/api'; // Change to backend URL
 
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
   }
 
-  // Método genérico para hacer peticiones
+  // Generic method to make requests
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
     const config = {
@@ -149,32 +149,32 @@ class ApiService {
     return this.request('/health');
   }
 
-  // Método para simular datos
+  // Method to simulate data
   getMockClinics() {
     return Promise.resolve([
       {
         id: 1,
         name: 'Paws & Hearts Wellness',
-        location: 'Polanco, Ciudad de México',
+        location: 'Polanco, Mexico City',
         rating: 4.9,
-        specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
+        specialties: ['SURGERY', 'X-RAYS', 'DENTAL'],
         image: './frontend/assets/images/lllll.jpg'
       },
       {
         id: 2,
-        name: 'Centro Médico Animal',
-        location: 'Santa Fe, Ciudad de México',
+        name: 'Animal Medical Center',
+        location: 'Santa Fe, Mexico City',
         rating: 4.8,
-        specialties: ['CARDIOLOGÍA', 'VACUNAS'],
+        specialties: ['CARDIOLOGY', 'VACCINES'],
         image: './frontend/assets/images/lllll.jpg',
         emergency: true
       },
       {
         id: 3,
         name: 'San Francisco Hospital',
-        location: 'Condesa, Ciudad de México',
+        location: 'Condesa, Mexico City',
         rating: 5.0,
-        specialties: ['LABORATORIO', 'FISIOTERAPIA'],
+        specialties: ['LABORATORY', 'PHYSIOTHERAPY'],
         image: './frontend/assets/images/lllll.jpg'
       }
     ]);

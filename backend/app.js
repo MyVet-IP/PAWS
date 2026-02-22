@@ -249,7 +249,7 @@ app.post('/api/emergency', validateBody(['mensaje', 'nombre_contacto', 'id_veter
 
     let whatsappLink = null;
     if (vet.whatsapp) {
-      whatsappLink = `https://wa.me/${vet.whatsapp}?text=${encodeURIComponent(`EMERGENCIA - ${nombre_contacto}: ${mensaje}`)}`;
+      whatsappLink = `https://wa.me/${vet.whatsapp}?text=${encodeURIComponent(`EMERGENCY - ${nombre_contacto}: ${mensaje}`)}`;
     }
 
     res.status(201).json({

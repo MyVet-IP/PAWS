@@ -153,9 +153,9 @@ SELECT v.id_veterinaria, s.id_servicio FROM veterinarias v JOIN servicios s ON s
 ON CONFLICT DO NOTHING;
 
 INSERT INTO mascotas (nombre, especie, raza, edad, id_cliente) VALUES
-  ('Bruno',  'Perro', 'Golden Retriever', 3, 1),
-  ('Mochi',  'Gato',  'Persa',            2, 1),
-  ('Coco',   'Perro', 'French Bulldog',   4, 2),
-  ('Nina',   'Gato',  'Siames',           1, 3),
-  ('Dante',  'Perro', 'Labrador',         6, 4)
+  ('Bruno',  'Dog', 'Golden Retriever', 3, 1),
+  ('Mochi',  'Cat',  'Persian',            2, 1),
+  ('Coco',   'Dog', 'French Bulldog',   4, 2),
+  ('Nina',   'Cat',  'Siamese',           1, 3),
+  ('Dante',  'Dog', 'Labrador',         6, 4)
 ON CONFLICT DO NOTHING;

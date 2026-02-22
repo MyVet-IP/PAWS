@@ -1,20 +1,20 @@
-// Script para probar la conexión a la base de datos PostgreSQL
-//Archivo importante, no borrar ni modificar sin entenderlo completamente, mejor dicho no lo toquen muchas gracias
-//Repito no me muevan esto porque es importante para verificar que la base de datos esté funcionando correctamente antes de ejecutar el backend
+// Script to test the PostgreSQL database connection
+//Important file, do not delete or modify without fully understanding it, in other words please don't touch it, thank you
+//I repeat, don't move this because it's important to verify that the database is working correctly before running the backend
 
 require('dotenv').config();
 const db = require('./backend/db');
 
 async function testConnection() {
-  console.log('PRUEBA DE CONEXIÓN A BASE DE DATOS');
+  console.log('DATABASE CONNECTION TEST');
 
 
   try {
-    console.log('Probando conexión...');
+    console.log('Testing connection...');
     await db.connect();
-    console.log('Conexión establecida correctamente\n');
+    console.log('Connection established successfully\n');
 
-    console.log('Verificando tablas...');
+    console.log('Verifying tables...');
     const tables = await db.all(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -24,39 +24,39 @@ async function testConnection() {
     `);
     
     if (tables.length > 0) {
-      console.log(`Se encontraron ${tables.length} tablas:`);
+      console.log(`Found ${tables.length} tables:`);
       tables.forEach(t => console.log(`  - ${t.table_name}`));
     } else {
-      console.log('No se encontraron tablas. Ejecuta el schema SQL.');
+      console.log('No tables found. Run the SQL schema.');
     }
     console.log('');
 
-    // Verificar datos de ejemplo
-    console.log('Probando lectura de datos...');
+    // Verify sample data
+    console.log('Testing data reading...');
     const clientes = await db.all('SELECT COUNT(*) as count FROM clientes');
     const veterinarias = await db.all('SELECT COUNT(*) as count FROM veterinarias');
     const mascotas = await db.all('SELECT COUNT(*) as count FROM mascotas');
     
-    console.log(`Clientes: ${clientes[0].count}`);
-    console.log(`Veterinarias: ${veterinarias[0].count}`);
-    console.log(`Mascotas: ${mascotas[0].count}`);
-    console.log('Lectura de datos exitosa\n');
+    console.log(`Clients: ${clientes[0].count}`);
+    console.log(`Clinics: ${veterinarias[0].count}`);
+    console.log(`Pets: ${mascotas[0].count}`);
+    console.log('Data reading successful\n');
 
-    //Cerrar conexión
-    console.log('Cerrando conexión...');
+    //Close connection
+    console.log('Closing connection...');
     await db.close();
-    console.log('Conexión cerrada correctamente\n');
+    console.log('Connection closed successfully\n');
 
-    console.log('TODAS LAS PRUEBAS PASARON');
+    console.log('ALL TESTS PASSED');
     
     process.exit(0);
     } catch (error) {
     console.error('\nERROR:', error.message);
-    console.error('\nSOLUCIÓN:');
-    console.error('1. Asegúrate de que PostgreSQL esté instalado y corriendo');
-    console.error('2. Crea la base de datos: createdb myvet_db');
-    console.error('3. Verifica las credenciales en el archivo .env');
-    console.error('4. Ejecuta el schema: psql -d myvet_db -f database/db.sql\n');
+    console.error('\nSOLUTION:');
+    console.error('1. Make sure PostgreSQL is installed and running');
+    console.error('2. Create the database: createdb myvet_db');
+    console.error('3. Verify the credentials in the .env file');
+    console.error('4. Run the schema: psql -d myvet_db -f database/db.sql\n');
     
     await db.close();
     process.exit(1);
