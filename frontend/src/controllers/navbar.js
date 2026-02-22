@@ -1,4 +1,4 @@
-// Controller para la navegación
+// Controller for navigation
 class NavbarController {
   constructor() {
     this.currentPage = window.location.hash.slice(1) || '/';
@@ -6,14 +6,14 @@ class NavbarController {
   }
 
   init() {
-    // Escuchar cambios de ruta
+    // Listen to route changes
     window.addEventListener('hashchange', () => {
       this.currentPage = window.location.hash.slice(1) || '/';
       this.updateActiveNavigation();
     });
   }
 
-  // Actualizar navegación activa
+  // Update active navigation
   updateActiveNavigation() {
     const navLinks = document.querySelectorAll('nav a');
     navLinks.forEach(link => {
@@ -26,21 +26,21 @@ class NavbarController {
     });
   }
 
-  // Navegación programática
+  // Programmatic navigation
   navigateTo(path) {
     window.location.hash = `#${path}`;
   }
 
-  // Obtener página actual
+  // Get current page
   getCurrentPage() {
     return this.currentPage;
   }
 
-  // Ir atrás
+  // Go back
   goBack() {
     window.history.back();
   }
 }
 
-// Exportar instancia única
+// Export single instance
 export const navbarController = new NavbarController();

@@ -1,5 +1,5 @@
 export function ClinicsView() {
-  // Obtener parámetros de búsqueda de la URL
+  // Get search parameters from URL
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
   const searchLocation = urlParams.get('location') || '';
 
@@ -10,11 +10,11 @@ export function ClinicsView() {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div class="flex items-center justify-between">
             <div>
-              <h1 class="text-3xl font-bold text-gray-900">Clínicas Veterinarias</h1>
-              <p class="text-gray-600 mt-2">Encuentra la mejor atención para tu mascota</p>
+              <h1 class="text-3xl font-bold text-gray-900">Veterinary Clinics</h1>
+              <p class="text-gray-600 mt-2">Find the best care for your pet</p>
             </div>
             <button onclick="window.location.hash='#/'" class="text-purple-600 hover:text-purple-700 font-medium">
-              ← Volver al inicio
+              ← Back to home
             </button>
           </div>
         </div>
@@ -33,12 +33,12 @@ export function ClinicsView() {
                 type="text" 
                 id="clinic-search" 
                 value="${searchLocation}"
-                placeholder="Buscar por ciudad o código postal..." 
+                placeholder="Search by city or zip code..." 
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
             </div>
             <button onclick="searchClinicsHere()" class="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors">
-              Buscar
+              Search
             </button>
           </div>
         </div>
@@ -48,12 +48,12 @@ export function ClinicsView() {
       <section class="bg-white border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div class="flex gap-4 flex-wrap">
-            <button class="filter-btn active" data-filter="all">Todas</button>
-            <button class="filter-btn" data-filter="emergency">Urgencias 24/7</button>
-            <button class="filter-btn" data-filter="surgery">Cirugía</button>
-            <button class="filter-btn" data-filter="cardiology">Cardiología</button>
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="emergency">24/7 Emergency</button>
+            <button class="filter-btn" data-filter="surgery">Surgery</button>
+            <button class="filter-btn" data-filter="cardiology">Cardiology</button>
             <button class="filter-btn" data-filter="dental">Dental</button>
-            <button class="filter-btn" data-filter="lab">Laboratorio</button>
+            <button class="filter-btn" data-filter="lab">Laboratory</button>
           </div>
         </div>
       </section>
@@ -62,13 +62,13 @@ export function ClinicsView() {
       <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-6 flex items-center justify-between">
           <p class="text-gray-600">
-            <span id="results-count">6</span> clínicas encontradas
-            ${searchLocation ? ` en <strong>${searchLocation}</strong>` : ''}
+            <span id="results-count">6</span> clinics found
+            ${searchLocation ? ` in <strong>${searchLocation}</strong>` : ''}
           </p>
           <select id="sort-select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-            <option value="rating">Ordenar por calificación</option>
-            <option value="distance">Ordenar por distancia</option>
-            <option value="name">Ordenar por nombre</option>
+            <option value="rating">Sort by rating</option>
+            <option value="distance">Sort by distance</option>
+            <option value="name">Sort by name</option>
           </select>
         </div>
 
@@ -79,14 +79,14 @@ export function ClinicsView() {
         <!-- Load More Button -->
         <div class="text-center mt-12">
           <button onclick="loadMoreClinics()" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl hover:bg-gray-300 transition-colors">
-            Cargar más clínicas
+            Load more clinics
           </button>
         </div>
       </main>
     </div>
 
     <script>
-      // Función para buscar clínicas desde esta página
+      // Function to search clinics from this page
       function searchClinicsHere() {
         const location = document.getElementById('clinic-search').value;
         if (location.trim()) {
@@ -96,30 +96,28 @@ export function ClinicsView() {
         }
       }
 
-      // Filtros
+      // Filters
       document.addEventListener('click', function(e) {
         if (e.target.classList.contains('filter-btn')) {
-          // Remover active de todos los botones
+          // Remove active from all buttons
           document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-          // Agregar active al botón clickeado
+          // Add active to clicked button
           e.target.classList.add('active');
           
-          // Aquí podrías filtrar las clínicas
+          // Here you could filter the clinics
           filterClinics(e.target.dataset.filter);
         }
       });
 
       function filterClinics(filter) {
-        console.log('Filtrando por:', filter);
-        // Implementar filtrado aquí
+        // Implement filtering here
       }
 
       function loadMoreClinics() {
-        console.log('Cargando más clínicas...');
-        // Implementar carga de más clínicas
+        // Implement loading more clinics
       }
 
-      // Búsqueda con Enter
+      // Search with Enter
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && document.getElementById('clinic-search') === document.activeElement) {
           searchClinicsHere();
@@ -138,27 +136,27 @@ export function ClinicsView() {
   `;
 }
 
-// Función para generar cards de clínicas
+// Function to generate clinic cards
 function generateClinicCards() {
   const clinics = [
     {
       id: 1,
       name: 'Paws & Hearts Wellness',
-      location: 'Polanco, Ciudad de México',
+      location: 'Polanco, Mexico City',
       rating: 4.9,
       reviewCount: 127,
-      specialties: ['CIRUGÍA', 'RAYOS X', 'DENTAL'],
+      specialties: ['SURGERY', 'X-RAYS', 'DENTAL'],
       image: './frontend/assets/images/lllll.jpg',
       isSpecialist: true,
       distance: '2.3 km'
     },
     {
       id: 2,
-      name: 'Centro Médico Animal',
-      location: 'Santa Fe, Ciudad de México',
+      name: 'Animal Medical Center',
+      location: 'Santa Fe, Mexico City',
       rating: 4.8,
       reviewCount: 89,
-      specialties: ['CARDIOLOGÍA', 'VACUNAS'],
+      specialties: ['CARDIOLOGY', 'VACCINES'],
       image: './frontend/assets/images/lllll.jpg',
       emergency: true,
       distance: '1.8 km'
@@ -166,41 +164,41 @@ function generateClinicCards() {
     {
       id: 3,
       name: 'San Francisco Hospital',
-      location: 'Condesa, Ciudad de México',
+      location: 'Condesa, Mexico City',
       rating: 5.0,
       reviewCount: 95,
-      specialties: ['LABORATORIO', 'FISIOTERAPIA'],
+      specialties: ['LABORATORY', 'PHYSIOTHERAPY'],
       image: './frontend/assets/images/lllll.jpg',
       distance: '3.1 km'
     },
     {
       id: 4,
-      name: 'Veterinaria Los Amigos',
-      location: 'Roma Norte, Ciudad de México',
+      name: 'Los Amigos Veterinary',
+      location: 'Roma Norte, Mexico City',
       rating: 4.7,
       reviewCount: 203,
-      specialties: ['CONSULTA', 'VACUNAS', 'GROOMING'],
+      specialties: ['CONSULTATION', 'VACCINES', 'GROOMING'],
       image: './frontend/assets/images/lllll.jpg',
       distance: '1.2 km'
     },
     {
       id: 5,
-      name: 'Clínica Especializada en Felinos',
-      location: 'Doctores, Ciudad de México',
+      name: 'Feline Specialized Clinic',
+      location: 'Doctores, Mexico City',
       rating: 4.9,
       reviewCount: 156,
-      specialties: ['FELINOS', 'COMPORTAMIENTO'],
+      specialties: ['FELINES', 'BEHAVIOR'],
       image: './frontend/assets/images/lllll.jpg',
       isSpecialist: true,
       distance: '4.5 km'
     },
     {
       id: 6,
-      name: 'Hospital Veterinario 24/7',
-      location: 'Del Valle, Ciudad de México',
+      name: '24/7 Veterinary Hospital',
+      location: 'Del Valle, Mexico City',
       rating: 4.6,
       reviewCount: 312,
-      specialties: ['URGENCIAS', 'CIRUGÍA', 'RAYOS X'],
+      specialties: ['EMERGENCY', 'SURGERY', 'X-RAYS'],
       image: './frontend/assets/images/lllll.jpg',
       emergency: true,
       distance: '2.9 km'

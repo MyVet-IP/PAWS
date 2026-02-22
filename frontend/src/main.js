@@ -1,6 +1,6 @@
 import { router } from "./router.js";
 import { navbarController } from "./controllers/navbar.js";
-import { apiService } from "./services/api.js";
+import { apiService } from "./views/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
 // Funciones globales para usar en HTML
@@ -14,9 +14,8 @@ window.bookAppointment = function (clinicId) {
   showLoading();
   setTimeout(() => {
     hideLoading();
-    showToast('¡Cita reservada exitosamente!', 'success');
+    showToast('Appointment booked successfully!', 'success');
   }, 1500);
-  console.log('Reservar cita en clínica:', clinicId);
 };
 
 window.searchClinics = function () {
