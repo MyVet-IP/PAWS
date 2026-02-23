@@ -1,5 +1,16 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const { Pool } = require('pg');
+
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+});
+
+module.exports = pool;
+
 const path = require('path');
 const fs = require('fs');
 
@@ -7,8 +18,8 @@ const DB_CONFIG = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'myvet_db',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
+  user: process.env.DB_USER || 'ulith',
+  password: process.env.DB_PASSWORD || 'Uge1011390919.',
 };
 
 const SCHEMA_PATH = path.join(__dirname, '..', 'database', 'db.sql');
@@ -69,9 +80,9 @@ class Database {
           reject(err);
         } else {
           const lastID = result.rows && result.rows[0] ? result.rows[0].id : result.insertId || null;
-          resolve({ 
+          resolve({
             lastID: lastID,
-            changes: result.rowCount 
+            changes: result.rowCount
           });
         }
       });

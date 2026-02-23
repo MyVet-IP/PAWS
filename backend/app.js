@@ -1,3 +1,5 @@
+require('dotenv').config({ path: '../.env' });
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -45,11 +47,11 @@ app.get('/api/clientes/:id', async (req, res) => {
 app.post('/api/clientes', async (req, res) => {
   try {
     const { nombre, email, password, telefono } = req.body;
-    
+
     if (!nombre || !email || !password) {
       return res.status(400).json({ error: 'nombre, email and password are required' });
     }
-    
+
     const cliente = await storage.createCliente(nombre, email, password, telefono);
     res.status(201).json(cliente);
   } catch (error) {
@@ -72,21 +74,21 @@ app.put('/api/clientes/:id', async (req, res) => {
 app.get('/api/clinics', async (req, res) => {
   try {
     const { location } = req.query;
-    
+
     let veterinarias;
     if (location) {
       veterinarias = await storage.getVeterinariasByLocation(location);
     } else {
       veterinarias = await storage.getAllVeterinarias();
     }
-    
+
     veterinarias = veterinarias.map(vet => ({
       ...vet,
       specialties: vet.servicios.map(s => s.nombre.toUpperCase()),
       image: vet.imagen,
       location: vet.direccion
     }));
-    
+
     res.json(veterinarias);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -99,11 +101,11 @@ app.get('/api/clinics/:id', async (req, res) => {
     if (!veterinaria) {
       return res.status(404).json({ error: 'Clinic not found' });
     }
-    
+
     veterinaria.specialties = veterinaria.servicios.map(s => s.nombre.toUpperCase());
     veterinaria.image = veterinaria.imagen;
     veterinaria.location = veterinaria.direccion;
-    
+
     res.json(veterinaria);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -113,11 +115,11 @@ app.get('/api/clinics/:id', async (req, res) => {
 app.post('/api/veterinarias', async (req, res) => {
   try {
     const { nombre, direccion, telefono, estado, rating, imagen } = req.body;
-    
+
     if (!nombre || !direccion) {
       return res.status(400).json({ error: 'nombre and direccion are required' });
     }
-    
+
     const veterinaria = await storage.createVeterinaria(nombre, direccion, telefono, estado, rating, imagen);
     res.status(201).json(veterinaria);
   } catch (error) {
@@ -137,11 +139,11 @@ app.get('/api/servicios', async (req, res) => {
 app.post('/api/servicios', async (req, res) => {
   try {
     const { nombre, descripcion } = req.body;
-    
+
     if (!nombre) {
       return res.status(400).json({ error: 'nombre is required' });
     }
-    
+
     const servicio = await storage.createServicio(nombre, descripcion);
     res.status(201).json(servicio);
   } catch (error) {
@@ -173,11 +175,11 @@ app.get('/api/pets/:id', async (req, res) => {
 app.post('/api/mascotas', async (req, res) => {
   try {
     const { nombre, especie, raza, edad, id_cliente } = req.body;
-    
+
     if (!nombre || !especie || !id_cliente) {
       return res.status(400).json({ error: 'nombre, especie and id_cliente are required' });
     }
-    
+
     const mascota = await storage.createMascota(nombre, especie, raza, edad, id_cliente);
     res.status(201).json(mascota);
   } catch (error) {
@@ -215,11 +217,11 @@ app.get('/api/visitas/mascota/:id', async (req, res) => {
 app.post('/api/visitas', async (req, res) => {
   try {
     const { diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria } = req.body;
-    
+
     if (!id_mascota || !id_veterinaria) {
       return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
     }
-    
+
     const visita = await storage.createVisita(diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria);
     res.status(201).json(visita);
   } catch (error) {
@@ -274,11 +276,11 @@ app.get('/api/emergencias', async (req, res) => {
 app.post('/api/emergencias', async (req, res) => {
   try {
     const { descripcion, id_mascota, id_veterinaria } = req.body;
-    
+
     if (!descripcion || !id_mascota || !id_veterinaria) {
       return res.status(400).json({ error: 'descripcion, id_mascota and id_veterinaria are required' });
     }
-    
+
     const emergencia = await storage.createEmergencia(descripcion, id_mascota, id_veterinaria);
     res.status(201).json(emergencia);
   } catch (error) {
@@ -298,11 +300,11 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
 app.post('/api/appointments', async (req, res) => {
   try {
     const { id_mascota, id_veterinaria, fecha, motivo } = req.body;
-    
+
     if (!id_mascota || !id_veterinaria) {
       return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
     }
-    
+
     const visita = await storage.createVisita(motivo || 'Scheduled appointment', null, null, id_mascota, id_veterinaria);
     res.status(201).json(visita);
   } catch (error) {

@@ -1,5 +1,5 @@
 console.log("server 1a");
-require("dotenv").config();
+require('dotenv').config({ path: '../.env' });
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
