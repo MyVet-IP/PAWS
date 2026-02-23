@@ -1,4 +1,4 @@
-export function initDashboard() {
+export function dashboardEvents() {
   const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
   if (!user) { window.location.hash = '#/login'; return; }
 
@@ -36,7 +36,7 @@ export function initDashboard() {
       const countEl = document.getElementById('pets-count');
       if (countEl) countEl.textContent = pets.length;
     })
-    .catch(() => {});
+    .catch(() => { });
 
   // Form to add pet
   const addForm = document.getElementById('add-pet-form');
@@ -45,10 +45,10 @@ export function initDashboard() {
       e.preventDefault();
       const user = JSON.parse(localStorage.getItem('currentUser'));
       const body = {
-        nombre:     document.getElementById('pet-nombre').value,
-        especie:    document.getElementById('pet-especie').value,
-        raza:       document.getElementById('pet-raza').value,
-        edad:       parseInt(document.getElementById('pet-edad').value),
+        nombre: document.getElementById('pet-nombre').value,
+        especie: document.getElementById('pet-especie').value,
+        raza: document.getElementById('pet-raza').value,
+        edad: parseInt(document.getElementById('pet-edad').value),
         id_cliente: user.id_cliente
       };
       const res = await fetch('/api/mascotas', {
@@ -75,7 +75,7 @@ export function initDashboard() {
   });
 }
 
-export function DashboardView() {
+export function dashboardPage() {
   return `
   <section class="flex h-screen bg-gray-50">
 

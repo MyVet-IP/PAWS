@@ -1,6 +1,6 @@
 // frontend/src/views/vet-dashboard.js
 
-export function VetDashboardView() {
+export function vetDashboardPage() {
   return `
   <section class="flex min-h-screen bg-gray-100">
 

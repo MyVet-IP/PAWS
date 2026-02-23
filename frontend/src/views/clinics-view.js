@@ -1,4 +1,4 @@
-export function ClinicsView() {
+export function clinicsPage() {
   // Get search parameters from URL
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
   const searchLocation = urlParams.get('location') || '';

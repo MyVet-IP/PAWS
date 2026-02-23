@@ -1,4 +1,4 @@
-export function loadRegisterPage() {
+export function registerPage() {
     return `
     <section class="min-h-screen bg-gradient-to-br from-purple/20 to-blue/20 flex items-center justify-center">
         <main class="bg-white rounded-3xl shadow-xl w-full max-w-lg p-8">

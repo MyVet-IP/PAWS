@@ -1,4 +1,4 @@
-export function loadLoginPage() {
+export function loginPage() {
     return `
     <section class="min-h-screen bg-pink font-sans">
         <main class="flex min-h-screen">

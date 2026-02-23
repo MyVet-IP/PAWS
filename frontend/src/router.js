@@ -1,19 +1,22 @@
-import { ClinicsView } from "./views/clinics-view.js";
-import { PetProfileView } from "./views/pet-profile.js";
-import { loadLoginPage, loginEvents } from "./views/login.js";
+import { clinicsPage } from "./views/clinics-view.js";
+import { petProfilepage } from "./views/pet-profile.js";
+import { loginPage, loginEvents } from "./views/login.js";
 import { landingPage, landingEvents } from "./views/landing-page.js";
-import { EmergencyView, emergencyEvents } from "./views/emergency.js";
-import { loadRegisterPage, registerEvents } from "./views/register.js";
-import { DashboardView, dashboardEvents } from "./views/user-dashboard.js";
+import { emergencyPage, emergencyEvents } from "./views/emergency.js";
+import { registerPage, registerEvents } from "./views/register.js";
+import { dashboardPage, dashboardEvents } from "./views/user-dashboard.js";
+import { vetDashboardPage } from "./views/vet-dashboard.js";
+
 
 const routes = {
   "/": landingPage,
-  "/register": loadRegisterPage,
-  "/login": loadLoginPage,
-  "/pet-profile": PetProfileView,
-  "/user-dashboard": DashboardView,
-  "/clinicas": ClinicsView,
-  "/emergencias": EmergencyView,
+  "/login": loginPage,
+  "/register": registerPage,
+  "/clinicas": clinicsPage,
+  "/emergencias": emergencyPage,
+  "/pet-profile": petProfilepage,
+  "/veterinary": vetDashboardPage,
+  "/user-dashboard": dashboardPage,
   "/tips": () => "<h1>Health Tips - In development</h1>"
 };
 
@@ -26,7 +29,7 @@ export function router() {
   try {
     if (view) {
       app.innerHTML = view();
-      initializePageEvents();
+      pageEvents();
 
       if (path === "/") {
         landingEvents();
@@ -58,7 +61,7 @@ export function router() {
 }
 
 // Function to initialize navigation events
-function initializePageEvents() {
+function pageEvents() {
   // Landing page navigation buttons
   const loginBtn = document.querySelector('.btn-primary');
   const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');
