@@ -1,14 +1,13 @@
-import { PetProfileView } from "./views/pet-profile.js";
-import { DashboardView, initDashboard } from "./views/user-dashboard.js";
-import { loadLandingPage, initLanding } from "./views/landing-page.js";
 import { ClinicsView } from "./views/clinics-view.js";
-import { loadLandingPage, landingEvents } from "./views/landing-page.js";
-import { loadLoginPage, loginEvents, initLogin } from "./views/login.js";
+import { PetProfileView } from "./views/pet-profile.js";
+import { loadLoginPage, loginEvents } from "./views/login.js";
+import { landingPage, landingEvents } from "./views/landing-page.js";
+import { EmergencyView, emergencyEvents } from "./views/emergency.js";
 import { loadRegisterPage, registerEvents } from "./views/register.js";
-import { EmergencyView, initEmergency } from "./views/emergency.js";
+import { DashboardView, dashboardEvents } from "./views/user-dashboard.js";
 
 const routes = {
-  "/": loadLandingPage,
+  "/": landingPage,
   "/register": loadRegisterPage,
   "/login": loadLoginPage,
   "/pet-profile": PetProfileView,
@@ -42,11 +41,11 @@ export function router() {
       }
 
       if (path === '/user-dashboard') {
-        registerEvents();
+        dashboardEvents();
       }
 
       if (path === '/emergencias') {
-        initEmergency();
+        emergencyEvents();
       }
 
     } else {
