@@ -1,9 +1,9 @@
 import { PetProfileView } from "./views/pet-profile.js";
 import { DashboardView, initDashboard } from "./views/user-dashboard.js";
 import { loadLandingPage, initLanding } from "./views/landing-page.js";
-import { ClinicsView } from "./views/clinics-view.js";
+import { ClinicsView, initClinicsView } from "./views/clinics-view.js";
 import { loadLoginPage, initLogin } from "./views/login.js";
-import { loadRegisterPage } from "./views/register.js";
+import { loadRegisterPage, initRegister } from "./views/register.js";
 import { EmergencyView, initEmergency } from "./views/emergency.js";
 
 const routes = {
@@ -29,6 +29,8 @@ export function router() {
       initializePageEvents();
       if (path === '/')               initLanding();
       if (path === '/login')          initLogin();
+      if (path === '/register')       initRegister();
+      if (path === '/clinicas')       initClinicsView();
       if (path === '/user-dashboard') initDashboard();
       if (path === '/emergencias')    initEmergency();
     } else {

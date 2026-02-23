@@ -1,3 +1,46 @@
+export function initRegister() {
+  const form = document.getElementById('register-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById('register-nombre').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+    const errBox = document.getElementById('register-error');
+    errBox.textContent = '';
+
+    if (password !== confirmPassword) {
+      errBox.textContent = 'Passwords do not match';
+      return;
+    }
+
+    if (password.length < 6) {
+      errBox.textContent = 'Password must be at least 6 characters';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) { 
+        errBox.textContent = data.error; 
+        return; 
+      }
+
+      localStorage.setItem('currentUser', JSON.stringify(data));
+      window.location.hash = '#/user-dashboard';
+    } catch {
+      errBox.textContent = 'Connection error. Please try again.';
+    }
+  });
+}
+
 export function loadRegisterPage() {
     return `
     <section class="min-h-screen bg-gradient-to-br from-purple/20 to-blue/20 flex items-center justify-center">
@@ -21,27 +64,28 @@ export function loadRegisterPage() {
                     Profile Type
                 </div>
             </div>
-            <form class="space-y-4">
+            <p id="register-error" class="text-red-500 text-sm mb-2 text-center"></p>
+            <form id="register-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="text-gray text-sm">Full Name</label>
-                        <input type="text" placeholder="e.g. Mariana Lopez"
-                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                        <input id="register-nombre" type="text" placeholder="e.g. Mariana Lopez"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2" required>
                     </div>
                     <div>
                         <label class=" text-sm">Email</label>
-                        <input type="email" placeholder="example@gmail.com"
-                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                        <input id="register-email" type="email" placeholder="example@gmail.com"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2" required>
                     </div>
                     <div>
                         <label class=" text-sm">Password</label>
-                        <input type="password" placeholder="********"
-                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                        <input id="register-password" type="password" placeholder="********"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2" required>
                     </div>
                     <div>
                         <label class=" text-sm">Confirm Password</label>
-                        <input type="password" placeholder="********"
-                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2">
+                        <input id="register-confirm-password" type="password" placeholder="********"
+                        class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-2" required>
                     </div>
                 </div>
                 <hr class="my-6 border-gray-300 ">
@@ -58,12 +102,12 @@ export function loadRegisterPage() {
                         <p class="text-xs text-gray mt-3">I want to offer my services and clinics</p>
                     </div>
                 </div>
-                <button class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
+                <button type="submit" class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
                     Sign Up →
                 </button>
                 <p class="text-center text-sm mt-4">
                     Already have an account?
-                    <a href="../views/login.html" class="text-pink font-semibold">Sign In</a>
+                    <a href="#/login" class="text-pink font-semibold">Sign In</a>
                 </p>
                 <div class="mt-8 pt-4 border-t border-gray-200 flex items-center justify-between text-[11px] text-gray/70">
                     <div class="flex items-center gap-1">

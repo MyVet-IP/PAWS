@@ -14,8 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const frontendPath = path.join(__dirname, '..', 'frontend');
 const rootPath = path.join(__dirname, '..');
-app.use(express.static(rootPath));
-app.use(express.static(frontendPath));
+app.use(express.static(rootPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
+app.use(express.static(frontendPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, message: 'API running' });
@@ -306,6 +306,25 @@ app.post('/api/appointments', async (req, res) => {
     const visita = await storage.createVisita(motivo || 'Scheduled appointment', null, null, id_mascota, id_veterinaria);
     res.status(201).json(visita);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/register', async (req, res) => {
+  try {
+    const { nombre, email, password, telefono } = req.body;
+    
+    if (!nombre || !email || !password) {
+      return res.status(400).json({ error: 'Name, email and password are required' });
+    }
+    
+    const cliente = await storage.createCliente(nombre, email, password, telefono);
+    const { password: _, ...user } = cliente;
+    res.status(201).json(user);
+  } catch (error) {
+    if (error.message.includes('duplicate') || error.message.includes('unique')) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
     res.status(500).json({ error: error.message });
   }
 });

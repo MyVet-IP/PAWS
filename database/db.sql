@@ -111,14 +111,14 @@ INSERT INTO clientes (nombre, email, password, telefono) VALUES
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO veterinarias (nombre, direccion, telefono, whatsapp, estado, rating, imagen) VALUES
-  ('Clinica Veterinaria El Poblado',      'Cra. 43A #16-22, El Poblado, Medellin',       '6042567890', '573046712893', 'Activa', 4.9, './frontend/assets/images/lllll.jpg'),
-  ('Centro Medico Veterinario Laureles',  'Cra. 76 #33-45, Laureles, Medellin',          '6043234567', '573113489205', 'Activa', 4.8, './frontend/assets/images/lllll.jpg'),
-  ('Veterinaria Envigado',                'Cll. 38 Sur #43-12, Envigado, Antioquia',     '6044512380', '573204561738', 'Activa', 5.0, './frontend/assets/images/lllll.jpg'),
-  ('Clinica Animal Belen',                'Cra. 76 #50-23, Belen, Medellin',             '6043987654', '573157823046', 'Activa', 4.7, './frontend/assets/images/lllll.jpg'),
-  ('VetSalud Sabaneta',                   'Cll. 77 Sur #43-10, Sabaneta, Antioquia',     '6044678901', '573217890123', 'Activa', 4.6, './frontend/assets/images/lllll.jpg'),
-  ('Veterinaria Bello Norte',             'Cra. 50 #45-67, Bello, Antioquia',            '6044234567', '573108901234', 'Activa', 4.4, './frontend/assets/images/lllll.jpg'),
-  ('Clinica Veterinaria Robledo',         'Cra. 80 #65-12, Robledo, Medellin',           '6042901234', '573189012345', 'Activa', 4.5, './frontend/assets/images/lllll.jpg'),
-  ('Veterinaria La Candelaria',           'Cll. 44 #52-25, La Candelaria, Medellin',     '6042512345', '573123456789', 'Activa', 4.3, './frontend/assets/images/lllll.jpg')
+  ('Clinica Veterinaria El Poblado',      'Cra. 43A #16-22, El Poblado, Medellin',       '6042567890', '573193052287', 'Activa', 4.9, './frontend/assets/images/lllll.jpg'),
+  ('Centro Medico Veterinario Laureles',  'Cra. 76 #33-45, Laureles, Medellin',          '6043234567', '573193052287', 'Activa', 4.8, './frontend/assets/images/lllll.jpg'),
+  ('Veterinaria Envigado',                'Cll. 38 Sur #43-12, Envigado, Antioquia',     '6044512380', '573193052287', 'Activa', 5.0, './frontend/assets/images/lllll.jpg'),
+  ('Clinica Animal Belen',                'Cra. 76 #50-23, Belen, Medellin',             '6043987654', '573193052287', 'Activa', 4.7, './frontend/assets/images/lllll.jpg'),
+  ('VetSalud Sabaneta',                   'Cll. 77 Sur #43-10, Sabaneta, Antioquia',     '6044678901', '573193052287', 'Activa', 4.6, './frontend/assets/images/lllll.jpg'),
+  ('Veterinaria Bello Norte',             'Cra. 50 #45-67, Bello, Antioquia',            '6044234567', '573193052287', 'Activa', 4.4, './frontend/assets/images/lllll.jpg'),
+  ('Clinica Veterinaria Robledo',         'Cra. 80 #65-12, Robledo, Medellin',           '6042901234', '573193052287', 'Activa', 4.5, './frontend/assets/images/lllll.jpg'),
+  ('Veterinaria La Candelaria',           'Cll. 44 #52-25, La Candelaria, Medellin',     '6042512345', '573193052287', 'Activa', 4.3, './frontend/assets/images/lllll.jpg')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO servicios (nombre, descripcion) VALUES
