@@ -1,5 +1,30 @@
 import { apiService } from "../services/api.js"
 
+function showLoading() {
+  const loadingHTML = `
+    <div id="loading-overlay"
+      class="fixed inset-0 z-[999] flex items-center justify-center bg-[rgba(15,23,42,0.5)] backdrop-blur-sm">
+
+      <div class="bg-white rounded-2xl p-8 shadow-xl flex flex-col items-center gap-4">
+
+        <div class="w-10 h-10 border-4 border-primary-pink border-t-transparent rounded-full animate-spin"></div>
+
+        <p class="font-bold text-[#334155]">
+          Finding emergency clinics...
+        </p>
+
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", loadingHTML);
+}
+
+function hideLoading() {
+  const loader = document.getElementById("loading-overlay");
+  if (loader) loader.remove();
+}
+
 export function modalView(){
   return `<section>
     <!-- Overlay -->
@@ -99,14 +124,15 @@ export async function modalEvents(){
 
   cards.forEach((card, index) => {
     card.addEventListener("click", async () => {
-
+      showLoading();
     console.log("Card clickeada:", index);
 
       try {
         const clinics = await apiService.getClinics();
 
         console.log("Data from backend:", clinics);
-
+        
+        hideLoading();
         if (index === 0) {
           console.log("Dogs & Cats seleccionados");
         } else {
@@ -114,6 +140,7 @@ export async function modalEvents(){
         }
 
       } catch (error) {
+        hideLoading();
         console.error("Clinics load wrong:", error);
       }
 
@@ -130,3 +157,4 @@ export async function modalEvents(){
 
 
 }
+
