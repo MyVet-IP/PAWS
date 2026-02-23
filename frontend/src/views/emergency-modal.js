@@ -1,4 +1,4 @@
-
+import { apiService } from "../services/api.js"
 
 export function modalView(){
   return `<section>
@@ -94,6 +94,39 @@ export function modalView(){
   </section>`
 }
 
-export function modalEvents(){
-  let close = document.getElementById()
+export async function modalEvents(){
+  const cards =document.querySelectorAll(".group");
+
+  cards.forEach((card, index) => {
+    card.addEventListener("click", async () => {
+
+    console.log("Card clickeada:", index);
+
+      try {
+        const clinics = await apiService.getClinics();
+
+        console.log("Data from backend:", clinics);
+
+        if (index === 0) {
+          console.log("Dogs & Cats seleccionados");
+        } else {
+          console.log("Exotic seleccionados");
+        }
+
+      } catch (error) {
+        console.error("Clinics load wrong:", error);
+      }
+
+    });
+  })
+
+  const closeBtn = document.querySelector(".absolute.top-6.right-6");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      document.querySelector(".fixed.inset-0").remove();
+    });
+  }
+
+
 }
