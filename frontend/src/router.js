@@ -13,7 +13,8 @@ const routes = {
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
   "/clinics-view": ClinicsView,
-  "/vet-dashboard": VetDashboardView
+  "/vet-dashboard": VetDashboardView,
+  
 };
 
 export function router() {
