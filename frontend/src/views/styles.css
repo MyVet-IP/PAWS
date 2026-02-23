@@ -1,0 +1,211 @@
+/* =============================================
+   VetEmergency — styles.css
+   CSS puro, sin Tailwind. Diseño idéntico al original.
+   ============================================= */
+
+/* --- Variables de color --- */
+:root {
+  --primary-pink:    #ffafcc;
+  --lavender-accent: #cdb4db;
+  --soft-green:      #c8e6c9;
+  --lavender-wash:   #f8f4fb;
+  --font-main:       'Manrope', sans-serif;
+}
+
+/* --- Reset base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: var(--font-main);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* =============================================
+   OVERLAY
+   ============================================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(15, 23, 42, 0.6); /* slate-900/60 */
+  backdrop-filter: blur(4px);
+}
+
+/* =============================================
+   MODAL
+   ============================================= */
+.modal {
+  position: relative;
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 2.5rem;
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+/* --- Header --- */
+.modal__header {
+  padding: 3rem 3rem 0 3rem;
+  text-align: center;
+}
+
+.modal__title {
+  color: red;
+  font-size: 2.25rem;   /* text-4xl */
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.modal__subtitle {
+  color: #64748b; /* slate-500 */
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 500;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+/* --- Badge "Specialists Available Now" --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  background-color: var(--soft-green);
+  color: #334155; /* slate-700 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.badge__icon {
+  font-size: 1rem;
+}
+
+/* --- Body (cards area) --- */
+.modal__body {
+  padding: 2rem 3rem 3rem 3rem;
+}
+
+/* --- Cards grid --- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Card --- */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  outline: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card:active {
+  transform: scale(0.95);
+}
+
+.card__image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--primary-pink);
+  overflow: hidden;
+  border: 4px solid #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover .card__image-wrapper {
+  box-shadow: 0 10px 25px -5px rgba(255, 175, 204, 0.4);
+}
+
+.card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s ease;
+}
+
+.card:hover .card__image {
+  transform: scale(1.1);
+}
+
+.card__title {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 900;
+  color: var(--primary-pink);
+  margin-bottom: 0.5rem;
+}
+
+.card__desc {
+  color: #64748b; /* slate-500 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600;
+  max-width: 240px;
+}
+
+
+/* --- Close button --- */
+.modal__close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: #f1f5f9; /* slate-100 */
+  color: #94a3b8; /* slate-400 */
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.modal__close:hover {
+  color: var(--primary-pink);
+  background-color: #ffffff;
+}
