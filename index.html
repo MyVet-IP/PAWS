@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
-  <title>MyVet</title>
+  <title>MedellinVet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="./frontend/assets/icons/favicon.svg" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-        theme: {
+      theme: {
         extend: {
-            colors: {
+          colors: {
             lavender: '#cdb4db',
             softpink: '#ffc8dd',
             pink: '#ffafcc',
@@ -19,18 +20,23 @@
             green: '#C8E6C9',
             white: '#ffffff',
             gray: '#6b7280',
-            }
+          }
         }
-        }
+      }
     }
-    </script>
-    <link rel="stylesheet" href="./frontend/css/task-manager.css">
-    <link rel="stylesheet" href="./frontend/css/landing.css">
+  </script>
+  <link rel="stylesheet" href="./frontend/css/task-manager.css">
+  <link rel="stylesheet" href="./frontend/css/landing.css">
 </head>
 
-<body id="app">
+<body id="app" class="min-h-screen bg-gradient-to-br from-purple/20 to-blue/20 flex items-center justify-center">
 
+  <!-- CONTENEDOR PRINCIPAL SPA -->
+  <div id="app"></div>
+
+  <!--  ENTRY POINT SPA -->
   <script type="module" src="./frontend/src/main.js"></script>
 
 </body>
+
 </html>

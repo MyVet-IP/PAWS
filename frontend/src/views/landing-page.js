@@ -22,7 +22,7 @@ export function loadLandingPage() {
 </svg>
 <input type="text" placeholder="Buscar especialista..." class="bg-transparent border-none outline-none text-sm w-40" style="min-width: 150px;">
 </div>
-<button class="btn-primary text-gray-800 font-semibold px-6 py-2 rounded-full">Ingresar</button>
+<button id="login-btn" class="btn-primary text-gray-800 font-semibold px-6 py-2 rounded-full">Ingresar</button>
 </div>
 </div>
 </div>
@@ -55,7 +55,7 @@ Conectamos a dueños de mascotas con las clínicas veterinarias más calificadas
 </svg>
                     <input type="text" id="search-location" placeholder="Ciudad o código postal" class="flex-1 border-none outline-none py-3">
                 </div>
-                <button onclick="searchClinics()" class="btn-primary text-gray-800 font-semibold px-8 py-3 rounded-2xl flex items-center gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
+                <button id="clinics-btn" class="btn-primary text-gray-800 font-semibold px-8 py-3 rounded-2xl flex items-center gap-2 hover:bg-gray-100 transition-colors cursor-pointer">
                     Buscar
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -295,10 +295,10 @@ La plataforma líder en búsqueda y gestión de salud para mascotas en Latinoam�
 <div>
 <h3 class="font-bold text-lg mb-4">Plataforma</h3>
 <ul class="space-y-3">
-<li><a href="#clinicas" class="footer-link text-gray-300 text-sm">Encontrar Clínicas</a></li>
-<li><a href="#emergencias" class="footer-link text-gray-300 text-sm">Servicios 24h</a></li>
-<li><a href="#especialistas" class="footer-link text-gray-300 text-sm">Especialistas</a></li>
-<li><a href="#blog" class="footer-link text-gray-300 text-sm">Blog de Salud</a></li>
+<li><a href="#/clinicas" class="footer-link text-gray-300 text-sm">Encontrar Clínicas</a></li>
+<li><a href="#/emergencias" class="footer-link text-gray-300 text-sm">Servicios 24h</a></li>
+<li><a href="#/especialistas" class="footer-link text-gray-300 text-sm">Especialistas</a></li>
+<li><a href="#/blog" class="footer-link text-gray-300 text-sm">Blog de Salud</a></li>
 </ul>
 </div>
 
@@ -341,3 +341,26 @@ Unirse
 </div>
 </footer>
 `}
+
+export function landingEvents() {
+    const loginBtn = document.getElementById("login-btn");
+    const searchBtn = document.getElementById("clinics-btn");
+    const searchInput = document.getElementById("search-location");
+
+    if (loginBtn) {
+        loginBtn.addEventListener("click", () => {
+            window.location.hash = "#/login";
+        });
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener("click", () => {
+            const location = searchInput.value.trim();
+            if (!location) return;
+
+            sessionStorage.setItem("searchLocation", location);
+
+            window.location.hash = "#/clinicas";
+        });
+    }
+}
