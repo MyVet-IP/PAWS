@@ -1,39 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Busqueda | medellinVet</title>
-    <style type="text/tailwindcss">
-        @theme {
-            --color-purple: #cdb4db;
-            --color-green-light: #C8E6C9;
-            --color-pink: #ffafcc;
-            --color-blue-light: #bde0fe;
-            --color-blue: #a2d2ff;
-            --color-white: #ffffff;
-            --color-gray: #6b7280;
-        }
-    </style>
-</head>
-
-<body class="min-h-screen bg-white">
-    <header class="h-20 border-b border-gray-200 flex items-center justify-between px-6">
-        <div class="flex items-center gap-2">
-            <span class="font-semibold">Medellin<span class="text-purple font-bold">Vet</span></span>
-        </div>
-        <nav class="hidden md:flex gap-6 text-sm text-gray">
-            <a href="#" class="hover:text-black">Home</a>
-            <a href="#" class="text-black font-bold border-b-2 border-pink pb-1">Find Vets</a>
-            <a href="#" class="hover:text-black">Services</a>
-        </nav>
-        <div class="flex items-center gap-4 text-sm">
-            <a href="#" class="text-gray hover:text-black">Login</a>
-            <a href="#" class="px-4 py-2 rounded-full bg-purple text-white hover:opacity-90">Entrar como Vet</a>
-        </div>
-    </header>
+export function loadMapPage(){
+    return `
     <main class="flex" style="height: calc(100vh - 80px);">
         <!-- Left panel -->
         <aside class="w-full md:w-1/3 border-r-2 border-gray-200 p-6 overflow-y-auto">
@@ -60,7 +26,5 @@
     <!-- 2. Google Maps — invoca window.initMap definido en mapPage.js -->
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoaEx8ykVQ4oyLJkP2yFzO2cmp8vT7Dk0&callback=initMap&libraries=places&v=weekly"
-        async></script>
-</body>
-
-</html>
+        async></script>`
+}

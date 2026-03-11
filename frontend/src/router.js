@@ -4,6 +4,8 @@ import { ClinicsView } from "./views/clinics-view.js";
 import { loadLandingPage, landingEvents } from "./views/landing-page.js";
 import { loadLoginPage, loginEvents } from "./views/login.js";
 import { loadRegisterPage, registerEvents } from "./views/register.js";
+import { loadMapPage } from "./views/map-page.js";
+
 
 const routes = {
   "/": loadLandingPage,
@@ -12,6 +14,7 @@ const routes = {
   "/pet-profile": PetProfileView,
   "/user-dashboard": DashboardView,
   "/clinicas": ClinicsView,
+  "/map-page": loadMapPage,
   "/emergencias": () => "<h1>Emergencias 24/7 - En desarrollo</h1>",
   "/tips": () => "<h1>Tips de Salud - En desarrollo</h1>"
 };
@@ -25,7 +28,10 @@ export function router() {
   const view = routes[path];
 
   if (path === '/clinicas'){
-    ClinicsController();
+    ClinicController();
+  }
+  if (path === '/map-page'){
+    MapPage();
   }
 
   if (view) {
