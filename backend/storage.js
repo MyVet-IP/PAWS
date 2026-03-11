@@ -94,6 +94,71 @@ class Storage {
 
     return veterinarias;
   }
+  
+  async getVeterinariasByCoords(lat, lng, radiusKm = 10, servicio = null, ratingMin = null) {
+    // Fórmula de Haversine en SQL puro (La formula Haversine es una fórmula utilizada 
+    // para calcular la distancia entre dos puntos de una esfera dadas sus coordenadas 
+    // de longitud y latitud)
+    // Calcula la distancia (Más corta) en km entre dos puntos geográficos
+    const haversine = `
+      (2 * 6371 * ASIN(
+        SQRT(
+          POWER(SIN(RADIANS(v.lat - $1) / 2), 2) +
+          COS(RADIANS($1)) * COS(RADIANS(v.lat)) *
+          POWER(SIN(RADIANS(v.lng - $2) / 2), 2)
+        )
+      ))
+    `;
+
+    // Parámetros base: lat, lng, radio
+    const params = [lat, lng, radiusKm];
+
+    // Condiciones base: que tenga coords y esté dentro del radio
+    let conditions = [
+      'v.lat IS NOT NULL',
+      'v.lng IS NOT NULL',
+      `${haversine} <= $3`
+    ];
+
+    // Filtro opcional por rating mínimo
+    if (ratingMin !== null) {
+      params.push(Number(ratingMin));
+      conditions.push(`v.rating >= $${params.length}`);
+    }
+
+    // Filtro opcional por servicio
+    if (servicio !== null) {
+      params.push(servicio.toLowerCase());
+      conditions.push(`
+        EXISTS (
+          SELECT 1 FROM servicios s
+          INNER JOIN veterinaria_servicios vs ON s.id_servicio = vs.id_servicio
+          WHERE vs.id_veterinaria = v.id_veterinaria
+          AND LOWER(s.nombre) = $${params.length}
+        )
+      `);
+    }
+
+    const where = `WHERE ${conditions.join(' AND ')}`;
+
+    const query = `
+      SELECT
+        v.*,
+        ROUND((${haversine})::numeric, 2) AS distancia_km
+      FROM veterinarias v
+      ${where}
+      ORDER BY distancia_km ASC
+    `;
+
+    const veterinarias = await db.all(query, params);
+
+    // Cargar servicios de cada veterinaria
+    for (let vet of veterinarias) {
+      vet.servicios = await this.getServiciosByVeterinaria(vet.id_veterinaria);
+    }
+
+    return veterinarias;
+  }
 
   async createVeterinaria(nombre, direccion, telefono = null, estado = 'Activa', rating = 0, imagen = null) {
     const result = await db.get(
