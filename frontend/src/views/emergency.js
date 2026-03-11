@@ -1,4 +1,4 @@
-export function EmergencyView() {
+export function emergencyPage() {
     return `
         <div class="min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
             <!-- Header -->
@@ -108,7 +108,7 @@ export function EmergencyView() {
     `;
 }
 
-export async function initEmergency() {
+export async function emergencyEvents() {
     const btnFind = document.getElementById('btn-find-emergency');
     const container = document.getElementById('emergencyClinicsContainer');
     const clinicsList = document.getElementById('clinicsList');
@@ -116,14 +116,14 @@ export async function initEmergency() {
     if (btnFind) {
         btnFind.addEventListener('click', async () => {
             const selected = document.querySelector('input[name="urgency"]:checked');
-            
+
             if (!selected) {
                 alert('Please select the urgency level');
                 return;
             }
 
             const urgencyLevel = parseInt(selected.value);
-            
+
             // Show clinics container
             if (container) {
                 container.classList.remove('hidden');
@@ -134,9 +134,9 @@ export async function initEmergency() {
             try {
                 const response = await fetch('http://localhost:3000/api/veterinarias');
                 const clinics = await response.json();
-                
+
                 // Filter only clinics with emergency service
-                const emergencyClinics = clinics.filter(clinic => 
+                const emergencyClinics = clinics.filter(clinic =>
                     clinic.servicios_emergencia || clinic.servicios?.includes('Emergencias 24/7')
                 );
 

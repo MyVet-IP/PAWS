@@ -1,15 +1,16 @@
 import { router } from "./router.js";
-import { navbarController } from "./controllers/navbar.js";
-import { apiService } from "./views/services/api.js";
+import { navbarController } from "./components/navbar.js";
+import { apiService } from "../../backend/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
-// Global functions to use in HTML
-window.viewClinicDetails = function(clinicId) {
-  showToast(`Viewing clinic details ${clinicId}`, 'info');
-  // Here you could navigate to a detail view
+// Funciones globales para usar en HTML
+window.viewClinicDetails = function (clinicId) {
+  showToast(`Viendo detalles de la clínica ${clinicId}`, 'info');
+  // Aquí podrías navegar a una vista de detalle
+  console.log('Ver detalles de clínica:', clinicId);
 };
 
-window.bookAppointment = function(clinicId) {
+window.bookAppointment = function (clinicId) {
   showLoading();
   setTimeout(() => {
     hideLoading();
@@ -17,7 +18,7 @@ window.bookAppointment = function(clinicId) {
   }, 1500);
 };
 
-window.searchClinics = function() {
+window.searchClinics = function () {
   const input = document.getElementById('search-location');
   if (input) {
     const location = input.value;
@@ -29,8 +30,18 @@ window.searchClinics = function() {
   }
 };
 
-// ES modules are deferred, the DOM is already ready when it gets here
-router();
-navbarController;
+// Inicializar aplicación
+function initApp() {
+  console.log('VetCare App iniciada');
 
+  // Cargar router
+  router();
+
+  // Inicializar controladores
+  navbarController;
+}
+
+// Event listeners
+window.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("load", router);
 window.addEventListener("hashchange", router);

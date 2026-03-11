@@ -1,4 +1,4 @@
-export function PetProfileView() {
+export function petProfilepage() {
   return `
   <section class="flex gap-12 p-10 bg-gray-50 min-h-screen">
 

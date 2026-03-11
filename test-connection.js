@@ -2,7 +2,7 @@
 //Important file, do not delete or modify without fully understanding it, in other words please don't touch it, thank you
 //I repeat, don't move this because it's important to verify that the database is working correctly before running the backend
 
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const db = require('./backend/db');
 
 async function testConnection() {
@@ -22,7 +22,7 @@ async function testConnection() {
       AND table_type = 'BASE TABLE'
       ORDER BY table_name
     `);
-    
+
     if (tables.length > 0) {
       console.log(`Found ${tables.length} tables:`);
       tables.forEach(t => console.log(`  - ${t.table_name}`));
@@ -36,7 +36,7 @@ async function testConnection() {
     const clientes = await db.all('SELECT COUNT(*) as count FROM clientes');
     const veterinarias = await db.all('SELECT COUNT(*) as count FROM veterinarias');
     const mascotas = await db.all('SELECT COUNT(*) as count FROM mascotas');
-    
+
     console.log(`Clients: ${clientes[0].count}`);
     console.log(`Clinics: ${veterinarias[0].count}`);
     console.log(`Pets: ${mascotas[0].count}`);
@@ -48,16 +48,16 @@ async function testConnection() {
     console.log('Connection closed successfully\n');
 
     console.log('ALL TESTS PASSED');
-    
+
     process.exit(0);
-    } catch (error) {
+  } catch (error) {
     console.error('\nERROR:', error.message);
     console.error('\nSOLUTION:');
     console.error('1. Make sure PostgreSQL is installed and running');
     console.error('2. Create the database: createdb myvet_db');
     console.error('3. Verify the credentials in the .env file');
     console.error('4. Run the schema: psql -d myvet_db -f database/db.sql\n');
-    
+
     await db.close();
     process.exit(1);
   }

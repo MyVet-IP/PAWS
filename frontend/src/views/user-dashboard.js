@@ -1,81 +1,81 @@
-export function initDashboard() {
-  const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
-  if (!user) { window.location.hash = '#/login'; return; }
+export function dashboardEvents() {
+  // const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  // if (!user) { window.location.hash = '#/login'; return; }
 
   // Update name
-  const nameEl = document.getElementById('dash-username');
-  if (nameEl) nameEl.textContent = `Welcome, ${user.nombre.split(' ')[0]}!`;
+  // const nameEl = document.getElementById('dash-username');
+  // if (nameEl) nameEl.textContent = `Welcome, ${user.nombre.split(' ')[0]}!`;
 
-  // Load pets
-  fetch(`/api/users/${user.id_cliente}/dashboard`)
-    .then(r => r.json())
-    .then(data => {
-      const grid = document.getElementById('pets-grid');
-      if (!grid) return;
-      const pets = data.mascotas || [];
+  //   // Load pets
+  //   fetch(`/api/users/${user.id_cliente}/dashboard`)
+  //     .then(r => r.json())
+  //     .then(data => {
+  //       const grid = document.getElementById('pets-grid');
+  //       if (!grid) return;
+  //       const pets = data.mascotas || [];
 
-      const cards = pets.map(p => `
-        <div class="bg-white rounded-2xl shadow-md w-64 p-5 hover:-translate-y-1 transition">
-          <div class="w-full h-40 bg-lightblue rounded-xl mb-4 flex items-center justify-center text-5xl">
-            ${p.especie === 'Cat' ? '🐱' : '🐶'}
-          </div>
-          <h3 class="font-bold text-lg text-gray-800">${p.nombre}</h3>
-          <p class="text-gray-500 text-sm mb-4">${p.raza || p.especie} • ${p.edad} ${p.edad === 1 ? 'year' : 'years'}</p>
-          <button class="bg-softpink w-full py-2 rounded-full font-medium">View profile</button>
-        </div>
-      `).join('');
+  //       const cards = pets.map(p => `
+  //         <div class="bg-white rounded-2xl shadow-md w-64 p-5 hover:-translate-y-1 transition">
+  //           <div class="w-full h-40 bg-lightblue rounded-xl mb-4 flex items-center justify-center text-5xl">
+  //             ${p.especie === 'Cat' ? '🐱' : '🐶'}
+  //           </div>
+  //           <h3 class="font-bold text-lg text-gray-800">${p.nombre}</h3>
+  //           <p class="text-gray-500 text-sm mb-4">${p.raza || p.especie} • ${p.edad} ${p.edad === 1 ? 'year' : 'years'}</p>
+  //           <button class="bg-softpink w-full py-2 rounded-full font-medium">View profile</button>
+  //         </div>
+  //       `).join('');
 
-      grid.innerHTML = cards + `
-        <div onclick="document.getElementById('modal-add-pet').classList.remove('hidden')"
-             class="w-64 border-2 border-dashed border-blue rounded-2xl flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:border-pink transition">
-          <span class="text-3xl mb-2">＋</span>
-          <p>Add pet</p>
-        </div>`;
+  //       grid.innerHTML = cards + `
+  //         <div onclick="document.getElementById('modal-add-pet').classList.remove('hidden')"
+  //              class="w-64 border-2 border-dashed border-blue rounded-2xl flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:border-pink transition">
+  //           <span class="text-3xl mb-2">＋</span>
+  //           <p>Add pet</p>
+  //         </div>`;
 
-      // Counter
-      const countEl = document.getElementById('pets-count');
-      if (countEl) countEl.textContent = pets.length;
-    })
-    .catch(() => {});
+  //       // Counter
+  //       const countEl = document.getElementById('pets-count');
+  //       if (countEl) countEl.textContent = pets.length;
+  //     })
+  //     .catch(() => { });
 
-  // Form to add pet
-  const addForm = document.getElementById('add-pet-form');
-  if (addForm) {
-    addForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const user = JSON.parse(localStorage.getItem('currentUser'));
-      const body = {
-        nombre:     document.getElementById('pet-nombre').value,
-        especie:    document.getElementById('pet-especie').value,
-        raza:       document.getElementById('pet-raza').value,
-        edad:       parseInt(document.getElementById('pet-edad').value),
-        id_cliente: user.id_cliente
-      };
-      const res = await fetch('/api/mascotas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (res.ok) {
-        document.getElementById('modal-add-pet').classList.add('hidden');
-        addForm.reset();
-        initDashboard(); // reload
-      }
-    });
-  }
+  //   // Form to add pet
+  //   const addForm = document.getElementById('add-pet-form');
+  //   if (addForm) {
+  //     addForm.addEventListener('submit', async (e) => {
+  //       e.preventDefault();
+  //       const user = JSON.parse(localStorage.getItem('currentUser'));
+  //       const body = {
+  //         nombre: document.getElementById('pet-nombre').value,
+  //         especie: document.getElementById('pet-especie').value,
+  //         raza: document.getElementById('pet-raza').value,
+  //         edad: parseInt(document.getElementById('pet-edad').value),
+  //         id_cliente: user.id_cliente
+  //       };
+  //       const res = await fetch('/api/mascotas', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify(body)
+  //       });
+  //       if (res.ok) {
+  //         document.getElementById('modal-add-pet').classList.add('hidden');
+  //         addForm.reset();
+  //         initDashboard(); // reload
+  //       }
+  //     });
+  //   }
 
-  // Close modal
-  document.getElementById('modal-close')?.addEventListener('click', () => {
-    document.getElementById('modal-add-pet').classList.add('hidden');
-  });
+  //   // Close modal
+  //   document.getElementById('modal-close')?.addEventListener('click', () => {
+  //     document.getElementById('modal-add-pet').classList.add('hidden');
+  //   });
 
-  // Header button
-  document.getElementById('btn-add-pet')?.addEventListener('click', () => {
-    document.getElementById('modal-add-pet').classList.remove('hidden');
-  });
+  //   // Header button
+  //   document.getElementById('btn-add-pet')?.addEventListener('click', () => {
+  //     document.getElementById('modal-add-pet').classList.remove('hidden');
+  //   });
 }
 
-export function DashboardView() {
+export function dashboardPage() {
   return `
   <section class="flex h-screen bg-gray-50">
 

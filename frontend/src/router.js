@@ -1,19 +1,22 @@
-import { PetProfileView } from "./views/pet-profile.js";
-import { DashboardView, initDashboard } from "./views/user-dashboard.js";
-import { loadLandingPage, initLanding } from "./views/landing-page.js";
-import { ClinicsView, initClinicsView } from "./views/clinics-view.js";
-import { loadLoginPage, initLogin } from "./views/login.js";
-import { loadRegisterPage, initRegister } from "./views/register.js";
-import { EmergencyView, initEmergency } from "./views/emergency.js";
+import { clinicsPage } from "./views/clinics-view.js";
+import { petProfilepage } from "./views/pet-profile.js";
+import { loginPage, loginEvents } from "./views/login.js";
+import { landingPage, landingEvents } from "./views/landing-page.js";
+import { emergencyPage, emergencyEvents } from "./views/emergency.js";
+import { registerPage, registerEvents } from "./views/register.js";
+import { dashboardPage, dashboardEvents } from "./views/user-dashboard.js";
+import { vetDashboardPage } from "./views/vet-dashboard.js";
+
 
 const routes = {
-  "/": loadLandingPage,
-  "/register": loadRegisterPage,
-  "/login": loadLoginPage,
-  "/pet-profile": PetProfileView,
-  "/user-dashboard": DashboardView,
-  "/clinicas": ClinicsView,
-  "/emergencias": EmergencyView,
+  "/": landingPage,
+  "/login": loginPage,
+  "/register": registerPage,
+  "/clinicas": clinicsPage,
+  "/emergencias": emergencyPage,
+  "/pet-profile": petProfilepage,
+  "/veterinary": vetDashboardPage,
+  "/user-dashboard": dashboardPage,
   "/tips": () => "<h1>Health Tips - In development</h1>"
 };
 
@@ -26,24 +29,39 @@ export function router() {
   try {
     if (view) {
       app.innerHTML = view();
-      initializePageEvents();
-      if (path === '/')               initLanding();
-      if (path === '/login')          initLogin();
-      if (path === '/register')       initRegister();
-      if (path === '/clinicas')       initClinicsView();
-      if (path === '/user-dashboard') initDashboard();
-      if (path === '/emergencias')    initEmergency();
+      pageEvents();
+
+      if (path === "/") {
+        landingEvents();
+      }
+
+      if (path === "/login") {
+        loginEvents();
+      }
+
+      if (path === "/register") {
+        registerEvents();
+      }
+
+      if (path === '/user-dashboard') {
+        dashboardEvents();
+      }
+
+      if (path === '/emergencias') {
+        emergencyEvents();
+      }
+
     } else {
       app.innerHTML = "<h1>Page not found</h1>";
     }
-  } catch (err) {
-    console.error("Error loading view:", err);
-    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error loading view:</b><pre>${err.message}</pre></div>`;
+  } catch (error) {
+    console.error("Error loading view:", error);
+    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error loading view:</b><pre>${error.message}</pre></div>`;
   }
 }
 
 // Function to initialize navigation events
-function initializePageEvents() {
+function pageEvents() {
   // Landing page navigation buttons
   const loginBtn = document.querySelector('.btn-primary');
   const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');

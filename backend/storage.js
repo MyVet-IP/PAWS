@@ -33,7 +33,7 @@ class Storage {
     const fields = [];
     const values = [];
     let paramCount = 1;
-    
+
     if (data.nombre !== undefined) {
       fields.push(`nombre = $${paramCount++}`);
       values.push(data.nombre);
@@ -46,14 +46,14 @@ class Storage {
       fields.push(`telefono = $${paramCount++}`);
       values.push(data.telefono);
     }
-    
+
     values.push(id);
-    
+
     await db.run(
       `UPDATE clientes SET ${fields.join(', ')} WHERE id_cliente = $${paramCount}`,
       values
     );
-    
+
     return await this.getClienteById(id);
   }
 
@@ -61,11 +61,11 @@ class Storage {
     const veterinarias = await db.all(
       'SELECT * FROM veterinarias ORDER BY id_veterinaria ASC'
     );
-    
+
     for (let vet of veterinarias) {
       vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
     }
-    
+
     return veterinarias;
   }
 
@@ -74,11 +74,11 @@ class Storage {
       'SELECT * FROM veterinarias WHERE id_veterinaria = $1',
       [id]
     );
-    
+
     if (veterinaria) {
       veterinaria.specialties = await this.getSpecialtiesByVeterinaria(id);
     }
-    
+
     return veterinaria;
   }
 
@@ -87,11 +87,11 @@ class Storage {
       'SELECT * FROM veterinarias WHERE direccion LIKE $1 OR estado LIKE $2',
       [`%${location}%`, `%${location}%`]
     );
-    
+
     for (let vet of veterinarias) {
       vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
     }
-    
+
     return veterinarias;
   }
 
@@ -174,7 +174,7 @@ class Storage {
     const fields = [];
     const values = [];
     let paramCount = 1;
-    
+
     if (data.nombre !== undefined) {
       fields.push(`nombre = $${paramCount++}`);
       values.push(data.nombre);
@@ -191,14 +191,14 @@ class Storage {
       fields.push(`edad = $${paramCount++}`);
       values.push(data.edad);
     }
-    
+
     values.push(id);
-    
+
     await db.run(
       `UPDATE mascotas SET ${fields.join(', ')} WHERE id_mascota = $${paramCount}`,
       values
     );
-    
+
     return await this.getMascotaById(id);
   }
 
@@ -299,11 +299,11 @@ class Storage {
   async getUserDashboard(id_cliente) {
     const cliente = await this.getClienteById(id_cliente);
     const mascotas = await this.getMascotasByCliente(id_cliente);
-    
+
     for (let mascota of mascotas) {
       mascota.visitas = await this.getVisitasByMascota(mascota.id_mascota);
     }
-    
+
     return {
       cliente,
       mascotas

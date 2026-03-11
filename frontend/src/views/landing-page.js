@@ -1,5 +1,5 @@
 ﻿// Please try not to modify the styles too much, it took me a while to fix them, thanks
-export function loadLandingPage() {
+export function landingPage() {
     return `
         <div class="hero-gradient min-h-screen">
         <nav class="main-nav bg-white/80 border-b border-gray-200/50 sticky-nav">
@@ -192,7 +192,7 @@ export function loadLandingPage() {
             </section>
         </main>
 
-        <footer class="bg-gray-950 text-white pt-16 pb-8 footer-spacing">
+        <footer class="bg-black text-white pt-16 pb-8 footer-spacing">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     <div>
@@ -275,7 +275,7 @@ export function loadLandingPage() {
     `;
 }
 
-export async function initLanding() {
+export async function landingEvents() {
     const btnIngresar = document.getElementById('btn-ingresar');
     const btnSearch = document.getElementById('btn-search');
     const btnEmergencyFab = document.getElementById('btn-emergency-fab');
