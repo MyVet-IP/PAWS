@@ -1,11 +1,11 @@
-import { clinicsPage } from "./views/clinics-view.js";
-import { petProfilepage } from "./views/pet-profile.js";
-import { loginPage, loginEvents } from "./views/login.js";
-import { landingPage, landingEvents } from "./views/landing-page.js";
-import { emergencyPage, emergencyEvents } from "./views/emergency.js";
-import { registerPage, registerEvents } from "./views/register.js";
-import { dashboardPage, dashboardEvents } from "./views/user-dashboard.js";
-import { vetDashboardPage } from "./views/vet-dashboard.js";
+import { clinicsPage } from "../views/clinics-view.js";
+import { petProfilepage } from "../views/pet-profile.js";
+import { loginPage, loginEvents } from "../views/login.js";
+import { landingPage, landingEvents } from "../views/landing-page.js";
+import { emergencyPage, emergencyEvents } from "../views/emergency.js";
+import { registerPage, registerEvents } from "../views/register.js";
+import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
+import { vetDashboardPage } from "../views/vet-dashboard.js";
 
 
 const routes = {
