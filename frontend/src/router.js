@@ -6,6 +6,7 @@ import { emergencyPage, emergencyEvents } from "./views/emergency.js";
 import { registerPage, registerEvents } from "./views/register.js";
 import { dashboardPage, dashboardEvents } from "./views/user-dashboard.js";
 import { vetDashboardPage } from "./views/vet-dashboard.js";
+import { loadMapPage, loadMapEvents} from "./views/map-page.js";
 
 
 const routes = {
@@ -17,6 +18,7 @@ const routes = {
   "/pet-profile": petProfilepage,
   "/veterinary": vetDashboardPage,
   "/user-dashboard": dashboardPage,
+  "/map-page": loadMapPage,
   "/tips": () => "<h1>Health Tips - In development</h1>"
 };
 
@@ -45,6 +47,10 @@ export function router() {
 
       if (path === '/user-dashboard') {
         dashboardEvents();
+      }
+      
+      if (path === "/map-page") {
+        loadMapEvents();
       }
 
       if (path === '/emergencias') {
