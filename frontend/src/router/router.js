@@ -7,6 +7,8 @@ import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { vetDashboardPage } from "../views/vet-dashboard.js";
 import { loadMapPage, loadMapEvents} from "../views/map-page.js";
+import { servicesPage,  servicesPageEvents} from "../views/services.js";
+import { maintenancePage, maintenanceEvents } from "../views/maintenance.js";
 
 
 const routes = {
@@ -19,6 +21,8 @@ const routes = {
   "/veterinary": vetDashboardPage,
   "/user-dashboard": dashboardPage,
   "/map-page": loadMapPage,
+  "/services": servicesPage,
+  "/maintenance": maintenancePage,
   "/tips": () => "<h1>Health Tips - In development</h1>"
 };
 
@@ -55,6 +59,12 @@ export function router() {
 
       if (path === '/emergencias') {
         emergencyEvents();
+      }
+      if (path === "/services") {
+        servicesPageEvents();
+      }
+      if (path === "/maintenance") {
+        maintenanceEvents();
       }
 
     } else {
