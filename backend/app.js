@@ -73,15 +73,42 @@ app.put('/api/clientes/:id', async (req, res) => {
 
 app.get('/api/clinics', async (req, res) => {
   try {
-    const { location } = req.query;
+    const { location, lat, lng, radius, servicio, rating } = req.query;
+
+    // Validar que lat y lng sean números válidos si vienen
+    const hasCoords = lat !== undefined && lng !== undefined;
+    if (hasCoords) {
+      const latNum = parseFloat(lat);
+      const lngNum = parseFloat(lng);
+      if (isNaN(latNum) || isNaN(lngNum)) {
+        return res.status(400).json({ error: 'lat y lng deben ser números válidos' });
+      }
+    }
+
+    const radiusKm   = radius  ? parseFloat(radius) : 10;
+    const ratingMin  = rating  ? parseFloat(rating)  : null;
+    const servFiltro = servicio ? servicio            : null;
 
     let veterinarias;
-    if (location) {
+
+    if (hasCoords) {
+      // Búsqueda por coordenadas + Haversine
+      veterinarias = await storage.getVeterinariasByCoords(
+        parseFloat(lat),
+        parseFloat(lng),
+        radiusKm,
+        servFiltro,
+        ratingMin
+      );
+    } else if (location) {
+      // Búsqueda por texto (comportamiento original)
       veterinarias = await storage.getVeterinariasByLocation(location);
     } else {
+      // Sin filtros — traer todas
       veterinarias = await storage.getAllVeterinarias();
     }
 
+    // Mapear campos para compatibilidad con el frontend
     veterinarias = veterinarias.map(vet => ({
       ...vet,
       specialties: vet.servicios.map(s => s.nombre.toUpperCase()),
@@ -89,7 +116,12 @@ app.get('/api/clinics', async (req, res) => {
       location: vet.direccion
     }));
 
-    res.json(veterinarias);
+    res.json({
+      total: veterinarias.length,
+      mode: hasCoords ? 'coords' : 'text',
+      clinics: veterinarias
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
