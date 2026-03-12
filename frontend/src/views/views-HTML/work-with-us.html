@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work With Us – PAWS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f5f8ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
+
+  <style>
+    .role-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex; flex-direction: column;
+    }
+    .role-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
+    .perk-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid #f5f5f5;
+      font-family: 'Roboto', sans-serif; font-size: 0.875rem; color: #4A4A4A;
+    }
+    .perk-item:last-child { border-bottom: none; }
+    .perk-check {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0; margin-top: 1px;
+    }
+    .role-cta {
+      display: block; width: 100%; padding: 13px;
+      border: none; border-radius: 12px;
+      font-family: 'Poppins', sans-serif; font-weight: 600;
+      font-size: 0.875rem; cursor: pointer;
+      transition: opacity 0.2s;
+      text-align: center;
+    }
+    .role-cta:hover { opacity: 0.85; }
+    .benefit-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 0; border-bottom: 1px solid #f0f0f0;
+      font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #4A4A4A;
+    }
+    .benefit-item:last-child { border-bottom: none; }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9rem;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .form-input:focus { border-color: #6A4C93; }
+    .form-label {
+      display: block; margin-bottom: 6px;
+      font-family: 'Poppins', sans-serif; font-size: 0.82rem;
+      font-weight: 600; color: #4A4A4A;
+    }
+    .submit-btn {
+      width: 100%; padding: 14px;
+      background: #6A4C93; color: white;
+      border: none; border-radius: 12px;
+      font-family: 'Poppins', sans-serif; font-weight: 700;
+      font-size: 0.95rem; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover { background: #5a3d80; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.45s ease forwards; }
+  </style>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b" style="border-color:#f0e8ff;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <div style="display:inline-flex; align-items:center; gap:6px; background:#FBF8CC; color:#d97706; font-size:0.75rem; font-weight:600; padding:5px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-family:'Poppins',sans-serif;">
+            🚀 Opportunities
+          </div>
+          <h1 class="text-3xl font-bold" style="color:#333; font-family:'Poppins',sans-serif;">Work With Us</h1>
+          <p class="mt-1" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.95rem;">Join the veterinary ecosystem that's changing pet care in Medellín</p>
+        </div>
+        <button onclick="window.location.hash='#/'" class="font-medium hover:opacity-75 transition" style="color:#6A4C93; font-family:'Poppins',sans-serif;">
+          ← Back to home
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Roles Grid -->
+    <section class="mb-16">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">How Can You Join?</h2>
+        <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">Choose the role that fits you best</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- Veterinary Clinic Partner -->
+        <div class="role-card fade-up" style="animation-delay:0s;">
+          <div style="height:5px; background:#B9FBC0;"></div>
+          <div class="p-7 flex-1 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+              <div style="width:48px; height:48px; border-radius:14px; background:#B9FBC0; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🏥</div>
+              <h3 class="text-lg font-bold" style="color:#333; font-family:'Poppins',sans-serif;">Veterinary Clinic Partner</h3>
+            </div>
+            <p class="mb-5" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.875rem; line-height:1.6;">List your clinic on PAWS and reach thousands of pet owners actively looking for care in your neighborhood.</p>
+            <div class="flex-1 mb-5">
+              <div class="perk-item"><div class="perk-check" style="background:#B9FBC0; color:#059669;">✓</div><span>Free listing for the first 3 months</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#B9FBC0; color:#059669;">✓</div><span>Verified badge on your profile</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#B9FBC0; color:#059669;">✓</div><span>Real-time appointment requests</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#B9FBC0; color:#059669;">✓</div><span>Analytics dashboard for your clinic</span></div>
+            </div>
+            <button class="role-cta" style="background:#B9FBC0; color:#059669;" onclick="scrollToForm('Veterinary Clinic Partner')">List My Clinic →</button>
+          </div>
+        </div>
+
+        <!-- Specialist Veterinarian -->
+        <div class="role-card fade-up" style="animation-delay:0.08s;">
+          <div style="height:5px; background:#F1C0E8;"></div>
+          <div class="p-7 flex-1 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+              <div style="width:48px; height:48px; border-radius:14px; background:#F1C0E8; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🩺</div>
+              <h3 class="text-lg font-bold" style="color:#333; font-family:'Poppins',sans-serif;">Specialist Veterinarian</h3>
+            </div>
+            <p class="mb-5" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.875rem; line-height:1.6;">Join our network of verified specialists and connect directly with pet owners who need your expertise.</p>
+            <div class="flex-1 mb-5">
+              <div class="perk-item"><div class="perk-check" style="background:#F1C0E8; color:#6A4C93;">✓</div><span>Build your personal specialist profile</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#F1C0E8; color:#6A4C93;">✓</div><span>Receive filtered appointment requests</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#F1C0E8; color:#6A4C93;">✓</div><span>Peer review and rating system</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#F1C0E8; color:#6A4C93;">✓</div><span>Monthly performance reports</span></div>
+            </div>
+            <button class="role-cta" style="background:#F1C0E8; color:#6A4C93;" onclick="scrollToForm('Specialist Veterinarian')">Join as Specialist →</button>
+          </div>
+        </div>
+
+        <!-- Student / Intern -->
+        <div class="role-card fade-up" style="animation-delay:0.16s;">
+          <div style="height:5px; background:#90BDF4;"></div>
+          <div class="p-7 flex-1 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+              <div style="width:48px; height:48px; border-radius:14px; background:#90BDF4; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🎓</div>
+              <h3 class="text-lg font-bold" style="color:#333; font-family:'Poppins',sans-serif;">Student / Intern</h3>
+            </div>
+            <p class="mb-5" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.875rem; line-height:1.6;">Are you a vet student or junior developer? We offer internships and collaboration opportunities.</p>
+            <div class="flex-1 mb-5">
+              <div class="perk-item"><div class="perk-check" style="background:#90BDF4; color:#2563eb;">✓</div><span>Real project experience</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#90BDF4; color:#2563eb;">✓</div><span>Mentorship from the core team</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#90BDF4; color:#2563eb;">✓</div><span>Reference letter upon completion</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#90BDF4; color:#2563eb;">✓</div><span>Flexible remote schedule</span></div>
+            </div>
+            <button class="role-cta" style="background:#90BDF4; color:#2563eb;" onclick="scrollToForm('Student / Intern')">Apply Now →</button>
+          </div>
+        </div>
+
+        <!-- Community Ambassador -->
+        <div class="role-card fade-up" style="animation-delay:0.24s;">
+          <div style="height:5px; background:#FBF8CC;"></div>
+          <div class="p-7 flex-1 flex flex-col">
+            <div class="flex items-center gap-3 mb-4">
+              <div style="width:48px; height:48px; border-radius:14px; background:#FBF8CC; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">📣</div>
+              <h3 class="text-lg font-bold" style="color:#333; font-family:'Poppins',sans-serif;">Community Ambassador</h3>
+            </div>
+            <p class="mb-5" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.875rem; line-height:1.6;">Help us grow the PAWS community in your neighborhood. Perfect for passionate pet lovers.</p>
+            <div class="flex-1 mb-5">
+              <div class="perk-item"><div class="perk-check" style="background:#FBF8CC; color:#d97706;">✓</div><span>Share your love for animals</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#FBF8CC; color:#d97706;">✓</div><span>Exclusive PAWS Ambassador perks</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#FBF8CC; color:#d97706;">✓</div><span>Monthly community meetups</span></div>
+              <div class="perk-item"><div class="perk-check" style="background:#FBF8CC; color:#d97706;">✓</div><span>Co-create content and campaigns</span></div>
+            </div>
+            <button class="role-cta" style="background:#FBF8CC; color:#d97706;" onclick="scrollToForm('Community Ambassador')">Become Ambassador →</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Why Join -->
+    <section class="mb-16">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-2xl font-bold mb-6" style="color:#333; font-family:'Poppins',sans-serif;">Why Partner With PAWS?</h2>
+          <div class="benefit-item"><span style="font-size:1.3rem;">📈</span><span>Access to 500+ active pet owners in Medellín</span></div>
+          <div class="benefit-item"><span style="font-size:1.3rem;">🔒</span><span>Secure, GDPR-compliant data handling</span></div>
+          <div class="benefit-item"><span style="font-size:1.3rem;">⚡</span><span>Onboarding in less than 48 hours</span></div>
+          <div class="benefit-item"><span style="font-size:1.3rem;">💬</span><span>Dedicated support via WhatsApp</span></div>
+          <div class="benefit-item"><span style="font-size:1.3rem;">📊</span><span>Real-time analytics for your profile</span></div>
+          <div class="benefit-item"><span style="font-size:1.3rem;">🌎</span><span>Growing presence across the Aburrá Valley</span></div>
+        </div>
+        <div style="background:linear-gradient(135deg,#6A4C93,#8b5cf6); border-radius:24px; padding:40px; color:white; text-align:center;">
+          <div style="font-size:3rem; margin-bottom:16px;">📈</div>
+          <div class="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <div style="font-size:1.6rem; font-weight:700; font-family:'Poppins',sans-serif;">500+</div>
+              <div style="font-size:0.8rem; opacity:0.75; font-family:'Roboto',sans-serif;">Pet Owners</div>
+            </div>
+            <div>
+              <div style="font-size:1.6rem; font-weight:700; font-family:'Poppins',sans-serif;">8</div>
+              <div style="font-size:0.8rem; opacity:0.75; font-family:'Roboto',sans-serif;">Partner Clinics</div>
+            </div>
+            <div>
+              <div style="font-size:1.6rem; font-weight:700; font-family:'Poppins',sans-serif;">4.8★</div>
+              <div style="font-size:0.8rem; opacity:0.75; font-family:'Roboto',sans-serif;">Avg Rating</div>
+            </div>
+            <div>
+              <div style="font-size:1.6rem; font-weight:700; font-family:'Poppins',sans-serif;">48h</div>
+              <div style="font-size:0.8rem; opacity:0.75; font-family:'Roboto',sans-serif;">Onboarding</div>
+            </div>
+          </div>
+          <p style="font-family:'Roboto',sans-serif; font-size:0.85rem; opacity:0.8; line-height:1.6;">Numbers growing every week as we expand across the Aburrá Valley.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="join-form" style="background:white; border-radius:24px; padding:48px; box-shadow:0 2px 20px rgba(0,0,0,0.07); max-width:640px; margin:0 auto;">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">Get In Touch</h2>
+        <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">Fill out the form and we'll reach out within 24 hours</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <div>
+          <label class="form-label">Full Name *</label>
+          <input type="text" id="ww-name" class="form-input" placeholder="María García">
+        </div>
+        <div>
+          <label class="form-label">Email *</label>
+          <input type="email" id="ww-email" class="form-input" placeholder="maria@clinica.com">
+        </div>
+        <div>
+          <label class="form-label">Phone / WhatsApp</label>
+          <input type="tel" id="ww-phone" class="form-input" placeholder="+57 300 000 0000">
+        </div>
+        <div>
+          <label class="form-label">I'm interested in *</label>
+          <select id="ww-role" class="form-input" style="background:white; cursor:pointer;">
+            <option value="">Select an option...</option>
+            <option>Veterinary Clinic Partner</option>
+            <option>Specialist Veterinarian</option>
+            <option>Student / Intern</option>
+            <option>Community Ambassador</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Tell us about yourself</label>
+          <textarea id="ww-message" class="form-input" rows="4" placeholder="Brief description of your clinic, specialty, or background..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitWorkForm()">Send Application →</button>
+      </div>
+      <p id="ww-success" style="display:none; text-align:center; color:#059669; font-family:'Poppins',sans-serif; font-weight:600; margin-top:16px;">
+        ✅ Application received! We'll contact you within 24h.
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  function scrollToForm(role) {
+    document.getElementById('join-form').scrollIntoView({ behavior: 'smooth' });
+    const select = document.getElementById('ww-role');
+    if (select) {
+      for (let opt of select.options) {
+        if (opt.text === role) { select.value = opt.value; break; }
+      }
+    }
+  }
+
+  function submitWorkForm() {
+    const name  = document.getElementById('ww-name').value.trim();
+    const email = document.getElementById('ww-email').value.trim();
+    const role  = document.getElementById('ww-role').value;
+
+    if (!name || !email || !role) {
+      alert('Please fill in your name, email, and area of interest.');
+      return;
+    }
+    if (!email.includes('@')) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    console.log('Work application:', { name, email, role });
+    document.getElementById('ww-success').style.display = 'block';
+    document.getElementById('ww-name').value = '';
+    document.getElementById('ww-email').value = '';
+    document.getElementById('ww-phone').value = '';
+    document.getElementById('ww-role').value = '';
+    document.getElementById('ww-message').value = '';
+  }
+</script>
+
+</body>
+</html>

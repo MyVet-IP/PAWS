@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Specialists – PAWS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
+
+  <style>
+    .specialist-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .specialist-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+    }
+    .specialist-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: 'Poppins', sans-serif;
+    }
+    .animal-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-family: 'Roboto', sans-serif;
+    }
+    .stars {
+      color: #f59e0b;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s;
+    }
+    .filter-chip {
+      padding: 7px 18px;
+      border-radius: 999px;
+      border: 1.5px solid #e5e7eb;
+      background: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .filter-chip.active, .filter-chip:hover {
+      background: #6A4C93;
+      border-color: #6A4C93;
+      color: white;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease forwards; }
+  </style>
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b" style="border-color: #f0e8ff;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <div style="display:inline-flex; align-items:center; gap:6px; background:#B9FBC0; color:#059669; font-size:0.75rem; font-weight:600; padding:5px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; font-family:'Poppins',sans-serif;">
+            🩺 Verified Professionals
+          </div>
+          <h1 class="text-3xl font-bold" style="color: #333333; font-family: 'Poppins', sans-serif;">Our Specialists</h1>
+          <p class="mt-1" style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.95rem;">Board-certified veterinary specialists across the Aburrá Valley</p>
+        </div>
+        <button onclick="window.location.hash='#/'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
+          ← Back to home
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <section style="background: linear-gradient(135deg, #6A4C93, #8b5cf6); padding: 32px 0;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center text-white">
+          <div style="font-size:1.6rem; margin-bottom:4px;">🩺</div>
+          <div style="font-size:1.5rem; font-weight:700; font-family:'Poppins',sans-serif;">40+</div>
+          <div style="font-size:0.8rem; opacity:0.8; font-family:'Roboto',sans-serif;">Verified Specialists</div>
+        </div>
+        <div class="text-center text-white">
+          <div style="font-size:1.6rem; margin-bottom:4px;">🔬</div>
+          <div style="font-size:1.5rem; font-weight:700; font-family:'Poppins',sans-serif;">8</div>
+          <div style="font-size:0.8rem; opacity:0.8; font-family:'Roboto',sans-serif;">Specialty Areas</div>
+        </div>
+        <div class="text-center text-white">
+          <div style="font-size:1.6rem; margin-bottom:4px;">⭐</div>
+          <div style="font-size:1.5rem; font-weight:700; font-family:'Poppins',sans-serif;">4.8★</div>
+          <div style="font-size:0.8rem; opacity:0.8; font-family:'Roboto',sans-serif;">Average Rating</div>
+        </div>
+        <div class="text-center text-white">
+          <div style="font-size:1.6rem; margin-bottom:4px;">📋</div>
+          <div style="font-size:1.5rem; font-weight:700; font-family:'Poppins',sans-serif;">2,000+</div>
+          <div style="font-size:0.8rem; opacity:0.8; font-family:'Roboto',sans-serif;">Consultations Done</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="bg-white border-b" style="border-color:#f5f5f5;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col gap-3">
+        <div class="flex gap-2 flex-wrap items-center">
+          <span style="font-size:0.75rem; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:0.05em; font-family:'Poppins',sans-serif; margin-right:4px;">Specialty:</span>
+          <button class="filter-chip active" onclick="filterSpecialists(this, 'All', 'specialty')">All</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Cardiology', 'specialty')">Cardiology</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Surgery', 'specialty')">Surgery</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Dermatology', 'specialty')">Dermatology</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Dentistry', 'specialty')">Dentistry</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Neurology', 'specialty')">Neurology</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Exotic Animals', 'specialty')">Exotic Animals</button>
+        </div>
+        <div class="flex gap-2 flex-wrap items-center">
+          <span style="font-size:0.75rem; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:0.05em; font-family:'Poppins',sans-serif; margin-right:4px;">Animal:</span>
+          <button class="filter-chip active" onclick="filterSpecialists(this, 'All Animals', 'animal')">All Animals</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Dogs', 'animal')">Dogs</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Cats', 'animal')">Cats</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Birds', 'animal')">Birds</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Reptiles', 'animal')">Reptiles</button>
+          <button class="filter-chip" onclick="filterSpecialists(this, 'Rabbits', 'animal')">Rabbits</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Specialists Grid -->
+    <div id="specialists-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+
+      <!-- Dr. Camila Torres -->
+      <div class="specialist-card fade-up" style="animation-delay:0s;">
+        <div style="height:6px; background:#F1C0E8;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#F1C0E8;">👩‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dr. Camila Torres</h3>
+                  <p style="color:#6A4C93; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Veterinary Cardiologist</p>
+                </div>
+                <span class="badge" style="background:#F1C0E8; color:#6A4C93;">Top Rated</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>Clinica Veterinaria El Poblado</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>El Poblado, Medellín</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">4.9</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(143 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Mon – Fri</span>
+            <span>📅 12 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Dogs</span>
+            <span class="animal-tag">Cats</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#F1C0E8; color:#6A4C93;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #F1C0E8; color:#6A4C93;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dr. Andrés Mejía -->
+      <div class="specialist-card fade-up" style="animation-delay:0.07s;">
+        <div style="height:6px; background:#90BDF4;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#90BDF4;">👨‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dr. Andrés Mejía</h3>
+                  <p style="color:#2563eb; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Exotic Animal Specialist</p>
+                </div>
+                <span class="badge" style="background:#90BDF4; color:#2563eb;">Exotic Expert</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>Centro Medico Veterinario Laureles</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>Laureles, Medellín</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">4.8</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(89 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Tue – Sat</span>
+            <span>📅 8 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Birds</span>
+            <span class="animal-tag">Reptiles</span>
+            <span class="animal-tag">Rabbits</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#90BDF4; color:#2563eb;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #90BDF4; color:#2563eb;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dra. Valentina Ríos -->
+      <div class="specialist-card fade-up" style="animation-delay:0.14s;">
+        <div style="height:6px; background:#B9FBC0;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#B9FBC0;">👩‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dra. Valentina Ríos</h3>
+                  <p style="color:#059669; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Veterinary Surgeon</p>
+                </div>
+                <span class="badge" style="background:#B9FBC0; color:#059669;">Perfect Score</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>Veterinaria Envigado</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>Envigado, Antioquia</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">5.0</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(201 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Mon – Sat</span>
+            <span>📅 15 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Dogs</span>
+            <span class="animal-tag">Cats</span>
+            <span class="animal-tag">Rabbits</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#B9FBC0; color:#059669;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #B9FBC0; color:#059669;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dr. Felipe Castro -->
+      <div class="specialist-card fade-up" style="animation-delay:0.21s;">
+        <div style="height:6px; background:#FBF8CC;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#FBF8CC;">👨‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dr. Felipe Castro</h3>
+                  <p style="color:#d97706; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Veterinary Dermatologist</p>
+                </div>
+                <span class="badge" style="background:#FBF8CC; color:#d97706;">Specialist</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>Clinica Animal Belen</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>Belén, Medellín</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">4.7</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(67 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Mon – Thu</span>
+            <span>📅 6 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Dogs</span>
+            <span class="animal-tag">Cats</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#FBF8CC; color:#d97706;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #FBF8CC; color:#d97706;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dra. Mariana Ospina -->
+      <div class="specialist-card fade-up" style="animation-delay:0.28s;">
+        <div style="height:6px; background:#FFCFD2;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#FFCFD2;">👩‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dra. Mariana Ospina</h3>
+                  <p style="color:#dc2626; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Veterinary Dentist</p>
+                </div>
+                <span class="badge" style="background:#FFCFD2; color:#dc2626;">Dental Expert</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>VetSalud Sabaneta</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>Sabaneta, Antioquia</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">4.6</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(112 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Wed – Sun</span>
+            <span>📅 9 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Dogs</span>
+            <span class="animal-tag">Cats</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#FFCFD2; color:#dc2626;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #FFCFD2; color:#dc2626;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dr. Juan Pablo Vélez -->
+      <div class="specialist-card fade-up" style="animation-delay:0.35s;">
+        <div style="height:6px; background:#F1C0E8;"></div>
+        <div class="p-6">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="specialist-avatar" style="background:#F1C0E8;">👨‍⚕️</div>
+            <div class="flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-bold text-base" style="color:#333; font-family:'Poppins',sans-serif;">Dr. Juan Pablo Vélez</h3>
+                  <p style="color:#6A4C93; font-size:0.82rem; font-weight:600; font-family:'Poppins',sans-serif;">Veterinary Neurologist</p>
+                </div>
+                <span class="badge" style="background:#F1C0E8; color:#6A4C93;">Neuro Expert</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3" style="font-family:'Roboto',sans-serif;">
+            <p style="font-size:0.82rem; color:#4A4A4A; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🏥 <span>Veterinaria La Candelaria</span></p>
+            <p style="font-size:0.82rem; color:#6b7280; display:flex; align-items:center; gap:6px;">📍 <span>La Candelaria, Medellín</span></p>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="stars">★★★★★</span>
+            <span style="font-size:0.85rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif;">4.8</span>
+            <span style="font-size:0.78rem; color:#9ca3af; font-family:'Roboto',sans-serif;">(78 reviews)</span>
+          </div>
+          <div class="flex gap-4 mb-4" style="font-family:'Roboto',sans-serif; font-size:0.8rem; color:#6b7280;">
+            <span>🕐 Mon – Fri</span>
+            <span>📅 11 years exp.</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="animal-tag">Dogs</span>
+            <span class="animal-tag">Cats</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" style="background:#F1C0E8; color:#6A4C93;">Book Appointment</button>
+            <button class="btn-secondary" style="border:1.5px solid #F1C0E8; color:#6A4C93;">View Profile</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA: Are you a vet? -->
+    <div style="background:white; border-radius:20px; padding:40px; text-align:center; box-shadow:0 2px 20px rgba(0,0,0,0.06); border:1px solid #f0e8ff;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">🩺</div>
+      <h3 class="text-xl font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">Are You a Veterinary Specialist?</h3>
+      <p class="mb-6" style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.9rem; max-width:480px; margin:0 auto 24px;">Join PAWS and connect with thousands of pet owners in Medellín looking for specialized care.</p>
+      <button onclick="window.location.hash='#/work-with-us'" style="background:#6A4C93; color:white; border:none; padding:13px 32px; border-radius:12px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer;">
+        Join as a Specialist →
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let activeSpecialty = 'All';
+  let activeAnimal = 'All Animals';
+
+  function filterSpecialists(btn, value, type) {
+    btn.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (type === 'specialty') activeSpecialty = value;
+    else activeAnimal = value;
+
+    console.log('Filter:', activeSpecialty, activeAnimal);
+  }
+</script>
+
+</body>
+</html>
