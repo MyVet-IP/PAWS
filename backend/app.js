@@ -4,23 +4,25 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./db');
-const storage = require('./storage');
 const { errorHandler, notFound, validateBody } = require('./middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// middlewares basicos
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// servir archivos estaticos del frontend
 const frontendPath = path.join(__dirname, '..', 'frontend');
 const rootPath = path.join(__dirname, '..');
-app.use(express.static(rootPath));
-app.use(express.static(frontendPath));
+app.use(express.static(rootPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
+app.use(express.static(frontendPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
 
+// endpoint de health check para verificar que el server esta corriendo
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'API running' });
+  res.json({ ok: true, message: 'API corriendo' });
 });
 
 app.get('/api/clientes', async (req, res) => {
@@ -329,10 +331,12 @@ app.post('/api/login', async (req, res, next) => {
   }
 });
 
+// redirigir todo lo que no sea /api al index.html (para el router del frontend)
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
+// middlewares de error - van al final siempre
 app.use(notFound);
 app.use(errorHandler);
 
@@ -347,19 +351,19 @@ async function startServer() {
       console.log(`========================================\n`);
     });
   } catch (error) {
-    console.error('Error starting server:', error);
+    console.error('Error al iniciar el servidor:', error);
     process.exit(1);
   }
 }
 
 process.on('SIGINT', async () => {
-  console.log('\n\nShutting down...');
+  console.log('\n\nCerrando servidor...');
   await db.close();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n\nShutting down...');
+  console.log('\n\nCerrando servidor...');
   await db.close();
   process.exit(0);
 });
@@ -367,3 +371,4 @@ process.on('SIGTERM', async () => {
 startServer();
 
 module.exports = app;
+
