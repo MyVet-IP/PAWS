@@ -1,4 +1,5 @@
 const db = require('./db');
+const { geocodificarDireccion, calcularDistanciaKm } = require('./services/geocoder');
 
 class Storage {
   async getAllClientes() {
@@ -95,69 +96,49 @@ class Storage {
     return veterinarias;
   }
   
-  async getVeterinariasByCoords(lat, lng, radiusKm = 10, servicio = null, ratingMin = null) {
-    // Fórmula de Haversine en SQL puro (La formula Haversine es una fórmula utilizada 
-    // para calcular la distancia entre dos puntos de una esfera dadas sus coordenadas 
-    // de longitud y latitud)
-    // Calcula la distancia (Más corta) en km entre dos puntos geográficos
-    const haversine = `
-      (2 * 6371 * ASIN(
-        SQRT(
-          POWER(SIN(RADIANS(v.lat - $1) / 2), 2) +
-          COS(RADIANS($1)) * COS(RADIANS(v.lat)) *
-          POWER(SIN(RADIANS(v.lng - $2) / 2), 2)
-        )
-      ))
-    `;
+  async getVeterinariasByCoords(userLat, userLng, radiusKm = 10, servicio = null, ratingMin = null) {
+    // 1. Traer todas las veterinarias (con filtros opcionales de servicio y rating)
+    let veterinarias = await this.getAllVeterinarias();
 
-    // Parámetros base: lat, lng, radio
-    const params = [lat, lng, radiusKm];
-
-    // Condiciones base: que tenga coords y esté dentro del radio
-    let conditions = [
-      'v.lat IS NOT NULL',
-      'v.lng IS NOT NULL',
-      `${haversine} <= $3`
-    ];
-
-    // Filtro opcional por rating mínimo
+    // 2. Filtro por rating mínimo (se hace en JS antes de geocodificar para reducir llamadas)
     if (ratingMin !== null) {
-      params.push(Number(ratingMin));
-      conditions.push(`v.rating >= $${params.length}`);
+      veterinarias = veterinarias.filter(v => v.rating >= ratingMin);
     }
 
-    // Filtro opcional por servicio
+    // 3. Filtro por servicio
     if (servicio !== null) {
-      params.push(servicio.toLowerCase());
-      conditions.push(`
-        EXISTS (
-          SELECT 1 FROM servicios s
-          INNER JOIN veterinaria_servicios vs ON s.id_servicio = vs.id_servicio
-          WHERE vs.id_veterinaria = v.id_veterinaria
-          AND LOWER(s.nombre) = $${params.length}
-        )
-      `);
+      veterinarias = veterinarias.filter(v =>
+        v.servicios.some(s => s.nombre.toLowerCase() === servicio.toLowerCase())
+      );
     }
 
-    const where = `WHERE ${conditions.join(' AND ')}`;
+    // 4. Geocodificar cada dirección y calcular distancia
+    // Nominatim tiene límite de 1 req/seg — esperamos 1100ms entre llamadas
+    const resultados = [];
 
-    const query = `
-      SELECT
-        v.*,
-        ROUND((${haversine})::numeric, 2) AS distancia_km
-      FROM veterinarias v
-      ${where}
-      ORDER BY distancia_km ASC
-    `;
+    for (const vet of veterinarias) {
+      const coords = await geocodificarDireccion(vet.direccion);
 
-    const veterinarias = await db.all(query, params);
+      if (coords) {
+        const distancia_km = calcularDistanciaKm(
+          userLat, userLng,
+          coords.lat, coords.lng
+        );
 
-    // Cargar servicios de cada veterinaria
-    for (let vet of veterinarias) {
-      vet.servicios = await this.getServiciosByVeterinaria(vet.id_veterinaria);
+        // 5. Solo incluir si está dentro del radio
+        if (distancia_km <= radiusKm) {
+          resultados.push({ ...vet, distancia_km });
+        }
+      }
+
+      // Respetar límite de Nominatim (solo si no vino del caché)
+      await new Promise(resolve => setTimeout(resolve, 1100));
     }
 
-    return veterinarias;
+    // 6. Ordenar por cercanía
+    resultados.sort((a, b) => a.distancia_km - b.distancia_km);
+
+    return resultados;
   }
 
   async createVeterinaria(nombre, direccion, telefono = null, estado = 'Activa', rating = 0, imagen = null) {
