@@ -75,8 +75,8 @@ app.get('/api/clinics', async (req, res) => {
   try {
     const { location, lat, lng, radius, servicio, rating } = req.query;
 
-    // Validar que lat y lng sean números válidos si vienen
     const hasCoords = lat !== undefined && lng !== undefined;
+
     if (hasCoords) {
       const latNum = parseFloat(lat);
       const lngNum = parseFloat(lng);
@@ -92,7 +92,6 @@ app.get('/api/clinics', async (req, res) => {
     let veterinarias;
 
     if (hasCoords) {
-      // Búsqueda por coordenadas + Haversine
       veterinarias = await storage.getVeterinariasByCoords(
         parseFloat(lat),
         parseFloat(lng),
@@ -101,14 +100,11 @@ app.get('/api/clinics', async (req, res) => {
         ratingMin
       );
     } else if (location) {
-      // Búsqueda por texto (comportamiento original)
       veterinarias = await storage.getVeterinariasByLocation(location);
     } else {
-      // Sin filtros — traer todas
       veterinarias = await storage.getAllVeterinarias();
     }
 
-    // Mapear campos para compatibilidad con el frontend
     veterinarias = veterinarias.map(vet => ({
       ...vet,
       specialties: vet.servicios.map(s => s.nombre.toUpperCase()),
