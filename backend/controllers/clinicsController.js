@@ -1,88 +1,84 @@
-const storage = require('../storage');
+﻿const storage = require('../storage');
 
-// trae todas las clinicas, con filtro de location opcional
 exports.getAll = async (req, res, next) => {
-  try {
-    const { location } = req.query;
-    let veterinarias;
+    try {
+        const { location } = req.query;
+        let veterinarias;
 
-    if (location) {
-      veterinarias = await storage.getVeterinariasByLocation(location);
-    } else {
-      veterinarias = await storage.getAllVeterinarias();
+        if (location) {
+            veterinarias = await storage.getVeterinariasByLocation(location);
+        } else {
+            veterinarias = await storage.getAllVeterinarias();
+        }
+
+        const resultado = veterinarias.map(vet => {
+            return {
+                ...vet,
+                specialties: vet.specialties.map(s => s.name.toUpperCase()),
+                image: vet.imagen,
+                location: vet.direccion
+            };
+        });
+
+        res.json(resultado);
+    } catch (err) {
+        next(err);
     }
-
-    // adaptamos los campos para que el frontend los lea bien
-    const resultado = veterinarias.map(vet => {
-      return {
-        ...vet,
-        specialties: vet.specialties.map(s => s.name.toUpperCase()),
-        image: vet.imagen,
-        location: vet.direccion
-      };
-    });
-
-    res.json(resultado);
-  } catch (err) {
-    next(err);
-  }
 };
 
 exports.getById = async (req, res, next) => {
-  try {
-    const veterinaria = await storage.getVeterinariaById(req.params.id);
+    try {
+        const veterinaria = await storage.getVeterinariaById(req.params.id);
 
-    if (!veterinaria) {
-      return res.status(404).json({ error: 'Clinica no encontrada' });
+        if (!veterinaria) {
+            return res.status(404).json({ error: 'Clinica no encontrada' });
+        }
+
+        veterinaria.specialties = veterinaria.specialties.map(s => s.name.toUpperCase());
+        veterinaria.image = veterinaria.imagen;
+        veterinaria.location = veterinaria.direccion;
+
+        res.json(veterinaria);
+    } catch (err) {
+        next(err);
     }
-
-    // igual que arriba pero para una sola
-    veterinaria.specialties = veterinaria.specialties.map(s => s.name.toUpperCase());
-    veterinaria.image = veterinaria.imagen;
-    veterinaria.location = veterinaria.direccion;
-
-    res.json(veterinaria);
-  } catch (err) {
-    next(err);
-  }
 };
 
 exports.create = async (req, res, next) => {
-  try {
-    const { nombre, direccion, telefono, estado, rating, imagen } = req.body;
+    try {
+        const { nombre, direccion, telefono, estado, rating, imagen } = req.body;
 
-    if (!nombre || !direccion) {
-      return res.status(400).json({ error: 'nombre y direccion son obligatorios' });
+        if (!nombre || !direccion) {
+            return res.status(400).json({ error: 'nombre y direccion son obligatorios' });
+        }
+
+        const nueva = await storage.createVeterinaria(nombre, direccion, telefono, estado, rating, imagen);
+        res.status(201).json(nueva);
+    } catch (err) {
+        next(err);
     }
-
-    const nueva = await storage.createVeterinaria(nombre, direccion, telefono, estado, rating, imagen);
-    res.status(201).json(nueva);
-  } catch (err) {
-    next(err);
-  }
 };
 
-// specialties - las especialidades de las clinicas
 exports.getAllSpecialties = async (req, res, next) => {
-  try {
-    const specialties = await storage.getAllSpecialties();
-    res.json(specialties);
-  } catch (err) {
-    next(err);
-  }
+    try {
+        const specialties = await storage.getAllSpecialties();
+        res.json(specialties);
+    } catch (err) {
+        next(err);
+    }
 };
 
 exports.createSpecialty = async (req, res, next) => {
-  try {
-    const { name } = req.body;
+    try {
+        const { name } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: 'el campo name es requerido' });
+        if (!name) {
+            return res.status(400).json({ error: 'el campo name es requerido' });
+        }
+
+        const specialty = await storage.createSpecialty(name);
+        res.status(201).json(specialty);
+    } catch (err) {
+        next(err);
     }
-
-    const specialty = await storage.createSpecialty(name);
-    res.status(201).json(specialty);
-  } catch (err) {
-    next(err);
-  }
 };

@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./db');
-const { errorHandler, notFound } = require('./middleware');
+const { errorHandler, notFound, validateBody } = require('./middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
