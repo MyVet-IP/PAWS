@@ -1,3 +1,6 @@
+import { getUser } from "../utils.js";
+import { Layout } from "../layout/layout.js";
+
 import { clinicsPage } from "../views/clinics-view.js";
 import { petProfilepage } from "../views/pet-profile.js";
 import { loginPage, loginEvents } from "../views/login.js";
@@ -7,17 +10,56 @@ import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { vetDashboardPage } from "../views/vet-dashboard.js";
 
+function checkAuth(roleRequired){
+  const user = getUser();
+
+  if(!user){
+    window.location.hash = "#/login";
+    return false;
+  }
+
+  if(roleRequired && user.role !== roleRequired){
+    window.location.hash = "#/unauthorized"; // crea esta vista simple
+    return false;
+  }
+
+  return true;
+}
 
 const routes = {
   "/": landingPage,
-  "/login": loginPage,
+  "/login": () => {
+    const user= getUser();
+    if(user) {
+      window.location.hash = "#/user-dashboard";
+      return "";
+    }
+    return loginPage();
+  },
+
   "/register": registerPage,
-  "/clinicas": clinicsPage,
-  "/emergencias": emergencyPage,
+  "/clinics": clinicsPage,
+  "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
-  "/veterinary": vetDashboardPage,
-  "/user-dashboard": dashboardPage,
-  "/tips": () => "<h1>Health Tips - In development</h1>"
+  "/veterinary": () => {
+    if(!checkAuth("vet")) return;
+    return vetDashboardPage();
+  },
+
+  "/user-dashboard": () => {
+    if(!checkAuth("owner")) return;
+    return dashboardPage();
+  },
+  "/tips": () => "<h1>Health Tips - In development</h1>",
+
+  "/unauthorized": () => `
+    <div class="p-10 text-center">
+      <h1 class="text-2xl font-bold text-red-500">
+        Unauthorized access
+      </h1>
+      <p>You don't have permission to view this page.</p>
+    </div>
+  `
 };
 
 export function router() {
@@ -28,7 +70,9 @@ export function router() {
 
   try {
     if (view) {
-      app.innerHTML = view();
+      const html = view();
+      app.innerHTML = Layout(html);
+
       pageEvents();
 
       if (path === "/") {
@@ -43,11 +87,11 @@ export function router() {
         registerEvents();
       }
 
-      if (path === '/user-dashboard') {
+      if (path === "/user-dashboard") {
         dashboardEvents();
       }
 
-      if (path === '/emergencias') {
+      if (path === '/emergency') {
         emergencyEvents();
       }
 
@@ -76,17 +120,24 @@ function pageEvents() {
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '#/clinicas';
+      window.location.hash = '#/clinics';
     });
   }
 
   // Navbar links
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      const href = link.getAttribute('href');
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+
+    if (!link.dataset.listener) {
+      link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
       if (href && href !== '#') {
         window.location.hash = href;
       }
     });
+
+    link.dataset.listener = "true";
+    
+    }
   });
 }
+

@@ -2,34 +2,7 @@
 export function landingPage() {
     return `
         <div class="hero-gradient min-h-screen">
-        <nav class="main-nav bg-white/80 border-b border-gray-200/50 sticky-nav">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16 md:h-20">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-purple-300 rounded-full flex items-center justify-center overflow-hidden">
-                            <img src="./frontend/assets/images/lllll.jpg" alt="VetCare Logo" class="w-full h-full object-cover">
-                        </div>
-                        <span class="text-xl font-bold text-gray-800">VetCare</span>
-                    </div>
 
-                    <div class="hidden md:flex items-center gap-8">
-                        <a href="#/clinicas" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Clinics</a>
-                        <a href="#/emergencias" class="text-red-500 hover:text-red-600 font-medium transition-colors">Emergencies</a>
-                        <a href="#/tips" class="text-gray-700 hover:text-purple-600 font-medium transition-colors">Health Tips</a>
-                    </div>
-
-                    <div class="flex items-center gap-3">
-                        <div class="hidden lg:flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                            <input type="text" placeholder="Search specialist..." class="bg-transparent border-none outline-none text-sm w-40 search-input-min">
-                        </div>
-                        <button id="btn-ingresar" class="btn-primary font-semibold px-6 py-2 rounded-full">Sign In</button>
-                    </div>
-                </div>
-            </div>
-        </nav>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div class="grid lg:grid-cols-2 gap-12 items-center hero-section">
@@ -42,7 +15,7 @@ export function landingPage() {
                     </div>
 
                     <h1 class="text-5xl md:text-6xl font-bold text-gray-800 leading-tight">
-                        Find the best <span class="text-purple-400">care</span> for your pet
+                        Elvated Care for your   <span class="text-purple-400">best friend.</span> 
                     </h1>
 
                     <p class="text-gray-600 text-lg">
