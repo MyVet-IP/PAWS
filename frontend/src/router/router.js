@@ -6,9 +6,11 @@ import { petProfilepage } from "../views/pet-profile.js";
 import { loginPage, loginEvents } from "../views/login.js";
 import { landingPage, landingEvents } from "../views/landing-page.js";
 import { emergencyPage, emergencyEvents } from "../views/emergency.js";
+import { EmergencyButton } from "../components/emergencyButton.js";
 import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { vetDashboardPage } from "../views/vet-dashboard.js";
+
 
 function checkAuth(roleRequired){
   const user = getUser();
@@ -64,6 +66,7 @@ const routes = {
 
 export function router() {
   const path = window.location.hash.slice(1) || "/";
+    console.log("Router ejecutado en path:", path);
   const app = document.getElementById("app");
 
   const view = routes[path];
@@ -74,6 +77,8 @@ export function router() {
       app.innerHTML = Layout(html);
 
       pageEvents();
+          console.log("EmergencyButton llamado desde router");
+      EmergencyButton();
 
       if (path === "/") {
         landingEvents();
@@ -140,4 +145,6 @@ function pageEvents() {
     }
   });
 }
+
+
 

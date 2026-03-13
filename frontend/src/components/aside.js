@@ -5,6 +5,8 @@ export function Aside() {
   const user = getUser();
   if (!user) return "";
 
+  const isVet = user.role === "vet"
+
   return `
 
   <aside class="w-72 h-screen bg-[#F5F7F6] border-r border-gray-200 p-4 flex flex-col gap-4">
@@ -41,7 +43,6 @@ export function Aside() {
         }
 
       </nav>
-
 
     <!-- 👤 OWNER CONTACT -->
     <div class="bg-white rounded-2xl p-4 shadow-sm">
@@ -157,47 +158,5 @@ function vetMenu() {
 
       </nav>
 
-        <!-- 📋 MENU -->
-      <nav class="flex flex-col gap-1 px-3 text-sm font-medium text-gray-700 flex-1">
-
-        <!-- ACTIVE -->
-        <a href="#/user-dashboard"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg bg-green-600 text-white">
-
-          📊 Dashboard
-        </a>
-
-        <a href="#/pets"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white transition">
-
-          🐾 My Pets
-        </a>
-
-        <a href="#/appointments"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white transition">
-
-          📅 Appointments
-        </a>
-
-        <a href="#/clinics"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white transition">
-
-          🏥 Clinics
-        </a>
-
-        <a href="#/services"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white transition">
-
-          🛁 Services
-        </a>
-
-        <a href="#/emergency"
-        class="flex items-center gap-3 px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 transition">
-
-          🚨 Emergency
-        </a>
-
-      </nav>
-      
-      `;
+     `;
 }

@@ -3,6 +3,7 @@ import { NavbarController } from "./components/navbar.js";
 import { apiService } from "../../backend/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
+
 // Funciones globales para usar en HTML
 window.viewClinicDetails = function (clinicId) {
   showToast(`Viendo detalles de la clínica ${clinicId}`, 'info');
@@ -33,15 +34,10 @@ window.searchClinics = function () {
 // Inicializar aplicación
 function initApp() {
   console.log('VetCare App iniciada');
-
   // Cargar router
   router();
-
-  // Inicializar controladores
-  NavbarController;
 }
 
 // Event listeners
 window.addEventListener("DOMContentLoaded", initApp);
-window.addEventListener("load", router);
 window.addEventListener("hashchange", router);
