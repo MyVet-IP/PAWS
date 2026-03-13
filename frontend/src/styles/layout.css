@@ -1,0 +1,17 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #333333;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Poppins', sans-serif;
+}
+
+main {
+  padding: 24px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}

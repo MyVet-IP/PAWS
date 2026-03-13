@@ -6,25 +6,30 @@
   <title>MedellinVet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="./frontend/assets/icons/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            lavender: '#cdb4db',
-            softpink: '#ffc8dd',
-            pink: '#ffafcc',
-            lightblue: '#bde0fe',
-            blue: '#a2d2ff',
-            green: '#C8E6C9',
-            white: '#ffffff',
-            gray: '#6b7280',
-          }
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          pawsGreen: "#B9FBC0",
+          pawsPurple: "#F1C0E8",
+          pawsYellow: "#FBF8CC",
+          pawsBlue: "#90BDF4",
+          pawsPink: "#FFCFD2",
+          pawsText: "#333333",
+          pawsSoftText: "#4A4A4A"
+        },
+        fontFamily: {
+          title: ["Poppins", "sans-serif"],
+          body: ["Roboto", "sans-serif"]
         }
       }
     }
+  }
   </script>
+<script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./frontend/css/task-manager.css">
   <link rel="stylesheet" href="./frontend/css/landing.css">
 </head>

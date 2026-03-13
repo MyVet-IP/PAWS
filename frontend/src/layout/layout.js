@@ -1,6 +1,6 @@
-import { Navbar } from "./components/navbar.js";
-import { Aside } from "./components/aside.js";
-import { Topbar } from "./components/topbar.js";
+import { Navbar } from "../components/navbar.js";
+import { Aside } from "../components/aside.js";
+import { Topbar } from "../components/topbar.js";
 
 export function Layout(viewContent, role, currentPath) {
 
@@ -33,4 +33,6 @@ export function Layout(viewContent, role, currentPath) {
     </div>
   `;
 }
+
+
 

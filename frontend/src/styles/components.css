@@ -1,0 +1,30 @@
+/* BOTÓN PRIMARIO */
+
+.btn-primary {
+  background: var(--green-pastel);
+  color: var(--text-primary);
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* BOTÓN SECUNDARIO */
+
+.btn-secondary {
+  background: white;
+  border: 2px solid var(--purple-pastel);
+  color: var(--text-highlight);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: var(--purple-pastel);
+}
