@@ -1,4 +1,4 @@
-export function loadLoginPage() {
+export function loginPage() {
     return `
     <section class="min-h-screen bg-pink font-sans">
         <main class="flex min-h-screen">
@@ -9,10 +9,8 @@ export function loadLoginPage() {
                     <div class="bg-gradient-to-b from-teal-700 to-teal-900 p-6 rounded-3xl shadow-lg ">
                         <div class="3modelcontainer"></div>
                     </div>
-                    <h2 class="mt-6 text-xl font-semibold text-blue">Cuidamos lo que amas</h2>
-                    <p class="mt-2 text-sm text-gray">
-                        conectando a los duenos de mascotas en medellin con los mejores profesionales veterinarios
-                    </p>
+                    <h2 class="mt-6 text-xl font-semibold text-blue">We care for what you love</h2>
+                    <p class="mt-2 text-sm text-gray"> connecting pet owners in Medellin with the best veterinary professionals</p>
                 </div>
             </section>
 
@@ -26,59 +24,46 @@ export function loadLoginPage() {
                         </span>
                         <span class="font-semibold text-purple">MedellinVet</span>
                     </div>
-
-                    <h1 class="text-2xl font-bold mb-1">¡Hola de nuevo!</h1>
+                    <h1 class="text-2xl font-bold mb-1">Welcome back!</h1>
                     <p class="text-sm text-gray mb-6">
-                        Ingresa tus credenciales para acceder a tu cuenta
+                        Enter your credentials to access your account
                     </p>
-
+                    <!--Form-->
+                    <p id="login-error" class="text-red-500 text-sm mb-2"></p>
                     <form id="login-form" class="space-y-4">
                         <div>
-                            <label class="text-sm ">Correo electronico</label>
-                            <input id="email" type="email" placeholder="mail@ejemplo.com"
-                                class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                            <label class="text-sm ">Email</label>
+                            <input id="login-email" type="email" placeholder="mail@example.com" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
 
                         <div>
-                            <label class="text-sm ">Contrasena</label>
-                            <input id="password" type="password" placeholder="********"
-                                class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1">
+                            <label class="text-sm ">Password</label>
+                            <input id="login-password" type="password" placeholder="********" class="mt-1 w-full px-4 py-2 rounded-full border focus:outline-none focus:ring-1" required>
                         </div>
 
                         <div class="flex justify-between items-center text-sm">
                             <label class="flex-items-center gap-2">
-                                <input type="checkbox" id="rememberMe">
-                                Recordarme
+                                <input type="checkbox">
+                                Remember me
                             </label>
                             <a href="#" class="text-pink hover:underline">
-                                ¿Olvidaste tu contraseña?
+                                Forgot your password?
                             </a>
                         </div>
-
-                        <div id="form-message" class="hidden mt-3 p-3 rounded text-sm"></div>
-
-                        <button
-                            class="w-full py-2 rounded-full bg-pink text-white font-semibold hover:opacity-90 transition">
-                            Iniciar Sesion
+                        <button class="w-full py-2 rounded-full bg-pink text-white font-semibold hover:opacity-90 transition">
+                            Sign In
                         </button>
-
-                        <div class="text-center text-xs text-gray">O continua con</div>
-
-                        <a href="http://localhost:4000/auth/google" class="flex gap-3">
-                            <button type="button" class="flex-1 border rounded-full py-2">
-                                Google
-                            </button>
-                        </a>
-
+                        <div class="text-center text-xs text-gray">Or continue with</div>
+                        <div class="flex gap-3">
+                            <button class="flex-1 border rounded-full py-2">Google</button>
+                        </div>
                         <p class="text-center text-sm mt-4">
-                            ¿No tienes cuenta?
-                            <a href="#" id="register-link" class="text-pink font-semibold">
-                                Registrarse
-                            </a>
+                            Don't have an account?
+                            <a href="#/register" class="text-pink font-semibold">Sign Up</a>
                         </p>
 
                         <div class="mt-6 text-xs text-center text-gray">
-                            MedellinVet | privacidad | terminos | soporte
+                            MedellinVet | privacy | terms | support
                         </div>
                     </form>
 
@@ -88,80 +73,31 @@ export function loadLoginPage() {
     </section>
     `;
 }
-
 export function loginEvents() {
+    const form = document.getElementById('login-form');
+    if (!form) return;
 
-    const loginForm = document.getElementById("login-form");
-    const loginMessage = document.getElementById("form-message");
-
-    if (!loginForm) return;
-
-    const registerLink = document.querySelector("#register-link");
-
-    if (registerLink) {
-        registerLink.addEventListener("click", (e) => {
-            e.preventDefault();
-            window.location.hash = "#/register";
-        });
-    }
-
-    loginForm.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const rememberMe = document.getElementById("rememberMe").checked;
-
-        if (!email || !password) {
-            showMessage(loginMessage, "Todos los campos son obligatorios", false);
-            return;
-        }
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const errBox = document.getElementById('login-error');
+        errBox.textContent = '';
 
         try {
-            const response = await fetch("http://localhost:4000/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
+            const data = await res.json();
+            if (!res.ok) { errBox.textContent = data.error; return; }
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                showMessage(loginMessage, data.message, false);
-                return;
-            }
-
-            if (rememberMe) {
-                localStorage.setItem("user", JSON.stringify(data));
-            } else {
-                sessionStorage.setItem("user", JSON.stringify(data));
-            }
-
-            showMessage(loginMessage, "Login exitoso ✔", true);
-
-            setTimeout(() => {
-                if (data.role === "vet") {
-                    window.location.hash = "#/pet-profile";
-                } else {
-                    window.location.hash = "#/user-dashboard";
-                }
-            }, 1000);
-
-        } catch (error) {
-            showMessage(loginMessage, "Error conectando con el servidor", false);
+            localStorage.setItem('currentUser', JSON.stringify(data));
+            window.location.hash = '#/user-dashboard';
+        } catch {
+            errBox.textContent = 'Connection error. Please try again.';
         }
     });
 }
 
-function showMessage(element, message, success) {
-    element.classList.remove("hidden");
-    element.classList.remove("bg-red-100", "text-red-700", "bg-green-100", "text-green-700");
-
-    if (success) {
-        element.classList.add("bg-green-100", "text-green-700");
-    } else {
-        element.classList.add("bg-red-100", "text-red-700");
-    }
-
-    element.textContent = message;
-}
