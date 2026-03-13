@@ -1,18 +1,29 @@
 ﻿const db = require('../db');
+const bcrypt = require('bcrypt');
+
+const SALT_ROUNDS = 10;
 
 module.exports = {
-    async getClienteByEmail(email) {
-        return db.get('SELECT * FROM clientes WHERE email = $1', [email]);
+    async getUserByEmail(email) {
+        return db.get(`SELECT * FROM users WHERE email = $1`, [email]);
     },
 
-    async createCliente(nombre, email, password, telefono = null) {
+    async createUser({ name, email, password, phone = null, role = 'user' }) {
+        const hashed = await bcrypt.hash(password, SALT_ROUNDS);
         const result = await db.get(
-            'INSERT INTO clientes (nombre, email, password, telefono) VALUES ($1, $2, $3, $4) RETURNING id_cliente',
-            [nombre, email, password, telefono]
+            `INSERT INTO users (name, email, password, phone, role)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING user_id`,
+            [name, email, hashed, phone, role]
         );
         return db.get(
-            'SELECT id_cliente, nombre, email, telefono, role FROM clientes WHERE id_cliente = $1',
-            [result.id_cliente]
+            `SELECT user_id, name, email, phone, role, created_at
+            FROM users WHERE user_id = $1`,
+            [result.user_id]
         );
+    },
+
+    async verifyPassword(plainText, hashed) {
+        return bcrypt.compare(plainText, hashed);
     }
 };

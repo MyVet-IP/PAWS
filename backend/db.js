@@ -77,7 +77,7 @@ class Database {
     return new Promise((resolve, reject) => {
       this.pool.query(sql, params, (err, result) => {
         if (err) {
-           reject(err);
+          reject(err);
         } else {
           const lastID = result.rows && result.rows[0] ? result.rows[0].id : result.insertId || null;
           resolve({

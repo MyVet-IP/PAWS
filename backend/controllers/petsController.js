@@ -1,9 +1,9 @@
-﻿const storage = require('../storage');
+﻿const petsStorage = require('../storage/petsStorage');
 
 exports.getAll = async (req, res, next) => {
     try {
-        const mascotas = await storage.getAllMascotas();
-        res.json(mascotas);
+        const pets = await petsStorage.getAll();
+        res.json(pets);
     } catch (err) {
         next(err);
     }
@@ -11,13 +11,18 @@ exports.getAll = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
     try {
-        const mascota = await storage.getMascotaById(req.params.id);
+        const pet = await petsStorage.getById(req.params.id);
+        if (!pet) return res.status(404).json({ error: 'Mascota no encontrada' });
+        res.json(pet);
+    } catch (err) {
+        next(err);
+    }
+};
 
-        if (!mascota) {
-            return res.status(404).json({ error: 'Mascota no encontrada' });
-        }
-
-        res.json(mascota);
+exports.getByUser = async (req, res, next) => {
+    try {
+        const pets = await petsStorage.getByUser(req.params.user_id);
+        res.json(pets);
     } catch (err) {
         next(err);
     }
@@ -25,15 +30,14 @@ exports.getById = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const { nombre, especie, raza, edad, id_cliente } = req.body;
+        const { name, species, breed, birth_date, weight_kg, user_id } = req.body;
 
-        // minimo necesitamos estos tres campos
-        if (!nombre || !especie || !id_cliente) {
-            return res.status(400).json({ error: 'nombre, especie e id_cliente son requeridos' });
+        if (!name || !species || !user_id) {
+            return res.status(400).json({ error: 'name, species y user_id son requeridos' });
         }
 
-        const mascota = await storage.createMascota(nombre, especie, raza, edad, id_cliente);
-        res.status(201).json(mascota);
+        const pet = await petsStorage.create({ name, species, breed, birth_date, weight_kg, user_id });
+        res.status(201).json(pet);
     } catch (err) {
         next(err);
     }
@@ -41,8 +45,17 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
-        const mascotaActualizada = await storage.updateMascota(req.params.id, req.body);
-        res.json(mascotaActualizada);
+        const pet = await petsStorage.update(req.params.id, req.body);
+        res.json(pet);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.remove = async (req, res, next) => {
+    try {
+        await petsStorage.remove(req.params.id);
+        res.json({ success: true });
     } catch (err) {
         next(err);
     }

@@ -1,9 +1,63 @@
-﻿const emergencyStorage = require('../storage/emergencyStorage');
-const veterinariasStorage = require('../storage/veterinariasStorage');
+﻿const emergenciesStorage = require('../storage/emergenciesStorage');
+const businessesStorage = require('../storage/businessesStorage');
+
+// ─── EMERGENCIES ──────────────────────────────────────────────────────────────
+
+exports.getAll = async (req, res, next) => {
+    try {
+        const emergencies = await emergenciesStorage.getAllEmergencies();
+        res.json(emergencies);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getById = async (req, res, next) => {
+    try {
+        const emergency = await emergenciesStorage.getEmergencyById(req.params.id);
+        if (!emergency) return res.status(404).json({ error: 'Emergencia no encontrada' });
+        res.json(emergency);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.create = async (req, res, next) => {
+    try {
+        const { pet_id, business_id, description } = req.body;
+
+        if (!pet_id || !business_id || !description) {
+            return res.status(400).json({ error: 'pet_id, business_id y description son requeridos' });
+        }
+
+        const emergency = await emergenciesStorage.createEmergency({ pet_id, business_id, description });
+        res.status(201).json(emergency);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.updateStatus = async (req, res, next) => {
+    try {
+        const { status } = req.body;
+        const allowed = ['open', 'in_progress', 'resolved'];
+
+        if (!status || !allowed.includes(status)) {
+            return res.status(400).json({ error: `status debe ser uno de: ${allowed.join(', ')}` });
+        }
+
+        const emergency = await emergenciesStorage.updateEmergencyStatus(req.params.id, status);
+        res.json(emergency);
+    } catch (err) {
+        next(err);
+    }
+};
+
+// ─── EMERGENCY MESSAGES ───────────────────────────────────────────────────────
 
 exports.getAllMessages = async (req, res, next) => {
     try {
-        const messages = await emergencyStorage.getAllEmergencyMessages();
+        const messages = await emergenciesStorage.getAllMessages();
         res.json(messages);
     } catch (err) {
         next(err);
@@ -12,56 +66,35 @@ exports.getAllMessages = async (req, res, next) => {
 
 exports.sendMessage = async (req, res, next) => {
     try {
-        const { mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia } = req.body;
+        const { business_id, emergency_id, message, contact_name, contact_phone, channel } = req.body;
 
-        const vet = await veterinariasStorage.getVeterinariaById(id_veterinaria);
-        if (!vet) {
-            return res.status(404).json({ error: 'Clinica no encontrada' });
+        if (!business_id || !message || !contact_name) {
+            return res.status(400).json({ error: 'business_id, message y contact_name son requeridos' });
         }
 
-        const registro = await emergencyStorage.createEmergencyMessage(
-            mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia || null
-        );
+        const business = await businessesStorage.getById(business_id);
+        if (!business) return res.status(404).json({ error: 'Negocio no encontrado' });
 
+        const registro = await emergenciesStorage.createMessage({
+            business_id, emergency_id, message, contact_name, contact_phone, channel
+        });
+
+        // Generar link de WhatsApp si el negocio tiene número
         let whatsappLink = null;
-        if (vet.whatsapp) {
-            const texto = `EMERGENCIA - ${nombre_contacto}: ${mensaje}`;
-            whatsappLink = `https://wa.me/${vet.whatsapp}?text=${encodeURIComponent(texto)}`;
+        if (business.whatsapp) {
+            const text = encodeURIComponent(`EMERGENCIA - ${contact_name}: ${message}`);
+            whatsappLink = `https://wa.me/${business.whatsapp}?text=${text}`;
         }
 
         res.status(201).json({
-            mensaje: registro,
+            message: registro,
             whatsappLink,
-            veterinaria: {
-                nombre: vet.nombre,
-                telefono: vet.telefono,
-                whatsapp: vet.whatsapp
+            business: {
+                name: business.name,
+                phone: business.phone,
+                whatsapp: business.whatsapp
             }
         });
-    } catch (err) {
-        next(err);
-    }
-};
-
-exports.getAll = async (req, res, next) => {
-    try {
-        const emergencias = await emergencyStorage.getAllEmergencias();
-        res.json(emergencias);
-    } catch (err) {
-        next(err);
-    }
-};
-
-exports.create = async (req, res, next) => {
-    try {
-        const { descripcion, id_mascota, id_veterinaria } = req.body;
-
-        if (!descripcion || !id_mascota || !id_veterinaria) {
-            return res.status(400).json({ error: 'descripcion, id_mascota e id_veterinaria son requeridos' });
-        }
-
-        const emergencia = await emergencyStorage.createEmergencia(descripcion, id_mascota, id_veterinaria);
-        res.status(201).json(emergencia);
     } catch (err) {
         next(err);
     }
