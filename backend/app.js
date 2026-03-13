@@ -1,41 +1,52 @@
 require('dotenv').config({ path: '../.env' });
-
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const db = require('./db');
+<<<<<<< HEAD
 const storage = require('./storage');
 const { errorHandler, notFound, validateBody } = require('./middleware');
 const { authenticateToken } = require('./middleware/auth');
+=======
+const { errorHandler, notFound } = require('./middleware');
+>>>>>>> 4259fd92f960b27ad695cc7466ee7b8c6cb64503
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+<<<<<<< HEAD
 // Allow credentials so browser will send/receive cookies during requests
 app.use(cors({ origin: true, credentials: true }));
+=======
+// ── Middlewares básicos ──────────────────────────────────────────────────────
+app.use(cors());
+>>>>>>> 4259fd92f960b27ad695cc7466ee7b8c6cb64503
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const frontendPath = path.join(__dirname, '..', 'frontend');
-const rootPath = path.join(__dirname, '..');
-app.use(express.static(rootPath));
-app.use(express.static(frontendPath));
+// ── Estáticos del frontend ───────────────────────────────────────────────────
+const noCache = {
+  etag: false,
+  lastModified: false,
+  setHeaders: res => res.setHeader('Cache-Control', 'no-store')
+};
+app.use(express.static(path.join(__dirname, '..'), noCache));
+app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
 
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'API running' });
-});
+// ── Health check ─────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => res.json({ ok: true, message: 'API corriendo' }));
 
-app.get('/api/clientes', async (req, res) => {
-  try {
-    const clientes = await storage.getAllClientes();
-    res.json(clientes);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// ── Rutas API ─────────────────────────────────────────────────────────────────
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/pets', require('./routes/pets'));
+app.use('/api/businesses', require('./routes/businesses'));
+app.use('/api/medical-records', require('./routes/medicalRecords'));
+app.use('/api/emergencies', require('./routes/emergencies'));
 
+<<<<<<< HEAD
 app.get('/api/clientes/:id', async (req, res) => {
   try {
     const cliente = await storage.getClienteById(req.params.id);
@@ -323,38 +334,35 @@ app.use('/api/auth', authRouter);
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
+=======
+// ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
+app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
+  res.sendFile(path.join(__dirname, '..', 'index.html'))
+);
+>>>>>>> 4259fd92f960b27ad695cc7466ee7b8c6cb64503
 
+// ── Error handlers (siempre al final) ────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
 
+// ── Arranque ──────────────────────────────────────────────────────────────────
 async function startServer() {
   try {
     await db.initialize();
     app.listen(PORT, () => {
       console.log(`\n========================================`);
-      console.log(` VetCare server started`);
-      console.log(` URL: http://localhost:${PORT}`);
-      console.log(` API: http://localhost:${PORT}/api/health`);
+      console.log(` Server: http://localhost:${PORT}`);
+      console.log(` API:    http://localhost:${PORT}/api/health`);
       console.log(`========================================\n`);
     });
-  } catch (error) {
-    console.error('Error starting server:', error);
+  } catch (err) {
+    console.error('Error iniciando servidor:', err);
     process.exit(1);
   }
 }
 
-process.on('SIGINT', async () => {
-  console.log('\n\nShutting down...');
-  await db.close();
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  console.log('\n\nShutting down...');
-  await db.close();
-  process.exit(0);
-});
+process.on('SIGINT', async () => { await db.close(); process.exit(0); });
+process.on('SIGTERM', async () => { await db.close(); process.exit(0); });
 
 startServer();
-
 module.exports = app;

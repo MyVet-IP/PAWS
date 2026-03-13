@@ -1,6 +1,4 @@
-const storage = require('../storage');
 const authStorage = require('../storage/authStorage');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const ACCESS_EXPIRES = '15m';
@@ -13,8 +11,28 @@ function createAccessToken(payload) {
 
 function createRefreshToken(payload) {
   const secret = process.env.REFRESH_SECRET || (process.env.JWT_SECRET || 'dev-secret');
-  // we'll sign refresh token with separate secret or same for simplicity
   return jwt.sign(payload, secret, { expiresIn: `${REFRESH_EXPIRES_SECONDS}s` });
+}
+
+async function register(req, res, next) {
+    try {
+        const { name, email, password, phone, role } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: 'name, email y password son requeridos' });
+        }
+
+        const existing = await authStorage.getUserByEmail(email);
+        if (existing) {
+            return res.status(400).json({ error: 'El email ya está registrado' });
+        }
+
+        const user = await authStorage.createUser({ name, email, password, phone, role });
+        res.status(201).json(user);
+
+    } catch (err) {
+        next(err);
+    }
 }
 
 async function login(req, res, next) {
@@ -22,32 +40,31 @@ async function login(req, res, next) {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
-    const cliente = await storage.getClienteByEmail(email);
-    if (!cliente) return res.status(401).json({ error: 'Invalid credentials' });
+    const user = await authStorage.getUserByEmail(email);
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const valid = await bcrypt.compare(password, cliente.password);
+    const valid = await authStorage.verifyPassword(password, user.password);
     if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const userPayload = { id: cliente.id_cliente, email: cliente.email };
+    const userPayload = { id: user.user_id, email: user.email, role: user.role };
     const accessToken = createAccessToken(userPayload);
     const refreshToken = createRefreshToken(userPayload);
 
     // persist refresh token
     const expiresAt = new Date(Date.now() + REFRESH_EXPIRES_SECONDS * 1000);
-    await authStorage.createRefreshToken(cliente.id_cliente, refreshToken, expiresAt);
+    await authStorage.createRefreshToken(user.user_id, refreshToken, expiresAt);
 
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      // access token short lived
     };
 
     res.cookie('access_token', accessToken, Object.assign({}, cookieOptions, { maxAge: 15 * 60 * 1000 }));
     res.cookie('refresh_token', refreshToken, Object.assign({}, cookieOptions, { maxAge: REFRESH_EXPIRES_SECONDS * 1000 }));
 
-    const { password: _, ...user } = cliente;
-    res.json({ user });
+    const { password: _, ...safeUser } = user;
+    res.json({ user: safeUser });
   } catch (err) {
     next(err);
   }
@@ -71,7 +88,7 @@ async function refresh(req, res, next) {
     if (!stored) return res.status(403).json({ error: 'Refresh token revoked' });
 
     // issue new access token
-    const accessToken = createAccessToken({ id: payload.id, email: payload.email });
+    const accessToken = createAccessToken({ id: payload.id, email: payload.email, role: payload.role });
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -103,7 +120,7 @@ async function me(req, res, next) {
   try {
     const userId = req.user && req.user.id;
     if (!userId) return res.status(401).json({ error: 'Not authenticated' });
-    const user = await storage.getClienteById(userId);
+    const user = await authStorage.getUserById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     const { password: _, ...safe } = user;
     res.json(safe);
@@ -112,4 +129,4 @@ async function me(req, res, next) {
   }
 }
 
-module.exports = { login, refresh, logout, me };
+module.exports = { register, login, refresh, logout, me };
