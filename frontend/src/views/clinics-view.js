@@ -73,7 +73,7 @@ export function clinicsPage() {
         </div>
 
         <div id="clinics-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          ${generateClinicCards()}
+          <div class="col-span-3 text-center py-12 text-gray-400">Cargando clínicas...</div>
         </div>
 
         <!-- Load More Button -->
@@ -136,74 +136,69 @@ export function clinicsPage() {
   `;
 }
 
-// Function to generate clinic cards
-function generateClinicCards() {
-  const clinics = [
-    {
-      id: 1,
-      name: 'Paws & Hearts Wellness',
-      location: 'Polanco, Mexico City',
-      rating: 4.9,
-      reviewCount: 127,
-      specialties: ['SURGERY', 'X-RAYS', 'DENTAL'],
-      image: './frontend/assets/images/lllll.jpg',
-      isSpecialist: true,
-      distance: '2.3 km'
-    },
-    {
-      id: 2,
-      name: 'Animal Medical Center',
-      location: 'Santa Fe, Mexico City',
-      rating: 4.8,
-      reviewCount: 89,
-      specialties: ['CARDIOLOGY', 'VACCINES'],
-      image: './frontend/assets/images/lllll.jpg',
-      emergency: true,
-      distance: '1.8 km'
-    },
-    {
-      id: 3,
-      name: 'San Francisco Hospital',
-      location: 'Condesa, Mexico City',
-      rating: 5.0,
-      reviewCount: 95,
-      specialties: ['LABORATORY', 'PHYSIOTHERAPY'],
-      image: './frontend/assets/images/lllll.jpg',
-      distance: '3.1 km'
-    },
-    {
-      id: 4,
-      name: 'Los Amigos Veterinary',
-      location: 'Roma Norte, Mexico City',
-      rating: 4.7,
-      reviewCount: 203,
-      specialties: ['CONSULTATION', 'VACCINES', 'GROOMING'],
-      image: './frontend/assets/images/lllll.jpg',
-      distance: '1.2 km'
-    },
-    {
-      id: 5,
-      name: 'Feline Specialized Clinic',
-      location: 'Doctores, Mexico City',
-      rating: 4.9,
-      reviewCount: 156,
-      specialties: ['FELINES', 'BEHAVIOR'],
-      image: './frontend/assets/images/lllll.jpg',
-      isSpecialist: true,
-      distance: '4.5 km'
-    },
-    {
-      id: 6,
-      name: '24/7 Veterinary Hospital',
-      location: 'Del Valle, Mexico City',
-      rating: 4.6,
-      reviewCount: 312,
-      specialties: ['EMERGENCY', 'SURGERY', 'X-RAYS'],
-      image: './frontend/assets/images/lllll.jpg',
-      emergency: true,
-      distance: '2.9 km'
+function renderClinicCard(clinic) {
+  const whatsappIcon = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+  return `
+    <div class="clinic-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div class="relative h-48">
+        <img src="${clinic.imagen || './frontend/assets/images/lllll.jpg'}" alt="${clinic.nombre}" class="w-full h-full object-cover">
+        <div class="absolute top-4 left-4 flex gap-2">
+          ${clinic.estado === 'Activa' ? '<span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Abierta</span>' : ''}
+        </div>
+        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
+          <span class="text-sm font-semibold text-yellow-500">★ ${clinic.rating || '4.9'}</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-1">${clinic.nombre}</h3>
+        <div class="flex items-center gap-2 text-gray-500 text-sm mb-4">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span>${clinic.direccion}</span>
+        </div>
+        <div class="flex gap-3 mb-3">
+          ${clinic.telefono ? `<a href="tel:${clinic.telefono}" class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium text-center">Llamar</a>` : ''}
+          <button onclick="viewClinicDetails(${clinic.id_veterinaria})" class="flex-1 border border-purple-600 text-purple-600 py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors text-sm font-medium">
+            Ver detalles
+          </button>
+        </div>
+        <button onclick="window.open('https://api.whatsapp.com/send/?phone=%2B573193052287&text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.nombre)}&type=phone_number&app_absent=0', '_blank')"
+          class="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
+          ${whatsappIcon}
+          Enviar WhatsApp
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+export async function initClinicsView() {
+  const grid = document.getElementById('clinics-grid');
+  const countEl = document.getElementById('results-count');
+  if (!grid) return;
+
+  try {
+    const res = await fetch('/api/clinics');
+    if (!res.ok) throw new Error('Error al cargar clínicas');
+    const clinics = await res.json();
+
+    if (clinics.length === 0) {
+      grid.innerHTML = '<p class="col-span-3 text-center text-gray-400 py-12">No se encontraron clínicas.</p>';
+      return;
     }
-  ];
+
+    if (countEl) countEl.textContent = clinics.length;
+    grid.innerHTML = clinics.map(renderClinicCard).join('');
+  } catch (err) {
+    grid.innerHTML = `<p class="col-span-3 text-center text-red-500 py-12">Error al cargar clínicas: ${err.message}</p>`;
+  }
+}
+
+function generateClinicCards() {
+  const clinics = [];
 
   return clinics.map(clinic => `
     <div class="clinic-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -251,6 +246,15 @@ function generateClinicCards() {
           <button onclick="bookAppointment(${clinic.id})" class="flex-1 border border-purple-600 text-purple-600 py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors text-sm font-medium">
             Reservar cita
           </button>
+        </div>
+        <div class="mt-3">
+          <a href="https://wa.me/573001234567?text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.name)}" target="_blank"
+            class="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Enviar WhatsApp
+          </a>
         </div>
       </div>
     </div>
