@@ -64,16 +64,5 @@ curl -i -b cookies.txt -c cookies.txt -X POST http://localhost:3000/api/auth/log
 ```
 
 Notas de seguridad y recomendaciones
-- En producción siempre usar `JWT_SECRET` y `REFRESH_SECRET` fuertes y distintos.
+- En producción siempre usar `JWT_SECRET` y `REFRESH_SECRET` fuertes y distintos. Se deben definir estas variables en .env
 - Habilitar `secure: true` en cookies (ya condicionado por `NODE_ENV === 'production'`).
-- Considerar protección CSRF para operaciones sensibles (double-submit cookie o tokens CSRF).
-- Opcional: implementar rotación de refresh tokens (emitir un nuevo refresh al usar `/refresh` y revocar el anterior).
-- Limitar el número de refresh tokens por usuario si no deseas múltiples sesiones por usuario.
-
-Siguientes pasos sugeridos
-- Proteger rutas específicas (por ejemplo: crear mascotas, reservar citas) usando `authenticateToken`.
-- Implementar rotación de refresh tokens y refresco automático desde frontend al recibir 401.
-- Añadir tests automáticos para el flujo de autenticación.
-
----
-Documento corto creado para la carpeta `docs` con la descripción de la integración de autenticación.
