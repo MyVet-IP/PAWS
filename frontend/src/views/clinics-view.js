@@ -1,3 +1,11 @@
+import { handleGeolocation, fetchClinics } from '../../../backend/services/clinics-service.js';
+const API_URL = 'http://localhost:3000/api/clinics';
+
+const state = {
+  coords: null,
+  debounceTimer: null
+};
+
 export function clinicsPage() {
   // Get search parameters from URL
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -40,7 +48,16 @@ export function clinicsPage() {
             <button onclick="searchClinicsHere()" class="bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors">
               Search
             </button>
+            <button id="btn-location" 
+              class="flex items-center gap-2 bg-purple-100 text-purple-700 px-5 py-3 rounded-xl hover:bg-purple-200 transition-colors font-medium text-sm">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                <circle cx="12" cy="9" r="2.5"/>
+              </svg>
+              <span id="btn-location-text">Use my location</span>
+            </button>
           </div>
+          <p id="location-status" class="text-sm mt-2 text-gray-500 hidden"></p>
         </div>
       </section>
 
@@ -123,6 +140,11 @@ export function clinicsPage() {
           searchClinicsHere();
         }
       });
+
+      
+
+
+
     </script>
 
     <style>
@@ -255,4 +277,10 @@ function generateClinicCards() {
       </div>
     </div>
   `).join('');
+}
+
+export function clinicsEvents() {
+  document.getElementById('btn-location')
+    ?.addEventListener('click', handleGeolocation);
+  fetchClinics();
 }

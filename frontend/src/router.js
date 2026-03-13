@@ -1,4 +1,4 @@
-import { clinicsPage } from "./views/clinics-view.js";
+import { clinicsPage, clinicsEvents } from "./views/clinics-view.js";
 import { petProfilepage } from "./views/pet-profile.js";
 import { loginPage, loginEvents } from "./views/login.js";
 import { landingPage, landingEvents } from "./views/landing-page.js";
@@ -51,6 +51,10 @@ export function router() {
         emergencyEvents();
       }
 
+      if (path === '/clinicas') {
+        clinicsEvents();
+      }
+
     } else {
       app.innerHTML = "<h1>Page not found</h1>";
     }
@@ -58,6 +62,8 @@ export function router() {
     console.error("Error loading view:", error);
     app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error loading view:</b><pre>${error.message}</pre></div>`;
   }
+
+  
 }
 
 // Function to initialize navigation events
