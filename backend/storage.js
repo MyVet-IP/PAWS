@@ -22,9 +22,14 @@ class Storage {
   }
 
   async createCliente(nombre, email, password, telefono = null) {
+    // Hash password before inserting
+    const bcrypt = require('bcryptjs');
+    const salt = bcrypt.genSaltSync(10);
+    const hashed = bcrypt.hashSync(password, salt);
+
     const result = await db.get(
       'INSERT INTO clientes (nombre, email, password, telefono) VALUES ($1, $2, $3, $4) RETURNING id_cliente',
-      [nombre, email, password, telefono]
+      [nombre, email, hashed, telefono]
     );
     return await this.getClienteById(result.id_cliente);
   }

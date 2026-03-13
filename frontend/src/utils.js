@@ -75,3 +75,42 @@ export function hideLoading() {
     loader.remove();
   }
 }
+
+// -------------------------
+// Auth helpers (JWT)
+// -------------------------
+export function setAuthToken(token) {
+  if (!token) return localStorage.removeItem('auth_token');
+  localStorage.setItem('auth_token', token);
+}
+
+export function getAuthToken() {
+  return localStorage.getItem('auth_token');
+}
+
+export function clearAuth() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('currentUser');
+}
+
+// Simple wrapper for fetch that attaches Authorization header when token exists
+export async function authFetch(input, init = {}) {
+  // Using cookie-based auth: include credentials so browser sends httpOnly cookies
+  const config = Object.assign({}, init, { credentials: 'include' });
+  const res = await fetch(input, config);
+  if (res.status === 401 || res.status === 403) {
+    // session expired or invalid; clear local user and allow callers to redirect
+    clearAuth();
+  }
+  return res;
+}
+
+export async function logoutUser() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  } catch (err) {
+    // ignore
+  }
+  clearAuth();
+  window.location.hash = '#/login';
+}

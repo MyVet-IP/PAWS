@@ -85,16 +85,23 @@ export function loginEvents() {
         errBox.textContent = '';
 
         try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (!res.ok) { errBox.textContent = data.error; return; }
+                        const res = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password })
+                        });
+                                    const data = await res.json();
+                                    if (!res.ok) { errBox.textContent = data.error; return; }
 
-            localStorage.setItem('currentUser', JSON.stringify(data));
-            window.location.hash = '#/user-dashboard';
+                                    // Server sets httpOnly cookies (access + refresh). We only store user info for UI.
+                                    if (data.user) {
+                                        localStorage.setItem('currentUser', JSON.stringify(data.user));
+                                    } else if (data.id_cliente || data.email) {
+                                        localStorage.setItem('currentUser', JSON.stringify(data));
+                                    }
+
+                                    window.location.hash = '#/user-dashboard';
         } catch {
             errBox.textContent = 'Connection error. Please try again.';
         }

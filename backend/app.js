@@ -2,17 +2,21 @@ require('dotenv').config({ path: '../.env' });
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const db = require('./db');
 const storage = require('./storage');
 const { errorHandler, notFound, validateBody } = require('./middleware');
+const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// Allow credentials so browser will send/receive cookies during requests
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const frontendPath = path.join(__dirname, '..', 'frontend');
 const rootPath = path.join(__dirname, '..');
@@ -312,22 +316,9 @@ app.post('/api/appointments', async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
-
-    const cliente = await storage.getClienteByEmail(email);
-    if (!cliente || cliente.password !== password) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const { password: _, ...user } = cliente;
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
+// Auth routes (login/refresh/logout/me) mounted from dedicated router
+const authRouter = require('./routes/auth');
+app.use('/api/auth', authRouter);
 
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));

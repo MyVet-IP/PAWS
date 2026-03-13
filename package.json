@@ -6,10 +6,14 @@
   "scripts": {
     "start": "node backend/app.js",
     "dev": "nodemon backend/app.js"
+    ,"hash-passwords": "node backend/scripts/hash-seed-passwords.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+  "cookie-parser": "^1.4.6",
     "pg": "^8.11.3",
     "dotenv": "^16.3.1"
   },

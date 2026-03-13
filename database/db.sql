@@ -93,6 +93,17 @@ CREATE TABLE IF NOT EXISTS veterinaria_servicios (
   FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio) ON DELETE CASCADE
 );
 
+-- Table to store refresh tokens (one per issued refresh token). Storing tokens
+-- allows revocation (logout) and rotation if needed.
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id SERIAL PRIMARY KEY,
+  id_cliente INTEGER NOT NULL,
+  token VARCHAR(512) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_mascotas_cliente ON mascotas(id_cliente);
 CREATE INDEX IF NOT EXISTS idx_visitas_mascota ON visitas(id_mascota);
 CREATE INDEX IF NOT EXISTS idx_visitas_veterinaria ON visitas(id_veterinaria);
