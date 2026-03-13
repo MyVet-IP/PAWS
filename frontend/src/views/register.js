@@ -66,13 +66,13 @@ export function registerPage() {
                         <p class="text-xs text-gray mt-3">I want to offer my services and clinics</p>
                     </div>
                 </div>
-                <button class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
+                <button type="submit" class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
                     Sign Up →
                 </button>
 
                 <p class="text-center text-sm mt-4">
                     Already have an account?
-                    <a href="../views/login.html" class="text-pink font-semibold">Sign In</a>
+                    <a href="#/login" class="text-pink font-semibold">Sign In</a>
                 </p>
 
                 <div

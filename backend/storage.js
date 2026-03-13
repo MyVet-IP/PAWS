@@ -63,7 +63,7 @@ class Storage {
     );
 
     for (let vet of veterinarias) {
-      vet.servicios = await this.getServiciosByVeterinaria(vet.id_veterinaria);
+      vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
     }
 
     return veterinarias;
@@ -76,7 +76,7 @@ class Storage {
     );
 
     if (veterinaria) {
-      veterinaria.servicios = await this.getServiciosByVeterinaria(id);
+      veterinaria.specialties = await this.getSpecialtiesByVeterinaria(id);
     }
 
     return veterinaria;
@@ -89,7 +89,7 @@ class Storage {
     );
 
     for (let vet of veterinarias) {
-      vet.servicios = await this.getServiciosByVeterinaria(vet.id_veterinaria);
+      vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
     }
 
     return veterinarias;
@@ -103,35 +103,35 @@ class Storage {
     return await this.getVeterinariaById(result.id_veterinaria);
   }
 
-  async getAllServicios() {
-    return await db.all('SELECT * FROM servicios ORDER BY id_servicio ASC');
+  async getAllSpecialties() {
+    return await db.all('SELECT * FROM specialties ORDER BY id_specialty ASC');
   }
 
-  async getServicioById(id) {
-    return await db.get('SELECT * FROM servicios WHERE id_servicio = $1', [id]);
+  async getSpecialtyById(id) {
+    return await db.get('SELECT * FROM specialties WHERE id_specialty = $1', [id]);
   }
 
-  async getServiciosByVeterinaria(id_veterinaria) {
+  async getSpecialtiesByVeterinaria(id_veterinaria) {
     return await db.all(
-      `SELECT s.* FROM servicios s
-       INNER JOIN veterinaria_servicios vs ON s.id_servicio = vs.id_servicio
+      `SELECT s.* FROM specialties s
+       INNER JOIN vet_specialties vs ON s.id_specialty = vs.id_specialty
        WHERE vs.id_veterinaria = $1`,
       [id_veterinaria]
     );
   }
 
-  async createServicio(nombre, descripcion = null) {
+  async createSpecialty(name) {
     const result = await db.get(
-      'INSERT INTO servicios (nombre, descripcion) VALUES ($1, $2) RETURNING id_servicio',
-      [nombre, descripcion]
+      'INSERT INTO specialties (name) VALUES ($1) RETURNING id_specialty',
+      [name]
     );
-    return await this.getServicioById(result.id_servicio);
+    return await this.getSpecialtyById(result.id_specialty);
   }
 
-  async addServicioToVeterinaria(id_veterinaria, id_servicio) {
+  async addSpecialtyToVeterinaria(id_veterinaria, id_specialty) {
     await db.run(
-      'INSERT INTO veterinaria_servicios (id_veterinaria, id_servicio) VALUES ($1, $2)',
-      [id_veterinaria, id_servicio]
+      'INSERT INTO vet_specialties (id_veterinaria, id_specialty) VALUES ($1, $2)',
+      [id_veterinaria, id_specialty]
     );
     return { success: true };
   }
