@@ -1,369 +1,345 @@
-require('dotenv').config({ path: '../.env' });
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const db = require('./db');
+
+// db module handles dotenv internally, but we also load it here
+// so process.env.PORT is available before db is imported
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+const db = require('./storage/db');
+const storage = require('./storage');
 const { errorHandler, notFound, validateBody } = require('./middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// middlewares basicos
+// --- Middlewares ---
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// servir archivos estaticos del frontend
+// Serve frontend static files
 const frontendPath = path.join(__dirname, '..', 'frontend');
 const rootPath = path.join(__dirname, '..');
 app.use(express.static(rootPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
 app.use(express.static(frontendPath, { etag: false, lastModified: false, setHeaders: (res) => { res.setHeader('Cache-Control', 'no-store'); } }));
 
-// endpoint de health check para verificar que el server esta corriendo
+// ======================== HEALTH CHECK ========================
+
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, message: 'API corriendo' });
+  res.json({ ok: true, message: 'PAWS API running' });
 });
 
-app.get('/api/clientes', async (req, res) => {
+// ======================== AUTH ========================
+
+app.post('/api/login', async (req, res, next) => {
   try {
-    const clientes = await storage.getAllClientes();
-    res.json(clientes);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const user = await storage.getUserByEmail(email);
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Strip password before sending
+    const { password: _, ...safeUser } = user;
+    res.json(safeUser);
+  } catch (err) {
+    next(err);
   }
 });
 
-app.get('/api/clientes/:id', async (req, res) => {
+// ======================== USERS (was /api/clientes) ========================
+
+app.get('/api/users', async (req, res, next) => {
   try {
-    const cliente = await storage.getClienteById(req.params.id);
-    if (!cliente) {
-      return res.status(404).json({ error: 'Client not found' });
-    }
-    res.json(cliente);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const users = await storage.getAllUsers();
+    res.json(users);
+  } catch (err) { next(err); }
 });
 
-app.post('/api/clientes', async (req, res) => {
+app.get('/api/users/:id', async (req, res, next) => {
   try {
-    const { nombre, email, password, telefono } = req.body;
+    const user = await storage.getUserById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) { next(err); }
+});
 
-    if (!nombre || !email || !password) {
-      return res.status(400).json({ error: 'nombre, email and password are required' });
+app.post('/api/users', async (req, res, next) => {
+  try {
+    const { name, email, password, phone } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'name, email and password are required' });
     }
-
-    const cliente = await storage.createCliente(nombre, email, password, telefono);
-    res.status(201).json(cliente);
-  } catch (error) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    const user = await storage.createUser(name, email, password, phone);
+    res.status(201).json(user);
+  } catch (err) {
+    if (err.code === '23505') {
       return res.status(400).json({ error: 'Email already registered' });
     }
-    res.status(500).json({ error: error.message });
+    next(err);
   }
 });
 
-app.put('/api/clientes/:id', async (req, res) => {
+app.put('/api/users/:id', async (req, res, next) => {
   try {
-    const cliente = await storage.updateCliente(req.params.id, req.body);
-    res.json(cliente);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const user = await storage.updateUser(req.params.id, req.body);
+    res.json(user);
+  } catch (err) { next(err); }
 });
 
-app.get('/api/clinics', async (req, res) => {
+app.get('/api/users/:id/dashboard', async (req, res, next) => {
+  try {
+    const dashboard = await storage.getUserDashboard(req.params.id);
+    res.json(dashboard);
+  } catch (err) { next(err); }
+});
+
+// ======================== CLINICS (was /api/clinics but now uses new schema) ========================
+
+app.get('/api/clinics', async (req, res, next) => {
   try {
     const { location } = req.query;
+    let clinics;
 
-    let veterinarias;
     if (location) {
-      veterinarias = await storage.getVeterinariasByLocation(location);
+      clinics = await storage.getClinicsByLocation(location);
     } else {
-      veterinarias = await storage.getAllVeterinarias();
+      clinics = await storage.getAllClinics();
     }
 
-    veterinarias = veterinarias.map(vet => ({
-      ...vet,
-      specialties: vet.servicios.map(s => s.nombre.toUpperCase()),
-      image: vet.imagen,
-      location: vet.direccion
+    // Add convenience fields for the frontend
+    // (the frontend used to expect "specialties" as uppercase strings, "image", "location")
+    clinics = clinics.map(c => ({
+      ...c,
+      specialties_list: c.specialties.map(s => s.name.toUpperCase()),
+      image: c.image_url,
+      location: c.address
     }));
 
-    res.json(veterinarias);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    res.json(clinics);
+  } catch (err) { next(err); }
 });
 
-app.get('/api/clinics/:id', async (req, res) => {
+app.get('/api/clinics/:id', async (req, res, next) => {
   try {
-    const veterinaria = await storage.getVeterinariaById(req.params.id);
-    if (!veterinaria) {
-      return res.status(404).json({ error: 'Clinic not found' });
+    const clinic = await storage.getClinicById(req.params.id);
+    if (!clinic) return res.status(404).json({ error: 'Clinic not found' });
+
+    clinic.specialties_list = clinic.specialties.map(s => s.name.toUpperCase());
+    clinic.image = clinic.image_url;
+    clinic.location = clinic.address;
+
+    res.json(clinic);
+  } catch (err) { next(err); }
+});
+
+app.post('/api/clinics', async (req, res, next) => {
+  try {
+    const { user_id, name, address } = req.body;
+    if (!user_id || !name || !address) {
+      return res.status(400).json({ error: 'user_id, name and address are required' });
     }
-
-    veterinaria.specialties = veterinaria.servicios.map(s => s.nombre.toUpperCase());
-    veterinaria.image = veterinaria.imagen;
-    veterinaria.location = veterinaria.direccion;
-
-    res.json(veterinaria);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const clinic = await storage.createClinic(req.body);
+    res.status(201).json(clinic);
+  } catch (err) { next(err); }
 });
 
-app.post('/api/veterinarias', async (req, res) => {
-  try {
-    const { nombre, direccion, telefono, estado, rating, imagen } = req.body;
+// ======================== SPECIALTIES (was /api/servicios) ========================
 
-    if (!nombre || !direccion) {
-      return res.status(400).json({ error: 'nombre and direccion are required' });
+app.get('/api/specialties', async (req, res, next) => {
+  try {
+    const specialties = await storage.getAllSpecialties();
+    res.json(specialties);
+  } catch (err) { next(err); }
+});
+
+app.post('/api/specialties', async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'name is required' });
+    const specialty = await storage.createSpecialty(name);
+    res.status(201).json(specialty);
+  } catch (err) { next(err); }
+});
+
+// ======================== PETS (was /api/mascotas) ========================
+
+app.get('/api/pets', async (req, res, next) => {
+  try {
+    const pets = await storage.getAllPets();
+    res.json(pets);
+  } catch (err) { next(err); }
+});
+
+app.get('/api/pets/:id', async (req, res, next) => {
+  try {
+    const pet = await storage.getPetById(req.params.id);
+    if (!pet) return res.status(404).json({ error: 'Pet not found' });
+    res.json(pet);
+  } catch (err) { next(err); }
+});
+
+app.post('/api/pets', async (req, res, next) => {
+  try {
+    const { name, species, user_id } = req.body;
+    if (!name || !species || !user_id) {
+      return res.status(400).json({ error: 'name, species and user_id are required' });
     }
-
-    const veterinaria = await storage.createVeterinaria(nombre, direccion, telefono, estado, rating, imagen);
-    res.status(201).json(veterinaria);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const pet = await storage.createPet(req.body);
+    res.status(201).json(pet);
+  } catch (err) { next(err); }
 });
 
-app.get('/api/servicios', async (req, res) => {
+app.put('/api/pets/:id', async (req, res, next) => {
   try {
-    const servicios = await storage.getAllServicios();
-    res.json(servicios);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const pet = await storage.updatePet(req.params.id, req.body);
+    res.json(pet);
+  } catch (err) { next(err); }
 });
 
-app.post('/api/servicios', async (req, res) => {
-  try {
-    const { nombre, descripcion } = req.body;
+// ======================== MEDICAL RECORDS (was /api/visitas) ========================
 
-    if (!nombre) {
-      return res.status(400).json({ error: 'nombre is required' });
+app.get('/api/medical-records', async (req, res, next) => {
+  try {
+    const records = await storage.getAllRecords();
+    res.json(records);
+  } catch (err) { next(err); }
+});
+
+app.get('/api/medical-records/pet/:id', async (req, res, next) => {
+  try {
+    const records = await storage.getRecordsByPet(req.params.id);
+    res.json(records);
+  } catch (err) { next(err); }
+});
+
+app.post('/api/medical-records', async (req, res, next) => {
+  try {
+    const { pet_id, clinic_id } = req.body;
+    if (!pet_id || !clinic_id) {
+      return res.status(400).json({ error: 'pet_id and clinic_id are required' });
     }
-
-    const servicio = await storage.createServicio(nombre, descripcion);
-    res.status(201).json(servicio);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const record = await storage.createRecord(req.body);
+    res.status(201).json(record);
+  } catch (err) { next(err); }
 });
 
-app.get('/api/mascotas', async (req, res) => {
+// Convenience alias — booking an appointment creates a medical record
+app.post('/api/appointments', async (req, res, next) => {
   try {
-    const mascotas = await storage.getAllMascotas();
-    res.json(mascotas);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/pets/:id', async (req, res) => {
-  try {
-    const mascota = await storage.getMascotaById(req.params.id);
-    if (!mascota) {
-      return res.status(404).json({ error: 'Pet not found' });
+    const { pet_id, clinic_id, reason } = req.body;
+    if (!pet_id || !clinic_id) {
+      return res.status(400).json({ error: 'pet_id and clinic_id are required' });
     }
-    res.json(mascota);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const record = await storage.createRecord({
+      pet_id,
+      clinic_id,
+      visit_type: 'appointment',
+      reason: reason || 'Scheduled appointment'
+    });
+    res.status(201).json(record);
+  } catch (err) { next(err); }
 });
 
-app.post('/api/mascotas', async (req, res) => {
-  try {
-    const { nombre, especie, raza, edad, id_cliente } = req.body;
+// ======================== EMERGENCIES (was /api/emergencias) ========================
 
-    if (!nombre || !especie || !id_cliente) {
-      return res.status(400).json({ error: 'nombre, especie and id_cliente are required' });
+app.get('/api/emergencies', async (req, res, next) => {
+  try {
+    const emergencies = await storage.getAllEmergencies();
+    res.json(emergencies);
+  } catch (err) { next(err); }
+});
+
+app.post('/api/emergencies', async (req, res, next) => {
+  try {
+    const { description, pet_id, business_id } = req.body;
+    if (!description || !pet_id || !business_id) {
+      return res.status(400).json({ error: 'description, pet_id and business_id are required' });
     }
-
-    const mascota = await storage.createMascota(nombre, especie, raza, edad, id_cliente);
-    res.status(201).json(mascota);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    const emergency = await storage.createEmergency(description, pet_id, business_id);
+    res.status(201).json(emergency);
+  } catch (err) { next(err); }
 });
 
-app.put('/api/pets/:id', async (req, res) => {
-  try {
-    const mascota = await storage.updateMascota(req.params.id, req.body);
-    res.json(mascota);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/visitas', async (req, res) => {
-  try {
-    const visitas = await storage.getAllVisitas();
-    res.json(visitas);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/visitas/mascota/:id', async (req, res) => {
-  try {
-    const visitas = await storage.getVisitasByMascota(req.params.id);
-    res.json(visitas);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/api/visitas', async (req, res) => {
-  try {
-    const { diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria } = req.body;
-
-    if (!id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
-    }
-
-    const visita = await storage.createVisita(diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria);
-    res.status(201).json(visita);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// ======================== EMERGENCY MESSAGES ========================
 
 app.get('/api/emergency-messages', async (req, res, next) => {
   try {
     const messages = await storage.getAllEmergencyMessages();
     res.json(messages);
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 });
 
-app.post('/api/emergency', validateBody(['mensaje', 'nombre_contacto', 'id_veterinaria']), async (req, res, next) => {
-  try {
-    const { mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia } = req.body;
+app.post('/api/emergency-messages',
+  validateBody(['message', 'contact_name', 'business_id']),
+  async (req, res, next) => {
+    try {
+      const { message, contact_name, contact_phone, business_id, emergency_id } = req.body;
 
-    const vet = await storage.getVeterinariaById(id_veterinaria);
-    if (!vet) return res.status(404).json({ error: 'Clinic not found' });
+      // Look up business to get whatsapp number
+      const business = await storage.getBusinessById(business_id);
+      if (!business) return res.status(404).json({ error: 'Business not found' });
 
-    const registro = await storage.createEmergencyMessage(
-      mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia || null
-    );
+      const record = await storage.createEmergencyMessage({
+        message, contact_name, contact_phone, business_id, emergency_id
+      });
 
-    let whatsappLink = null;
-    if (vet.whatsapp) {
-      whatsappLink = `https://wa.me/${vet.whatsapp}?text=${encodeURIComponent(`EMERGENCY - ${nombre_contacto}: ${mensaje}`)}`;
-    }
+      let whatsappLink = null;
+      if (business.whatsapp) {
+        whatsappLink = `https://wa.me/${business.whatsapp}?text=${encodeURIComponent(`EMERGENCY - ${contact_name}: ${message}`)}`;
+      }
 
-    res.status(201).json({
-      mensaje: registro,
-      whatsappLink,
-      veterinaria: { nombre: vet.nombre, telefono: vet.telefono, whatsapp: vet.whatsapp }
-    });
-  } catch (err) {
-    next(err);
+      res.status(201).json({
+        message: record,
+        whatsappLink,
+        business: { name: business.name, phone: business.phone, whatsapp: business.whatsapp }
+      });
+    } catch (err) { next(err); }
   }
-});
+);
 
-app.get('/api/emergencias', async (req, res) => {
-  try {
-    const emergencias = await storage.getAllEmergencias();
-    res.json(emergencias);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// ======================== SPA FALLBACK ========================
 
-app.post('/api/emergencias', async (req, res) => {
-  try {
-    const { descripcion, id_mascota, id_veterinaria } = req.body;
-
-    if (!descripcion || !id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'descripcion, id_mascota and id_veterinaria are required' });
-    }
-
-    const emergencia = await storage.createEmergencia(descripcion, id_mascota, id_veterinaria);
-    res.status(201).json(emergencia);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/users/:id/dashboard', async (req, res) => {
-  try {
-    const dashboard = await storage.getUserDashboard(req.params.id);
-    res.json(dashboard);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/api/appointments', async (req, res) => {
-  try {
-    const { id_mascota, id_veterinaria, fecha, motivo } = req.body;
-
-    if (!id_mascota || !id_veterinaria) {
-      return res.status(400).json({ error: 'id_mascota and id_veterinaria are required' });
-    }
-
-    const visita = await storage.createVisita(motivo || 'Scheduled appointment', null, null, id_mascota, id_veterinaria);
-    res.status(201).json(visita);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/api/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
-
-    const cliente = await storage.getClienteByEmail(email);
-    if (!cliente || cliente.password !== password) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const { password: _, ...user } = cliente;
-    res.json(user);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// redirigir todo lo que no sea /api al index.html (para el router del frontend)
+// Any non-API GET request serves index.html (for the frontend hash router)
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// middlewares de error - van al final siempre
+// ======================== ERROR HANDLING ========================
+
 app.use(notFound);
 app.use(errorHandler);
+
+// ======================== START SERVER ========================
 
 async function startServer() {
   try {
     await db.initialize();
     app.listen(PORT, () => {
       console.log(`\n========================================`);
-      console.log(` VetCare server started`);
+      console.log(` PAWS server started`);
       console.log(` URL: http://localhost:${PORT}`);
       console.log(` API: http://localhost:${PORT}/api/health`);
       console.log(`========================================\n`);
     });
   } catch (error) {
-    console.error('Error al iniciar el servidor:', error);
+    console.error('Failed to start server:', error.message);
     process.exit(1);
   }
 }
 
 process.on('SIGINT', async () => {
-  console.log('\n\nCerrando servidor...');
+  console.log('\nShutting down...');
   await db.close();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n\nCerrando servidor...');
   await db.close();
   process.exit(0);
 });
@@ -371,4 +347,3 @@ process.on('SIGTERM', async () => {
 startServer();
 
 module.exports = app;
-

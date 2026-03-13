@@ -1,313 +1,344 @@
-const db = require('./db');
+// Data access layer for PAWS
+// All methods use raw SQL via the db module (pg pool).
+// Rewritten to match the new ERD schema (English naming, businesses+clinics split, etc.)
+
+const db = require('./storage/db');
 
 class Storage {
-  async getAllClientes() {
+
+  // ======================== USERS (was "clientes") ========================
+
+  async getAllUsers() {
     return await db.all(
-      'SELECT id_cliente, nombre, email, telefono FROM clientes ORDER BY id_cliente ASC'
+      'SELECT user_id, name, email, phone, role, created_at FROM users ORDER BY user_id ASC'
     );
   }
 
-  async getClienteById(id) {
+  async getUserById(id) {
     return await db.get(
-      'SELECT id_cliente, nombre, email, telefono FROM clientes WHERE id_cliente = $1',
+      'SELECT user_id, name, email, phone, role, created_at FROM users WHERE user_id = $1',
       [id]
     );
   }
 
-  async getClienteByEmail(email) {
+  async getUserByEmail(email) {
+    // Returns ALL fields including password (needed for login check)
     return await db.get(
-      'SELECT * FROM clientes WHERE email = $1',
+      'SELECT * FROM users WHERE email = $1',
       [email]
     );
   }
 
-  async createCliente(nombre, email, password, telefono = null) {
+  async createUser(name, email, password, phone = null) {
     const result = await db.get(
-      'INSERT INTO clientes (nombre, email, password, telefono) VALUES ($1, $2, $3, $4) RETURNING id_cliente',
-      [nombre, email, password, telefono]
+      'INSERT INTO users (name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING user_id',
+      [name, email, password, phone]
     );
-    return await this.getClienteById(result.id_cliente);
+    return await this.getUserById(result.user_id);
   }
 
-  async updateCliente(id, data) {
+  async updateUser(id, data) {
     const fields = [];
     const values = [];
-    let paramCount = 1;
+    let p = 1;
 
-    if (data.nombre !== undefined) {
-      fields.push(`nombre = $${paramCount++}`);
-      values.push(data.nombre);
-    }
-    if (data.email !== undefined) {
-      fields.push(`email = $${paramCount++}`);
-      values.push(data.email);
-    }
-    if (data.telefono !== undefined) {
-      fields.push(`telefono = $${paramCount++}`);
-      values.push(data.telefono);
-    }
+    if (data.name !== undefined)  { fields.push(`name = $${p++}`);  values.push(data.name); }
+    if (data.email !== undefined) { fields.push(`email = $${p++}`); values.push(data.email); }
+    if (data.phone !== undefined) { fields.push(`phone = $${p++}`); values.push(data.phone); }
+
+    if (fields.length === 0) return await this.getUserById(id);
 
     values.push(id);
-
     await db.run(
-      `UPDATE clientes SET ${fields.join(', ')} WHERE id_cliente = $${paramCount}`,
+      `UPDATE users SET ${fields.join(', ')} WHERE user_id = $${p}`,
       values
     );
-
-    return await this.getClienteById(id);
+    return await this.getUserById(id);
   }
 
-  async getAllVeterinarias() {
-    const veterinarias = await db.all(
-      'SELECT * FROM veterinarias ORDER BY id_veterinaria ASC'
-    );
+  // ======================== BUSINESSES ========================
 
-    for (let vet of veterinarias) {
-      vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
+  async getBusinessById(id) {
+    return await db.get('SELECT * FROM businesses WHERE business_id = $1', [id]);
+  }
+
+  // ======================== CLINICS (was "veterinarias") ========================
+  // Each clinic is a business + a clinic extension row.
+  // Queries JOIN both tables to return the full picture.
+
+  async getAllClinics() {
+    const clinics = await db.all(`
+      SELECT c.clinic_id, c.service_type, c.is_24h, c.rating,
+             b.business_id, b.name, b.address, b.phone, b.whatsapp,
+             b.zone, b.latitude, b.longitude, b.image_url, b.status
+      FROM clinics c
+      JOIN businesses b ON b.business_id = c.business_id
+      ORDER BY b.name ASC
+    `);
+
+    for (let clinic of clinics) {
+      clinic.specialties = await this.getSpecialtiesByClinic(clinic.clinic_id);
     }
 
-    return veterinarias;
+    return clinics;
   }
 
-  async getVeterinariaById(id) {
-    const veterinaria = await db.get(
-      'SELECT * FROM veterinarias WHERE id_veterinaria = $1',
-      [id]
-    );
+  async getClinicById(id) {
+    const clinic = await db.get(`
+      SELECT c.clinic_id, c.service_type, c.is_24h, c.rating,
+             b.business_id, b.name, b.address, b.phone, b.whatsapp,
+             b.zone, b.latitude, b.longitude, b.image_url, b.status
+      FROM clinics c
+      JOIN businesses b ON b.business_id = c.business_id
+      WHERE c.clinic_id = $1
+    `, [id]);
 
-    if (veterinaria) {
-      veterinaria.specialties = await this.getSpecialtiesByVeterinaria(id);
+    if (clinic) {
+      clinic.specialties = await this.getSpecialtiesByClinic(id);
     }
 
-    return veterinaria;
+    return clinic;
   }
 
-  async getVeterinariasByLocation(location) {
-    const veterinarias = await db.all(
-      'SELECT * FROM veterinarias WHERE direccion LIKE $1 OR estado LIKE $2',
-      [`%${location}%`, `%${location}%`]
-    );
+  async getClinicsByLocation(location) {
+    const clinics = await db.all(`
+      SELECT c.clinic_id, c.service_type, c.is_24h, c.rating,
+             b.business_id, b.name, b.address, b.phone, b.whatsapp,
+             b.zone, b.latitude, b.longitude, b.image_url, b.status
+      FROM clinics c
+      JOIN businesses b ON b.business_id = c.business_id
+      WHERE b.address ILIKE $1 OR b.zone ILIKE $2
+      ORDER BY b.name ASC
+    `, [`%${location}%`, `%${location}%`]);
 
-    for (let vet of veterinarias) {
-      vet.specialties = await this.getSpecialtiesByVeterinaria(vet.id_veterinaria);
+    for (let clinic of clinics) {
+      clinic.specialties = await this.getSpecialtiesByClinic(clinic.clinic_id);
     }
 
-    return veterinarias;
+    return clinics;
   }
 
-  async createVeterinaria(nombre, direccion, telefono = null, estado = 'Activa', rating = 0, imagen = null) {
-    const result = await db.get(
-      'INSERT INTO veterinarias (nombre, direccion, telefono, estado, rating, imagen) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_veterinaria',
-      [nombre, direccion, telefono, estado, rating, imagen]
+  async createClinic(data) {
+    const { user_id, name, address, phone, whatsapp, zone, latitude, longitude, image_url, service_type, is_24h } = data;
+
+    // First create the business row
+    const business = await db.get(
+      `INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, zone, latitude, longitude, image_url, status)
+       VALUES ($1, 'clinic', $2, $3, $4, $5, $6, $7, $8, $9, 'active')
+       RETURNING business_id`,
+      [user_id, name, address, phone || null, whatsapp || null, zone || null, latitude || null, longitude || null, image_url || null]
     );
-    return await this.getVeterinariaById(result.id_veterinaria);
+
+    // Then create the clinic extension
+    const clinic = await db.get(
+      `INSERT INTO clinics (business_id, service_type, is_24h, rating)
+       VALUES ($1, $2, $3, 0)
+       RETURNING clinic_id`,
+      [business.business_id, service_type || 'public', is_24h || false]
+    );
+
+    return await this.getClinicById(clinic.clinic_id);
   }
+
+  // ======================== SPECIALTIES (was "servicios" in routes) ========================
 
   async getAllSpecialties() {
-    return await db.all('SELECT * FROM specialties ORDER BY id_specialty ASC');
-  }
-
-  async getSpecialtyById(id) {
-    return await db.get('SELECT * FROM specialties WHERE id_specialty = $1', [id]);
-  }
-
-  async getSpecialtiesByVeterinaria(id_veterinaria) {
-    return await db.all(
-      `SELECT s.* FROM specialties s
-       INNER JOIN vet_specialties vs ON s.id_specialty = vs.id_specialty
-       WHERE vs.id_veterinaria = $1`,
-      [id_veterinaria]
-    );
+    return await db.all('SELECT * FROM specialties ORDER BY specialty_id ASC');
   }
 
   async createSpecialty(name) {
     const result = await db.get(
-      'INSERT INTO specialties (name) VALUES ($1) RETURNING id_specialty',
+      'INSERT INTO specialties (name) VALUES ($1) RETURNING specialty_id',
       [name]
     );
-    return await this.getSpecialtyById(result.id_specialty);
+    return await db.get('SELECT * FROM specialties WHERE specialty_id = $1', [result.specialty_id]);
   }
 
-  async addSpecialtyToVeterinaria(id_veterinaria, id_specialty) {
+  async getSpecialtiesByClinic(clinic_id) {
+    return await db.all(
+      `SELECT s.specialty_id, s.name
+       FROM specialties s
+       JOIN clinic_specialties cs ON s.specialty_id = cs.specialty_id
+       WHERE cs.clinic_id = $1`,
+      [clinic_id]
+    );
+  }
+
+  async addSpecialtyToClinic(clinic_id, specialty_id) {
     await db.run(
-      'INSERT INTO vet_specialties (id_veterinaria, id_specialty) VALUES ($1, $2)',
-      [id_veterinaria, id_specialty]
+      'INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+      [clinic_id, specialty_id]
     );
     return { success: true };
   }
 
-  async getAllMascotas() {
+  // ======================== PETS (was "mascotas") ========================
+
+  async getAllPets() {
     return await db.all(
-      `SELECT m.*, c.nombre AS cliente_nombre
-       FROM mascotas m
-       INNER JOIN clientes c ON c.id_cliente = m.id_cliente
-       ORDER BY m.id_mascota ASC`
+      `SELECT p.*, u.name AS owner_name
+       FROM pets p
+       JOIN users u ON u.user_id = p.user_id
+       ORDER BY p.pet_id ASC`
     );
   }
 
-  async getMascotaById(id) {
+  async getPetById(id) {
     return await db.get(
-      `SELECT m.*, c.nombre AS cliente_nombre, c.email AS cliente_email, c.telefono AS cliente_telefono
-       FROM mascotas m
-       INNER JOIN clientes c ON c.id_cliente = m.id_cliente
-       WHERE m.id_mascota = $1`,
+      `SELECT p.*, u.name AS owner_name, u.email AS owner_email, u.phone AS owner_phone
+       FROM pets p
+       JOIN users u ON u.user_id = p.user_id
+       WHERE p.pet_id = $1`,
       [id]
     );
   }
 
-  async getMascotasByCliente(id_cliente) {
+  async getPetsByUser(user_id) {
     return await db.all(
-      'SELECT * FROM mascotas WHERE id_cliente = $1 ORDER BY id_mascota ASC',
-      [id_cliente]
+      'SELECT * FROM pets WHERE user_id = $1 ORDER BY pet_id ASC',
+      [user_id]
     );
   }
 
-  async createMascota(nombre, especie, raza = null, edad = null, id_cliente) {
+  async createPet(data) {
+    const { name, species, breed, birth_date, weight_kg, user_id } = data;
     const result = await db.get(
-      'INSERT INTO mascotas (nombre, especie, raza, edad, id_cliente) VALUES ($1, $2, $3, $4, $5) RETURNING id_mascota',
-      [nombre, especie, raza, edad, id_cliente]
+      `INSERT INTO pets (name, species, breed, birth_date, weight_kg, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING pet_id`,
+      [name, species, breed || null, birth_date || null, weight_kg || null, user_id]
     );
-    return await this.getMascotaById(result.id_mascota);
+    return await this.getPetById(result.pet_id);
   }
 
-  async updateMascota(id, data) {
+  async updatePet(id, data) {
     const fields = [];
     const values = [];
-    let paramCount = 1;
+    let p = 1;
 
-    if (data.nombre !== undefined) {
-      fields.push(`nombre = $${paramCount++}`);
-      values.push(data.nombre);
-    }
-    if (data.especie !== undefined) {
-      fields.push(`especie = $${paramCount++}`);
-      values.push(data.especie);
-    }
-    if (data.raza !== undefined) {
-      fields.push(`raza = $${paramCount++}`);
-      values.push(data.raza);
-    }
-    if (data.edad !== undefined) {
-      fields.push(`edad = $${paramCount++}`);
-      values.push(data.edad);
-    }
+    if (data.name !== undefined)       { fields.push(`name = $${p++}`);       values.push(data.name); }
+    if (data.species !== undefined)    { fields.push(`species = $${p++}`);    values.push(data.species); }
+    if (data.breed !== undefined)      { fields.push(`breed = $${p++}`);      values.push(data.breed); }
+    if (data.birth_date !== undefined) { fields.push(`birth_date = $${p++}`); values.push(data.birth_date); }
+    if (data.weight_kg !== undefined)  { fields.push(`weight_kg = $${p++}`);  values.push(data.weight_kg); }
+
+    if (fields.length === 0) return await this.getPetById(id);
 
     values.push(id);
-
     await db.run(
-      `UPDATE mascotas SET ${fields.join(', ')} WHERE id_mascota = $${paramCount}`,
+      `UPDATE pets SET ${fields.join(', ')} WHERE pet_id = $${p}`,
       values
     );
-
-    return await this.getMascotaById(id);
+    return await this.getPetById(id);
   }
 
-  async getAllVisitas() {
+  // ======================== MEDICAL RECORDS (was "visitas") ========================
+
+  async getAllRecords() {
     return await db.all(
-      `SELECT v.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
-       FROM visitas v
-       INNER JOIN mascotas m ON m.id_mascota = v.id_mascota
-       INNER JOIN veterinarias vet ON vet.id_veterinaria = v.id_veterinaria
-       ORDER BY v.fecha DESC`
+      `SELECT mr.*, p.name AS pet_name, b.name AS clinic_name
+       FROM medical_records mr
+       JOIN pets p ON p.pet_id = mr.pet_id
+       JOIN clinics c ON c.clinic_id = mr.clinic_id
+       JOIN businesses b ON b.business_id = c.business_id
+       ORDER BY mr.visit_date DESC`
     );
   }
 
-  async getVisitaById(id) {
+  async getRecordById(id) {
     return await db.get(
-      `SELECT v.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
-       FROM visitas v
-       INNER JOIN mascotas m ON m.id_mascota = v.id_mascota
-       INNER JOIN veterinarias vet ON vet.id_veterinaria = v.id_veterinaria
-       WHERE v.id_visita = $1`,
+      `SELECT mr.*, p.name AS pet_name, b.name AS clinic_name
+       FROM medical_records mr
+       JOIN pets p ON p.pet_id = mr.pet_id
+       JOIN clinics c ON c.clinic_id = mr.clinic_id
+       JOIN businesses b ON b.business_id = c.business_id
+       WHERE mr.record_id = $1`,
       [id]
     );
   }
 
-  async getVisitasByMascota(id_mascota) {
+  async getRecordsByPet(pet_id) {
     return await db.all(
-      `SELECT v.*, vet.nombre AS veterinaria_nombre
-       FROM visitas v
-       INNER JOIN veterinarias vet ON vet.id_veterinaria = v.id_veterinaria
-       WHERE v.id_mascota = $1
-       ORDER BY v.fecha DESC`,
-      [id_mascota]
+      `SELECT mr.*, b.name AS clinic_name
+       FROM medical_records mr
+       JOIN clinics c ON c.clinic_id = mr.clinic_id
+       JOIN businesses b ON b.business_id = c.business_id
+       WHERE mr.pet_id = $1
+       ORDER BY mr.visit_date DESC`,
+      [pet_id]
     );
   }
 
-  async createVisita(diagnostico = null, medicamentos = null, chequeos = null, id_mascota, id_veterinaria) {
+  async createRecord(data) {
+    const { pet_id, clinic_id, user_id, visit_type, reason, diagnosis, treatment, notes } = data;
     const result = await db.get(
-      'INSERT INTO visitas (diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria) VALUES ($1, $2, $3, $4, $5) RETURNING id_visita',
-      [diagnostico, medicamentos, chequeos, id_mascota, id_veterinaria]
+      `INSERT INTO medical_records (pet_id, clinic_id, user_id, visit_type, reason, diagnosis, treatment, notes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING record_id`,
+      [pet_id, clinic_id, user_id || null, visit_type || 'general', reason || null, diagnosis || null, treatment || null, notes || null]
     );
-    return await this.getVisitaById(result.id_visita);
+    return await this.getRecordById(result.record_id);
   }
 
-  async getAllEmergencias() {
+  // ======================== EMERGENCIES (was "emergencias") ========================
+
+  async getAllEmergencies() {
     return await db.all(
-      `SELECT e.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
-       FROM emergencias e
-       INNER JOIN mascotas m ON m.id_mascota = e.id_mascota
-       INNER JOIN veterinarias vet ON vet.id_veterinaria = e.id_veterinaria
-       ORDER BY e.fecha DESC`
+      `SELECT e.*, p.name AS pet_name, b.name AS business_name
+       FROM emergencies e
+       JOIN pets p ON p.pet_id = e.pet_id
+       JOIN businesses b ON b.business_id = e.business_id
+       ORDER BY e.created_at DESC`
     );
   }
 
-  async getEmergenciaById(id) {
+  async createEmergency(description, pet_id, business_id) {
+    const result = await db.get(
+      `INSERT INTO emergencies (description, pet_id, business_id)
+       VALUES ($1, $2, $3) RETURNING emergency_id`,
+      [description, pet_id, business_id]
+    );
     return await db.get(
-      `SELECT e.*, m.nombre AS mascota_nombre, vet.nombre AS veterinaria_nombre
-       FROM emergencias e
-       INNER JOIN mascotas m ON m.id_mascota = e.id_mascota
-       INNER JOIN veterinarias vet ON vet.id_veterinaria = e.id_veterinaria
-       WHERE e.id_emergencia = $1`,
-      [id]
+      `SELECT e.*, p.name AS pet_name, b.name AS business_name
+       FROM emergencies e
+       JOIN pets p ON p.pet_id = e.pet_id
+       JOIN businesses b ON b.business_id = e.business_id
+       WHERE e.emergency_id = $1`,
+      [result.emergency_id]
     );
   }
 
-  async createEmergencia(descripcion, id_mascota, id_veterinaria) {
-    const result = await db.get(
-      'INSERT INTO emergencias (descripcion, id_mascota, id_veterinaria) VALUES ($1, $2, $3) RETURNING id_emergencia',
-      [descripcion, id_mascota, id_veterinaria]
-    );
-    return await this.getEmergenciaById(result.id_emergencia);
-  }
-
-  async createEmergencyMessage(mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia = null) {
-    const row = await db.get(
-      `INSERT INTO emergency_messages (mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id_mensaje`,
-      [mensaje, nombre_contacto, telefono_contacto, id_veterinaria, id_emergencia]
-    );
-    return await db.get('SELECT * FROM emergency_messages WHERE id_mensaje = $1', [row.id_mensaje]);
-  }
+  // ======================== EMERGENCY MESSAGES ========================
 
   async getAllEmergencyMessages() {
     return await db.all(
-      `SELECT em.*, v.nombre AS veterinaria_nombre, v.whatsapp
+      `SELECT em.*, b.name AS business_name, b.whatsapp
        FROM emergency_messages em
-       JOIN veterinarias v ON v.id_veterinaria = em.id_veterinaria
-       ORDER BY em.fecha DESC`
+       JOIN businesses b ON b.business_id = em.business_id
+       ORDER BY em.created_at DESC`
     );
   }
 
-  async getEmergencyMessagesByVeterinaria(id_veterinaria) {
-    return await db.all(
-      'SELECT * FROM emergency_messages WHERE id_veterinaria = $1 ORDER BY fecha DESC',
-      [id_veterinaria]
+  async createEmergencyMessage(data) {
+    const { message, contact_name, contact_phone, business_id, emergency_id } = data;
+    const row = await db.get(
+      `INSERT INTO emergency_messages (message, contact_name, contact_phone, business_id, emergency_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING message_id`,
+      [message, contact_name, contact_phone || null, business_id, emergency_id || null]
     );
+    return await db.get('SELECT * FROM emergency_messages WHERE message_id = $1', [row.message_id]);
   }
 
-  async getUserDashboard(id_cliente) {
-    const cliente = await this.getClienteById(id_cliente);
-    const mascotas = await this.getMascotasByCliente(id_cliente);
+  // ======================== USER DASHBOARD ========================
 
-    for (let mascota of mascotas) {
-      mascota.visitas = await this.getVisitasByMascota(mascota.id_mascota);
+  async getUserDashboard(user_id) {
+    const user = await this.getUserById(user_id);
+    const pets = await this.getPetsByUser(user_id);
+
+    for (let pet of pets) {
+      pet.medical_records = await this.getRecordsByPet(pet.pet_id);
     }
 
-    return {
-      cliente,
-      mascotas
-    };
+    return { user, pets };
   }
 }
 

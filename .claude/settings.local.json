@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(js|html|css\\)$\")",
+      "Bash(grep -r require.*routes /c/Users/frede/Documents/Xime/PAWS/backend --include=*.js)"
+    ]
+  }
+}

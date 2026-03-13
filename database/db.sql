@@ -1,155 +1,301 @@
--- MyVet database schema -- PostgreSQL
-
-CREATE TABLE IF NOT EXISTS clientes (
-  id_cliente SERIAL PRIMARY KEY,
-  nombre VARCHAR(120) NOT NULL,
+﻿CREATE TABLE IF NOT EXISTS users (
+  user_id SERIAL PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
   email VARCHAR(180) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  telefono VARCHAR(30),
-  role VARCHAR(20) DEFAULT 'user' CHECK (role IN ('user', 'admin'))
-);
-
-CREATE TABLE IF NOT EXISTS veterinarias (
-  id_veterinaria SERIAL PRIMARY KEY,
-  nombre VARCHAR(140) NOT NULL,
-  direccion VARCHAR(200) NOT NULL,
-  telefono VARCHAR(30),
-  whatsapp VARCHAR(30),
-  estado VARCHAR(60),
-  rating DECIMAL(2,1) DEFAULT 0,
-  imagen VARCHAR(255),
-  zone VARCHAR(100),
-  service_type VARCHAR(20) DEFAULT 'public' CHECK (service_type IN ('public', 'private')),
-  is_24h BOOLEAN DEFAULT FALSE,
-  latitude DECIMAL(10,7),
-  longitude DECIMAL(10,7)
+  phone VARCHAR(30),
+  role VARCHAR(30) DEFAULT 'user' CHECK (role IN ('user', 'business', 'admin')),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS specialties (
-  id_specialty SERIAL PRIMARY KEY,
+  specialty_id SERIAL PRIMARY KEY,
   name VARCHAR(120) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS animal_types (
+  animal_type_id SERIAL PRIMARY KEY,
+  name VARCHAR(80) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE IF NOT EXISTS businesses (
+  business_id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  business_type VARCHAR(30) NOT NULL CHECK (business_type IN ('clinic', 'shelter', 'petshop', 'dog_walker', 'daycare')),
+  name VARCHAR(140) NOT NULL,
+  address VARCHAR(200) NOT NULL,
+  phone VARCHAR(30),
+  whatsapp VARCHAR(30),
+  email VARCHAR(180),
+  zone VARCHAR(100),
+  latitude DECIMAL(10,7),
+  longitude DECIMAL(10,7),
+  image_url VARCHAR(255),
+  status VARCHAR(60) DEFAULT 'active',
+  nit VARCHAR(50),
+  nit_verified VARCHAR(30),
+  nit_verified_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS pets (
+  pet_id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  species VARCHAR(80) NOT NULL,
+  breed VARCHAR(100),
+  birth_date DATE,
+  weight_kg DECIMAL(6,2),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS clinics (
+  clinic_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  service_type VARCHAR(20) DEFAULT 'public' CHECK (service_type IN ('public', 'private')),
+  is_24h BOOLEAN DEFAULT FALSE,
+  rating DECIMAL(2,1) DEFAULT 0,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS shelters (
+  shelter_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS petshops (
+  petshop_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS dog_walkers (
+  walker_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  bio TEXT,
+  service_area VARCHAR(200),
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS daycares (
+  daycare_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS vets (
+  vet_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL,
+  license_number VARCHAR(100),
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS schedules (
-  id_schedule SERIAL PRIMARY KEY,
-  id_veterinaria INTEGER NOT NULL,
+  schedule_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL,
   day_of_week VARCHAR(10) NOT NULL CHECK (day_of_week IN ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')),
   open_time TIME,
   close_time TIME,
   is_open BOOLEAN DEFAULT TRUE,
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE CASCADE
+  UNIQUE (business_id, day_of_week),
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS animal_types (
-  id_animal_type SERIAL PRIMARY KEY,
-  name VARCHAR(80) NOT NULL UNIQUE
+CREATE TABLE IF NOT EXISTS emergencies (
+  emergency_id SERIAL PRIMARY KEY,
+  pet_id INTEGER NOT NULL,
+  business_id INTEGER NOT NULL,
+  description TEXT NOT NULL,
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'resolved', 'cancelled')),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  resolved_at TIMESTAMP,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE RESTRICT
 );
 
-CREATE TABLE IF NOT EXISTS guarderias (
-  id_guarderia SERIAL PRIMARY KEY,
-  nombre VARCHAR(140) NOT NULL,
-  direccion VARCHAR(200) NOT NULL,
-  telefono VARCHAR(30)
+
+CREATE TABLE IF NOT EXISTS medical_records (
+  record_id SERIAL PRIMARY KEY,
+  pet_id INTEGER NOT NULL,
+  clinic_id INTEGER NOT NULL,
+  user_id INTEGER,
+  visit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  visit_type VARCHAR(50) DEFAULT 'general',
+  reason TEXT,
+  diagnosis TEXT,
+  treatment TEXT,
+  notes TEXT,
+  file_url VARCHAR(500),
+  file_original_name VARCHAR(255),
+  file_mime_type VARCHAR(100),
+  file_size_bytes INTEGER,
+  next_visit_date DATE,
+  follow_up_notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS refugios (
-  id_refugio SERIAL PRIMARY KEY,
-  nombre VARCHAR(140) NOT NULL,
-  direccion VARCHAR(200) NOT NULL,
-  telefono VARCHAR(30)
+CREATE TABLE IF NOT EXISTS clinic_specialties (
+  clinic_id INTEGER NOT NULL,
+  specialty_id INTEGER NOT NULL,
+  PRIMARY KEY (clinic_id, specialty_id),
+  FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE CASCADE,
+  FOREIGN KEY (specialty_id) REFERENCES specialties(specialty_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS mascotas (
-  id_mascota SERIAL PRIMARY KEY,
-  nombre VARCHAR(120) NOT NULL,
-  especie VARCHAR(80) NOT NULL,
-  raza VARCHAR(100),
-  edad INTEGER CHECK (edad >= 0),
-  id_cliente INTEGER NOT NULL,
-  FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS visitas (
-  id_visita SERIAL PRIMARY KEY,
-  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  diagnostico VARCHAR(255),
-  medicamentos VARCHAR(255),
-  chequeos VARCHAR(255),
-  id_mascota INTEGER NOT NULL,
-  id_veterinaria INTEGER NOT NULL,
-  FOREIGN KEY (id_mascota) REFERENCES mascotas(id_mascota) ON DELETE CASCADE,
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT
-);
-
-CREATE TABLE IF NOT EXISTS emergencias (
-  id_emergencia SERIAL PRIMARY KEY,
-  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  descripcion VARCHAR(255) NOT NULL,
-  id_mascota INTEGER NOT NULL,
-  id_veterinaria INTEGER NOT NULL,
-  FOREIGN KEY (id_mascota) REFERENCES mascotas(id_mascota) ON DELETE CASCADE,
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT
-);
-
-CREATE TABLE IF NOT EXISTS emergency_messages (
-  id_mensaje SERIAL PRIMARY KEY,
-  mensaje TEXT NOT NULL,
-  nombre_contacto VARCHAR(120) NOT NULL,
-  telefono_contacto VARCHAR(30),
-  canal VARCHAR(30) DEFAULT 'whatsapp',
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'resolved')),
-  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  id_veterinaria INTEGER NOT NULL,
-  id_emergencia INTEGER,
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE RESTRICT,
-  FOREIGN KEY (id_emergencia) REFERENCES emergencias(id_emergencia) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS clinic_animal_types (
+  clinic_id INTEGER NOT NULL,
+  animal_type_id INTEGER NOT NULL,
+  PRIMARY KEY (clinic_id, animal_type_id),
+  FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE CASCADE,
+  FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS vet_specialties (
-  id_veterinaria INTEGER NOT NULL,
-  id_specialty INTEGER NOT NULL,
-  PRIMARY KEY (id_veterinaria, id_specialty),
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE CASCADE,
-  FOREIGN KEY (id_specialty) REFERENCES specialties(id_specialty) ON DELETE CASCADE
+  vet_id INTEGER NOT NULL,
+  specialty_id INTEGER NOT NULL,
+  PRIMARY KEY (vet_id, specialty_id),
+  FOREIGN KEY (vet_id) REFERENCES vets(vet_id) ON DELETE CASCADE,
+  FOREIGN KEY (specialty_id) REFERENCES specialties(specialty_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS vet_animal_types (
-  id_veterinaria INTEGER NOT NULL,
-  id_animal_type INTEGER NOT NULL,
-  PRIMARY KEY (id_veterinaria, id_animal_type),
-  FOREIGN KEY (id_veterinaria) REFERENCES veterinarias(id_veterinaria) ON DELETE CASCADE,
-  FOREIGN KEY (id_animal_type) REFERENCES animal_types(id_animal_type) ON DELETE CASCADE
+  vet_id INTEGER NOT NULL,
+  animal_type_id INTEGER NOT NULL,
+  PRIMARY KEY (vet_id, animal_type_id),
+  FOREIGN KEY (vet_id) REFERENCES vets(vet_id) ON DELETE CASCADE,
+  FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_mascotas_cliente ON mascotas(id_cliente);
-CREATE INDEX IF NOT EXISTS idx_visitas_mascota ON visitas(id_mascota);
-CREATE INDEX IF NOT EXISTS idx_visitas_veterinaria ON visitas(id_veterinaria);
-CREATE INDEX IF NOT EXISTS idx_emergencias_mascota ON emergencias(id_mascota);
-CREATE INDEX IF NOT EXISTS idx_emergencias_veterinaria ON emergencias(id_veterinaria);
-CREATE INDEX IF NOT EXISTS idx_emergency_messages_veterinaria ON emergency_messages(id_veterinaria);
-CREATE INDEX IF NOT EXISTS idx_emergency_messages_emergencia ON emergency_messages(id_emergencia);
-CREATE INDEX IF NOT EXISTS idx_schedules_veterinaria ON schedules(id_veterinaria);
-CREATE INDEX IF NOT EXISTS idx_vet_specialties_veterinaria ON vet_specialties(id_veterinaria);
-CREATE INDEX IF NOT EXISTS idx_vet_animal_types_veterinaria ON vet_animal_types(id_veterinaria);
+CREATE TABLE IF NOT EXISTS shelter_pets (
+  shelter_pet_id SERIAL PRIMARY KEY,
+  shelter_id INTEGER NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  species VARCHAR(80) NOT NULL,
+  breed VARCHAR(100),
+  birth_date DATE,
+  weight_kg DECIMAL(6,2),
+  gender VARCHAR(20),
+  description TEXT,
+  image_url VARCHAR(255),
+  status VARCHAR(30) DEFAULT 'available' CHECK (status IN ('available', 'adopted', 'fostered', 'medical_hold')),
+  intake_date DATE,
+  intake_reason VARCHAR(200),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE CASCADE
+);
 
--- Seed data
+CREATE TABLE IF NOT EXISTS daycare_slots (
+  slot_id SERIAL PRIMARY KEY,
+  daycare_id INTEGER NOT NULL,
+  day_of_week VARCHAR(10) NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  capacity INTEGER NOT NULL DEFAULT 1,
+  is_active BOOLEAN DEFAULT TRUE,
+  FOREIGN KEY (daycare_id) REFERENCES daycares(daycare_id) ON DELETE CASCADE
+);
 
-INSERT INTO clientes (nombre, email, password, telefono) VALUES
-  ('Andres Restrepo',  'andres.restrepo@gmail.com',   '123456', '3046712893'),
-  ('Camila Montoya',   'camila.montoya@hotmail.com',  '123456', '3113489205'),
-  ('Juan Gomez',       'juangomez94@gmail.com',       '123456', '3204561738'),
-  ('Natalia Herrera',  'nherrera.med@outlook.com',    '123456', '3157823046')
+CREATE TABLE IF NOT EXISTS emergency_messages (
+  message_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL,
+  emergency_id INTEGER,
+  message TEXT NOT NULL,
+  contact_name VARCHAR(120) NOT NULL,
+  contact_phone VARCHAR(30),
+  channel VARCHAR(30) DEFAULT 'whatsapp',
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'resolved')),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE RESTRICT,
+  FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id) ON DELETE SET NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS adoptions (
+  adoption_id SERIAL PRIMARY KEY,
+  shelter_id INTEGER NOT NULL,
+  shelter_pet_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  pet_id INTEGER,
+  adoption_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE RESTRICT,
+  FOREIGN KEY (shelter_pet_id) REFERENCES shelter_pets(shelter_pet_id) ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS daycare_bookings (
+  booking_id SERIAL PRIMARY KEY,
+  slot_id INTEGER NOT NULL,
+  pet_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  booking_date DATE NOT NULL,
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (slot_id) REFERENCES daycare_slots(slot_id) ON DELETE RESTRICT,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+CREATE INDEX IF NOT EXISTS idx_businesses_user ON businesses(user_id);
+CREATE INDEX IF NOT EXISTS idx_businesses_type ON businesses(business_type);
+CREATE INDEX IF NOT EXISTS idx_pets_user ON pets(user_id);
+CREATE INDEX IF NOT EXISTS idx_medical_records_pet ON medical_records(pet_id);
+CREATE INDEX IF NOT EXISTS idx_medical_records_clinic ON medical_records(clinic_id);
+CREATE INDEX IF NOT EXISTS idx_emergencies_pet ON emergencies(pet_id);
+CREATE INDEX IF NOT EXISTS idx_emergencies_business ON emergencies(business_id);
+CREATE INDEX IF NOT EXISTS idx_emergency_messages_business ON emergency_messages(business_id);
+CREATE INDEX IF NOT EXISTS idx_emergency_messages_emergency ON emergency_messages(emergency_id);
+CREATE INDEX IF NOT EXISTS idx_schedules_business ON schedules(business_id);
+CREATE INDEX IF NOT EXISTS idx_shelter_pets_shelter ON shelter_pets(shelter_id);
+CREATE INDEX IF NOT EXISTS idx_adoptions_shelter ON adoptions(shelter_id);
+CREATE INDEX IF NOT EXISTS idx_adoptions_user ON adoptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_slots_daycare ON daycare_slots(daycare_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_bookings_slot ON daycare_bookings(slot_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_bookings_user ON daycare_bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_vets_business ON vets(business_id);
+
+
+INSERT INTO users (name, email, password, phone, role) VALUES
+  ('Admin PAWS',       'admin@paws.local',            '123456', NULL,          'admin'),
+  ('Andres Restrepo',  'andres.restrepo@gmail.com',   '123456', '3046712893',  'user'),
+  ('Camila Montoya',   'camila.montoya@hotmail.com',  '123456', '3113489205',  'user'),
+  ('Juan Gomez',       'juangomez94@gmail.com',       '123456', '3204561738',  'user'),
+  ('Natalia Herrera',  'nherrera.med@outlook.com',    '123456', '3157823046',  'user')
 ON CONFLICT (email) DO NOTHING;
 
-INSERT INTO veterinarias (nombre, direccion, telefono, whatsapp, estado, rating, imagen, zone, service_type, is_24h, latitude, longitude) VALUES
-  ('Clinica Veterinaria El Poblado',      'Cra. 43A #16-22, El Poblado, Medellin',       '6042567890', '573193052287', 'Activa', 4.9, './frontend/assets/images/lllll.jpg', 'El Poblado',    'private', TRUE,  6.2086, -75.5659),
-  ('Centro Medico Veterinario Laureles',  'Cra. 76 #33-45, Laureles, Medellin',          '6043234567', '573193052287', 'Activa', 4.8, './frontend/assets/images/lllll.jpg', 'Laureles',      'private', FALSE, 6.2442, -75.5906),
-  ('Veterinaria Envigado',                'Cll. 38 Sur #43-12, Envigado, Antioquia',     '6044512380', '573193052287', 'Activa', 5.0, './frontend/assets/images/lllll.jpg', 'Envigado',      'public',  TRUE,  6.1700, -75.5920),
-  ('Clinica Animal Belen',                'Cra. 76 #50-23, Belen, Medellin',             '6043987654', '573193052287', 'Activa', 4.7, './frontend/assets/images/lllll.jpg', 'Belen',         'public',  FALSE, 6.2364, -75.6108),
-  ('VetSalud Sabaneta',                   'Cll. 77 Sur #43-10, Sabaneta, Antioquia',     '6044678901', '573193052287', 'Activa', 4.6, './frontend/assets/images/lllll.jpg', 'Sabaneta',      'private', FALSE, 6.1516, -75.6149),
-  ('Veterinaria Bello Norte',             'Cra. 50 #45-67, Bello, Antioquia',            '6044234567', '573193052287', 'Activa', 4.4, './frontend/assets/images/lllll.jpg', 'Bello',         'public',  FALSE, 6.3295, -75.5593),
-  ('Clinica Veterinaria Robledo',         'Cra. 80 #65-12, Robledo, Medellin',           '6042901234', '573193052287', 'Activa', 4.5, './frontend/assets/images/lllll.jpg', 'Robledo',       'public',  FALSE, 6.2722, -75.6100),
-  ('Veterinaria La Candelaria',           'Cll. 44 #52-25, La Candelaria, Medellin',     '6042512345', '573193052287', 'Activa', 4.3, './frontend/assets/images/lllll.jpg', 'La Candelaria', 'public',  TRUE,  6.2518, -75.5636)
+INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, zone, latitude, longitude, image_url, status) VALUES
+  (1, 'clinic', 'Clinica Veterinaria El Poblado',     'Cra. 43A #16-22, El Poblado, Medellin',   '6042567890', '573193052287', 'El Poblado',    6.2086,  -75.5659, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Centro Medico Veterinario Laureles', 'Cra. 76 #33-45, Laureles, Medellin',      '6043234567', '573193052287', 'Laureles',      6.2442,  -75.5906, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria Envigado',               'Cll. 38 Sur #43-12, Envigado, Antioquia', '6044512380', '573193052287', 'Envigado',      6.1700,  -75.5920, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Clinica Animal Belen',               'Cra. 76 #50-23, Belen, Medellin',         '6043987654', '573193052287', 'Belen',         6.2364,  -75.6108, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'VetSalud Sabaneta',                  'Cll. 77 Sur #43-10, Sabaneta, Antioquia', '6044678901', '573193052287', 'Sabaneta',      6.1516,  -75.6149, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria Bello Norte',            'Cra. 50 #45-67, Bello, Antioquia',        '6044234567', '573193052287', 'Bello',         6.3295,  -75.5593, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Clinica Veterinaria Robledo',        'Cra. 80 #65-12, Robledo, Medellin',       '6042901234', '573193052287', 'Robledo',       6.2722,  -75.6100, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria La Candelaria',          'Cll. 44 #52-25, La Candelaria, Medellin', '6042512345', '573193052287', 'La Candelaria', 6.2518,  -75.5636, './frontend/assets/images/lllll.jpg', 'active')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO clinics (business_id, service_type, is_24h, rating) VALUES
+  (1, 'private', TRUE,  4.9),
+  (2, 'private', FALSE, 4.8),
+  (3, 'public',  TRUE,  5.0),
+  (4, 'public',  FALSE, 4.7),
+  (5, 'private', FALSE, 4.6),
+  (6, 'public',  FALSE, 4.4),
+  (7, 'public',  FALSE, 4.5),
+  (8, 'public',  TRUE,  4.3)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO specialties (name) VALUES
@@ -175,28 +321,21 @@ INSERT INTO animal_types (name) VALUES
   ('Fish')
 ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO vet_specialties (id_veterinaria, id_specialty)
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Surgery','X-Ray','Dental','Emergency')        WHERE v.nombre = 'Clinica Veterinaria El Poblado'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Cardiology','Vaccination','Laboratory')       WHERE v.nombre = 'Centro Medico Veterinario Laureles'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Laboratory','Physiotherapy','Emergency')      WHERE v.nombre = 'Veterinaria Envigado'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Vaccination','Dental','Grooming')             WHERE v.nombre = 'Clinica Animal Belen'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Surgery','X-Ray','Boarding')                 WHERE v.nombre = 'VetSalud Sabaneta'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Vaccination','Grooming','Boarding')           WHERE v.nombre = 'Veterinaria Bello Norte'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Vaccination','Laboratory','Dental')           WHERE v.nombre = 'Clinica Veterinaria Robledo'
-UNION ALL
-SELECT v.id_veterinaria, s.id_specialty FROM veterinarias v JOIN specialties s ON s.name IN ('Surgery','Emergency','Cardiology')            WHERE v.nombre = 'Veterinaria La Candelaria'
+INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES
+  (1, 3), (1, 4), (1, 5), (1, 9),
+  (2, 6), (2, 1), (2, 7),
+  (3, 7), (3, 8), (3, 9),
+  (4, 1), (4, 5), (4, 2),
+  (5, 3), (5, 4), (5, 10),
+  (6, 1), (6, 2), (6, 10),
+  (7, 1), (7, 7), (7, 5),
+  (8, 3), (8, 9), (8, 6)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO mascotas (nombre, especie, raza, edad, id_cliente) VALUES
-  ('Bruno',  'Dog', 'Golden Retriever', 3, 1),
-  ('Mochi',  'Cat',  'Persian',            2, 1),
-  ('Coco',   'Dog', 'French Bulldog',   4, 2),
-  ('Nina',   'Cat',  'Siamese',           1, 3),
-  ('Dante',  'Dog', 'Labrador',         6, 4)
+INSERT INTO pets (user_id, name, species, breed, birth_date, weight_kg) VALUES
+  (2, 'Bruno', 'Dog', 'Golden Retriever', '2023-03-15', 30.5),
+  (2, 'Mochi', 'Cat', 'Persian',          '2024-03-15', 4.2),
+  (3, 'Coco',  'Dog', 'French Bulldog',   '2022-03-15', 12.0),
+  (4, 'Nina',  'Cat', 'Siamese',          '2025-03-15', 3.8),
+  (5, 'Dante', 'Dog', 'Labrador',         '2020-03-15', 32.0)
 ON CONFLICT DO NOTHING;

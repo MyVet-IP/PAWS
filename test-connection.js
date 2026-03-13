@@ -1,7 +1,3 @@
-// Script to test the PostgreSQL database connection
-//Important file, do not delete or modify without fully understanding it, in other words please don't touch it, thank you
-//I repeat, don't move this because it's important to verify that the database is working correctly before running the backend
-
 require('dotenv').config({ path: '../.env' });
 const db = require('./backend/db');
 
@@ -31,7 +27,7 @@ async function testConnection() {
     }
     console.log('');
 
-    // Verify sample data
+
     console.log('Testing data reading...');
     const clientes = await db.all('SELECT COUNT(*) as count FROM clientes');
     const veterinarias = await db.all('SELECT COUNT(*) as count FROM veterinarias');

@@ -1,52 +1,46 @@
-require('dotenv').config({ path: '../.env' });
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-});
-
-module.exports = pool;
+// Database connection module for PAWS
+// Uses PostgreSQL via the 'pg' library with a connection pool.
+// Supports SSL for Azure deployment.
 
 const path = require('path');
 const fs = require('fs');
+const { Pool } = require('pg');
+
+// Load .env from the project root.
+// Using absolute path so it works regardless of CWD.
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 
 const DB_CONFIG = {
   host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'myvet_db',
-  user: process.env.DB_USER || 'ulith',
-  password: process.env.DB_PASSWORD || 'Uge1011390919.',
+  port: parseInt(process.env.DB_PORT) || 5432,
+  database: process.env.DB_NAME || 'paws_db',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '',
 };
 
-const SCHEMA_PATH = path.join(__dirname, '..', 'database', 'db.sql');
+// Azure requires SSL — enable it when DB_SSL=true in .env
+if (process.env.DB_SSL === 'true') {
+  DB_CONFIG.ssl = { rejectUnauthorized: false };
+}
+
+// Path to the schema file — two levels up from backend/storage/ to project root
+const SCHEMA_PATH = path.join(__dirname, '..', '..', 'database', 'db.sql');
 
 class Database {
   constructor() {
     this.pool = null;
   }
 
-  connect() {
-    return new Promise((resolve, reject) => {
-      try {
-        this.pool = new Pool(DB_CONFIG);
-        this.pool.query('SELECT NOW()', (err, result) => {
-          if (err) {
-            console.error('Failed to connect to PostgreSQL:', err);
-            reject(err);
-          } else {
-            console.log('Connected to PostgreSQL');
-            console.log(`Database: ${DB_CONFIG.database}`);
-            resolve();
-          }
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
+  async connect() {
+    this.pool = new Pool(DB_CONFIG);
+    try {
+      await this.pool.query('SELECT NOW()');
+      console.log('Connected to PostgreSQL');
+      console.log(`Database: ${DB_CONFIG.database} @ ${DB_CONFIG.host}`);
+    } catch (err) {
+      console.error('Failed to connect to PostgreSQL:', err.message);
+      throw err;
+    }
   }
 
   async initialize() {
@@ -58,88 +52,51 @@ class Database {
       );
 
       if (parseInt(tableCheck.count) === 0) {
-        console.log('Initializing database schema...');
+        console.log('No tables found — initializing schema...');
         const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
         await this.exec(schema);
-        console.log('Schema initialized');
+        console.log('Schema initialized successfully.');
       } else {
-        console.log(`Database has ${tableCheck.count} tables`);
+        console.log(`Database already has ${tableCheck.count} tables.`);
       }
 
       return this;
     } catch (error) {
-      console.error('Error initializing database:', error);
+      console.error('Error initializing database:', error.message);
       throw error;
     }
   }
 
-  run(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.pool.query(sql, params, (err, result) => {
-        if (err) {
-           reject(err);
-        } else {
-          const lastID = result.rows && result.rows[0] ? result.rows[0].id : result.insertId || null;
-          resolve({
-            lastID: lastID,
-            changes: result.rowCount
-          });
-        }
-      });
-    });
+  // INSERT, UPDATE, DELETE — returns { changes: rowCount }
+  async run(sql, params = []) {
+    const result = await this.pool.query(sql, params);
+    return { changes: result.rowCount };
   }
 
-  get(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.pool.query(sql, params, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.rows[0] || null);
-        }
-      });
-    });
+  // SELECT single row — returns object or null
+  async get(sql, params = []) {
+    const result = await this.pool.query(sql, params);
+    return result.rows[0] || null;
   }
 
-  all(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.pool.query(sql, params, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.rows);
-        }
-      });
-    });
+  // SELECT multiple rows — returns array
+  async all(sql, params = []) {
+    const result = await this.pool.query(sql, params);
+    return result.rows;
   }
 
+  // Execute raw SQL (for schema init, etc.)
   async exec(sql) {
-    try {
-      await this.pool.query(sql);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    await this.pool.query(sql);
   }
 
-  close() {
-    return new Promise((resolve, reject) => {
-      if (this.pool) {
-        this.pool.end((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log('Database connection closed');
-            resolve();
-          }
-        });
-      } else {
-        resolve();
-      }
-    });
+  // Close the pool
+  async close() {
+    if (this.pool) {
+      await this.pool.end();
+      console.log('Database connection closed.');
+    }
   }
 }
 
-const database = new Database();
-
-module.exports = database;
+module.exports = new Database();

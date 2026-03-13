@@ -5,7 +5,6 @@ router.get('/visitas', visitsController.getAll);
 router.get('/visitas/mascota/:id', visitsController.getByPet);
 router.post('/visitas', visitsController.create);
 
-// ruta para agendar citas desde el frontend
 router.post('/appointments', visitsController.createAppointment);
 
 module.exports = router;
