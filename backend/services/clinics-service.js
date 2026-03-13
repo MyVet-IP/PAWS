@@ -10,7 +10,7 @@ const state = {
 // ── Botón de geolocalización ───────────────────────────────
 export function handleGeolocation() {
   if (!navigator.geolocation) {
-    showLocationStatus('⚠ Tu navegador no soporta geolocalización.', 'text-red-500');
+    showLocationStatus('Tu navegador no soporta geolocalización.', 'text-red-500');
     return;
   }
 
@@ -20,7 +20,7 @@ export function handleGeolocation() {
   btn.disabled = true;
   btn.classList.add('opacity-60', 'cursor-not-allowed');
   text.textContent = 'Getting location...';
-  showLocationStatus('📡 Solicitando permisos de ubicación...', 'text-gray-500');
+  showLocationStatus('Requesting location permissions (Check the box Remember this decision for better service)...', 'text-gray-500');
 
   navigator.geolocation.getCurrentPosition(
     (pos) => {
@@ -33,7 +33,7 @@ export function handleGeolocation() {
       btn.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-purple-100', 'text-purple-700');
       btn.classList.add('bg-green-100', 'text-green-700');
       text.textContent = 'Location active';
-      showLocationStatus('📍 Ubicación detectada — buscando clínicas en 10 km', 'text-green-600');
+      showLocationStatus('Location detected — searching for clinics within 10 km', 'text-green-600');
 
       fetchClinics();
     },
@@ -43,9 +43,9 @@ export function handleGeolocation() {
       resetLocationBtn();
 
       const msgs = {
-        1: '⚠ Permiso de ubicación denegado.',
-        2: '⚠ No se pudo determinar tu ubicación.',
-        3: '⚠ La solicitud de ubicación tardó demasiado.',
+        1: 'Location permission denied.',
+        2: 'Your location could not be determined.',
+        3: 'The location request took too long.',
       };
       showLocationStatus(msgs[err.code] || '⚠ Error obteniendo ubicación.', 'text-red-500');
     },

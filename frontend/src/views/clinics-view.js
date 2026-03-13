@@ -282,5 +282,13 @@ function generateClinicCards() {
 export function clinicsEvents() {
   document.getElementById('btn-location')
     ?.addEventListener('click', handleGeolocation);
+
+  // Banner de invitación si aún no tiene ubicación activa
+  const status = document.getElementById('location-status');
+  if (status) {
+    status.className = 'text-sm mt-2 text-purple-600';
+    status.textContent = 'Activate your location to see the clinics closest to your location.';
+  }
+
   fetchClinics();
 }
