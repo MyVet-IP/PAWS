@@ -1,6 +1,6 @@
 import { getUser } from "../utils.js";
 
-export function NavbarController() {
+export function navbarController() {
 
   const user = getUser();
 
@@ -90,15 +90,15 @@ export function NavbarController() {
   `;
 }
 
-  export function navbarEvents() {
-    const loginBtn = document.getElementById("btn-login");
+export function navbarEvents() {
+  const loginBtn = document.getElementById("btn-login");
 
-    if(loginBtn) {
-      loginBtn.addEventListener("click", () => {
-        window.location.hash = "#/login";
-      });
-    }
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      window.location.hash = "#/login";
+    });
   }
+}
 
 
 

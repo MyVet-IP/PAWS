@@ -1,4 +1,4 @@
-import { NavbarController, navbarEvents } from "../components/navbar.js";
+import { navbarController, navbarEvents } from "../components/navbar.js";
 import { Aside } from "../components/aside.js";
 import { Topbar } from "../components/topbar.js";
 import { getUser } from "../utils.js";
@@ -6,16 +6,16 @@ import { Footer } from "../components/footer.js";
 
 export function Layout(content) {
 
-  const user = getUser ();
+  const user = getUser();
   const role = user ? user.role : "guest";
 
   const currentPath = window.location.hash || "#/";
 
-    // if this is guest
-    if (role === "guest") {
+  // if this is guest
+  if (role === "guest") {
 
-        const html = `
-          ${NavbarController()}
+    const html = `
+          ${navbarController()}
 
           <main class="p-6">
             ${content}
@@ -23,13 +23,13 @@ export function Layout(content) {
           ${Footer()}
         `;
 
-        setTimeout(navbarEvents,0);
+    setTimeout(navbarEvents, 0);
 
-        return html;
-      }
+    return html;
+  }
 
-      // if is user or vet.
-      return `
+  // if is user or vet.
+  return `
         <div class="flex h-screen">
 
           ${Aside(role)}
@@ -47,7 +47,7 @@ export function Layout(content) {
         </div>
 
       `;
-    }
+}
 
 
 
