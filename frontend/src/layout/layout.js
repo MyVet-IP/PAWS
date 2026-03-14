@@ -1,4 +1,4 @@
-import { NavbarController, navbarEvents } from "../components/navbar.js";
+import { navbarController, navbarEvents } from "../components/navbar.js";
 import { Aside } from "../components/aside.js";
 import { Topbar } from "../components/topbar.js";
 import { getUser } from "../utils.js";
@@ -15,7 +15,7 @@ export function Layout(content) {
     if (role === "guest") {
 
         const html = `
-          ${NavbarController()}
+          ${navbarController()}
 
           <main class="p-6">
             ${content}

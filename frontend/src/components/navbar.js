@@ -1,6 +1,6 @@
 import { getUser } from "../utils.js";
 
-export function NavbarController() {
+export function navbarController() {
 
   const user = getUser();
 
