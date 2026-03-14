@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./db');
 const { errorHandler, notFound } = require('./middleware');
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,51 @@ app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
   res.sendFile(path.join(__dirname, '..', 'index.html'))
 );
 
+// ── REGISTER DB ──────────────────────────────────────────────────────────────────────
+
+app.post("/api/register", async (req, res) => {
+
+  const { name, email, password, role } = req.body;
+
+  try {
+
+    // verificar si el email ya existe
+    const existingUser = await db.get(
+      "SELECT user_id FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Este correo ya está registrado"
+      });
+    }
+
+    // encriptar contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // insertar usuario
+    await db.run(
+      "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4)",
+      [name, email, hashedPassword, role]
+    );
+
+    res.status(201).json({
+      message: "Usuario registrado correctamente"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error en el servidor :P"
+    });
+
+  }
+
+});
+
 // ── Error handlers (siempre al final) ────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
@@ -63,3 +109,4 @@ process.on('SIGTERM', async () => { await db.close(); process.exit(0); });
 
 startServer();
 module.exports = app;
+

@@ -18,8 +18,8 @@ const DB_CONFIG = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'myvet_db',
-  user: process.env.DB_USER || 'ulith',
-  password: process.env.DB_PASSWORD || 'Uge1011390919.',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || 'M3b4r_434753',
 };
 
 const SCHEMA_PATH = path.join(__dirname, '..', 'database', 'db.sql');
