@@ -1,0 +1,207 @@
+export function aboutUsPage() {
+  const team = [
+    { name: 'Ulith', role: 'Project Lead', emoji: '👩‍💼', color: '#F1C0E8' },
+    { name: 'Ximena', role: 'Backend & Deployment', emoji: '👩‍💻', color: '#90BDF4' },
+    { name: 'Anderson', role: 'Research & Field Work', emoji: '🔍', color: '#B9FBC0' },
+    { name: 'Andreina', role: 'UI/UX Design', emoji: '🎨', color: '#FBF8CC' },
+    { name: 'Faiber', role: 'AI Integration', emoji: '🤖', color: '#FFCFD2' },
+    { name: 'Jose', role: 'Frontend & Geolocation', emoji: '🗺️', color: '#F1C0E8' }
+  ];
+
+  const values = [
+    { icon: '❤️', title: 'Pet-First Philosophy', description: 'Every decision we make starts with one question: is this better for the pets of Medellín?', color: '#FFCFD2' },
+    { icon: '🔬', title: 'Evidence-Based Care', description: 'We only partner with clinics that meet rigorous quality standards and maintain verified credentials.', color: '#90BDF4' },
+    { icon: '🤝', title: 'Community Driven', description: 'We are built by Medellín for Medellín. The Paisa community and its pets are our reason for existing.', color: '#B9FBC0' },
+    { icon: '🚀', title: 'Technology for Good', description: 'We use modern technology not for its own sake, but to genuinely reduce the time between a sick pet and quality care.', color: '#FBF8CC' }
+  ];
+
+  return `
+    <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f9ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
+
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+      <style>
+        .about-section { margin-bottom: 80px; }
+        .team-card {
+          background: white;
+          border-radius: 20px;
+          padding: 28px;
+          text-align: center;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+          border: 1px solid rgba(0,0,0,0.04);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .team-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,0.09); }
+        .team-avatar {
+          width: 72px; height: 72px;
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 2rem;
+          margin: 0 auto 16px;
+        }
+        .value-card {
+          background: white;
+          border-radius: 16px;
+          padding: 28px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+          border: 1px solid rgba(0,0,0,0.04);
+          display: flex; gap: 20px; align-items: flex-start;
+        }
+        .value-icon {
+          width: 52px; height: 52px;
+          border-radius: 14px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.5rem;
+          flex-shrink: 0;
+        }
+        .milestone {
+          display: flex; align-items: flex-start; gap: 20px;
+          padding: 24px 0; border-bottom: 1px solid #f5f5f5;
+        }
+        .milestone:last-child { border-bottom: none; }
+        .milestone-dot {
+          width: 14px; height: 14px; border-radius: 50%;
+          flex-shrink: 0; margin-top: 5px;
+        }
+        @keyframes fadeUp {
+          from { opacity:0; transform: translateY(16px); }
+          to   { opacity:1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.5s ease forwards; }
+      </style>
+
+      <!-- Header -->
+      <header class="bg-white shadow-sm border-b" style="border-color:#f0e8ff;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div class="flex items-center justify-between">
+            <button onclick="window.location.hash='#/'" class="font-medium hover:opacity-75 transition" style="color:#6A4C93; font-family:'Poppins',sans-serif;">
+              ← Back to home
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero -->
+      <section style="background: linear-gradient(135deg, #6A4C93 0%, #8b5cf6 100%); padding: 80px 0; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-60px; right:-60px; width:300px; height:300px; background:rgba(255,255,255,0.05); border-radius:50%;"></div>
+        <div style="position:absolute; bottom:-40px; left:-40px; width:200px; height:200px; background:rgba(255,255,255,0.04); border-radius:50%;"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white fade-up">
+          <div style="font-size:3rem; margin-bottom:16px;">🐾</div>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4" style="font-family:'Poppins',sans-serif; line-height:1.2;">We Exist Because <br>Pets Deserve Better</h1>
+          <p style="font-family:'Roboto',sans-serif; font-size:1.1rem; opacity:0.85; max-width:560px; margin:0 auto; line-height:1.7;">
+            PAWS was born in Medellín with a simple mission: make quality veterinary care as easy to find as ordering food online.
+          </p>
+        </div>
+      </section>
+
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        <!-- Our Story -->
+        <section class="about-section">
+          <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-up">
+              <div style="display:inline-block; background:#B9FBC0; color:#059669; font-size:0.75rem; font-weight:600; padding:5px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; font-family:'Poppins',sans-serif;">
+                Our Story
+              </div>
+              <h2 class="text-3xl font-bold mb-4" style="color:#333; font-family:'Poppins',sans-serif; line-height:1.3;">From a Classroom Project to Medellín's Vet Platform</h2>
+              <p class="mb-4" style="color:#4A4A4A; font-family:'Roboto',sans-serif; line-height:1.7; font-size:0.95rem;">
+                PAWS started as a university project by a team of six students who shared a common frustration: finding a good vet for a sick pet in Medellín at midnight was nearly impossible.
+              </p>
+              <p class="mb-4" style="color:#4A4A4A; font-family:'Roboto',sans-serif; line-height:1.7; font-size:0.95rem;">
+                We spent months talking to pet owners across El Poblado, Laureles, Envigado, and Bello. The problem was always the same — too many clinics with no way to compare them, and no real-time information about availability or specialties.
+              </p>
+              <p style="color:#4A4A4A; font-family:'Roboto',sans-serif; line-height:1.7; font-size:0.95rem;">
+                So we built PAWS: a platform that connects Medellín's pet owners with the right care at the right moment, powered by geolocation and real data from verified clinics.
+              </p>
+            </div>
+            <div style="background:white; border-radius:24px; padding:32px; box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+              <div class="milestone">
+                <div class="milestone-dot" style="background:#B9FBC0;"></div>
+                <div>
+                  <p class="font-semibold" style="color:#333; font-family:'Poppins',sans-serif;">The Idea</p>
+                  <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Six students, one shared problem, and a Scrum board on a Monday morning.</p>
+                </div>
+              </div>
+              <div class="milestone">
+                <div class="milestone-dot" style="background:#90BDF4;"></div>
+                <div>
+                  <p class="font-semibold" style="color:#333; font-family:'Poppins',sans-serif;">Sprint 1–3: Foundation</p>
+                  <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Database, authentication, clinic listings, and emergency messaging built from scratch.</p>
+                </div>
+              </div>
+              <div class="milestone">
+                <div class="milestone-dot" style="background:#F1C0E8;"></div>
+                <div>
+                  <p class="font-semibold" style="color:#333; font-family:'Poppins',sans-serif;">Sprint 4–5: Intelligence</p>
+                  <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Geolocation, filters, AI integration, and real clinic partnerships added.</p>
+                </div>
+              </div>
+              <div class="milestone">
+                <div class="milestone-dot" style="background:#FBF8CC;"></div>
+                <div>
+                  <p class="font-semibold" style="color:#333; font-family:'Poppins',sans-serif;">Today & Beyond</p>
+                  <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Serving the Aburrá Valley with plans to expand across Colombia.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Values -->
+        <section class="about-section">
+          <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">What We Stand For</h2>
+            <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">The principles that guide every decision we make</p>
+          </div>
+          <div class="grid md:grid-cols-2 gap-5">
+            ${values.map((v, i) => `
+              <div class="value-card fade-up" style="animation-delay:${i*0.08}s;">
+                <div class="value-icon" style="background:${v.color};">${v.icon}</div>
+                <div>
+                  <h3 class="font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">${v.title}</h3>
+                  <p style="color:#4A4A4A; font-family:'Roboto',sans-serif; font-size:0.875rem; line-height:1.6;">${v.description}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- Team -->
+        <section class="about-section">
+          <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold mb-2" style="color:#333; font-family:'Poppins',sans-serif;">Meet the Team</h2>
+            <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">Six people. One goal. Infinite love for animals.</p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            ${team.map((m, i) => `
+              <div class="team-card fade-up" style="animation-delay:${i*0.07}s;">
+                <div class="team-avatar" style="background:${m.color};">${m.emoji}</div>
+                <h3 class="font-bold text-sm mb-1" style="color:#333; font-family:'Poppins',sans-serif;">${m.name}</h3>
+                <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.75rem; line-height:1.4;">${m.role}</p>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- CTA -->
+        <section style="background:linear-gradient(135deg,#6A4C93,#8b5cf6); border-radius:24px; padding:56px 40px; text-align:center; color:white;">
+          <h2 class="text-2xl font-bold mb-3" style="font-family:'Poppins',sans-serif;">Want to Be Part of PAWS?</h2>
+          <p style="font-family:'Roboto',sans-serif; opacity:0.85; margin-bottom:28px; font-size:0.95rem;">We're always looking for passionate people — whether you're a vet, a developer, or just a pet lover.</p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button onclick="window.location.hash='#/work-with-us'" style="background:#B9FBC0; color:#333; border:none; padding:13px 28px; border-radius:12px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer;">
+              Work With Us
+            </button>
+            <button onclick="window.location.hash='#/contact'" style="background:rgba(255,255,255,0.15); color:white; border:1.5px solid rgba(255,255,255,0.4); padding:13px 28px; border-radius:12px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer;">
+              Contact Us
+            </button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  `;
+}
+
+export function aboutUsEvents() {
+  // Events handled inline
+}

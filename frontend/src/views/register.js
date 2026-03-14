@@ -185,12 +185,15 @@ export function registerPage() {
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
                     Continue with Google
+                <button type="submit" class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
+                    Sign Up →
                 </button>
 
                 <!-- Sign In Link -->
                 <p class="text-center text-sm text-text-soft">
                     Already have an account?
                     <a href="#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
+                    <a href="#/login" class="text-pink font-semibold">Sign In</a>
                 </p>
 
                 <!-- Footer -->
@@ -355,6 +358,17 @@ export function registerEvents() {
                         role: role.value
                     })
                 });
+        try {
+            const response = await fetch("http://localhost:3000/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    role: role.value
+                })
+            });
 
                 const data = await response.json();
 

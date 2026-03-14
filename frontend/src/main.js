@@ -1,5 +1,5 @@
 import { router } from "./router/router.js";
-import { NavbarController } from "./components/navbar.js";
+import { navbarController } from "./components/navbar.js";
 import { apiService } from "../../backend/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
