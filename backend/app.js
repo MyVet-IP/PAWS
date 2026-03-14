@@ -32,7 +32,7 @@ app.use('/api/pets', require('./routes/pets'));
 app.use('/api/businesses', require('./routes/businesses'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/emergencies', require('./routes/emergencies'));
-app.use('api/ai', require('./routes/ai'));
+app.use('/api/ai', require('./routes/ai'));
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
