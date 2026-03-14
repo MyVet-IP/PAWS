@@ -28,6 +28,9 @@ function setCache(key, data) {
 // ─── Endpoints ─────────────────────────────────────────────
 exports.recommendClinic = async (req, res, next) => {
   try {
+
+    console.log('DB_HOST:', process.env.DB_HOST);
+    console.log('DB_NAME:', process.env.DB_NAME);
     const { sintomas, especie } = req.body;
     if (!sintomas || !especie) {
       return res.status(400).json({ error: 'Se requieren los campos: sintomas, especie' });
@@ -72,7 +75,7 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
   ]
 }`;
 
-    const model    = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model    = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const result   = await model.generateContent(prompt);
     const rawText  = result.response.text().trim()
       .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
