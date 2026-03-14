@@ -280,12 +280,12 @@ export function loginEvents() {
     function setupPasswordToggle(toggleId, inputId) {
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
-        
+
         if (toggle && input) {
             toggle.addEventListener('click', () => {
                 const type = input.type === 'password' ? 'text' : 'password';
                 input.type = type;
-                
+
                 // Update icon
                 const icon = toggle.querySelector('svg');
                 if (type === 'text') {
@@ -308,10 +308,10 @@ export function loginEvents() {
     // Form submission handler
     async function handleLogin(e, emailId, passwordId, role) {
         e.preventDefault();
-        
+
         const email = document.getElementById(emailId).value.trim();
         const password = document.getElementById(passwordId).value;
-        
+
         errorBox.classList.add('hidden');
         errorBox.textContent = '';
 
@@ -321,9 +321,9 @@ export function loginEvents() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, role })
             });
-            
+
             const data = await res.json();
-            
+
             if (!res.ok) {
                 errorBox.textContent = data.error || 'Login failed. Please try again.';
                 errorBox.classList.remove('hidden');

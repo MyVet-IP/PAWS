@@ -4,20 +4,20 @@ import { AuthLayout } from "../layout/auth-layout.js";
 import { Aside, asideEvents } from "../components/aside.js";
 
 import { clinicsPage } from "../views/clinics-view.js";
-import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
+import { healthTipsPage } from "../views/health-tips.js";
 import { loginPage, loginEvents } from "../views/login.js";
-import { landingPage, landingEvents } from "../views/landing-page.js";
-import { emergencyPage, emergencyEvents } from "../views/emergency.js";
+import { loadMapPage, loadMapEvents } from "../views/map-page.js";
+import { aboutUsPage, aboutUsEvents } from "../views/about-us.js";
 import { EmergencyButton } from "../components/emergencyButton.js";
 import { registerPage, registerEvents } from "../views/register.js";
-import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
-import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
-import { loadMapPage, loadMapEvents } from "../views/map-page.js";
-import { healthTipsPage } from "../views/health-tips.js";
-import { aboutUsPage, aboutUsEvents } from "../views/about-us.js";
+import { landingPage, landingEvents } from "../views/landing-page.js";
+import { emergencyPage, emergencyEvents } from "../views/emergency.js";
 import { contactUsPage, contactUsEvents } from "../views/contact-us.js";
+import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
+import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
 import { specialistsPage, specialistsEvents } from "../views/specialists.js";
+import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
 import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
 import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
@@ -35,19 +35,19 @@ const routes = {
     return loginPage();
   },
 
-  "/register": registerPage,
   "/clinics": clinicsPage,
+  "/register": registerPage,
   "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
   "/veterinary": vetDashboardPage,
 
-  "/user-dashboard": dashboardPage,
-  "/map-page": loadMapPage,
   "/tips": healthTipsPage,
+  "/map-page": loadMapPage,
   "/about-us": aboutUsPage,
   "/contact": contactUsPage,
   "/work-with-us": workWithUsPage,
   "/specialists": specialistsPage,
+  "/user-dashboard": dashboardPage,
   "/medical-records": medicalRecordsPage,
   "/appointments": userScheduleAppointmentsPage,
   "/business-appointments": businessScheduleAppointmentsPage,

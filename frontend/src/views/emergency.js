@@ -171,11 +171,11 @@ export function emergencyPage() {
 
       <div class="grid sm:grid-cols-2 gap-3">
         ${[
-          { icon: "🐾", tip: "Keep your pet calm and in a safe, warm place" },
-          { icon: "📞", tip: "Call ahead so the clinic will be ready for you" },
-          { icon: "📋", tip: "Bring medical history and vaccination records" },
-          { icon: "🚫", tip: "Do not give food or water until the vet says so" },
-        ].map(t => `
+      { icon: "🐾", tip: "Keep your pet calm and in a safe, warm place" },
+      { icon: "📞", tip: "Call ahead so the clinic will be ready for you" },
+      { icon: "📋", tip: "Bring medical history and vaccination records" },
+      { icon: "🚫", tip: "Do not give food or water until the vet says so" },
+    ].map(t => `
           <div class="flex items-start gap-3 p-3 bg-white rounded-xl shadow-card">
             <span class="text-lg flex-shrink-0">${t.icon}</span>
             <p class="text-text-soft text-xs leading-relaxed">${t.tip}</p>
@@ -192,10 +192,10 @@ export function emergencyPage() {
 //  emergencyEvents
 // ─────────────────────────────────────────────
 export async function emergencyEvents() {
-  const btnFind    = document.getElementById('btn-find-emergency');
-  const container  = document.getElementById('emergencyClinicsContainer');
-  const clinicsList= document.getElementById('clinicsList');
-  const countEl    = document.getElementById('clinics-count');
+  const btnFind = document.getElementById('btn-find-emergency');
+  const container = document.getElementById('emergencyClinicsContainer');
+  const clinicsList = document.getElementById('clinicsList');
+  const countEl = document.getElementById('clinics-count');
 
   if (!btnFind) return;
 
@@ -205,7 +205,7 @@ export async function emergencyEvents() {
     if (!selected) {
       // Visual shake instead of alert
       btnFind.style.animation = 'none';
-      btnFind.style.outline   = '3px solid #fca5a5';
+      btnFind.style.outline = '3px solid #fca5a5';
       setTimeout(() => { btnFind.style.outline = 'none'; }, 1200);
 
       // Show inline message
@@ -241,7 +241,7 @@ export async function emergencyEvents() {
 
     try {
       const response = await fetch('/api/veterinarias');
-      const clinics  = await response.json();
+      const clinics = await response.json();
 
       const emergencyClinics = clinics.filter(c =>
         c.servicios_emergencia || c.servicios?.includes('Emergencias 24/7')

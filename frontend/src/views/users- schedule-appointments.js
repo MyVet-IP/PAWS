@@ -1,182 +1,7 @@
 // User Schedule Appointments Page - PAWS Pet Care Platform
 export function userScheduleAppointmentsPage() {
-    return `
+  return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
-
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
-      <style>
-        .appointment-card {
-          background: white;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-          border: 1px solid rgba(0,0,0,0.04);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .appointment-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 36px rgba(0,0,0,0.09);
-        }
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.72rem;
-          font-weight: 600;
-          padding: 5px 12px;
-          border-radius: 999px;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          font-family: 'Poppins', sans-serif;
-        }
-        .status-pending { background: #FBF8CC; color: #d97706; }
-        .status-confirmed { background: #B9FBC0; color: #059669; }
-        .status-completed { background: #90BDF4; color: #2563eb; }
-        .status-cancelled { background: #FFCFD2; color: #dc2626; }
-        .tab-btn {
-          padding: 12px 24px;
-          border-radius: 12px;
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: #6b7280;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .tab-btn.active {
-          background: #6A4C93;
-          color: white;
-        }
-        .tab-btn:hover:not(.active) {
-          background: #f3f4f6;
-        }
-        .calendar-day {
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.9rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.15s;
-          border: 2px solid transparent;
-        }
-        .calendar-day:hover { background: #f3f4f6; }
-        .calendar-day.today { border-color: #6A4C93; }
-        .calendar-day.selected { background: #6A4C93; color: white; }
-        .calendar-day.has-appointment::after {
-          content: '';
-          position: absolute;
-          bottom: 4px;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: #B9FBC0;
-        }
-        .time-slot {
-          padding: 10px 18px;
-          border-radius: 10px;
-          border: 1.5px solid #e5e7eb;
-          background: white;
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.82rem;
-          font-weight: 500;
-          color: #6b7280;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .time-slot:hover { border-color: #6A4C93; color: #6A4C93; }
-        .time-slot.selected { background: #6A4C93; border-color: #6A4C93; color: white; }
-        .time-slot.unavailable { background: #f3f4f6; color: #d1d5db; cursor: not-allowed; }
-        .stat-card {
-          background: white;
-          border-radius: 16px;
-          padding: 20px;
-          text-align: center;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-          border: 1px solid rgba(0,0,0,0.04);
-        }
-        .clinic-card {
-          background: white;
-          border-radius: 16px;
-          padding: 16px;
-          border: 1.5px solid #e5e7eb;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .clinic-card:hover, .clinic-card.selected {
-          border-color: #6A4C93;
-          background: #faf5ff;
-        }
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.4);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.2s;
-        }
-        .modal-overlay.open {
-          opacity: 1;
-          pointer-events: auto;
-        }
-        .modal-content {
-          background: white;
-          border-radius: 24px;
-          padding: 32px;
-          max-width: 600px;
-          width: 90%;
-          max-height: 90vh;
-          overflow-y: auto;
-          transform: scale(0.95);
-          transition: transform 0.2s;
-        }
-        .modal-overlay.open .modal-content {
-          transform: scale(1);
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
-        .step-indicator {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .step-dot {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 0.8rem;
-          font-weight: 600;
-          font-family: 'Poppins', sans-serif;
-          transition: all 0.2s;
-        }
-        .step-dot.active { background: #6A4C93; color: white; }
-        .step-dot.completed { background: #B9FBC0; color: #059669; }
-        .step-dot.pending { background: #e5e7eb; color: #9ca3af; }
-        .step-line {
-          height: 2px;
-          width: 40px;
-          background: #e5e7eb;
-        }
-        .step-line.active { background: #6A4C93; }
-      </style>
 
       <!-- Header -->
       <header class="bg-white shadow-sm border-b" style="border-color: #f0e8ff;">
@@ -379,145 +204,145 @@ export function userScheduleAppointmentsPage() {
 }
 
 export function userScheduleAppointmentsEvents() {
-    let allAppointments = [];
-    let allPets = [];
-    let allClinics = [];
-    let currentTab = 'upcoming';
-    let bookingStep = 1;
-    let bookingData = {
-        pet: null,
-        clinic: null,
-        date: null,
-        time: null,
-        reason: 'checkup',
-        notes: ''
-    };
+  let allAppointments = [];
+  let allPets = [];
+  let allClinics = [];
+  let currentTab = 'upcoming';
+  let bookingStep = 1;
+  let bookingData = {
+    pet: null,
+    clinic: null,
+    date: null,
+    time: null,
+    reason: 'checkup',
+    notes: ''
+  };
 
-    // Initialize
-    loadPets();
-    loadClinics();
-    loadAppointments();
-    setupDatePicker();
+  // Initialize
+  loadPets();
+  loadClinics();
+  loadAppointments();
+  setupDatePicker();
 
-    // Tab events
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentTab = btn.dataset.tab;
-            renderAppointments();
-        });
+  // Tab events
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = btn.dataset.tab;
+      renderAppointments();
     });
+  });
 
-    // New appointment button
-    const newBtn = document.getElementById('btn-new-appointment');
-    if (newBtn) {
-        newBtn.addEventListener('click', () => {
-            resetBookingFlow();
-            document.getElementById('modal-new-appointment').classList.add('open');
-        });
-    }
-
-    // Close modals on backdrop
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('open');
-        });
+  // New appointment button
+  const newBtn = document.getElementById('btn-new-appointment');
+  if (newBtn) {
+    newBtn.addEventListener('click', () => {
+      resetBookingFlow();
+      document.getElementById('modal-new-appointment').classList.add('open');
     });
+  }
 
-    // ─── Load Functions ─────────────────────────────────────────
+  // Close modals on backdrop
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+  });
 
-    async function loadPets() {
-        try {
-            const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/dashboard`);
-            if (res.ok) {
-                const data = await res.json();
-                allPets = data.mascotas || data.pets || [];
-                renderBookingPets();
-            }
-        } catch (err) {
-            console.error('Error loading pets:', err);
-        }
+  // ─── Load Functions ─────────────────────────────────────────
+
+  async function loadPets() {
+    try {
+      const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/dashboard`);
+      if (res.ok) {
+        const data = await res.json();
+        allPets = data.mascotas || data.pets || [];
+        renderBookingPets();
+      }
+    } catch (err) {
+      console.error('Error loading pets:', err);
+    }
+  }
+
+  async function loadClinics() {
+    try {
+      const res = await fetch('/api/clinics');
+      if (res.ok) {
+        allClinics = await res.json();
+        renderBookingClinics();
+      }
+    } catch (err) {
+      console.error('Error loading clinics:', err);
+    }
+  }
+
+  async function loadAppointments() {
+    try {
+      // Note: Replace with actual appointments endpoint when available
+      // For now using mock data structure
+      const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/appointments`);
+      if (res.ok) {
+        allAppointments = await res.json();
+      } else {
+        // Use empty array if no appointments endpoint
+        allAppointments = [];
+      }
+      updateStats();
+      renderAppointments();
+    } catch (err) {
+      console.error('Error loading appointments:', err);
+      allAppointments = [];
+      updateStats();
+      renderAppointments();
+    }
+  }
+
+  function setupDatePicker() {
+    const dateInput = document.getElementById('booking-date');
+    if (dateInput) {
+      const today = new Date();
+      const minDate = today.toISOString().split('T')[0];
+      const maxDate = new Date(today.setMonth(today.getMonth() + 3)).toISOString().split('T')[0];
+      dateInput.min = minDate;
+      dateInput.max = maxDate;
+      dateInput.addEventListener('change', () => {
+        bookingData.date = dateInput.value;
+        renderTimeSlots();
+      });
+    }
+  }
+
+  // ─── Stats & Render ─────────────────────────────────────────
+
+  function updateStats() {
+    const now = new Date();
+    const upcoming = allAppointments.filter(a => new Date(a.date) >= now && a.status !== 'cancelled').length;
+    const confirmed = allAppointments.filter(a => a.status === 'confirmed').length;
+    const pending = allAppointments.filter(a => a.status === 'pending').length;
+    const completed = allAppointments.filter(a => a.status === 'completed').length;
+
+    document.getElementById('stat-upcoming').textContent = upcoming;
+    document.getElementById('stat-confirmed').textContent = confirmed;
+    document.getElementById('stat-pending').textContent = pending;
+    document.getElementById('stat-completed').textContent = completed;
+  }
+
+  function renderAppointments() {
+    const container = document.getElementById('appointments-container');
+    if (!container) return;
+
+    const now = new Date();
+    let filtered = [...allAppointments];
+
+    if (currentTab === 'upcoming') {
+      filtered = filtered.filter(a => new Date(a.date) >= now && a.status !== 'cancelled');
+    } else if (currentTab === 'past') {
+      filtered = filtered.filter(a => new Date(a.date) < now || a.status === 'completed');
     }
 
-    async function loadClinics() {
-        try {
-            const res = await fetch('/api/clinics');
-            if (res.ok) {
-                allClinics = await res.json();
-                renderBookingClinics();
-            }
-        } catch (err) {
-            console.error('Error loading clinics:', err);
-        }
-    }
-
-    async function loadAppointments() {
-        try {
-            // Note: Replace with actual appointments endpoint when available
-            // For now using mock data structure
-            const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/appointments`);
-            if (res.ok) {
-                allAppointments = await res.json();
-            } else {
-                // Use empty array if no appointments endpoint
-                allAppointments = [];
-            }
-            updateStats();
-            renderAppointments();
-        } catch (err) {
-            console.error('Error loading appointments:', err);
-            allAppointments = [];
-            updateStats();
-            renderAppointments();
-        }
-    }
-
-    function setupDatePicker() {
-        const dateInput = document.getElementById('booking-date');
-        if (dateInput) {
-            const today = new Date();
-            const minDate = today.toISOString().split('T')[0];
-            const maxDate = new Date(today.setMonth(today.getMonth() + 3)).toISOString().split('T')[0];
-            dateInput.min = minDate;
-            dateInput.max = maxDate;
-            dateInput.addEventListener('change', () => {
-                bookingData.date = dateInput.value;
-                renderTimeSlots();
-            });
-        }
-    }
-
-    // ─── Stats & Render ─────────────────────────────────────────
-
-    function updateStats() {
-        const now = new Date();
-        const upcoming = allAppointments.filter(a => new Date(a.date) >= now && a.status !== 'cancelled').length;
-        const confirmed = allAppointments.filter(a => a.status === 'confirmed').length;
-        const pending = allAppointments.filter(a => a.status === 'pending').length;
-        const completed = allAppointments.filter(a => a.status === 'completed').length;
-
-        document.getElementById('stat-upcoming').textContent = upcoming;
-        document.getElementById('stat-confirmed').textContent = confirmed;
-        document.getElementById('stat-pending').textContent = pending;
-        document.getElementById('stat-completed').textContent = completed;
-    }
-
-    function renderAppointments() {
-        const container = document.getElementById('appointments-container');
-        if (!container) return;
-
-        const now = new Date();
-        let filtered = [...allAppointments];
-
-        if (currentTab === 'upcoming') {
-            filtered = filtered.filter(a => new Date(a.date) >= now && a.status !== 'cancelled');
-        } else if (currentTab === 'past') {
-            filtered = filtered.filter(a => new Date(a.date) < now || a.status === 'completed');
-        }
-
-        if (filtered.length === 0) {
-            container.innerHTML = `
+    if (filtered.length === 0) {
+      container.innerHTML = `
         <div style="text-align:center; padding:60px 20px; background:white; border-radius:20px;">
           <div style="font-size:4rem; margin-bottom:16px;">&#128197;</div>
           <h3 style="font-size:1.2rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif; margin-bottom:8px;">No Appointments</h3>
@@ -531,36 +356,36 @@ export function userScheduleAppointmentsEvents() {
           ` : ''}
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        // Sort by date
-        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort by date
+    filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        container.innerHTML = filtered.map((apt, index) => {
-            const aptDate = new Date(apt.date);
-            const dateStr = aptDate.toLocaleDateString('en-US', {
-                weekday: 'short', month: 'short', day: 'numeric'
-            });
-            const timeStr = apt.time || '10:00 AM';
-            const petName = apt.pet_name || 'Pet';
-            const clinicName = apt.clinic_name || 'Clinic';
+    container.innerHTML = filtered.map((apt, index) => {
+      const aptDate = new Date(apt.date);
+      const dateStr = aptDate.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric'
+      });
+      const timeStr = apt.time || '10:00 AM';
+      const petName = apt.pet_name || 'Pet';
+      const clinicName = apt.clinic_name || 'Clinic';
 
-            const statusClasses = {
-                pending: 'status-pending',
-                confirmed: 'status-confirmed',
-                completed: 'status-completed',
-                cancelled: 'status-cancelled'
-            };
+      const statusClasses = {
+        pending: 'status-pending',
+        confirmed: 'status-confirmed',
+        completed: 'status-completed',
+        cancelled: 'status-cancelled'
+      };
 
-            const statusIcons = {
-                pending: '&#128336;',
-                confirmed: '&#9989;',
-                completed: '&#9989;',
-                cancelled: '&#10060;'
-            };
+      const statusIcons = {
+        pending: '&#128336;',
+        confirmed: '&#9989;',
+        completed: '&#9989;',
+        cancelled: '&#10060;'
+      };
 
-            return `
+      return `
         <div class="appointment-card fade-up" style="animation-delay:${index * 0.05}s;" onclick="window.viewAppointment(${apt.appointment_id || index})">
           <div style="display:flex; align-items:stretch;">
             <!-- Date Column -->
@@ -605,26 +430,26 @@ export function userScheduleAppointmentsEvents() {
           </div>
         </div>
       `;
-        }).join('');
-    }
+    }).join('');
+  }
 
-    // ─── Booking Flow ───────────────────────────────────────────
+  // ─── Booking Flow ───────────────────────────────────────────
 
-    function resetBookingFlow() {
-        bookingStep = 1;
-        bookingData = { pet: null, clinic: null, date: null, time: null, reason: 'checkup', notes: '' };
-        updateStepIndicators();
-        showBookingStep(1);
-        document.getElementById('btn-prev-step').style.display = 'none';
-        document.getElementById('btn-next-step').textContent = 'Next';
-    }
+  function resetBookingFlow() {
+    bookingStep = 1;
+    bookingData = { pet: null, clinic: null, date: null, time: null, reason: 'checkup', notes: '' };
+    updateStepIndicators();
+    showBookingStep(1);
+    document.getElementById('btn-prev-step').style.display = 'none';
+    document.getElementById('btn-next-step').textContent = 'Next';
+  }
 
-    function renderBookingPets() {
-        const container = document.getElementById('booking-pet-list');
-        if (!container) return;
+  function renderBookingPets() {
+    const container = document.getElementById('booking-pet-list');
+    if (!container) return;
 
-        if (allPets.length === 0) {
-            container.innerHTML = `
+    if (allPets.length === 0) {
+      container.innerHTML = `
         <div class="col-span-2 text-center py-8">
           <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">No pets found. Please add a pet first.</p>
           <button onclick="window.location.hash='#/user-dashboard'" style="margin-top:12px; background:#6A4C93; color:white; border:none; padding:10px 20px; border-radius:10px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer;">
@@ -632,17 +457,17 @@ export function userScheduleAppointmentsEvents() {
           </button>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        container.innerHTML = allPets.map(pet => {
-            const petId = pet.pet_id || pet.id_mascota;
-            const petName = pet.nombre || pet.name;
-            const emoji = pet.especie === 'Cat' || pet.species === 'Cat' ? '&#128049;' : '&#128054;';
-            const bgColor = pet.especie === 'Cat' || pet.species === 'Cat' ? '#F1C0E8' : '#B9FBC0';
-            const isSelected = bookingData.pet?.id === petId;
+    container.innerHTML = allPets.map(pet => {
+      const petId = pet.pet_id || pet.id_mascota;
+      const petName = pet.nombre || pet.name;
+      const emoji = pet.especie === 'Cat' || pet.species === 'Cat' ? '&#128049;' : '&#128054;';
+      const bgColor = pet.especie === 'Cat' || pet.species === 'Cat' ? '#F1C0E8' : '#B9FBC0';
+      const isSelected = bookingData.pet?.id === petId;
 
-            return `
+      return `
         <div class="clinic-card ${isSelected ? 'selected' : ''}" onclick="window.selectBookingPet(${petId}, '${petName}')">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:48px; height:48px; border-radius:50%; background:${bgColor}; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
@@ -655,28 +480,28 @@ export function userScheduleAppointmentsEvents() {
           </div>
         </div>
       `;
-        }).join('');
-    }
+    }).join('');
+  }
 
-    function renderBookingClinics() {
-        const container = document.getElementById('booking-clinic-list');
-        if (!container) return;
+  function renderBookingClinics() {
+    const container = document.getElementById('booking-clinic-list');
+    if (!container) return;
 
-        if (allClinics.length === 0) {
-            container.innerHTML = `
+    if (allClinics.length === 0) {
+      container.innerHTML = `
         <div class="text-center py-8">
           <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">No clinics available.</p>
         </div>
       `;
-            return;
-        }
+      return;
+    }
 
-        container.innerHTML = allClinics.map(clinic => {
-            const clinicId = clinic.clinic_id || clinic.id_clinica;
-            const clinicName = clinic.nombre || clinic.name;
-            const isSelected = bookingData.clinic?.id === clinicId;
+    container.innerHTML = allClinics.map(clinic => {
+      const clinicId = clinic.clinic_id || clinic.id_clinica;
+      const clinicName = clinic.nombre || clinic.name;
+      const isSelected = bookingData.clinic?.id === clinicId;
 
-            return `
+      return `
         <div class="clinic-card ${isSelected ? 'selected' : ''}" onclick="window.selectBookingClinic(${clinicId}, '${clinicName}', '${clinic.direccion || clinic.address || ''}')">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:48px; height:48px; border-radius:12px; background:#90BDF4; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">
@@ -695,45 +520,45 @@ export function userScheduleAppointmentsEvents() {
           </div>
         </div>
       `;
-        }).join('');
-    }
+    }).join('');
+  }
 
-    function renderTimeSlots() {
-        const container = document.getElementById('booking-time-slots');
-        if (!container) return;
+  function renderTimeSlots() {
+    const container = document.getElementById('booking-time-slots');
+    if (!container) return;
 
-        const slots = [
-            '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM',
-            '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM',
-            '04:00 PM', '05:00 PM', '06:00 PM'
-        ];
+    const slots = [
+      '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM',
+      '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM',
+      '04:00 PM', '05:00 PM', '06:00 PM'
+    ];
 
-        // Simulate some unavailable slots
-        const unavailable = ['12:00 PM', '01:00 PM'];
+    // Simulate some unavailable slots
+    const unavailable = ['12:00 PM', '01:00 PM'];
 
-        container.innerHTML = slots.map(slot => {
-            const isUnavailable = unavailable.includes(slot);
-            const isSelected = bookingData.time === slot;
+    container.innerHTML = slots.map(slot => {
+      const isUnavailable = unavailable.includes(slot);
+      const isSelected = bookingData.time === slot;
 
-            return `
+      return `
         <button class="time-slot ${isSelected ? 'selected' : ''} ${isUnavailable ? 'unavailable' : ''}"
                 onclick="${isUnavailable ? '' : `window.selectBookingTime('${slot}')`}"
                 ${isUnavailable ? 'disabled' : ''}>
           ${slot}
         </button>
       `;
-        }).join('');
-    }
+    }).join('');
+  }
 
-    function renderBookingSummary() {
-        const container = document.getElementById('booking-summary');
-        if (!container) return;
+  function renderBookingSummary() {
+    const container = document.getElementById('booking-summary');
+    if (!container) return;
 
-        const dateStr = bookingData.date ? new Date(bookingData.date).toLocaleDateString('en-US', {
-            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-        }) : 'Not selected';
+    const dateStr = bookingData.date ? new Date(bookingData.date).toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    }) : 'Not selected';
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div style="display:grid; gap:12px;">
         <div style="display:flex; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid #e5e7eb;">
           <span style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Pet</span>
@@ -753,121 +578,121 @@ export function userScheduleAppointmentsEvents() {
         </div>
       </div>
     `;
+  }
+
+  function showBookingStep(step) {
+    document.querySelectorAll('.booking-step').forEach(s => s.style.display = 'none');
+    document.getElementById(`booking-step-${step}`).style.display = 'block';
+
+    // Update prev/next buttons
+    document.getElementById('btn-prev-step').style.display = step > 1 ? 'block' : 'none';
+    document.getElementById('btn-next-step').textContent = step === 4 ? 'Confirm Booking' : 'Next';
+
+    // Render step-specific content
+    if (step === 3) {
+      renderTimeSlots();
+    } else if (step === 4) {
+      renderBookingSummary();
+    }
+  }
+
+  function updateStepIndicators() {
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById(`step-${i}`);
+      const line = document.getElementById(`line-${i - 1}-${i}`);
+
+      if (i < bookingStep) {
+        dot.className = 'step-dot completed';
+        dot.innerHTML = '&#10003;';
+        if (line) line.className = 'step-line active';
+      } else if (i === bookingStep) {
+        dot.className = 'step-dot active';
+        dot.textContent = i;
+        if (line) line.className = 'step-line active';
+      } else {
+        dot.className = 'step-dot pending';
+        dot.textContent = i;
+        if (line) line.className = 'step-line';
+      }
+    }
+  }
+
+  // ─── Global Functions ───────────────────────────────────────
+
+  window.selectBookingPet = function (id, name) {
+    bookingData.pet = { id, name };
+    renderBookingPets();
+  };
+
+  window.selectBookingClinic = function (id, name, address) {
+    bookingData.clinic = { id, name, address };
+    renderBookingClinics();
+  };
+
+  window.selectBookingTime = function (time) {
+    bookingData.time = time;
+    renderTimeSlots();
+  };
+
+  window.nextBookingStep = async function () {
+    // Validate current step
+    if (bookingStep === 1 && !bookingData.pet) {
+      alert('Please select a pet.');
+      return;
+    }
+    if (bookingStep === 2 && !bookingData.clinic) {
+      alert('Please select a clinic.');
+      return;
+    }
+    if (bookingStep === 3 && (!bookingData.date || !bookingData.time)) {
+      alert('Please select a date and time.');
+      return;
     }
 
-    function showBookingStep(step) {
-        document.querySelectorAll('.booking-step').forEach(s => s.style.display = 'none');
-        document.getElementById(`booking-step-${step}`).style.display = 'block';
-
-        // Update prev/next buttons
-        document.getElementById('btn-prev-step').style.display = step > 1 ? 'block' : 'none';
-        document.getElementById('btn-next-step').textContent = step === 4 ? 'Confirm Booking' : 'Next';
-
-        // Render step-specific content
-        if (step === 3) {
-            renderTimeSlots();
-        } else if (step === 4) {
-            renderBookingSummary();
-        }
+    if (bookingStep === 4) {
+      // Submit booking
+      await submitBooking();
+      return;
     }
 
-    function updateStepIndicators() {
-        for (let i = 1; i <= 4; i++) {
-            const dot = document.getElementById(`step-${i}`);
-            const line = document.getElementById(`line-${i - 1}-${i}`);
+    bookingStep++;
+    updateStepIndicators();
+    showBookingStep(bookingStep);
+  };
 
-            if (i < bookingStep) {
-                dot.className = 'step-dot completed';
-                dot.innerHTML = '&#10003;';
-                if (line) line.className = 'step-line active';
-            } else if (i === bookingStep) {
-                dot.className = 'step-dot active';
-                dot.textContent = i;
-                if (line) line.className = 'step-line active';
-            } else {
-                dot.className = 'step-dot pending';
-                dot.textContent = i;
-                if (line) line.className = 'step-line';
-            }
-        }
+  window.prevBookingStep = function () {
+    if (bookingStep > 1) {
+      bookingStep--;
+      updateStepIndicators();
+      showBookingStep(bookingStep);
     }
+  };
 
-    // ─── Global Functions ───────────────────────────────────────
+  window.closeNewAppointmentModal = function () {
+    document.getElementById('modal-new-appointment').classList.remove('open');
+  };
 
-    window.selectBookingPet = function (id, name) {
-        bookingData.pet = { id, name };
-        renderBookingPets();
+  window.closeDetailModal = function () {
+    document.getElementById('modal-appointment-detail').classList.remove('open');
+  };
+
+  window.viewAppointment = function (id) {
+    const apt = allAppointments.find(a => (a.appointment_id || allAppointments.indexOf(a)) === id);
+    if (!apt) return;
+
+    const modal = document.getElementById('modal-appointment-detail');
+    document.getElementById('detail-title').textContent = `${apt.pet_name || 'Pet'} - ${apt.reason || 'Appointment'}`;
+
+    const statusClasses = {
+      pending: 'status-pending',
+      confirmed: 'status-confirmed',
+      completed: 'status-completed',
+      cancelled: 'status-cancelled'
     };
+    document.getElementById('detail-status').innerHTML = `<span class="status-badge ${statusClasses[apt.status] || 'status-pending'}">${apt.status || 'Pending'}</span>`;
 
-    window.selectBookingClinic = function (id, name, address) {
-        bookingData.clinic = { id, name, address };
-        renderBookingClinics();
-    };
-
-    window.selectBookingTime = function (time) {
-        bookingData.time = time;
-        renderTimeSlots();
-    };
-
-    window.nextBookingStep = async function () {
-        // Validate current step
-        if (bookingStep === 1 && !bookingData.pet) {
-            alert('Please select a pet.');
-            return;
-        }
-        if (bookingStep === 2 && !bookingData.clinic) {
-            alert('Please select a clinic.');
-            return;
-        }
-        if (bookingStep === 3 && (!bookingData.date || !bookingData.time)) {
-            alert('Please select a date and time.');
-            return;
-        }
-
-        if (bookingStep === 4) {
-            // Submit booking
-            await submitBooking();
-            return;
-        }
-
-        bookingStep++;
-        updateStepIndicators();
-        showBookingStep(bookingStep);
-    };
-
-    window.prevBookingStep = function () {
-        if (bookingStep > 1) {
-            bookingStep--;
-            updateStepIndicators();
-            showBookingStep(bookingStep);
-        }
-    };
-
-    window.closeNewAppointmentModal = function () {
-        document.getElementById('modal-new-appointment').classList.remove('open');
-    };
-
-    window.closeDetailModal = function () {
-        document.getElementById('modal-appointment-detail').classList.remove('open');
-    };
-
-    window.viewAppointment = function (id) {
-        const apt = allAppointments.find(a => (a.appointment_id || allAppointments.indexOf(a)) === id);
-        if (!apt) return;
-
-        const modal = document.getElementById('modal-appointment-detail');
-        document.getElementById('detail-title').textContent = `${apt.pet_name || 'Pet'} - ${apt.reason || 'Appointment'}`;
-
-        const statusClasses = {
-            pending: 'status-pending',
-            confirmed: 'status-confirmed',
-            completed: 'status-completed',
-            cancelled: 'status-cancelled'
-        };
-        document.getElementById('detail-status').innerHTML = `<span class="status-badge ${statusClasses[apt.status] || 'status-pending'}">${apt.status || 'Pending'}</span>`;
-
-        const aptDate = new Date(apt.date);
-        document.getElementById('detail-body').innerHTML = `
+    const aptDate = new Date(apt.date);
+    document.getElementById('detail-body').innerHTML = `
       <div style="background:#f9fafb; border-radius:16px; padding:20px; margin-bottom:20px;">
         <div style="display:grid; gap:12px;">
           <div style="display:flex; justify-content:space-between;">
@@ -899,10 +724,10 @@ export function userScheduleAppointmentsEvents() {
       ` : ''}
     `;
 
-        // Actions based on status
-        const actionsDiv = document.getElementById('detail-actions');
-        if (apt.status === 'pending' || apt.status === 'confirmed') {
-            actionsDiv.innerHTML = `
+    // Actions based on status
+    const actionsDiv = document.getElementById('detail-actions');
+    if (apt.status === 'pending' || apt.status === 'confirmed') {
+      actionsDiv.innerHTML = `
         <button onclick="window.cancelAppointment(${apt.appointment_id})" style="flex:1; padding:12px; border-radius:12px; border:1.5px solid #FFCFD2; background:white; color:#dc2626; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer;">
           Cancel Appointment
         </button>
@@ -910,107 +735,107 @@ export function userScheduleAppointmentsEvents() {
           Reschedule
         </button>
       `;
-        } else {
-            actionsDiv.innerHTML = '';
-        }
-
-        modal.classList.add('open');
-    };
-
-    window.cancelAppointment = async function (id) {
-        if (!confirm('Are you sure you want to cancel this appointment?')) return;
-
-        try {
-            // API call to cancel
-            const apt = allAppointments.find(a => a.appointment_id === id);
-            if (apt) apt.status = 'cancelled';
-            renderAppointments();
-            updateStats();
-            window.closeDetailModal();
-        } catch (err) {
-            console.error('Error cancelling appointment:', err);
-        }
-    };
-
-    window.rescheduleAppointment = function (id) {
-        window.closeDetailModal();
-        // Open booking modal with pre-filled data
-        document.getElementById('btn-new-appointment').click();
-    };
-
-    async function submitBooking() {
-        bookingData.reason = document.getElementById('booking-reason').value;
-        bookingData.notes = document.getElementById('booking-notes').value;
-
-        const body = {
-            pet_id: bookingData.pet.id,
-            user_id: user.user_id || user.id_cliente,
-            clinic_id: bookingData.clinic.id,
-            date: bookingData.date,
-            time: bookingData.time,
-            reason: bookingData.reason,
-            notes: bookingData.notes,
-            status: 'pending'
-        };
-
-        try {
-            // Note: Replace with actual endpoint
-            const res = await fetch('/api/appointments', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            if (res.ok) {
-                const newApt = await res.json();
-                allAppointments.unshift({
-                    ...newApt,
-                    pet_name: bookingData.pet.name,
-                    clinic_name: bookingData.clinic.name,
-                    address: bookingData.clinic.address
-                });
-                window.closeNewAppointmentModal();
-                updateStats();
-                renderAppointments();
-                alert('Appointment booked successfully!');
-            } else {
-                // Fallback: add to local state
-                allAppointments.unshift({
-                    appointment_id: Date.now(),
-                    pet_id: bookingData.pet.id,
-                    pet_name: bookingData.pet.name,
-                    clinic_id: bookingData.clinic.id,
-                    clinic_name: bookingData.clinic.name,
-                    address: bookingData.clinic.address,
-                    date: bookingData.date,
-                    time: bookingData.time,
-                    reason: bookingData.reason,
-                    notes: bookingData.notes,
-                    status: 'pending'
-                });
-                window.closeNewAppointmentModal();
-                updateStats();
-                renderAppointments();
-            }
-        } catch (err) {
-            console.error('Error booking appointment:', err);
-            // Fallback: add to local state
-            allAppointments.unshift({
-                appointment_id: Date.now(),
-                pet_id: bookingData.pet.id,
-                pet_name: bookingData.pet.name,
-                clinic_id: bookingData.clinic.id,
-                clinic_name: bookingData.clinic.name,
-                address: bookingData.clinic.address,
-                date: bookingData.date,
-                time: bookingData.time,
-                reason: bookingData.reason,
-                notes: bookingData.notes,
-                status: 'pending'
-            });
-            window.closeNewAppointmentModal();
-            updateStats();
-            renderAppointments();
-        }
+    } else {
+      actionsDiv.innerHTML = '';
     }
+
+    modal.classList.add('open');
+  };
+
+  window.cancelAppointment = async function (id) {
+    if (!confirm('Are you sure you want to cancel this appointment?')) return;
+
+    try {
+      // API call to cancel
+      const apt = allAppointments.find(a => a.appointment_id === id);
+      if (apt) apt.status = 'cancelled';
+      renderAppointments();
+      updateStats();
+      window.closeDetailModal();
+    } catch (err) {
+      console.error('Error cancelling appointment:', err);
+    }
+  };
+
+  window.rescheduleAppointment = function (id) {
+    window.closeDetailModal();
+    // Open booking modal with pre-filled data
+    document.getElementById('btn-new-appointment').click();
+  };
+
+  async function submitBooking() {
+    bookingData.reason = document.getElementById('booking-reason').value;
+    bookingData.notes = document.getElementById('booking-notes').value;
+
+    const body = {
+      pet_id: bookingData.pet.id,
+      user_id: user.user_id || user.id_cliente,
+      clinic_id: bookingData.clinic.id,
+      date: bookingData.date,
+      time: bookingData.time,
+      reason: bookingData.reason,
+      notes: bookingData.notes,
+      status: 'pending'
+    };
+
+    try {
+      // Note: Replace with actual endpoint
+      const res = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) {
+        const newApt = await res.json();
+        allAppointments.unshift({
+          ...newApt,
+          pet_name: bookingData.pet.name,
+          clinic_name: bookingData.clinic.name,
+          address: bookingData.clinic.address
+        });
+        window.closeNewAppointmentModal();
+        updateStats();
+        renderAppointments();
+        alert('Appointment booked successfully!');
+      } else {
+        // Fallback: add to local state
+        allAppointments.unshift({
+          appointment_id: Date.now(),
+          pet_id: bookingData.pet.id,
+          pet_name: bookingData.pet.name,
+          clinic_id: bookingData.clinic.id,
+          clinic_name: bookingData.clinic.name,
+          address: bookingData.clinic.address,
+          date: bookingData.date,
+          time: bookingData.time,
+          reason: bookingData.reason,
+          notes: bookingData.notes,
+          status: 'pending'
+        });
+        window.closeNewAppointmentModal();
+        updateStats();
+        renderAppointments();
+      }
+    } catch (err) {
+      console.error('Error booking appointment:', err);
+      // Fallback: add to local state
+      allAppointments.unshift({
+        appointment_id: Date.now(),
+        pet_id: bookingData.pet.id,
+        pet_name: bookingData.pet.name,
+        clinic_id: bookingData.clinic.id,
+        clinic_name: bookingData.clinic.name,
+        address: bookingData.clinic.address,
+        date: bookingData.date,
+        time: bookingData.time,
+        reason: bookingData.reason,
+        notes: bookingData.notes,
+        status: 'pending'
+      });
+      window.closeNewAppointmentModal();
+      updateStats();
+      renderAppointments();
+    }
+  }
 }

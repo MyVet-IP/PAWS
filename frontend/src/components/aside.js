@@ -9,8 +9,8 @@ export function Aside() {
   const user = getUser();
   if (!user) return "";
 
-  const isVet    = user.role === "vet";
-  const photo    = user.photo || null;
+  const isVet = user.role === "vet";
+  const photo = user.photo || null;
   const initials = (user.name || "U")
     .split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
 
@@ -53,12 +53,12 @@ export function Aside() {
              class="rounded-full overflow-hidden flex items-center justify-center"
              style="width:60px;height:60px;border:2.5px solid #B9FBC0;box-shadow:0 0 0 4px rgba(185,251,192,0.15);">
           ${photo
-            ? `<img src="${photo}" class="w-full h-full object-cover" alt="avatar"/>`
-            : `<div class="w-full h-full flex items-center justify-center font-bold text-white"
+      ? `<img src="${photo}" class="w-full h-full object-cover" alt="avatar"/>`
+      : `<div class="w-full h-full flex items-center justify-center font-bold text-white"
                     style="font-size:1.2rem;background:linear-gradient(135deg,#B9FBC0,#6A4C93);">
                  ${initials}
                </div>`
-          }
+    }
         </div>
 
         <!-- Online dot — color dinámico necesita style -->
@@ -241,10 +241,10 @@ export function Aside() {
 // ─────────────────────────────────────────────
 function ownerMenu(currentHash) {
   const links = [
-    { href: "#/user-dashboard", label: "Dashboard",   icon: "📊" },
-    { href: "#/pet-profile",    label: "My Pets",      icon: "🐾" },
-    { href: "#/appointments",   label: "Appointments", icon: "📅" },
-    { href: "#/clinics",        label: "Clinics",      icon: "🏥" },
+    { href: "#/user-dashboard", label: "Dashboard", icon: "📊" },
+    { href: "#/pet-profile", label: "My Pets", icon: "🐾" },
+    { href: "#/appointments", label: "Appointments", icon: "📅" },
+    { href: "#/clinics", label: "Clinics", icon: "🏥" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
 }
@@ -254,9 +254,9 @@ function ownerMenu(currentHash) {
 // ─────────────────────────────────────────────
 function vetMenu(currentHash) {
   const links = [
-    { href: "#/veterinary",      label: "Dashboard",       icon: "📊" },
-    { href: "#/appointments",    label: "Appointments",    icon: "📅" },
-    { href: "#/pet-profile",     label: "Patients",        icon: "🐾" },
+    { href: "#/veterinary", label: "Dashboard", icon: "📊" },
+    { href: "#/appointments", label: "Appointments", icon: "📅" },
+    { href: "#/pet-profile", label: "Patients", icon: "🐾" },
     { href: "#/medical-records", label: "Medical Records", icon: "📋" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
@@ -276,10 +276,10 @@ function navLink({ href, label, icon }, currentHash) {
   // Solo cambian background, color y border-left-color — el base se preserva
   const activeStyle = `${base}background:rgba(185,251,192,0.20);color:#B9FBC0;border-left-color:#B9FBC0;`;
   const normalStyle = `${base}color:rgba(255,255,255,0.65);`;
-  const hoverStyle  = `${base}color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.09);`;
+  const hoverStyle = `${base}color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.09);`;
 
   // cssText ahora siempre incluye el base, así no se pierden padding ni font-size
-  const hOn  = `this.style.cssText='${hoverStyle}'`;
+  const hOn = `this.style.cssText='${hoverStyle}'`;
   const hOff = `this.style.cssText='${isActive ? activeStyle : normalStyle}'`;
 
   return `
@@ -300,23 +300,23 @@ export function asideEvents() {
   let user = JSON.parse(localStorage.getItem("user") || "null");
   if (!user) return;
 
-  const modal      = document.getElementById("modal-edit-profile");
-  const trigger    = document.getElementById("aside-profile-trigger");
-  const closeBtn   = document.getElementById("modal-profile-close");
-  const saveBtn    = document.getElementById("btn-save-profile");
-  const fileInput  = document.getElementById("photo-file-input");
-  const logoutBtn  = document.getElementById("aside-logout-btn");
+  const modal = document.getElementById("modal-edit-profile");
+  const trigger = document.getElementById("aside-profile-trigger");
+  const closeBtn = document.getElementById("modal-profile-close");
+  const saveBtn = document.getElementById("btn-save-profile");
+  const fileInput = document.getElementById("photo-file-input");
+  const logoutBtn = document.getElementById("aside-logout-btn");
   const successMsg = document.getElementById("profile-success");
 
   // Hover sobre avatar del modal
   const avatarWrapper = document.getElementById("avatar-upload-wrapper");
-  const overlay       = document.getElementById("avatar-overlay");
+  const overlay = document.getElementById("avatar-overlay");
   if (avatarWrapper && overlay) {
     avatarWrapper.addEventListener("mouseenter", () => overlay.style.opacity = "1");
     avatarWrapper.addEventListener("mouseleave", () => overlay.style.opacity = "0");
   }
 
-  const openModal  = () => { if (modal) modal.style.display = "flex"; };
+  const openModal = () => { if (modal) modal.style.display = "flex"; };
   const closeModal = () => { if (modal) modal.style.display = "none"; };
 
   // Abrir modal
@@ -347,7 +347,7 @@ export function asideEvents() {
   // Guardar
   saveBtn?.addEventListener("click", () => {
     user = JSON.parse(localStorage.getItem("user") || "null");
-    const newName  = document.getElementById("edit-name")?.value.trim();
+    const newName = document.getElementById("edit-name")?.value.trim();
     const newPhone = document.getElementById("edit-phone")?.value.trim();
 
     if (fileInput?.files[0]) {
@@ -371,13 +371,13 @@ export function asideEvents() {
 // ─────────────────────────────────────────────
 
 function _fillModal(user) {
-  const nameEl  = document.getElementById("edit-name");
+  const nameEl = document.getElementById("edit-name");
   const emailEl = document.getElementById("edit-email");
   const phoneEl = document.getElementById("edit-phone");
   const preview = document.getElementById("modal-avatar-preview");
   const success = document.getElementById("profile-success");
 
-  if (nameEl)  nameEl.value  = user.name  || "";
+  if (nameEl) nameEl.value = user.name || "";
   if (emailEl) emailEl.value = user.email || "";
   if (phoneEl) phoneEl.value = user.phone || "";
   if (success) success.style.display = "none";
@@ -400,7 +400,7 @@ function _renderAvatar(el, photo, name = "") {
 function _persistAndRefresh(user, name, phone, photo, closeModal, successMsg) {
   const updated = {
     ...user,
-    ...(name  ? { name }  : {}),
+    ...(name ? { name } : {}),
     ...(phone ? { phone } : {}),
     ...(photo ? { photo } : {}),
   };

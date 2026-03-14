@@ -18,8 +18,6 @@ export function contactUsPage() {
 
   return `
     <div class="contact-page">
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
       <!-- Header -->
       <header class="contact-header">
         <div class="contact-header-content">

@@ -77,7 +77,7 @@ export function hideLoading() {
 }
 
 // utils.js
-export function getUser(){
+export function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 

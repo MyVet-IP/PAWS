@@ -1,133 +1,7 @@
 // Medical Records Page - PAWS Pet Care Platform
 export function medicalRecordsPage() {
-    return `
+  return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
-
-      <style>
-        .record-card {
-          background: white;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-          border: 1px solid rgba(0,0,0,0.04);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .record-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 36px rgba(0,0,0,0.09);
-        }
-        .visit-badge {
-          display: inline-block;
-          font-size: 0.7rem;
-          font-weight: 600;
-          padding: 4px 12px;
-          border-radius: 999px;
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          font-family: 'Poppins', sans-serif;
-        }
-        .stat-card {
-          background: white;
-          border-radius: 16px;
-          padding: 20px;
-          text-align: center;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-          border: 1px solid rgba(0,0,0,0.04);
-        }
-        .filter-chip {
-          padding: 8px 18px;
-          border-radius: 999px;
-          border: 1.5px solid #e5e7eb;
-          background: white;
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: #6b7280;
-          cursor: pointer;
-          transition: all 0.15s;
-          white-space: nowrap;
-        }
-        .filter-chip.active, .filter-chip:hover {
-          background: #6A4C93;
-          border-color: #6A4C93;
-          color: white;
-        }
-        .pet-selector {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          background: white;
-          border-radius: 14px;
-          border: 1.5px solid #e5e7eb;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .pet-selector:hover, .pet-selector.active {
-          border-color: #6A4C93;
-          background: #faf5ff;
-        }
-        .timeline-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
-        .timeline-line {
-          width: 2px;
-          background: #e5e7eb;
-          flex-shrink: 0;
-        }
-        .detail-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px 0;
-          border-bottom: 1px solid #f5f5f5;
-          font-family: 'Roboto', sans-serif;
-          font-size: 0.875rem;
-        }
-        .detail-row:last-child { border-bottom: none; }
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.4);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 100;
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.2s;
-        }
-        .modal-overlay.open {
-          opacity: 1;
-          pointer-events: auto;
-        }
-        .modal-content {
-          background: white;
-          border-radius: 24px;
-          padding: 32px;
-          max-width: 560px;
-          width: 90%;
-          max-height: 85vh;
-          overflow-y: auto;
-          transform: scale(0.95);
-          transition: transform 0.2s;
-        }
-        .modal-overlay.open .modal-content {
-          transform: scale(1);
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.4s ease forwards; }
-        .empty-state {
-          text-align: center;
-          padding: 60px 20px;
-        }
-      </style>
 
       <!-- Header -->
       <header class="bg-white shadow-sm border-b" style="border-color: #f0e8ff;">
@@ -326,90 +200,90 @@ export function medicalRecordsPage() {
 }
 
 export function medicalRecordsEvents() {
-    let allRecords = [];
-    let allPets = [];
-    let selectedPetId = 'all';
-    let selectedFilter = 'all';
+  let allRecords = [];
+  let allPets = [];
+  let selectedPetId = 'all';
+  let selectedFilter = 'all';
 
-    // Load initial data
-    loadPets();
-    loadRecords();
+  // Load initial data
+  loadPets();
+  loadRecords();
 
-    // Filter chip events
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            selectedFilter = chip.dataset.filter;
-            renderRecords();
-        });
+  // Filter chip events
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedFilter = chip.dataset.filter;
+      renderRecords();
     });
+  });
 
-    // Add record button
-    const addBtn = document.getElementById('btn-add-record');
-    if (addBtn) {
-        addBtn.addEventListener('click', () => {
-            document.getElementById('modal-add-record').classList.add('open');
-        });
-    }
-
-    // Add record form
-    const addForm = document.getElementById('form-add-record');
-    if (addForm) {
-        addForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await submitNewRecord();
-        });
-    }
-
-    // Close modals on backdrop click
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('open');
-            }
-        });
+  // Add record button
+  const addBtn = document.getElementById('btn-add-record');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      document.getElementById('modal-add-record').classList.add('open');
     });
+  }
 
-    // ─── Load Functions ─────────────────────────────────────────
+  // Add record form
+  const addForm = document.getElementById('form-add-record');
+  if (addForm) {
+    addForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitNewRecord();
+    });
+  }
 
-    async function loadPets() {
-        try {
-            const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/dashboard`);
-            if (res.ok) {
-                const data = await res.json();
-                allPets = data.mascotas || data.pets || [];
-                renderPetSelectors();
-                populatePetDropdown();
-            }
-        } catch (err) {
-            console.error('Error loading pets:', err);
-        }
+  // Close modals on backdrop click
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('open');
+      }
+    });
+  });
+
+  // ─── Load Functions ─────────────────────────────────────────
+
+  async function loadPets() {
+    try {
+      const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/dashboard`);
+      if (res.ok) {
+        const data = await res.json();
+        allPets = data.mascotas || data.pets || [];
+        renderPetSelectors();
+        populatePetDropdown();
+      }
+    } catch (err) {
+      console.error('Error loading pets:', err);
     }
+  }
 
-    async function loadRecords() {
-        try {
-            const res = await fetch(`/api/medical-records/user/${user.user_id || user.id_cliente}`);
-            if (res.ok) {
-                allRecords = await res.json();
-                updateStats();
-                renderRecords();
-            } else {
-                renderEmptyState();
-            }
-        } catch (err) {
-            console.error('Error loading records:', err);
-            renderEmptyState();
-        }
+  async function loadRecords() {
+    try {
+      const res = await fetch(`/api/medical-records/user/${user.user_id || user.id_cliente}`);
+      if (res.ok) {
+        allRecords = await res.json();
+        updateStats();
+        renderRecords();
+      } else {
+        renderEmptyState();
+      }
+    } catch (err) {
+      console.error('Error loading records:', err);
+      renderEmptyState();
     }
+  }
 
-    // ─── Render Functions ───────────────────────────────────────
+  // ─── Render Functions ───────────────────────────────────────
 
-    function renderPetSelectors() {
-        const container = document.getElementById('pet-selector-list');
-        if (!container || !allPets.length) return;
+  function renderPetSelectors() {
+    const container = document.getElementById('pet-selector-list');
+    if (!container || !allPets.length) return;
 
-        const allOption = `
+    const allOption = `
       <div class="pet-selector ${selectedPetId === 'all' ? 'active' : ''}" data-pet-id="all" onclick="window.selectPet('all')">
         <div style="width:36px; height:36px; border-radius:50%; background:#F1C0E8; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; color:#6A4C93;">
           All
@@ -418,14 +292,14 @@ export function medicalRecordsEvents() {
       </div>
     `;
 
-        const petOptions = allPets.map(pet => {
-            const emoji = pet.especie === 'Cat' || pet.species === 'Cat' ? '&#128049;' :
-                pet.especie === 'Dog' || pet.species === 'Dog' ? '&#128054;' : '&#128062;';
-            const bgColor = pet.especie === 'Cat' || pet.species === 'Cat' ? '#F1C0E8' : '#B9FBC0';
-            const petId = pet.pet_id || pet.id_mascota;
-            const petName = pet.nombre || pet.name;
+    const petOptions = allPets.map(pet => {
+      const emoji = pet.especie === 'Cat' || pet.species === 'Cat' ? '&#128049;' :
+        pet.especie === 'Dog' || pet.species === 'Dog' ? '&#128054;' : '&#128062;';
+      const bgColor = pet.especie === 'Cat' || pet.species === 'Cat' ? '#F1C0E8' : '#B9FBC0';
+      const petId = pet.pet_id || pet.id_mascota;
+      const petName = pet.nombre || pet.name;
 
-            return `
+      return `
         <div class="pet-selector ${selectedPetId === petId ? 'active' : ''}" data-pet-id="${petId}" onclick="window.selectPet(${petId})">
           <div style="width:36px; height:36px; border-radius:50%; background:${bgColor}; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
             ${emoji}
@@ -433,77 +307,77 @@ export function medicalRecordsEvents() {
           <span style="font-family:'Poppins',sans-serif; font-weight:500; font-size:0.85rem; color:#333;">${petName}</span>
         </div>
       `;
-        }).join('');
+    }).join('');
 
-        container.innerHTML = allOption + petOptions;
+    container.innerHTML = allOption + petOptions;
+  }
+
+  function populatePetDropdown() {
+    const select = document.getElementById('record-pet');
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Select a pet...</option>' +
+      allPets.map(pet => {
+        const petId = pet.pet_id || pet.id_mascota;
+        const petName = pet.nombre || pet.name;
+        return `<option value="${petId}">${petName}</option>`;
+      }).join('');
+  }
+
+  function updateStats() {
+    const total = allRecords.length;
+    const checkups = allRecords.filter(r => r.visit_type === 'checkup').length;
+    const vaccines = allRecords.filter(r => r.visit_type === 'vaccination').length;
+    const upcoming = allRecords.filter(r => {
+      if (!r.next_visit_date) return false;
+      return new Date(r.next_visit_date) > new Date();
+    }).length;
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-checkups').textContent = checkups;
+    document.getElementById('stat-vaccines').textContent = vaccines;
+    document.getElementById('stat-upcoming').textContent = upcoming;
+  }
+
+  function renderRecords() {
+    const container = document.getElementById('records-container');
+    if (!container) return;
+
+    let filtered = [...allRecords];
+
+    // Filter by pet
+    if (selectedPetId !== 'all') {
+      filtered = filtered.filter(r => r.pet_id === selectedPetId);
     }
 
-    function populatePetDropdown() {
-        const select = document.getElementById('record-pet');
-        if (!select) return;
-
-        select.innerHTML = '<option value="">Select a pet...</option>' +
-            allPets.map(pet => {
-                const petId = pet.pet_id || pet.id_mascota;
-                const petName = pet.nombre || pet.name;
-                return `<option value="${petId}">${petName}</option>`;
-            }).join('');
+    // Filter by type
+    if (selectedFilter !== 'all') {
+      filtered = filtered.filter(r => r.visit_type === selectedFilter);
     }
 
-    function updateStats() {
-        const total = allRecords.length;
-        const checkups = allRecords.filter(r => r.visit_type === 'checkup').length;
-        const vaccines = allRecords.filter(r => r.visit_type === 'vaccination').length;
-        const upcoming = allRecords.filter(r => {
-            if (!r.next_visit_date) return false;
-            return new Date(r.next_visit_date) > new Date();
-        }).length;
-
-        document.getElementById('stat-total').textContent = total;
-        document.getElementById('stat-checkups').textContent = checkups;
-        document.getElementById('stat-vaccines').textContent = vaccines;
-        document.getElementById('stat-upcoming').textContent = upcoming;
+    if (filtered.length === 0) {
+      renderEmptyState();
+      return;
     }
 
-    function renderRecords() {
-        const container = document.getElementById('records-container');
-        if (!container) return;
+    container.innerHTML = filtered.map((record, index) => {
+      const visitDate = record.visit_date ? new Date(record.visit_date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+      }) : 'No date';
 
-        let filtered = [...allRecords];
+      const typeColors = {
+        checkup: { bg: '#B9FBC0', text: '#059669' },
+        vaccination: { bg: '#90BDF4', text: '#2563eb' },
+        surgery: { bg: '#FFCFD2', text: '#dc2626' },
+        emergency: { bg: '#FFCFD2', text: '#dc2626' },
+        dental: { bg: '#FBF8CC', text: '#d97706' },
+        grooming: { bg: '#F1C0E8', text: '#6A4C93' },
+        other: { bg: '#e5e7eb', text: '#6b7280' }
+      };
+      const colors = typeColors[record.visit_type] || typeColors.other;
+      const petName = record.pet_name || 'Unknown Pet';
 
-        // Filter by pet
-        if (selectedPetId !== 'all') {
-            filtered = filtered.filter(r => r.pet_id === selectedPetId);
-        }
-
-        // Filter by type
-        if (selectedFilter !== 'all') {
-            filtered = filtered.filter(r => r.visit_type === selectedFilter);
-        }
-
-        if (filtered.length === 0) {
-            renderEmptyState();
-            return;
-        }
-
-        container.innerHTML = filtered.map((record, index) => {
-            const visitDate = record.visit_date ? new Date(record.visit_date).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'short', day: 'numeric'
-            }) : 'No date';
-
-            const typeColors = {
-                checkup: { bg: '#B9FBC0', text: '#059669' },
-                vaccination: { bg: '#90BDF4', text: '#2563eb' },
-                surgery: { bg: '#FFCFD2', text: '#dc2626' },
-                emergency: { bg: '#FFCFD2', text: '#dc2626' },
-                dental: { bg: '#FBF8CC', text: '#d97706' },
-                grooming: { bg: '#F1C0E8', text: '#6A4C93' },
-                other: { bg: '#e5e7eb', text: '#6b7280' }
-            };
-            const colors = typeColors[record.visit_type] || typeColors.other;
-            const petName = record.pet_name || 'Unknown Pet';
-
-            return `
+      return `
         <div class="record-card fade-up" style="animation-delay:${index * 0.05}s;" onclick="window.viewRecord(${record.record_id})">
           <div style="display:flex; align-items:stretch;">
             <!-- Timeline indicator -->
@@ -545,14 +419,14 @@ export function medicalRecordsEvents() {
           </div>
         </div>
       `;
-        }).join('');
-    }
+    }).join('');
+  }
 
-    function renderEmptyState() {
-        const container = document.getElementById('records-container');
-        if (!container) return;
+  function renderEmptyState() {
+    const container = document.getElementById('records-container');
+    if (!container) return;
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div class="empty-state" style="background:white; border-radius:20px; padding:60px 20px;">
         <div style="font-size:4rem; margin-bottom:16px;">&#128203;</div>
         <h3 style="font-size:1.2rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif; margin-bottom:8px;">No Medical Records Yet</h3>
@@ -564,33 +438,33 @@ export function medicalRecordsEvents() {
         </button>
       </div>
     `;
-    }
+  }
 
-    // ─── Modal Functions ────────────────────────────────────────
+  // ─── Modal Functions ────────────────────────────────────────
 
-    window.selectPet = function (petId) {
-        selectedPetId = petId === 'all' ? 'all' : parseInt(petId);
-        renderPetSelectors();
-        renderRecords();
-    };
+  window.selectPet = function (petId) {
+    selectedPetId = petId === 'all' ? 'all' : parseInt(petId);
+    renderPetSelectors();
+    renderRecords();
+  };
 
-    window.viewRecord = function (recordId) {
-        const record = allRecords.find(r => r.record_id === recordId);
-        if (!record) return;
+  window.viewRecord = function (recordId) {
+    const record = allRecords.find(r => r.record_id === recordId);
+    if (!record) return;
 
-        const modal = document.getElementById('modal-record-detail');
-        const title = document.getElementById('modal-title');
-        const date = document.getElementById('modal-date');
-        const body = document.getElementById('modal-body');
+    const modal = document.getElementById('modal-record-detail');
+    const title = document.getElementById('modal-title');
+    const date = document.getElementById('modal-date');
+    const body = document.getElementById('modal-body');
 
-        const visitDate = record.visit_date ? new Date(record.visit_date).toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        }) : 'No date recorded';
+    const visitDate = record.visit_date ? new Date(record.visit_date).toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }) : 'No date recorded';
 
-        title.textContent = `${record.pet_name || 'Pet'} - ${record.visit_type.charAt(0).toUpperCase() + record.visit_type.slice(1)}`;
-        date.textContent = visitDate;
+    title.textContent = `${record.pet_name || 'Pet'} - ${record.visit_type.charAt(0).toUpperCase() + record.visit_type.slice(1)}`;
+    date.textContent = visitDate;
 
-        body.innerHTML = `
+    body.innerHTML = `
       <div style="margin-bottom:20px;">
         ${record.clinic_name ? `
           <div class="detail-row">
@@ -651,58 +525,58 @@ export function medicalRecordsEvents() {
       ` : ''}
     `;
 
-        modal.classList.add('open');
-    };
+    modal.classList.add('open');
+  };
 
-    window.closeRecordModal = function () {
-        document.getElementById('modal-record-detail').classList.remove('open');
-    };
+  window.closeRecordModal = function () {
+    document.getElementById('modal-record-detail').classList.remove('open');
+  };
 
-    window.closeAddModal = function () {
-        document.getElementById('modal-add-record').classList.remove('open');
-    };
+  window.closeAddModal = function () {
+    document.getElementById('modal-add-record').classList.remove('open');
+  };
 
-    // ─── Submit New Record ──────────────────────────────────────
+  // ─── Submit New Record ──────────────────────────────────────
 
-    async function submitNewRecord() {
-        const petId = document.getElementById('record-pet').value;
-        const visitType = document.getElementById('record-type').value;
+  async function submitNewRecord() {
+    const petId = document.getElementById('record-pet').value;
+    const visitType = document.getElementById('record-type').value;
 
-        if (!petId || !visitType) {
-            alert('Please select a pet and visit type.');
-            return;
-        }
-
-        const body = {
-            pet_id: parseInt(petId),
-            user_id: user.user_id || user.id_cliente,
-            visit_type: visitType,
-            visit_date: document.getElementById('record-date').value || null,
-            veterinarian: document.getElementById('record-vet').value || null,
-            reason: document.getElementById('record-reason').value || null,
-            diagnosis: document.getElementById('record-diagnosis').value || null,
-            treatment: document.getElementById('record-treatment').value || null,
-            notes: document.getElementById('record-notes').value || null
-        };
-
-        try {
-            const res = await fetch('/api/medical-records', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            if (res.ok) {
-                window.closeAddModal();
-                document.getElementById('form-add-record').reset();
-                loadRecords();
-            } else {
-                const err = await res.json();
-                alert(err.error || 'Failed to save record.');
-            }
-        } catch (err) {
-            console.error('Error saving record:', err);
-            alert('Failed to save record. Please try again.');
-        }
+    if (!petId || !visitType) {
+      alert('Please select a pet and visit type.');
+      return;
     }
+
+    const body = {
+      pet_id: parseInt(petId),
+      user_id: user.user_id || user.id_cliente,
+      visit_type: visitType,
+      visit_date: document.getElementById('record-date').value || null,
+      veterinarian: document.getElementById('record-vet').value || null,
+      reason: document.getElementById('record-reason').value || null,
+      diagnosis: document.getElementById('record-diagnosis').value || null,
+      treatment: document.getElementById('record-treatment').value || null,
+      notes: document.getElementById('record-notes').value || null
+    };
+
+    try {
+      const res = await fetch('/api/medical-records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (res.ok) {
+        window.closeAddModal();
+        document.getElementById('form-add-record').reset();
+        loadRecords();
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to save record.');
+      }
+    } catch (err) {
+      console.error('Error saving record:', err);
+      alert('Failed to save record. Please try again.');
+    }
+  }
 }

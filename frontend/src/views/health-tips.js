@@ -59,150 +59,6 @@ export function healthTipsPage() {
   return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #f8f6ff 0%, #fef9f9 50%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
 
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
-      <style>
-        .tips-hero-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: #F1C0E8;
-          color: #6A4C93;
-          font-size: 0.75rem;
-          font-weight: 600;
-          padding: 6px 14px;
-          border-radius: 999px;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
-          font-family: 'Poppins', sans-serif;
-        }
-        .tip-card {
-          background: white;
-          border-radius: 20px;
-          padding: 32px;
-          box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
-          border: 1px solid rgba(0,0,0,0.04);
-          position: relative;
-          overflow: hidden;
-        }
-        .tip-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.10);
-        }
-        .tip-card-accent {
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 4px;
-          border-radius: 20px 20px 0 0;
-        }
-        .tip-category-badge {
-          display: inline-block;
-          font-size: 0.7rem;
-          font-weight: 600;
-          padding: 4px 12px;
-          border-radius: 999px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-family: 'Poppins', sans-serif;
-          margin-bottom: 12px;
-        }
-        .tip-list-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          padding: 8px 0;
-          font-family: 'Roboto', sans-serif;
-          font-size: 0.875rem;
-          color: #4A4A4A;
-          border-bottom: 1px solid #f5f5f5;
-        }
-        .tip-list-item:last-child { border-bottom: none; }
-        .tip-check {
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          margin-top: 1px;
-          font-size: 10px;
-        }
-        .seasonal-card {
-          background: white;
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-          text-align: center;
-          transition: transform 0.2s ease;
-        }
-        .seasonal-card:hover { transform: translateY(-2px); }
-        .newsletter-section {
-          background: linear-gradient(135deg, #6A4C93 0%, #8b5cf6 100%);
-          border-radius: 24px;
-          padding: 48px;
-          text-align: center;
-          color: white;
-          position: relative;
-          overflow: hidden;
-        }
-        .newsletter-section::before {
-          content: '';
-          position: absolute;
-          top: -40px; right: -40px;
-          width: 200px; height: 200px;
-          background: rgba(255,255,255,0.06);
-          border-radius: 50%;
-        }
-        .newsletter-input {
-          flex: 1;
-          padding: 14px 20px;
-          border: none;
-          border-radius: 12px;
-          font-family: 'Roboto', sans-serif;
-          font-size: 0.9rem;
-          outline: none;
-          color: #333;
-        }
-        .newsletter-btn {
-          padding: 14px 28px;
-          background: #B9FBC0;
-          color: #333;
-          border: none;
-          border-radius: 12px;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          font-size: 0.875rem;
-          cursor: pointer;
-          transition: background 0.2s;
-          white-space: nowrap;
-        }
-        .newsletter-btn:hover { background: #9ef0a7; }
-        .filter-pill {
-          padding: 8px 20px;
-          border-radius: 999px;
-          border: 1.5px solid #e5e7eb;
-          background: white;
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.8rem;
-          font-weight: 500;
-          color: #6b7280;
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .filter-pill:hover, .filter-pill.active {
-          background: #6A4C93;
-          border-color: #6A4C93;
-          color: white;
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.5s ease forwards; }
-      </style>
-
       <!-- Header -->
       <header class="bg-white shadow-sm border-b" style="border-color: #f0e8ff;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -267,11 +123,11 @@ export function healthTipsPage() {
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             ${[
-              { season: 'Spring', icon: '🌸', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
-              { season: 'Summer', icon: '☀️', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
-              { season: 'Rainy Season', icon: '🌧️', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
-              { season: 'Year-Round', icon: '🌿', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
-            ].map(s => `
+      { season: 'Spring', icon: '🌸', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
+      { season: 'Summer', icon: '☀️', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
+      { season: 'Rainy Season', icon: '🌧️', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
+      { season: 'Year-Round', icon: '🌿', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
+    ].map(s => `
               <div class="seasonal-card">
                 <div class="text-3xl mb-3">${s.icon}</div>
                 <div class="font-semibold mb-2" style="color: #333; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">${s.season}</div>

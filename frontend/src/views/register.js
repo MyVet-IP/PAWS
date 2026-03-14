@@ -206,12 +206,12 @@ export function registerEvents() {
     function setupPasswordToggle(toggleId, inputId) {
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
-        
+
         if (toggle && input) {
             toggle.addEventListener('click', () => {
                 const type = input.type === 'password' ? 'text' : 'password';
                 input.type = type;
-                
+
                 const icon = toggle.querySelector('svg');
                 if (type === 'text') {
                     icon.innerHTML = `
@@ -249,10 +249,10 @@ export function registerEvents() {
             document.getElementById('strength-4')
         ];
         const strengthText = document.getElementById('strength-text');
-        
+
         const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
         const texts = ['Weak', 'Fair', 'Good', 'Strong'];
-        
+
         strengthBars.forEach((bar, index) => {
             bar.className = 'h-1 flex-1 rounded-full transition-colors';
             if (index < strength) {
@@ -261,7 +261,7 @@ export function registerEvents() {
                 bar.classList.add('bg-gray-200');
             }
         });
-        
+
         if (password.length > 0) {
             strengthText.textContent = `Password strength: ${texts[strength - 1] || 'Very weak'}`;
             strengthText.className = 'text-xs';
@@ -280,13 +280,13 @@ export function registerEvents() {
     // Form message helper
     function showMessage(message, success) {
         formMessage.classList.remove("hidden", "bg-red-50", "text-red-700", "bg-green-50", "text-green-700", "border-red-200", "border-green-200");
-        
+
         if (success) {
             formMessage.classList.add("bg-green-50", "text-green-700", "border", "border-green-200");
         } else {
             formMessage.classList.add("bg-red-50", "text-red-700", "border", "border-red-200");
         }
-        
+
         formMessage.textContent = message;
     }
 
