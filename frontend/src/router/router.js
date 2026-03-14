@@ -105,7 +105,7 @@ export function router() {
 function runPageEvents(path) {
 
   if (!PUBLIC_PATHS.includes(path)) {
-    asideEvents();                 
+    asideEvents();
   }
 
   switch (path) {

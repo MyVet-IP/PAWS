@@ -90,15 +90,15 @@ export function navbarController() {
   `;
 }
 
-  export function navbarEvents() {
-    const loginBtn = document.getElementById("btn-login");
+export function navbarEvents() {
+  const loginBtn = document.getElementById("btn-login");
 
-    if(loginBtn) {
-      loginBtn.addEventListener("click", () => {
-        window.location.hash = "#/login";
-      });
-    }
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      window.location.hash = "#/login";
+    });
   }
+}
 
 
 
