@@ -11,7 +11,7 @@ import { emergencyPage, emergencyEvents } from "../views/emergency.js";
 import { EmergencyButton } from "../components/emergencyButton.js";
 import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
-import { vetDashboardPage } from "../views/vet-dashboard.js";
+import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
 import { healthTipsPage } from "../views/health-tips.js";
 
@@ -137,6 +137,10 @@ function runPageEvents(path) {
     case "/pet-profile":
       petProfileEvents();
       break
+
+    case "/veterinary":
+      vetDashboardEvents();
+      break;
   }
 }
 
