@@ -178,27 +178,13 @@ export function landingPage() {
 }
 
 export async function landingEvents() {
-    const btnIngresar = document.getElementById('btn-ingresar');
     const btnSearch = document.getElementById('btn-search');
-    const btnEmergencyFab = document.getElementById('btn-emergency-fab');
-
-    if (btnIngresar) {
-        btnIngresar.addEventListener('click', () => {
-            window.location.hash = '#/login';
-        });
-    }
 
     if (btnSearch) {
         btnSearch.addEventListener('click', () => {
             const searchInput = document.getElementById('searchInput');
             const location = searchInput?.value || '';
             window.location.hash = `#/clinicas?location=${encodeURIComponent(location)}`;
-        });
-    }
-
-    if (btnEmergencyFab) {
-        btnEmergencyFab.addEventListener('click', () => {
-            window.location.hash = '#/emergencias';
         });
     }
 
