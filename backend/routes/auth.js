@@ -49,6 +49,7 @@ passport.use(new GoogleStrategy({
 
 
 /* LOGIN GOOGLE */
+
 router.get("/google", (req, res, next) => {
 
     const role = req.query.role || "user";
@@ -63,8 +64,8 @@ router.get("/google", (req, res, next) => {
 
 /* CALLBACK GOOGLE */
 
-router.get("/google/callback",
-
+router.get(
+    "/google/callback",
     passport.authenticate("google", { failureRedirect: "/#/login" }),
 
     async (req, res) => {
@@ -85,30 +86,40 @@ router.get("/google/callback",
 
                 const fakePassword = await bcrypt.hash("google_login", 10);
 
-                const result = await db.run(
-                    "INSERT INTO users (name,email,password,role) VALUES ($1,$2,$3,$4)",
+                const result = await db.get(
+                    "INSERT INTO users (name,email,password,role) VALUES ($1,$2,$3,$4) RETURNING *",
                     [name, email, fakePassword, role]
                 );
+
+                user = result;
+
             }
 
-            const userRole = user ? user.role : role;
+            /* DATOS QUE SE ENVIARAN AL FRONTEND */
 
-            if (userRole === "business") {
-                return res.redirect("http://localhost:3000/#/veterinary");
-            }
+            const userData = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            };
 
-            return res.redirect("http://localhost:3000/#/user-dashboard");
+            /* REDIRECCION CON USER */
+
+            const encodedUser = encodeURIComponent(JSON.stringify(userData));
+
+            return res.redirect(
+                `http://localhost:3000/#/google-login-success?user=${encodedUser}`
+            );
 
         } catch (error) {
 
             console.error(error);
-
             res.redirect("http://localhost:3000/#/login");
 
         }
 
     }
-
 );
 
 module.exports = router;
