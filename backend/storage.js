@@ -1,12 +1,7 @@
-// Data access layer for PAWS
-// All methods use raw SQL via the db module (pg pool).
-// Rewritten to match the new ERD schema (English naming, businesses+clinics split, etc.)
-
 const db = require('./storage/db');
 
 class Storage {
-
-  // ======================== USERS (was "clientes") ========================
+  // Usuarios
 
   async getAllUsers() {
     return await db.all(
@@ -22,17 +17,18 @@ class Storage {
   }
 
   async getUserByEmail(email) {
-    // Returns ALL fields including password (needed for login check)
     return await db.get(
       'SELECT * FROM users WHERE email = $1',
       [email]
     );
   }
 
-  async createUser(name, email, password, phone = null) {
+  async createUser(name, email, password, phone = null, role = 'owner') {
     const result = await db.get(
-      'INSERT INTO users (name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING user_id',
-      [name, email, password, phone]
+      `INSERT INTO users (name, email, password, phone, role)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING user_id`,
+      [name, email, password, phone, role]
     );
     return await this.getUserById(result.user_id);
   }
@@ -45,6 +41,7 @@ class Storage {
     if (data.name !== undefined)  { fields.push(`name = $${p++}`);  values.push(data.name); }
     if (data.email !== undefined) { fields.push(`email = $${p++}`); values.push(data.email); }
     if (data.phone !== undefined) { fields.push(`phone = $${p++}`); values.push(data.phone); }
+    if (data.role !== undefined)  { fields.push(`role = $${p++}`);  values.push(data.role); }
 
     if (fields.length === 0) return await this.getUserById(id);
 
@@ -56,15 +53,13 @@ class Storage {
     return await this.getUserById(id);
   }
 
-  // ======================== BUSINESSES ========================
+  // Negocios
 
   async getBusinessById(id) {
     return await db.get('SELECT * FROM businesses WHERE business_id = $1', [id]);
   }
 
-  // ======================== CLINICS (was "veterinarias") ========================
-  // Each clinic is a business + a clinic extension row.
-  // Queries JOIN both tables to return the full picture.
+  // Clínicas
 
   async getAllClinics() {
     const clinics = await db.all(`
@@ -76,7 +71,7 @@ class Storage {
       ORDER BY b.name ASC
     `);
 
-    for (let clinic of clinics) {
+    for (const clinic of clinics) {
       clinic.specialties = await this.getSpecialtiesByClinic(clinic.clinic_id);
     }
 
@@ -111,7 +106,7 @@ class Storage {
       ORDER BY b.name ASC
     `, [`%${location}%`, `%${location}%`]);
 
-    for (let clinic of clinics) {
+    for (const clinic of clinics) {
       clinic.specialties = await this.getSpecialtiesByClinic(clinic.clinic_id);
     }
 
@@ -119,17 +114,40 @@ class Storage {
   }
 
   async createClinic(data) {
-    const { user_id, name, address, phone, whatsapp, zone, latitude, longitude, image_url, service_type, is_24h } = data;
+    const {
+      user_id,
+      name,
+      address,
+      phone,
+      whatsapp,
+      zone,
+      latitude,
+      longitude,
+      image_url,
+      service_type,
+      is_24h
+    } = data;
 
-    // First create the business row
     const business = await db.get(
-      `INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, zone, latitude, longitude, image_url, status)
-       VALUES ($1, 'clinic', $2, $3, $4, $5, $6, $7, $8, $9, 'active')
-       RETURNING business_id`,
-      [user_id, name, address, phone || null, whatsapp || null, zone || null, latitude || null, longitude || null, image_url || null]
+      `INSERT INTO businesses (
+        user_id, business_type, name, address, phone, whatsapp,
+        zone, latitude, longitude, image_url, status
+      )
+      VALUES ($1, 'clinic', $2, $3, $4, $5, $6, $7, $8, $9, 'active')
+      RETURNING business_id`,
+      [
+        user_id,
+        name,
+        address,
+        phone || null,
+        whatsapp || null,
+        zone || null,
+        latitude || null,
+        longitude || null,
+        image_url || null
+      ]
     );
 
-    // Then create the clinic extension
     const clinic = await db.get(
       `INSERT INTO clinics (business_id, service_type, is_24h, rating)
        VALUES ($1, $2, $3, 0)
@@ -140,7 +158,7 @@ class Storage {
     return await this.getClinicById(clinic.clinic_id);
   }
 
-  // ======================== SPECIALTIES (was "servicios" in routes) ========================
+  // Especialidades
 
   async getAllSpecialties() {
     return await db.all('SELECT * FROM specialties ORDER BY specialty_id ASC');
@@ -151,7 +169,10 @@ class Storage {
       'INSERT INTO specialties (name) VALUES ($1) RETURNING specialty_id',
       [name]
     );
-    return await db.get('SELECT * FROM specialties WHERE specialty_id = $1', [result.specialty_id]);
+    return await db.get(
+      'SELECT * FROM specialties WHERE specialty_id = $1',
+      [result.specialty_id]
+    );
   }
 
   async getSpecialtiesByClinic(clinic_id) {
@@ -172,7 +193,7 @@ class Storage {
     return { success: true };
   }
 
-  // ======================== PETS (was "mascotas") ========================
+  // Mascotas
 
   async getAllPets() {
     return await db.all(
@@ -204,7 +225,8 @@ class Storage {
     const { name, species, breed, birth_date, weight_kg, user_id } = data;
     const result = await db.get(
       `INSERT INTO pets (name, species, breed, birth_date, weight_kg, user_id)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING pet_id`,
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING pet_id`,
       [name, species, breed || null, birth_date || null, weight_kg || null, user_id]
     );
     return await this.getPetById(result.pet_id);
@@ -215,11 +237,11 @@ class Storage {
     const values = [];
     let p = 1;
 
-    if (data.name !== undefined)       { fields.push(`name = $${p++}`);       values.push(data.name); }
-    if (data.species !== undefined)    { fields.push(`species = $${p++}`);    values.push(data.species); }
-    if (data.breed !== undefined)      { fields.push(`breed = $${p++}`);      values.push(data.breed); }
+    if (data.name !== undefined)       { fields.push(`name = $${p++}`); values.push(data.name); }
+    if (data.species !== undefined)    { fields.push(`species = $${p++}`); values.push(data.species); }
+    if (data.breed !== undefined)      { fields.push(`breed = $${p++}`); values.push(data.breed); }
     if (data.birth_date !== undefined) { fields.push(`birth_date = $${p++}`); values.push(data.birth_date); }
-    if (data.weight_kg !== undefined)  { fields.push(`weight_kg = $${p++}`);  values.push(data.weight_kg); }
+    if (data.weight_kg !== undefined)  { fields.push(`weight_kg = $${p++}`); values.push(data.weight_kg); }
 
     if (fields.length === 0) return await this.getPetById(id);
 
@@ -231,7 +253,7 @@ class Storage {
     return await this.getPetById(id);
   }
 
-  // ======================== MEDICAL RECORDS (was "visitas") ========================
+  // Historial médico
 
   async getAllRecords() {
     return await db.all(
@@ -274,12 +296,21 @@ class Storage {
       `INSERT INTO medical_records (pet_id, clinic_id, user_id, visit_type, reason, diagnosis, treatment, notes)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING record_id`,
-      [pet_id, clinic_id, user_id || null, visit_type || 'general', reason || null, diagnosis || null, treatment || null, notes || null]
+      [
+        pet_id,
+        clinic_id,
+        user_id || null,
+        visit_type || 'general',
+        reason || null,
+        diagnosis || null,
+        treatment || null,
+        notes || null
+      ]
     );
     return await this.getRecordById(result.record_id);
   }
 
-  // ======================== EMERGENCIES (was "emergencias") ========================
+  // Emergencias
 
   async getAllEmergencies() {
     return await db.all(
@@ -294,9 +325,11 @@ class Storage {
   async createEmergency(description, pet_id, business_id) {
     const result = await db.get(
       `INSERT INTO emergencies (description, pet_id, business_id)
-       VALUES ($1, $2, $3) RETURNING emergency_id`,
+       VALUES ($1, $2, $3)
+       RETURNING emergency_id`,
       [description, pet_id, business_id]
     );
+
     return await db.get(
       `SELECT e.*, p.name AS pet_name, b.name AS business_name
        FROM emergencies e
@@ -307,7 +340,7 @@ class Storage {
     );
   }
 
-  // ======================== EMERGENCY MESSAGES ========================
+  // Mensajes de emergencia
 
   async getAllEmergencyMessages() {
     return await db.all(
@@ -322,19 +355,24 @@ class Storage {
     const { message, contact_name, contact_phone, business_id, emergency_id } = data;
     const row = await db.get(
       `INSERT INTO emergency_messages (message, contact_name, contact_phone, business_id, emergency_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING message_id`,
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING message_id`,
       [message, contact_name, contact_phone || null, business_id, emergency_id || null]
     );
-    return await db.get('SELECT * FROM emergency_messages WHERE message_id = $1', [row.message_id]);
+
+    return await db.get(
+      'SELECT * FROM emergency_messages WHERE message_id = $1',
+      [row.message_id]
+    );
   }
 
-  // ======================== USER DASHBOARD ========================
+  // Dashboard del usuario
 
   async getUserDashboard(user_id) {
     const user = await this.getUserById(user_id);
     const pets = await this.getPetsByUser(user_id);
 
-    for (let pet of pets) {
+    for (const pet of pets) {
       pet.medical_records = await this.getRecordsByPet(pet.pet_id);
     }
 

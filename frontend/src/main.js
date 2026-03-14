@@ -1,6 +1,6 @@
 import { router } from "./router.js";
 import { navbarController } from "./components/navbar.js";
-import { apiService } from "../../backend/services/api.js";
+import { apiService } from "../../frontend/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 
 // Funciones globales para usar en HTML
