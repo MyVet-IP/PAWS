@@ -1,38 +1,54 @@
-import { Navbar } from "../components/navbar.js";
+import { NavbarController, navbarEvents } from "../components/navbar.js";
 import { Aside } from "../components/aside.js";
 import { Topbar } from "../components/topbar.js";
+import { getUser } from "../utils.js";
+import { Footer } from "../components/footer.js";
 
-export function Layout(viewContent, role, currentPath) {
+export function Layout(content) {
 
-  // if this is guest
-  if (role === "guest") {
-    return `
-      ${Navbar(role)}
-      <main class="p-6">
-        ${viewContent}
-      </main>
-    `;
-  }
+  const user = getUser ();
+  const role = user ? user.role : "guest";
 
-  // if is user or vet.
-  return `
-    <div class="flex h-screen">
+  const currentPath = window.location.hash || "#/";
 
-      ${Aside(role)}
+    // if this is guest
+    if (role === "guest") {
 
-      <div class="flex-1 flex flex-col">
+        const html = `
+          ${NavbarController()}
 
-        ${Topbar(role, currentPath)}
+          <main class="p-6">
+            ${content}
+          </main>
+          ${Footer()}
+        `;
 
-        <main class="flex-1 overflow-y-auto p-6">
-          ${viewContent}
-        </main>
+        setTimeout(navbarEvents,0);
 
-      </div>
+        return html;
+      }
 
-    </div>
-  `;
-}
+      // if is user or vet.
+      return `
+        <div class="flex h-screen">
+
+          ${Aside(role)}
+
+          <div class="flex-1 flex flex-col">
+
+            ${Topbar(role, currentPath)}
+
+            <main class="flex-1 overflow-y-auto p-6">
+              ${content}
+            </main>
+             ${Footer()}
+          </div>
+          
+        </div>
+
+      `;
+    }
+
 
 
 

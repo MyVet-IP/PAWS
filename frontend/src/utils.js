@@ -75,3 +75,8 @@ export function hideLoading() {
     loader.remove();
   }
 }
+
+// utils.js
+export function getUser(){
+  return JSON.parse(localStorage.getItem("user"));
+}

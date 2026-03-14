@@ -1,18 +1,73 @@
+// emergencyButton.js
 export function EmergencyButton() {
-  return `
-  <button
-    id="btn-emergency-fab"
-    class="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center z-40 transition transform hover:scale-110"
-    aria-label="Emergencies"
-  >
-    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        stroke-width="2" 
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-      />
-    </svg>
-  </button>
+  
+  console.log("EmergencyButton ejecutado");
+
+  // 💀 Eliminar botón previo si existe
+  const existing = document.getElementById("emergency-btn");
+  if (existing) existing.remove();
+
+  const btn = document.createElement("button");
+  btn.id = "emergency-btn";
+  btn.className = `
+    fixed bottom-6 right-6
+    w-24 h-24
+    rounded-full
+    bg-[#FF0000]
+    flex items-center justify-center
+    text-white
+    shadow-[0_0_30px_rgba(255,0,0,0.9)]
+    animate-pulse
+    hover:scale-110
+    hover:shadow-[0_0_50px_rgba(255,0,0,1)]
+    transition
+    cursor-grab
+    z-50
   `;
+  btn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="w-12 h-12"
+         fill="white"
+         viewBox="0 0 24 24">
+      <path d="M1 21h22L12 2 1 21zm11-3a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm-1-5h2v-4h-2v4z"/>
+    </svg>
+  `;
+
+  btn.addEventListener("dblclick", () => {
+    window.location.hash = '#/emergency';
+  });
+
+  document.body.appendChild(btn);
+
+  makeDraggable(btn);
 }
+
+// Función para arrastrar el botón
+function makeDraggable(element) {
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  element.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    element.classList.remove("cursor-grab");
+    element.classList.add("cursor-grabbing");
+
+    offsetX = e.clientX - element.offsetLeft;
+    offsetY = e.clientY - element.offsetTop;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    element.style.left = e.clientX - offsetX + "px";
+    element.style.top = e.clientY - offsetY + "px";
+    element.style.right = "auto";
+    element.style.bottom = "auto";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    element.classList.remove("cursor-grabbing");
+    element.classList.add("cursor-grab");
+  });
+}
+

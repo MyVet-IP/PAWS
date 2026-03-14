@@ -73,10 +73,12 @@ export function loginPage() {
     </section>
     `;
 }
+
 export function loginEvents() {
     const form = document.getElementById('login-form');
     if (!form) return;
 
+    // loginEvents dentro de login.js
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value.trim();
@@ -93,11 +95,22 @@ export function loginEvents() {
             const data = await res.json();
             if (!res.ok) { errBox.textContent = data.error; return; }
 
-            localStorage.setItem('currentUser', JSON.stringify(data));
-            window.location.hash = '#/user-dashboard';
+            // Guardar sesión
+            localStorage.setItem('user', JSON.stringify(data));
+
+            // Redirigir según rol
+            if(data.role === "owner"){
+                window.location.hash = "#/user-dashboard";
+            }
+            if(data.role === "vet"){
+                window.location.hash = "#/veterinary";
+            }
+            if(data.role === "admin"){
+                window.location.hash = "#/admin-dashboard"; // si luego creas esta vista
+            }
         } catch {
             errBox.textContent = 'Connection error. Please try again.';
         }
-    });
-}
+});
 
+}
