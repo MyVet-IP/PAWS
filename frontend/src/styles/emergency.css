@@ -1,6 +1,6 @@
 /* Emergency Page Styles /
 
-/ Urgency options /
+/* Urgency options */
 .urgency-option {
   transition: all 0.2s ease;
 }
@@ -15,27 +15,34 @@
   background: rgba(241, 192, 232, 0.2);
 }
 
-/ Emergency clinic cards /
+/* Emergency clinic cards */
 .emergency-clinic-card {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .emergency-clinic-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
-/ Pulsing 24/7 badge /
+/* Pulsing 24/7 badge */
 .badge-24h {
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
-/ Call button /
+/* Call button */
 .call-btn {
   transition: all 0.2s ease;
 }
@@ -45,7 +52,7 @@
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
-/ WhatsApp button /
+/* WhatsApp button */
 .whatsapp-btn {
   transition: all 0.2s ease;
 }
@@ -55,17 +62,17 @@
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
-/ Tips list /
+/* Tips list */
 .tip-item {
   transition: background 0.2s ease;
 }
 
 .tip-item:hover {
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 8px;
 }
 
-/ Dark Mode */
+/* Dark Mode */
 .dark .urgency-option {
   background: #374151;
   border-color: #4B5563;

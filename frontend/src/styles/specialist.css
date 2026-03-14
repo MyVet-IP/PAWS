@@ -1,0 +1,656 @@
+/* ========== Specialists Page Styles ========== */
+
+/* Page Layout */
+.specialists-page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+.specialists-header {
+    background: white;
+    box-shadow: var(--shadow-card);
+    border-bottom: 1px solid #f0e8ff;
+}
+
+.specialists-header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+    .specialists-header-content {
+        padding: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .specialists-header-content {
+        padding: 24px 32px;
+    }
+}
+
+.specialists-header-info {
+    flex: 1;
+}
+
+.specialists-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-green);
+    color: #059669;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialists-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialists-page-subtitle {
+    margin-top: 4px;
+    color: var(--text-soft);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+}
+
+.specialists-back-btn {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: var(--text-highlight);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.specialists-back-btn:hover {
+    opacity: 0.75;
+}
+
+/* Stats Bar */
+.specialists-stats-bar {
+    background: linear-gradient(135deg, #6A4C93, #8b5cf6);
+    padding: 32px 0;
+}
+
+.specialists-stats-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+@media (min-width: 640px) {
+    .specialists-stats-container {
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .specialists-stats-container {
+        padding: 0 32px;
+    }
+}
+
+.specialists-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (min-width: 768px) {
+    .specialists-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.specialists-stat-item {
+    text-align: center;
+    color: white;
+}
+
+.specialists-stat-icon {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+}
+
+.specialists-stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialists-stat-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Filters Section */
+.specialists-filters {
+    background: white;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.specialists-filters-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+@media (min-width: 640px) {
+    .specialists-filters-content {
+        padding: 16px 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .specialists-filters-content {
+        padding: 16px 32px;
+    }
+}
+
+.specialists-filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.specialists-filter-row:last-child {
+    margin-bottom: 0;
+}
+
+.specialists-filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Poppins', sans-serif;
+    margin-right: 4px;
+}
+
+.specialists-filter-chip {
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1.5px solid #e5e7eb;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.specialists-filter-chip.active,
+.specialists-filter-chip:hover {
+    background: var(--text-highlight);
+    border-color: var(--text-highlight);
+    color: white;
+}
+
+/* Main Content */
+.specialists-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 16px;
+}
+
+@media (min-width: 640px) {
+    .specialists-main {
+        padding: 40px 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .specialists-main {
+        padding: 40px 32px;
+    }
+}
+
+/* Specialists Grid */
+.specialists-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+@media (min-width: 768px) {
+    .specialists-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .specialists-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Specialist Card */
+.specialist-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.specialist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10);
+}
+
+.specialist-card-accent {
+    height: 6px;
+}
+
+.specialist-card-accent--purple {
+    background: var(--color-purple);
+}
+
+.specialist-card-accent--blue {
+    background: var(--color-blue);
+}
+
+.specialist-card-accent--green {
+    background: var(--color-green);
+}
+
+.specialist-card-accent--yellow {
+    background: var(--color-yellow);
+}
+
+.specialist-card-accent--pink {
+    background: var(--color-pink);
+}
+
+.specialist-card-content {
+    padding: 24px;
+}
+
+/* Specialist Header */
+.specialist-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.specialist-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.specialist-avatar--purple {
+    background: var(--color-purple);
+}
+
+.specialist-avatar--blue {
+    background: var(--color-blue);
+}
+
+.specialist-avatar--green {
+    background: var(--color-green);
+}
+
+.specialist-avatar--yellow {
+    background: var(--color-yellow);
+}
+
+.specialist-avatar--pink {
+    background: var(--color-pink);
+}
+
+.specialist-info {
+    flex: 1;
+}
+
+.specialist-info-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.specialist-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialist-role {
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialist-role--purple {
+    color: var(--text-highlight);
+}
+
+.specialist-role--blue {
+    color: #2563eb;
+}
+
+.specialist-role--green {
+    color: #059669;
+}
+
+.specialist-role--yellow {
+    color: #d97706;
+}
+
+.specialist-role--pink {
+    color: #dc2626;
+}
+
+.specialist-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialist-badge--purple {
+    background: var(--color-purple);
+    color: var(--text-highlight);
+}
+
+.specialist-badge--blue {
+    background: var(--color-blue);
+    color: #2563eb;
+}
+
+.specialist-badge--green {
+    background: var(--color-green);
+    color: #059669;
+}
+
+.specialist-badge--yellow {
+    background: var(--color-yellow);
+    color: #d97706;
+}
+
+.specialist-badge--pink {
+    background: var(--color-pink);
+    color: #dc2626;
+}
+
+/* Specialist Location */
+.specialist-location {
+    margin-bottom: 12px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.specialist-location-item {
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.specialist-clinic {
+    color: var(--text-soft);
+}
+
+.specialist-neighborhood {
+    color: var(--text-muted);
+}
+
+/* Specialist Rating */
+.specialist-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.specialist-stars {
+    color: #f59e0b;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.specialist-rating-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialist-reviews {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Specialist Meta */
+.specialist-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Animal Tags */
+.specialist-animals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.specialist-animal-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: var(--text-muted);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Specialist Actions */
+.specialist-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.specialist-btn-primary {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.specialist-btn-primary:hover {
+    opacity: 0.85;
+}
+
+.specialist-btn-primary--purple {
+    background: var(--color-purple);
+    color: var(--text-highlight);
+}
+
+.specialist-btn-primary--blue {
+    background: var(--color-blue);
+    color: #2563eb;
+}
+
+.specialist-btn-primary--green {
+    background: var(--color-green);
+    color: #059669;
+}
+
+.specialist-btn-primary--yellow {
+    background: var(--color-yellow);
+    color: #d97706;
+}
+
+.specialist-btn-primary--pink {
+    background: var(--color-pink);
+    color: #dc2626;
+}
+
+.specialist-btn-secondary {
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background: white;
+    transition: all var(--transition-fast);
+}
+
+.specialist-btn-secondary--purple {
+    border: 1.5px solid var(--color-purple);
+    color: var(--text-highlight);
+}
+
+.specialist-btn-secondary--blue {
+    border: 1.5px solid var(--color-blue);
+    color: #2563eb;
+}
+
+.specialist-btn-secondary--green {
+    border: 1.5px solid var(--color-green);
+    color: #059669;
+}
+
+.specialist-btn-secondary--yellow {
+    border: 1.5px solid var(--color-yellow);
+    color: #d97706;
+}
+
+.specialist-btn-secondary--pink {
+    border: 1.5px solid var(--color-pink);
+    color: #dc2626;
+}
+
+/* CTA Section */
+.specialists-cta {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+    border: 1px solid #f0e8ff;
+}
+
+.specialists-cta-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.specialists-cta-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.specialists-cta-text {
+    color: var(--text-soft);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    max-width: 480px;
+    margin: 0 auto 24px;
+}
+
+.specialists-cta-btn {
+    background: var(--text-highlight);
+    color: white;
+    border: none;
+    padding: 13px 32px;
+    border-radius: var(--radius-md);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.specialists-cta-btn:hover {
+    opacity: 0.9;
+}
+
+/* Animations */
+@keyframes specialistsFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.specialists-fade-up {
+    animation: specialistsFadeUp 0.4s ease forwards;
+}
+
+.specialists-fade-up-delay-1 {
+    animation-delay: 0.07s;
+}
+
+.specialists-fade-up-delay-2 {
+    animation-delay: 0.14s;
+}
+
+.specialists-fade-up-delay-3 {
+    animation-delay: 0.21s;
+}
+
+.specialists-fade-up-delay-4 {
+    animation-delay: 0.28s;
+}
+
+.specialists-fade-up-delay-5 {
+    animation-delay: 0.35s;
+}
