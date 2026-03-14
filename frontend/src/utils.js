@@ -80,3 +80,19 @@ export function hideLoading() {
 export function getUser(){
   return JSON.parse(localStorage.getItem("user"));
 }
+
+
+export function checkAuth(role) {
+  const user = getUser(); // ya tienes getUser importado
+  if (!user) {
+    window.location.hash = "#/unauthorized";
+    return false;
+  }
+
+  if (user.role !== role) {
+    window.location.hash = "#/unauthorized";
+    return false;
+  }
+
+  return true;
+}

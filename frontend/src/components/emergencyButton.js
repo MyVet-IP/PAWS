@@ -11,7 +11,7 @@ export function EmergencyButton() {
   btn.id = "emergency-btn";
   btn.className = `
     fixed bottom-6 right-6
-    w-24 h-24
+    w-16 h-16
     rounded-full
     bg-[#FF0000]
     flex items-center justify-center

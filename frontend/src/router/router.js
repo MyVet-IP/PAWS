@@ -1,8 +1,10 @@
-import { getUser } from "../utils.js";
+import { getUser, checkAuth } from "../utils.js";
 import { Layout } from "../layout/layout.js";
+import { AuthLayout } from "../layout/auth-layout.js";
+import { Aside, asideEvents } from "../components/aside.js";
 
 import { clinicsPage } from "../views/clinics-view.js";
-import { petProfilepage } from "../views/pet-profile.js";
+import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
 import { loginPage, loginEvents } from "../views/login.js";
 import { landingPage, landingEvents } from "../views/landing-page.js";
 import { emergencyPage, emergencyEvents } from "../views/emergency.js";
@@ -11,8 +13,9 @@ import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { vetDashboardPage } from "../views/vet-dashboard.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
-import { AuthLayout } from "../layout/auth-layout.js";
+import { healthTipsPage } from "../views/health-tips.js";
 
+const PUBLIC_PATHS = ["/", "/login", "/register"];
 
 const routes = {
   "/": landingPage,
@@ -28,11 +31,30 @@ const routes = {
   "/register": registerPage,
   "/clinics": clinicsPage,
   "/emergency": emergencyPage,
-  "/pet-profile": petProfilepage,
-  "/veterinary": vetDashboardPage,
-  "/user-dashboard": dashboardPage,
+  "/pet-profile": () => {
+    if (!checkAuth("owner")) return;
+    return petProfilepage();
+  },
+  "/veterinary": () => {
+    if (!checkAuth("vet")) return;
+    return vetDashboardPage();
+  },
+
+  "/user-dashboard": () => {
+    if (!checkAuth("owner")) return;
+    return dashboardPage();
+  },
   "/map-page": loadMapPage,
-  "/tips": () => "<h1>Health Tips - In development</h1>"
+  "/tips": healthTipsPage,
+
+  "/unauthorized": () => `
+    <div class="p-10 text-center">
+      <h1 class="text-2xl font-bold text-red-500">
+        Unauthorized access
+      </h1>
+      <p>You don't have permission to view this page.</p>
+    </div>
+  `
 };
 
 export function router() {
@@ -40,53 +62,81 @@ export function router() {
   console.log("Router ejecutado en path:", path);
   const app = document.getElementById("app");
 
-  const view = routes[path];
+  const viewFunction = routes[path];
 
   try {
-    if (view) {
-      const html = view();
 
-      if (path === "/login" || path === "/register") {
-        app.innerHTML = AuthLayout(html);
-      } else {
-        app.innerHTML = Layout(html);
-      }
-
-      // 🔥 SIEMPRE ejecutar
-      pageEvents();
-      console.log("EmergencyButton llamado desde router");
-      EmergencyButton();
-
-      if (path === "/") {
-        landingEvents();
-      }
-
-      if (path === "/login") {
-        loginEvents();
-      }
-
-      if (path === "/register") {
-        registerEvents();
-      }
-
-      if (path === "/user-dashboard") {
-        dashboardEvents();
-      }
-
-      if (path === "/map-page") {
-        loadMapEvents();
-      }
-
-      if (path === '/emergencias') {
-        emergencyEvents();
-      }
-
-    } else {
+    if (!viewFunction) {
       app.innerHTML = "<h1>Page not found</h1>";
+      return;
     }
+
+    const html = viewFunction();
+
+    // ===== Layout selector =====
+    if (path === "/login" || path === "/register") {
+      app.innerHTML = AuthLayout(html);
+    } else {
+      app.innerHTML = Layout(html);
+    }
+
+    // ===== Global components =====
+    pageEvents();
+    EmergencyButton();
+
+    // ===== Page-specific events =====
+    runPageEvents(path);
+
   } catch (error) {
+
     console.error("Error loading view:", error);
-    app.innerHTML = `<div style="padding:2rem;color:red;font-family:monospace"><b>Error loading view:</b><pre>${error.message}</pre></div>`;
+
+    app.innerHTML = `
+      <div style="padding:2rem;color:red;font-family:monospace">
+        <b>Error loading view:</b>
+        <pre>${error.message}</pre>
+      </div>
+    `;
+  }
+}
+
+// ==================== PAGE EVENTS ====================
+
+function runPageEvents(path) {
+
+  if (!PUBLIC_PATHS.includes(path)) {
+    asideEvents();                 
+  }
+
+  switch (path) {
+
+    case "/":
+      landingEvents();
+      break;
+
+    case "/login":
+      loginEvents();
+      break;
+
+    case "/register":
+      registerEvents();
+      break;
+
+    case "/user-dashboard":
+      dashboardEvents();
+      break;
+
+    case "/map-page":
+      loadMapEvents();
+      break;
+
+    case "/emergency":
+      emergencyEvents();
+      break;
+
+    case "/pet-profile":
+      petProfileEvents();
+      break
   }
 }
 
