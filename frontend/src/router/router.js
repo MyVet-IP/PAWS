@@ -11,7 +11,7 @@ import { registerPage, registerEvents } from "../views/register.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { vetDashboardPage } from "../views/vet-dashboard.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
-
+import { AuthLayout } from "../layout/auth-layout.js";
 
 
 const routes = {
@@ -45,8 +45,14 @@ export function router() {
   try {
     if (view) {
       const html = view();
-      app.innerHTML = Layout(html);
 
+      if (path === "/login" || path === "/register") {
+        app.innerHTML = AuthLayout(html);
+      } else {
+        app.innerHTML = Layout(html);
+      }
+
+      // 🔥 SIEMPRE ejecutar
       pageEvents();
       console.log("EmergencyButton llamado desde router");
       EmergencyButton();
