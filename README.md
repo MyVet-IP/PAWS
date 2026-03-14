@@ -60,12 +60,12 @@ MyVet/
 
 | Ruta | Descripción | Estado |
 |------|-------------|---------|
-| `#/` o `#/landing` | Página principal | ✅ Funcional |
-| `#/clinicas` | Lista de clínicas | ✅ Funcional |
-| `#/pet-profile` | Perfil de mascota | ✅ Funcional |
-| `#/user-dashboard` | Dashboard usuario | ✅ Funcional |
-| `#/emergencias` | Emergencias 24/7 | 🚧 En desarrollo |
-| `#/tips` | Tips de salud | 🚧 En desarrollo |
+| `/#/` o `/#/landing` | Página principal | ✅ Funcional |
+| `/#/clinicas` | Lista de clínicas | ✅ Funcional |
+| `/#/pet-profile` | Perfil de mascota | ✅ Funcional |
+| `/#/user-dashboard` | Dashboard usuario | ✅ Funcional |
+| `/#/emergencias` | Emergencias 24/7 | 🚧 En desarrollo |
+| `/#/tips` | Tips de salud | 🚧 En desarrollo |
 
 ## 🚀 **Cómo usar**
 
@@ -81,7 +81,7 @@ python -m http.server 8000
 - **Desde Landing**: Botones "Ingresar", "Buscar", enlaces del navbar
 - **Búsqueda**: Campo de búsqueda funcional con parámetros URL
 - **Clínicas**: Filtros, vista de detalles, reservas
-- **Programática**: `window.location.hash = '#/ruta'`
+- **Programática**: `window.location.hash = '/#/ruta'`
 
 ### 3. **Funcionalidades principales**
 
@@ -91,7 +91,7 @@ python -m http.server 8000
 window.searchClinics();
 
 // Con ubicación específica:
-window.location.hash = '#/clinicas?location=Polanco';
+window.location.hash = '/#/clinicas?location=Polanco';
 ```
 
 #### 🏥 **Interacción con clínicas**

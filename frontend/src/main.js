@@ -24,9 +24,9 @@ window.searchClinics = function () {
   if (input) {
     const location = input.value;
     if (location.trim()) {
-      window.location.hash = `#/clinicas?location=${encodeURIComponent(location)}`;
+      window.location.hash = `/#/clinicas?location=${encodeURIComponent(location)}`;
     } else {
-      window.location.hash = '#/clinicas';
+      window.location.hash = '/#/clinicas';
     }
   }
 };

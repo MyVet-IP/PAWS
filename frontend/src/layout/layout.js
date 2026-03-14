@@ -9,7 +9,7 @@ export function Layout(content) {
   const user = getUser();
   const role = user ? user.role : "guest";
 
-  const currentPath = window.location.hash || "#/";
+  const currentPath = window.location.hash || "/#/";
 
   // if this is guest
   if (role === "guest") {

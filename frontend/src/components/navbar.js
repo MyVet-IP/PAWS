@@ -16,7 +16,7 @@ export function navbarController() {
       <!-- LOGO -->
       <div 
       class="flex items-center gap-2 font-bold text-gray-800 cursor-pointer"
-      onclick="window.location.hash='#/'">
+      onclick="window.location.hash='/#/'">
 
         <span class="text-green-600 text-xl">🐾</span>
 
@@ -30,25 +30,25 @@ export function navbarController() {
       <!-- NAV LINKS -->
       <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
 
-        <a href="#/clinics"
+        <a href="/#/clinics"
         class="flex items-center gap-1 hover:text-green-600 transition">
 
           🏥 Clinics
         </a>
 
-        <a href="#/emergency"
+        <a href="/#/emergency"
         class="flex items-center gap-1 hover:text-red-500 transition">
 
           ✴️ Emergencies
         </a>
 
-        <a href="#/services"
+        <a href="/#/services"
         class="flex items-center gap-1 hover:text-green-600 transition">
 
           🧼 Services
         </a>
 
-        <a href="#/tips"
+        <a href="/#/tips"
         class="flex items-center gap-1 hover:text-green-600 transition">
 
           💡 Tips
@@ -95,7 +95,7 @@ export function navbarEvents() {
 
   if (loginBtn) {
     loginBtn.addEventListener("click", () => {
-      window.location.hash = "#/login";
+      window.location.hash = "/#/login";
     });
   }
 }

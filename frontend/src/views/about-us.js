@@ -32,7 +32,7 @@ export function aboutUsPage() {
       <!-- Header -->
       <header class="about-header">
         <div class="about-header-content">
-          <button onclick="window.location.hash='#/'" class="about-back-btn">
+          <button onclick="window.location.hash='/#/'" class="about-back-btn">
             <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
             Back to home
           </button>
@@ -150,10 +150,10 @@ export function aboutUsPage() {
           <h2 class="about-cta-title">Want to Be Part of PAWS?</h2>
           <p class="about-cta-text">We're always looking for passionate people - whether you're a vet, a developer, or just a pet lover.</p>
           <div class="about-cta-buttons">
-            <button onclick="window.location.hash='#/work-with-us'" class="about-cta-btn-primary">
+            <button onclick="window.location.hash='/#/work-with-us'" class="about-cta-btn-primary">
               Work With Us
             </button>
-            <button onclick="window.location.hash='#/contact'" class="about-cta-btn-secondary">
+            <button onclick="window.location.hash='/#/contact'" class="about-cta-btn-secondary">
               Contact Us
             </button>
           </div>

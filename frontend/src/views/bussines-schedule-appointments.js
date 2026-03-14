@@ -15,7 +15,7 @@ export function businessScheduleAppointmentsPage() {
               <h1 class="text-3xl font-bold" style="color: #333333; font-family: 'Poppins', sans-serif;">Appointment Management</h1>
               <p class="mt-1" style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.95rem;">Manage your clinic's appointments and schedule</p>
             </div>
-            <button onclick="window.location.hash='#/veterinary'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
+            <button onclick="window.location.hash='/#/veterinary'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
               Back to Dashboard
             </button>
           </div>

@@ -109,7 +109,7 @@ export function specialistsPage() {
             <h1 class="specialists-page-title">Our Specialists</h1>
             <p class="specialists-page-subtitle">Board-certified veterinary specialists across the Aburra Valley</p>
           </div>
-          <button onclick="window.location.hash='#/'" class="specialists-back-btn">
+          <button onclick="window.location.hash='/#/'" class="specialists-back-btn">
             <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
             Back to home
           </button>
@@ -233,7 +233,7 @@ export function specialistsPage() {
           </div>
           <h3 class="specialists-cta-title">Are You a Veterinary Specialist?</h3>
           <p class="specialists-cta-text">Join PAWS and connect with thousands of pet owners in Medellin looking for specialized care.</p>
-          <button onclick="window.location.hash='#/work-with-us'" class="specialists-cta-btn">
+          <button onclick="window.location.hash='/#/work-with-us'" class="specialists-cta-btn">
             Join as a Specialist
             <span class="material-symbols-outlined" style="vertical-align: middle; margin-left: 4px; font-size: 18px;">arrow_forward</span>
           </button>

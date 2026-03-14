@@ -162,7 +162,7 @@ export function registerPage() {
                 <div class="flex items-start gap-3">
                     <input type="checkbox" id="terms" class="w-4 h-4 mt-1 rounded border-gray-300 text-paws-purple focus:ring-paws-purple" required>
                     <label for="terms" class="text-sm text-text-soft">
-                        I agree to the <a href="#/terms" class="text-text-highlight hover:underline">Terms of Service</a> and <a href="#/privacy" class="text-text-highlight hover:underline">Privacy Policy</a>
+                        I agree to the <a href="/#/terms" class="text-text-highlight hover:underline">Terms of Service</a> and <a href="/#/privacy" class="text-text-highlight hover:underline">Privacy Policy</a>
                     </label>
                 </div>
 
@@ -174,7 +174,7 @@ export function registerPage() {
                 <!-- Sign In Link -->
                 <p class="text-center text-sm text-text-soft">
                     Already have an account?
-                    <a href="#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
+                    <a href="/#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
                 </p>
 
                 <!-- Footer -->
@@ -186,8 +186,8 @@ export function registerPage() {
                         <span>Your data is protected</span>
                     </div>
                     <div class="flex gap-4">
-                        <a href="#/terms" class="hover:text-text-primary transition">Terms</a>
-                        <a href="#/privacy" class="hover:text-text-primary transition">Privacy</a>
+                        <a href="/#/terms" class="hover:text-text-primary transition">Terms</a>
+                        <a href="/#/privacy" class="hover:text-text-primary transition">Privacy</a>
                     </div>
                 </div>
             </form>
@@ -350,7 +350,7 @@ export function registerEvents() {
                 showMessage("Account created successfully! Redirecting...", true);
 
                 setTimeout(() => {
-                    window.location.hash = "#/login";
+                    window.location.hash = "/#/login";
                 }, 1500);
 
             } catch (error) {
