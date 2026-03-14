@@ -1,30 +1,30 @@
 /* ========== COLORES PRINCIPALES ========== */
 
-/* :root {
+:root {
 
-  Branding 
+  /* Branding  */
   --green-pastel: #B9FBC0;
   --purple-pastel: #F1C0E8;
 
-  Secundarios 
+  /* Secundarios  */
   --yellow-soft: #FBF8CC;
   --blue-pastel: #90BDF4;
   --pink-soft: #FFCFD2;
 
-   Texto 
+  /* Texto  */
   --text-primary: #333333;
   --text-soft: #4A4A4A;
   --text-highlight: #6A4C93;
 
-  Fondo 
+  /* Fondo  */
   --background-main: #ffffff;
   --background-soft: #FBF8CC;
 
-   Bordes 
+  /* Bordes  */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
 
-   Sombras
-  --shadow-soft: 0 4px 10px rgba(0,0,0,0.08);
-}  */
+  /* Sombras */
+  --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
