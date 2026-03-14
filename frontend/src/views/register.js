@@ -157,6 +157,7 @@ export function registerPage() {
                         </label>
                     </div>
                 </div>
+<<<<<<< HEAD
 
                 <!-- Terms Agreement -->
                 <div class="flex items-start gap-3">
@@ -169,6 +170,10 @@ export function registerPage() {
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary w-full py-3 text-base">
                     Create Account
+=======
+                <button type="submit" class=" w-full mt-6 bg-purple cursor-pointer rounded-full py-3 text-white font-semibold hover:opacity-90 transition">
+                    Sign Up →
+>>>>>>> origin/develop
                 </button>
 
                 <!-- Divider -->
@@ -192,7 +197,11 @@ export function registerPage() {
                 <!-- Sign In Link -->
                 <p class="text-center text-sm text-text-soft">
                     Already have an account?
+<<<<<<< HEAD
                     <a href="#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
+=======
+                    <a href="#/login" class="text-pink font-semibold">Sign In</a>
+>>>>>>> origin/develop
                     <a href="#/login" class="text-pink font-semibold">Sign In</a>
                 </p>
 
@@ -221,6 +230,7 @@ export function registerEvents() {
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirmPassword");
 
+<<<<<<< HEAD
     // Password visibility toggles
     function setupPasswordToggle(toggleId, inputId) {
         const toggle = document.getElementById(toggleId);
@@ -242,6 +252,39 @@ export function registerEvents() {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                     `;
                 }
+=======
+    if (!registerForm) return;
+
+    registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const confirmPassword = document.getElementById("confirmPassword").value.trim();
+        const role = document.querySelector("input[name='role']:checked");
+
+        if (!name || !email || !password || !confirmPassword || !role) {
+            showMessage(registerMessage, "Todos los campos son obligatorios", false);
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showMessage(registerMessage, "Las contraseñas no coinciden", false);
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    role: role.value
+                })
+>>>>>>> origin/develop
             });
         }
     }
