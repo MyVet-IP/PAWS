@@ -363,8 +363,7 @@ export function registerEvents() {
     const googleSignup = document.getElementById('google-signup');
     if (googleSignup) {
         googleSignup.addEventListener('click', () => {
-            console.log('Google signup initiated');
-            // In production: window.location.href = '/api/auth/google/signup';
+            window.location.href = '/api/auth/google?role=user';
         });
     }
 }

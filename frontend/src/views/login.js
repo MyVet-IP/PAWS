@@ -369,17 +369,13 @@ export function loginEvents() {
 
     if (googleLoginUser) {
         googleLoginUser.addEventListener('click', () => {
-            // Placeholder for Google OAuth integration
-            console.log('Google login for user initiated');
-            // In production: window.location.href = '/api/auth/google?type=user';
+            window.location.href = '/api/auth/google?role=user';
         });
     }
 
     if (googleLoginEnterprise) {
         googleLoginEnterprise.addEventListener('click', () => {
-            // Placeholder for Google OAuth integration
-            console.log('Google login for enterprise initiated');
-            // In production: window.location.href = '/api/auth/google?type=enterprise';
+            window.location.href = '/api/auth/google?role=business';
         });
     }
 }
