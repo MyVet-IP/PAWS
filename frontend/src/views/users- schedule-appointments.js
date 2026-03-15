@@ -748,7 +748,13 @@ export function userScheduleAppointmentsEvents() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
     try {
-      // API call to cancel
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+      if (!res.ok) throw new Error('Failed to cancel');
+
       const apt = allAppointments.find(a => a.appointment_id === id);
       if (apt) apt.status = 'cancelled';
       renderAppointments();
@@ -756,6 +762,7 @@ export function userScheduleAppointmentsEvents() {
       window.closeDetailModal();
     } catch (err) {
       console.error('Error cancelling appointment:', err);
+      alert('Could not cancel the appointment. Please try again.');
     }
   };
 
