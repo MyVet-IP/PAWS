@@ -29,16 +29,6 @@ export function aboutUsPage() {
   return `
     <div class="about-page">
 
-      <!-- Header -->
-      <header class="about-header">
-        <div class="about-header-content">
-          <button onclick="window.location.hash='/#/'" class="about-back-btn">
-            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
-            Back to home
-          </button>
-        </div>
-      </header>
-
       <!-- Hero -->
       <section class="about-hero">
         <div class="about-hero-circle-1"></div>
@@ -153,7 +143,7 @@ export function aboutUsPage() {
             <button onclick="window.location.hash='/#/work-with-us'" class="about-cta-btn-primary">
               Work With Us
             </button>
-            <button onclick="window.location.hash='/#/contact'" class="about-cta-btn-secondary">
+            <button onclick="window.location.hash='#/contact'" class="about-cta-btn-secondary">
               Contact Us
             </button>
           </div>

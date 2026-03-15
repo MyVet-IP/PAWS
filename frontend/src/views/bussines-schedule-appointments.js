@@ -1,5 +1,4 @@
-// Business Schedule Appointments Page - PAWS Pet Care Platform
-// For clinic/business owners to manage incoming appointments
+
 export function businessScheduleAppointmentsPage() {
   return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
