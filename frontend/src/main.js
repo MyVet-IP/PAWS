@@ -2,6 +2,7 @@ import { router } from "./router/router.js";
 import { navbarController } from "./components/navbar.js";
 import { apiService } from "../../backend/services/api.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
+import { showPageLoading, hidePageLoading } from "./utils.js";
 
 
 // Funciones globales para usar en HTML
@@ -18,6 +19,13 @@ window.bookAppointment = function (clinicId) {
     showToast('Appointment booked successfully!', 'success');
   }, 1500);
 };
+
+window.addEventListener('load', () => {
+  showPageLoading()
+  setTimeout(() => {
+    hidePageLoading()
+  }, 500);
+});
 
 window.searchClinics = function () {
   const input = document.getElementById('search-location');

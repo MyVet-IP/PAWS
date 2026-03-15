@@ -20,6 +20,7 @@ import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
 import { specialistsPage, specialistsEvents } from "../views/specialists.js";
 import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
+import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
 import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
 import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
 
@@ -51,8 +52,10 @@ const routes = {
   "/specialists": specialistsPage,
   "/user-dashboard": dashboardPage,
   "/medical-records": medicalRecordsPage,
+  "/admin-dashboard": adminDashboardPage,
   "/appointments": userScheduleAppointmentsPage,
   "/business-appointments": businessScheduleAppointmentsPage,
+
 
   "/unauthorized": () => `
     <div class="p-10 text-center">
@@ -131,6 +134,10 @@ function runPageEvents(path) {
 
     case "/user-dashboard":
       dashboardEvents();
+      break;
+
+    case "/admin-dashboard":
+      adminDashboardEvents();
       break;
 
     case "/map-page":
