@@ -4,7 +4,7 @@ export function Aside() {
   const user = getUser();
   if (!user) return "";
 
-  const isVet = user.role === "vet";
+  const isVet = user.role === "business";
   const photo = user.photo || null;
   const initials = (user.name || "U")
     .split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
@@ -356,7 +356,7 @@ export function asideEvents() {
   // Logout
   logoutBtn?.addEventListener("click", () => {
     localStorage.removeItem("user");
-    window.location.hash = "#/";
+    window.location.hash = "/";
   });
 }
 

@@ -1,0 +1,22 @@
+/* ── Emergency floating button ──────────────── */
+.emergency-float-btn {
+  animation: pulse-red 2s infinite;
+  transition: transform 120ms ease, box-shadow 200ms ease;
+}
+
+.emergency-float-btn:hover {
+  transform: scale(1.10) !important;
+  box-shadow: 0 0 0 6px rgba(220,38,38,0.20),
+              0 8px 24px rgba(220,38,38,0.50) !important;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220,38,38,0.50),
+                0 6px 20px rgba(220,38,38,0.40);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(220,38,38,0),
+                0 6px 20px rgba(220,38,38,0.20);
+  }
+}

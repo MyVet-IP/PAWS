@@ -282,7 +282,7 @@ export function servicesPageEvents() {
             bookBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 // route to maintenance view
-                window.location.hash = '#/maintenance';
+                window.location.hash = '/maintenance';
             });
         }
     });
@@ -292,7 +292,7 @@ export function servicesPageEvents() {
     if (viewAllBtn) {
         viewAllBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.hash = '#/maintenance';
+            window.location.hash = '/maintenance';
         });
     }
 

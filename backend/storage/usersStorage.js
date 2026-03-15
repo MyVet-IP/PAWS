@@ -5,9 +5,12 @@ module.exports = {
 
     async getAll() {
         return db.all(
-            `SELECT user_id, name, email, phone, role, created_at
-            FROM users
-            ORDER BY user_id ASC`
+            `SELECT u.user_id, u.name, u.email, u.phone, u.role, u.created_at,
+                    COUNT(p.pet_id) AS pet_count
+            FROM users u
+            LEFT JOIN pets p ON p.user_id = u.user_id
+            GROUP BY u.user_id, u.name, u.email, u.phone, u.role, u.created_at
+            ORDER BY u.user_id ASC`
         );
     },
 
@@ -64,16 +67,24 @@ module.exports = {
         return this.getById(user_id);
     },
 
-    // ─── DASHBOARD ────────────────────────────────────────────────────────────
-    // Devuelve el user + sus mascotas + historial médico de cada mascota
+    // ─── DELETE 
+
+    async remove(user_id) {
+        await db.run(`DELETE FROM users WHERE user_id = $1`, [user_id]);
+    },
+
+    // ─── DASHBOARD 
 
     async getDashboard(user_id) {
         const user = await this.getById(user_id);
         if (!user) return null;
 
         const pets = await db.all(
-            `SELECT pet_id, name, species, breed, birth_date, weight_kg, created_at
-            FROM pets WHERE user_id = $1 ORDER BY pet_id ASC`,
+            `SELECT p.pet_id, p.name, p.breed, p.birth_date, p.weight_kg, p.created_at,
+                    at.name AS species_name
+            FROM pets p
+            LEFT JOIN animal_types at ON at.animal_type_id = p.animal_type_id
+            WHERE p.user_id = $1 ORDER BY p.pet_id ASC`,
             [user_id]
         );
 

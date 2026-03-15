@@ -5,7 +5,7 @@ const petsController = require('../controllers/petsController');
 router.get('/', petsController.getAll);
 router.get('/:id', petsController.getById);
 router.get('/user/:user_id', petsController.getByUser);
-router.post('/', validateBody(['name', 'species', 'user_id']), petsController.create);
+router.post('/', validateBody(['name', 'animal_type_id', 'user_id']), petsController.create);
 router.put('/:id', petsController.update);
 router.delete('/:id', petsController.remove);
 

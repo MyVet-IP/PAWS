@@ -112,9 +112,9 @@ export function getUser() {
 
 
 export function checkAuth(role) {
-  const user = getUser(); // ya tienes getUser importado
+  const user = getUser();
   if (!user) {
-    window.location.hash = "/unauthorized";
+    window.location.hash = "/login";
     return false;
   }
 

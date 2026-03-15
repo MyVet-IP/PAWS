@@ -31,7 +31,13 @@ const routes = {
   "/login": () => {
     const user = getUser();
     if (user) {
-      window.location.hash = "/user-dashboard";
+      if (user.role === 'business') {
+        window.location.hash = "/veterinary";
+      } else if (user.role === 'admin') {
+        window.location.hash = "/admin-dashboard";
+      } else {
+        window.location.hash = "/user-dashboard";
+      }
       return "";
     }
     return loginPage();
@@ -72,7 +78,13 @@ const routes = {
       const user = JSON.parse(decodeURIComponent(params.get("user") || "{}"));
       if (user && user.email) {
         localStorage.setItem("user", JSON.stringify(user));
-        window.location.hash = "/user-dashboard";
+        if (user.role === 'business') {
+          window.location.hash = "/veterinary";
+        } else if (user.role === 'admin') {
+          window.location.hash = "/admin-dashboard";
+        } else {
+          window.location.hash = "/user-dashboard";
+        }
       } else {
         window.location.hash = "/login";
       }
@@ -81,6 +93,16 @@ const routes = {
     }
     return "";
   }
+};
+
+const PROTECTED = {
+  "/user-dashboard":        "user",
+  "/pet-profile":           "user",
+  "/appointments":          "user",
+  "/veterinary":            "business",
+  "/business-appointments": "business",
+  "/medical-records":       "business",
+  "/admin-dashboard":       "admin",
 };
 
 export function router() {
@@ -96,6 +118,10 @@ export function router() {
     if (!viewFunction) {
       app.innerHTML = "<h1>Page not found</h1>";
       return;
+    }
+
+    if (path in PROTECTED) {
+      if (!checkAuth(PROTECTED[path])) return;
     }
 
     const html = viewFunction();
@@ -216,14 +242,14 @@ function pageEvents() {
   if (loginBtn && loginBtn.textContent.includes('Sign In')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '/#/login';
+      window.location.hash = '/login';
     });
   }
 
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '/#/clinics';
+      window.location.hash = '/clinics';
     });
   }
 
@@ -232,9 +258,10 @@ function pageEvents() {
 
     if (!link.dataset.listener) {
       link.addEventListener("click", (e) => {
+        e.preventDefault();
         const href = link.getAttribute("href");
         if (href && href !== '#') {
-          window.location.hash = href;
+          window.location.hash = href.startsWith('#') ? href.slice(1) : href;
         }
       });
 

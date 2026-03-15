@@ -14,6 +14,7 @@ router.post('/',
     businessesController.create
 );
 router.put('/:id', businessesController.update);
+router.delete('/:id', businessesController.remove);
 
 // Horarios
 router.get('/:id/schedule', businessesController.getSchedule);

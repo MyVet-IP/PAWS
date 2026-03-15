@@ -188,7 +188,7 @@ export async function landingEvents() {
         btnSearch.addEventListener('click', () => {
             const searchInput = document.getElementById('searchInput');
             const location = searchInput?.value || '';
-            window.location.hash = `/#/clinics?location=${encodeURIComponent(location)}`;
+            window.location.hash = `/clinics?location=${encodeURIComponent(location)}`;
         });
     }
 

@@ -5,9 +5,10 @@ module.exports = {
 
     async getAll() {
         return db.all(
-            `SELECT p.*, u.name AS owner_name
+            `SELECT p.*, u.name AS owner_name, at.name AS species_name
             FROM pets p
             INNER JOIN users u ON u.user_id = p.user_id
+            LEFT JOIN animal_types at ON at.animal_type_id = p.animal_type_id
             ORDER BY p.pet_id ASC`
         );
     },
