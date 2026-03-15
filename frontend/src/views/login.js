@@ -316,7 +316,7 @@ export function loginEvents() {
         errorBox.textContent = '';
 
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, role })
@@ -334,14 +334,12 @@ export function loginEvents() {
             localStorage.setItem('user', JSON.stringify(data));
 
             // Redirect based on role
-            if (data.role === 'owner') {
-                window.location.hash = '/#/user-dashboard';
-            } else if (data.role === 'vet' || data.role === 'clinic') {
-                window.location.hash = '/#/veterinary';
+            if (data.role === 'business') {
+                window.location.hash = '/veterinary';
             } else if (data.role === 'admin') {
-                window.location.hash = '/#/admin-dashboard';
+                window.location.hash = '/admin-dashboard';
             } else {
-                window.location.hash = '/#/user-dashboard';
+                window.location.hash = '/user-dashboard';
             }
         } catch (error) {
             errorBox.textContent = 'Connection error. Please try again.';
