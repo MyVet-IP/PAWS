@@ -81,6 +81,9 @@ app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 app.post("/api/register", async (req, res) => {
     const { name, email, password, role } = req.body;
+    // Map frontend role values to DB-valid values ('admin'|'user'|'business')
+    const roleMap = { owner: 'user', vet: 'business', business: 'business', admin: 'admin' };
+    const dbRole = roleMap[role] || 'user';
     try {
         const existingUser = await db.get(
             "SELECT user_id FROM users WHERE email = $1",
@@ -92,7 +95,7 @@ app.post("/api/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.run(
             "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4)",
-            [name, email, hashedPassword, role]
+            [name, email, hashedPassword, dbRole]
         );
         res.status(201).json({ message: "Usuario registrado correctamente" });
     } catch (error) {
