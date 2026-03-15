@@ -45,12 +45,12 @@ exports.recommendClinic = async (req, res, next) => {
 
     const clinicasResumen = clinicas.map(c => ({
       business_id: c.business_id,
-      name:        c.name,
-      address:     c.address,
-      zone:        c.zone,
-      whatsapp:    c.whatsapp,
-      is_24h:      c.is_24h,
-      rating:      c.rating,
+      name: c.name,
+      address: c.address,
+      zone: c.zone,
+      whatsapp: c.whatsapp,
+      is_24h: c.is_24h,
+      rating: c.rating,
       specialties: (c.specialties || []).map(s => s.name)
     }));
 
@@ -75,23 +75,23 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
   ]
 }`;
 
-    const model    = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result   = await model.generateContent(prompt);
-    const rawText  = result.response.text().trim()
+    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    const rawText = result.response.text().trim()
       .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
 
     const parsed = JSON.parse(rawText);
 
-    const clinicasMap  = new Map(clinicas.map(c => [c.business_id, c]));
+    const clinicasMap = new Map(clinicas.map(c => [c.business_id, c]));
     const recomendadas = (parsed.recomendadas || []).map(r => {
       const c = clinicasMap.get(r.business_id) || {};
       return {
         business_id: r.business_id,
-        name:        c.name     || 'N/A',
-        address:     c.address  || 'N/A',
-        zone:        c.zone     || 'N/A',
-        whatsapp:    c.whatsapp || null,
-        razon:       r.razon
+        name: c.name || 'N/A',
+        address: c.address || 'N/A',
+        zone: c.zone || 'N/A',
+        whatsapp: c.whatsapp || null,
+        razon: r.razon
       };
     });
 
@@ -107,7 +107,48 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
 
 exports.petSymptomTriage = async (req, res, next) => {
   try {
-    res.json({ mensaje: 'proximamente' });
+    const { sintomas, especie } = req.body;
+    if (!sintomas || !especie) {
+      return res.status(400).json({ error: 'Se requieren los campos: sintomas, especie' });
+    }
+
+    const client = getClient();
+    if (!client) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY no configurada' });
+    }
+
+    const prompt = `Eres un veterinario experto en triaje de emergencias animales.
+
+    Un dueño describe esta situación:
+    - Especie: ${especie}
+    - Síntomas: ${sintomas}
+
+    Clasifica la urgencia según estas reglas ESTRICTAS:
+    - ALTA  → riesgo de vida inminente (dificultad respiratoria, convulsiones, trauma, sangrado intenso, fiebre muy alta, inconsciencia)
+    - MEDIA → requiere atención veterinaria en las próximas 24-48 horas
+    - BAJA  → monitorear en casa, visita de rutina si los síntomas persisten
+
+    Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+    {
+      "urgencia": "ALTA" | "MEDIA" | "BAJA",
+      "explicacion": "<razonamiento clínico breve>",
+      "accion_recomendada": "<qué debe hacer el dueño ahora mismo>"
+    }`;
+
+    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    const rawText = result.response.text().trim()
+      .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
+
+    const parsed = JSON.parse(rawText);
+
+    res.json({
+      urgencia: parsed.urgencia,
+      explicacion: parsed.explicacion,
+      accion_recomendada: parsed.accion_recomendada,
+      disclaimer: 'Esta clasificación es orientativa y no reemplaza al veterinario'
+    });
+
   } catch (err) {
     next(err);
   }
