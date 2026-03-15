@@ -4,7 +4,7 @@
 //  El Layout ya inyecta Aside + Topbar
 //  ✅ Migrado al sistema de tokens PAWS
 // ─────────────────────────────────────────────
-
+import { showToast, authFetch } from '../utils.js';
 const HEALTH_TIPS = [
   { icon: "💧", tip: "Make sure your pet always has fresh water available — hydration is key to kidney health.", color: "var(--color-blue)" },
   { icon: "🦷", tip: "Brush your pet's teeth 2–3 times a week to prevent tartar and gum disease.", color: "var(--color-green)" },
@@ -373,7 +373,7 @@ export function dashboardEvents() {
     const body = { name, animal_type_id, breed: breed || null, birth_date, user_id: user?.user_id || user?.id };
 
     try {
-      const res = await fetch('/api/pets', {
+      const res = await authFetch('/api/pets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -408,7 +408,7 @@ async function loadPets(user) {
 
   try {
     const userId = user.user_id || user.id;
-    const res = await fetch(`/api/users/${userId}/dashboard`);
+    const res = await authFetch(`/api/users/${userId}/dashboard`);
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
     const pets = data.pets || [];
@@ -506,7 +506,7 @@ async function loadNextAppointment(user) {
   if (!user) return;
   try {
     const userId = user.user_id || user.id;
-    const res = await fetch(`/api/users/${userId}/appointments`);
+    const res = await authFetch(`/api/users/${userId}/appointments`);
     if (!res.ok) return;
     const appointments = await res.json();
     // Filtrar solo citas futuras y tomar la primera

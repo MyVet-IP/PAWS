@@ -3,7 +3,7 @@
 //  Solo retorna el contenido interno del <main>
 //  El Layout ya inyecta Aside + Topbar
 // ─────────────────────────────────────────────
-
+import { showToast, authFetch } from '../utils.js';
 export function petProfilepage() {
   const pet = {
     name:      'Max',
@@ -421,38 +421,139 @@ export function petProfilepage() {
 //  petProfileEvents — registra listeners
 //  Llámalo desde el router
 // ─────────────────────────────────────────────
-export function petProfileEvents() {
-  const modal    = document.getElementById("modal-edit-pet");
-  const closeBtn = document.getElementById("modal-pet-close");
-  const cancelBtn= document.getElementById("btn-pet-cancel");
-  const saveBtn  = document.getElementById("btn-pet-save");
-  const success  = document.getElementById("pet-edit-success");
+export async function petProfileEvents() {
+  const petId = localStorage.getItem('selectedPetId');
 
-  // Botones que abren el modal
-  ["btn-edit-pet", "btn-edit-pet-full"].forEach(id => {
-    document.getElementById(id)?.addEventListener("click", () => {
+  if (petId) {
+    try {
+      const res = await authFetch(`/api/pets/${petId}`);
+      if (res.ok) {
+        const p = await res.json();
+
+        const nameEl  = document.getElementById('pet-display-name');
+        const breedEl = document.getElementById('pet-display-breed');
+        if (nameEl)  nameEl.textContent  = p.name  || '—';
+        if (breedEl) breedEl.textContent = p.breed || p.species_name || '—';
+
+        const avatarEl = document.querySelector('#pet-avatar-wrapper span');
+        if (avatarEl) {
+          const s = (p.species_name || '').toLowerCase();
+          avatarEl.textContent = s.includes('cat') ? '🐱' : s.includes('dog') ? '🐕' : '🐾';
+        }
+
+        const ageEl    = document.getElementById('pet-display-age');
+        const weightEl = document.getElementById('pet-display-weight');
+        if (ageEl) {
+          if (p.birth_date) {
+            const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
+            ageEl.textContent = `${yrs} ${yrs === 1 ? 'yr' : 'yrs'}`;
+          } else {
+            ageEl.textContent = '—';
+          }
+        }
+        if (weightEl) weightEl.textContent = p.weight_kg ? `${p.weight_kg} kg` : '—';
+
+        const speciesEl   = document.getElementById('pet-display-species');
+        const birthdayEl  = document.getElementById('pet-display-birthday');
+        const microchipEl = document.getElementById('pet-display-microchip');
+        if (speciesEl)   speciesEl.textContent   = p.species_name || '—';
+        if (birthdayEl)  birthdayEl.textContent  = p.birth_date
+          ? new Date(p.birth_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+          : '—';
+        if (microchipEl) microchipEl.textContent = '—';
+
+        const modalSub = document.querySelector('#modal-edit-pet p');
+        if (modalSub) modalSub.textContent = `Update ${p.name}'s information`;
+      }
+    } catch (err) {
+      console.error('Error loading pet:', err);
+    }
+
+    try {
+      const res = await authFetch(`/api/medical-records/pet/${petId}`);
+      if (res.ok) {
+        const records = await res.json();
+        _renderHistory(records);
+      }
+    } catch (err) {
+      console.error('Error loading history:', err);
+    }
+  }
+
+  const modal     = document.getElementById('modal-edit-pet');
+  const closeBtn  = document.getElementById('modal-pet-close');
+  const cancelBtn = document.getElementById('btn-pet-cancel');
+  const saveBtn   = document.getElementById('btn-pet-save');
+  const success   = document.getElementById('pet-edit-success');
+
+  ['btn-edit-pet', 'btn-edit-pet-full'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () => {
       _fillPetModal();
-      if (modal) modal.style.display = "flex";
+      if (modal) modal.style.display = 'flex';
     });
   });
 
-  // Cerrar — X y Cancel
-  const closeModal = () => { if (modal) modal.style.display = "none"; };
-  closeBtn?.addEventListener("click",  closeModal);
-  cancelBtn?.addEventListener("click", closeModal);
-  modal?.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+  const closeModal = () => { if (modal) modal.style.display = 'none'; };
+  closeBtn?.addEventListener('click',  closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-  // Guardar
-  saveBtn?.addEventListener("click", () => {
+  saveBtn?.addEventListener('click', () => {
     _applyPetChanges();
     if (success) {
-      success.style.display = "block";
-      setTimeout(() => {
-        success.style.display = "none";
-        closeModal();
-      }, 1600);
+      success.style.display = 'block';
+      setTimeout(() => { success.style.display = 'none'; closeModal(); }, 1600);
     }
   });
+}
+
+function _renderHistory(records) {
+  const container = document.querySelector('section:last-of-type .flex.flex-col.gap-3');
+  if (!container) return;
+
+  if (!records || records.length === 0) {
+    container.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-card p-6 flex flex-col items-center gap-2 text-center">
+        <span class="text-3xl">📋</span>
+        <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">No medical records yet</p>
+        <p class="text-xs" style="color:var(--text-muted);">Records will appear here after vet visits</p>
+      </div>`;
+    return;
+  }
+
+  const TYPE_MAP = {
+    checkup: { icon: '🩺', color: '#F1C0E8' },
+    vaccine: { icon: '💉', color: '#B9FBC0' },
+    dental:  { icon: '🦷', color: '#90BDF4' },
+  };
+
+  container.innerHTML = records.map(r => {
+    const t     = TYPE_MAP[r.visit_type] || { icon: '💊', color: '#FFCFD2' };
+    const title = r.reason || r.diagnosis || r.visit_type || 'Visit';
+    const desc  = r.treatment || r.notes || '—';
+    const date  = r.visit_date
+      ? new Date(r.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      : '—';
+    const clinic = r.clinic_name
+      ? `<p class="text-xs mt-0.5" style="color:var(--text-muted);">${r.clinic_name}</p>`
+      : '';
+
+    return `
+      <div class="bg-white rounded-2xl shadow-card p-4 hover:shadow-soft transition">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base"
+               style="background:${t.color};">${t.icon}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2 mb-0.5">
+              <h3 class="font-bold text-text-primary font-poppins text-sm">${title}</h3>
+              <span class="text-xs text-text-muted font-poppins shrink-0">${date}</span>
+            </div>
+            ${clinic}
+            <p class="text-text-soft text-xs leading-relaxed mt-0.5">${desc}</p>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ─────────────────────────────────────────────
