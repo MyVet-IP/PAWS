@@ -12,6 +12,39 @@ exports.getAll = async (req, res, next) => {
     }
 };
 
+exports.getByUser = async (req, res, next) => {
+    try {
+        const { status } = req.query;
+        const appointments = await appointmentsStorage.getByUser(req.params.id, { status });
+        res.json(appointments);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getByBusiness = async (req, res, next) => {
+    try {
+        const { status } = req.query;
+        const appointments = await appointmentsStorage.getByBusiness(req.params.id, { status });
+        res.json(appointments);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.create = async (req, res, next) => {
+    try {
+        const { user_id, business_id, pet_id, date, time, notes, status } = req.body;
+        if (!user_id || !business_id || !pet_id || !date || !time) {
+            return res.status(400).json({ error: 'user_id, business_id, pet_id, date y time son requeridos' });
+        }
+        const appointment = await appointmentsStorage.create({ user_id, business_id, pet_id, date, time, notes, status });
+        res.status(201).json(appointment);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.updateStatus = async (req, res, next) => {
     try {
         const { status } = req.body;

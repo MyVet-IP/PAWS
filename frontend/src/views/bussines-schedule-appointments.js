@@ -155,6 +155,7 @@ export function businessScheduleAppointmentsPage() {
 }
 
 export function businessScheduleAppointmentsEvents() {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
   let allAppointments = [];
   let currentFilter = 'all';
   let searchQuery = '';
@@ -265,13 +266,28 @@ export function businessScheduleAppointmentsEvents() {
 
   async function loadAppointments() {
     try {
-      // Try to fetch from API, fallback to mock data
-      const res = await fetch(`/api/clinics/${user.clinic_id || 1}/appointments`);
-      if (res.ok) {
-        allAppointments = await res.json();
-      } else {
-        allAppointments = mockAppointments;
+      // Obtener el business_id del usuario logueado como negocio
+      const businessRes = await fetch('/api/businesses');
+      let businessId = null;
+      if (businessRes.ok) {
+        const businesses = await businessRes.json();
+        const userId = user?.user_id || user?.id;
+        const myBusiness = businesses.find(b => b.user_id === userId);
+        businessId = myBusiness?.business_id;
       }
+
+      if (businessId) {
+        const res = await fetch(`/api/businesses/${businessId}/appointments`);
+        if (res.ok) {
+          allAppointments = await res.json();
+          updateStats();
+          renderAppointments();
+          renderDaySchedule();
+          return;
+        }
+      }
+      // Fallback a mock mientras no haya negocio registrado
+      allAppointments = mockAppointments;
     } catch (err) {
       console.error('Error loading appointments:', err);
       allAppointments = mockAppointments;

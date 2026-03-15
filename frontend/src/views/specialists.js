@@ -247,6 +247,99 @@ export function specialistsPage() {
 export function specialistsEvents() {
   let activeSpecialty = 'All';
   let activeAnimal = 'All Animals';
+  let allSpecialists = [];
+
+  // Cargar especialistas desde /api/businesses (veterinarios con especialidades)
+  async function loadSpecialists() {
+    const grid = document.getElementById('specialists-grid');
+    if (!grid) return;
+
+    try {
+      const [bizRes, specRes] = await Promise.all([
+        fetch('/api/businesses?type=vet'),
+        fetch('/api/businesses/specialties')
+      ]);
+
+      if (!bizRes.ok) throw new Error('Error loading specialists');
+      const businesses = await bizRes.json();
+      const specialties = specRes.ok ? await specRes.json() : [];
+
+      // Actualizar chips de especialidades dinámicamente
+      const specRow = document.querySelector('.specialists-filter-row');
+      if (specRow && specialties.length > 0) {
+        const allChip = specRow.querySelector('[onclick*="All"]');
+        const existingChips = specRow.querySelectorAll('.specialists-filter-chip:not(:first-child)');
+        existingChips.forEach(c => c.remove());
+        specialties.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'specialists-filter-chip';
+          btn.textContent = s.name;
+          btn.onclick = () => window.filterSpecialists(btn, s.name, 'specialty');
+          specRow.appendChild(btn);
+        });
+      }
+
+      if (businesses.length === 0) {
+        // Mantener datos de demo si no hay datos reales aún
+        return;
+      }
+
+      allSpecialists = businesses;
+      renderSpecialists(businesses);
+    } catch (err) {
+      console.error('Error loading specialists:', err);
+      // Mantener datos de demo en caso de error
+    }
+  }
+
+  function renderSpecialists(list) {
+    const grid = document.getElementById('specialists-grid');
+    if (!grid || list.length === 0) return;
+
+    const colors = ['purple', 'blue', 'green', 'yellow', 'pink'];
+    grid.innerHTML = list.map((biz, i) => {
+      const color = colors[i % colors.length];
+      const specs = (biz.specialties || []).map(s => s.name).join(', ') || 'General Veterinary';
+      const animals = (biz.animal_types || []).map(a => `<span class="specialist-animal-tag">${a.name}</span>`).join('');
+      return `
+        <div class="specialist-card">
+          <div class="specialist-card-accent specialist-card-accent--${color}"></div>
+          <div class="specialist-card-content">
+            <div class="specialist-card-header">
+              <div class="specialist-avatar specialist-avatar--${color}">
+                <span class="material-symbols-outlined" style="font-size:1.8rem;">local_hospital</span>
+              </div>
+              <div class="specialist-info">
+                <div class="specialist-info-header">
+                  <div>
+                    <h3 class="specialist-name">${biz.name}</h3>
+                    <p class="specialist-role specialist-role--${color}">${specs}</p>
+                  </div>
+                  ${biz.rating ? `<span class="specialist-badge specialist-badge--${color}">★ ${biz.rating}</span>` : ''}
+                </div>
+              </div>
+            </div>
+            <div class="specialist-location">
+              <p class="specialist-location-item specialist-neighborhood">
+                <span class="material-symbols-outlined" style="font-size:16px;">location_on</span>
+                <span>${biz.address || biz.zone || 'Medellín'}</span>
+              </p>
+            </div>
+            ${animals ? `<div class="specialist-animals">${animals}</div>` : ''}
+            <div class="specialist-actions">
+              <button class="specialist-btn-primary specialist-btn-primary--${color}"
+                      onclick="window.location.hash='#/appointments'">
+                Book Appointment
+              </button>
+              <button class="specialist-btn-secondary specialist-btn-secondary--${color}"
+                      onclick="window.location.hash='#/clinics'">
+                View Clinic
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
 
   window.filterSpecialists = function (btn, value, type) {
     btn.parentElement.querySelectorAll('.specialists-filter-chip').forEach(c => c.classList.remove('active'));
@@ -255,7 +348,23 @@ export function specialistsEvents() {
     if (type === 'specialty') activeSpecialty = value;
     else activeAnimal = value;
 
-    // Simple visual filter - in production would re-fetch from API
-    console.log('Filter:', activeSpecialty, activeAnimal);
+    // Filtrar lista actual
+    let filtered = allSpecialists.length > 0 ? allSpecialists : [];
+    if (filtered.length === 0) return; // usar demo data si no hay API data
+
+    if (activeSpecialty !== 'All') {
+      filtered = filtered.filter(b =>
+        (b.specialties || []).some(s => s.name.toLowerCase().includes(activeSpecialty.toLowerCase()))
+      );
+    }
+    if (activeAnimal !== 'All Animals') {
+      filtered = filtered.filter(b =>
+        (b.animal_types || []).some(a => a.name.toLowerCase().includes(activeAnimal.toLowerCase()))
+      );
+    }
+    renderSpecialists(filtered.length > 0 ? filtered : allSpecialists);
   };
+
+  // Intentar cargar desde la API; si falla, mantiene los datos de demo del HTML
+  loadSpecialists();
 }

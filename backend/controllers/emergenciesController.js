@@ -1,7 +1,7 @@
 ﻿const emergenciesStorage = require('../storage/emergenciesStorage');
 const businessesStorage = require('../storage/businessesStorage');
 
-// ─── EMERGENCIES ──────────────────────────────────────────────────────────────
+// EMERGENCIES
 
 exports.getAll = async (req, res, next) => {
     try {
@@ -53,7 +53,7 @@ exports.updateStatus = async (req, res, next) => {
     }
 };
 
-// ─── EMERGENCY MESSAGES ───────────────────────────────────────────────────────
+// EMERGENCY MESSAGES 
 
 exports.getAllMessages = async (req, res, next) => {
     try {

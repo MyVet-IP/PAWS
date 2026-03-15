@@ -1,13 +1,8 @@
 // ─────────────────────────────────────────────
 //  clinics-view.js
 //  ✅ Migrado al sistema de tokens PAWS
-//  ✅ Filtros y sort funcionales
-//  ✅ Load More oculto hasta implementación
-//  ✅ Placeholder visual para imágenes
+//  Sin <script> ni <style> inline
 // ─────────────────────────────────────────────
-
-// In-memory store for loaded clinics — used by filters and sort
-let _allClinics = [];
 
 export function clinicsPage() {
   const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -26,7 +21,7 @@ export function clinicsPage() {
       </p>
     </div>
 
-    <!-- ── SEARCH + FILTERS ─────────────────── -->
+    <!-- ── SEARCH + FILTERS ROW ─────────────── -->
     <div class="bg-white rounded-2xl p-4 mb-5 flex flex-col gap-4"
          style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);">
 
@@ -90,13 +85,14 @@ export function clinicsPage() {
         onfocus="this.style.borderColor='var(--text-highlight)'"
         onblur="this.style.borderColor='var(--bg-muted)'">
         <option value="rating">Sort by rating</option>
+        <option value="distance">Sort by distance</option>
         <option value="name">Sort by name</option>
-        <option value="zone">Sort by zone</option>
       </select>
     </div>
 
     <!-- ── CLINICS GRID ──────────────────────── -->
     <div id="clinics-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Loading state -->
       <div class="col-span-3 flex items-center justify-center gap-2 py-16"
            style="color:var(--text-muted);">
         <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,9 +103,8 @@ export function clinicsPage() {
       </div>
     </div>
 
-    <!-- Load More — hidden until implemented -->
-    <!-- TODO: show when pagination is ready -->
-    <div id="load-more-wrapper" class="hidden text-center mt-8">
+    <!-- ── LOAD MORE ─────────────────────────── -->
+    <div class="text-center mt-8">
       <button id="btn-load-more"
         class="px-8 py-2.5 rounded-xl font-poppins font-semibold text-sm transition"
         style="background:var(--bg-muted);color:var(--text-soft);
@@ -125,7 +120,7 @@ export function clinicsPage() {
 }
 
 // ─────────────────────────────────────────────
-//  renderClinicCard
+//  renderClinicCard — usa tokens PAWS
 // ─────────────────────────────────────────────
 function renderClinicCard(clinic) {
   const whatsappIcon = `
@@ -133,48 +128,34 @@ function renderClinicCard(clinic) {
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>`;
 
-  // Visual placeholder when no image — uses clinic name initials
-  const initials = (clinic.nombre || '?')
-    .split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
-
-  const imageSection = clinic.imagen
-    ? `<img src="${clinic.imagen}" alt="${clinic.nombre}"
-            class="w-full h-full object-cover"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-       <div class="clinic-img-placeholder" style="display:none;">${initials}</div>`
-    : `<div class="clinic-img-placeholder">${initials}</div>`;
-
   return `
-    <div class="bg-white rounded-2xl overflow-hidden transition clinic-card"
-         style="box-shadow:var(--shadow-card);transition:var(--transition-fast);">
+    <div class="bg-white rounded-2xl overflow-hidden transition"
+         style="box-shadow:var(--shadow-card);transition:var(--transition-fast);"
+         onmouseenter="this.style.boxShadow='var(--shadow-medium)';this.style.transform='translateY(-2px)'"
+         onmouseleave="this.style.boxShadow='var(--shadow-card)';this.style.transform='none'">
 
-      <!-- Image / Placeholder -->
-      <div class="relative overflow-hidden" style="height:176px;background:var(--bg-muted);">
-        ${imageSection}
+      <!-- Image -->
+      <div class="relative h-44 overflow-hidden" style="background:var(--bg-muted);">
+        <img src="${clinic.image_url || './frontend/assets/images/clinic-placeholder.jpg'}"
+             alt="${clinic.name}"
+             class="w-full h-full object-cover"/>
         <div class="absolute top-3 left-3 flex gap-2">
-          ${clinic.estado === 'Activa' ? `
+          ${clinic.status === 'active' ? `
             <span class="text-xs font-bold px-2.5 py-1 rounded-full"
                   style="background:var(--color-green);color:var(--text-primary);">
               ● Open
             </span>` : ''}
-          ${clinic.servicios_emergencia ? `
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full"
-                  style="background:#FEE2E2;color:#dc2626;">
-              24/7
-            </span>` : ''}
         </div>
         <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full"
              style="background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);">
-          <span class="text-xs font-bold" style="color:#d97706;">
-            ★ ${clinic.rating || '4.9'}
-          </span>
+          <span class="text-xs font-bold" style="color:#d97706;">★ ${clinic.rating || '—'}</span>
         </div>
       </div>
 
       <!-- Body -->
       <div class="p-5">
         <h3 class="font-bold font-poppins mb-1" style="font-size:15px;color:var(--text-primary);">
-          ${clinic.nombre}
+          ${clinic.name}
         </h3>
         <div class="flex items-start gap-1.5 mb-4" style="color:var(--text-muted);">
           <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,17 +164,8 @@ function renderClinicCard(clinic) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span class="text-xs">${clinic.direccion || 'Medellín, Colombia'}</span>
+          <span class="text-xs">${clinic.address || clinic.zone || ''}</span>
         </div>
-
-        <!-- Services tags -->
-        ${clinic.servicios && clinic.servicios.length > 0 ? `
-          <div class="flex flex-wrap gap-1 mb-4">
-            ${clinic.servicios.slice(0, 3).map(s => `
-              <span class="text-xs px-2 py-0.5 rounded-full font-roboto"
-                    style="background:var(--bg-muted);color:var(--text-soft);">${s}</span>
-            `).join('')}
-          </div>` : ''}
 
         <!-- Action buttons -->
         <div class="flex gap-2 mb-2">
@@ -206,7 +178,7 @@ function renderClinicCard(clinic) {
                onmouseleave="this.style.opacity='1'">
               📞 Call
             </a>` : ''}
-          <button onclick="viewClinicDetails(${clinic.id_veterinaria})"
+          <button onclick="viewClinicDetails(${clinic.business_id})"
             class="flex-1 py-2 px-3 rounded-xl font-poppins font-semibold text-xs transition"
             style="border:1.5px solid var(--text-highlight);color:var(--text-highlight);
                    background:transparent;transition:var(--transition-fast);"
@@ -216,8 +188,7 @@ function renderClinicCard(clinic) {
           </button>
         </div>
 
-        ${clinic.whatsapp ? `
-        <button onclick="window.open('https://api.whatsapp.com/send/?phone=%2B${clinic.whatsapp}&text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.nombre)}','_blank')"
+        <button onclick="window.open('https://api.whatsapp.com/send/?phone=%2B573193052287&text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.name)}&type=phone_number&app_absent=0','_blank')"
           class="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl
                  font-poppins font-semibold text-xs text-white transition"
           style="background:#16a34a;transition:var(--transition-fast);"
@@ -225,98 +196,37 @@ function renderClinicCard(clinic) {
           onmouseleave="this.style.background='#16a34a'">
           ${whatsappIcon}
           WhatsApp
-        </button>` : ''}
+        </button>
       </div>
     </div>
   `;
 }
 
 // ─────────────────────────────────────────────
-//  renderGrid — renders filtered + sorted list
+//  initClinicsView — carga clínicas desde API
 // ─────────────────────────────────────────────
-export async function renderGrid() {
+export async function initClinicsView() {
   const grid = document.getElementById('clinics-grid');
   const countEl = document.getElementById('results-count');
   if (!grid) return;
 
-  if (countEl) countEl.textContent = clinics.length;
-
-  if (clinics.length === 0) {
-    grid.innerHTML = `
-      <div class="col-span-3 text-center py-16">
-        <p class="text-4xl mb-3">🏥</p>
-        <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
-        <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p>
-      </div>`;
-    return;
-  }
-
-  grid.innerHTML = clinics.map(renderClinicCard).join('');
-}
-
-// ─────────────────────────────────────────────
-//  applyFiltersAndSort — runs on every change
-// ─────────────────────────────────────────────
-function applyFiltersAndSort() {
-  const searchVal = document.getElementById('clinic-search')?.value.trim().toLowerCase() || '';
-  const activeBtn = document.querySelector('.clinic-filter-active');
-  const activeFilter = activeBtn?.dataset.filter || 'all';
-  const sortVal = document.getElementById('sort-select')?.value || 'rating';
-
-  // Filter by search text
-  let result = _allClinics.filter(c => {
-    if (searchVal) {
-      const name = (c.nombre || '').toLowerCase();
-      const address = (c.direccion || '').toLowerCase();
-      const zone = (c.zona || '').toLowerCase();
-      const services = (c.servicios || []).join(' ').toLowerCase();
-      if (!name.includes(searchVal) &&
-        !address.includes(searchVal) &&
-        !zone.includes(searchVal) &&
-        !services.includes(searchVal)) return false;
-    }
-    return true;
-  });
-
-  // Filter by chip
-  if (activeFilter !== 'all') {
-    const filterMap = {
-      emergency: c => c.servicios_emergencia || (c.servicios || []).some(s => s.toLowerCase().includes('emergencia')),
-      surgery: c => (c.servicios || []).some(s => s.toLowerCase().includes('cirug')),
-      cardiology: c => (c.servicios || []).some(s => s.toLowerCase().includes('cardiolog')),
-      dental: c => (c.servicios || []).some(s => s.toLowerCase().includes('dental') || s.toLowerCase().includes('odontolog')),
-      lab: c => (c.servicios || []).some(s => s.toLowerCase().includes('laborator')),
-    };
-    if (filterMap[activeFilter]) {
-      result = result.filter(filterMap[activeFilter]);
-    }
-  }
-
-  // Sort
-  result = [...result].sort((a, b) => {
-    if (sortVal === 'rating') return (b.rating || 0) - (a.rating || 0);
-    if (sortVal === 'name') return (a.nombre || '').localeCompare(b.nombre || '');
-    if (sortVal === 'zone') return (a.zona || '').localeCompare(b.zona || '');
-    return 0;
-  });
-
-  renderGrid(result);
-}
-
-// ─────────────────────────────────────────────
-//  initClinicsView — fetches from API
-// ─────────────────────────────────────────────
-export async function initClinicsView() {
-  const grid = document.getElementById('clinics-grid');
-  if (!grid) return;
-
   try {
-    const res = await fetch('/api/clinics');
+    const res = await fetch('/api/businesses?type=clinic');
     if (!res.ok) throw new Error('Error loading clinics');
     const clinics = await res.json();
 
-    _allClinics = clinics;
-    applyFiltersAndSort();
+    if (clinics.length === 0) {
+      grid.innerHTML = `
+        <div class="col-span-3 text-center py-16">
+          <p class="text-4xl mb-3">🏥</p>
+          <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
+          <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p>
+        </div>`;
+      return;
+    }
+
+    if (countEl) countEl.textContent = clinics.length;
+    grid.innerHTML = clinics.map(renderClinicCard).join('');
 
   } catch (err) {
     grid.innerHTML = `
@@ -329,40 +239,116 @@ export async function initClinicsView() {
 }
 
 // ─────────────────────────────────────────────
-//  clinicsEvents
+//  clinicsEvents — registra listeners
+//  Llámalo desde el router
 // ─────────────────────────────────────────────
 export function clinicsEvents() {
-
   // Search button
   document.getElementById('btn-clinic-search')?.addEventListener('click', () => {
-    applyFiltersAndSort();
+    const location = document.getElementById('clinic-search')?.value.trim();
+    window.location.hash = location
+      ? `#/clinics?location=${encodeURIComponent(location)}`
+      : '#/clinics';
   });
 
   // Search on Enter
   document.getElementById('clinic-search')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') applyFiltersAndSort();
+    if (e.key === 'Enter') document.getElementById('btn-clinic-search')?.click();
   });
 
-  // Live search while typing
-  document.getElementById('clinic-search')?.addEventListener('input', () => {
-    applyFiltersAndSort();
-  });
+  // Filter chips — conectados con la API
+  let allClinics = [];
+  let activeFilter = 'all';
 
-  // Filter chips
+  async function fetchAndRender(filter = 'all', search = '') {
+    const grid = document.getElementById('clinics-grid');
+    const countEl = document.getElementById('results-count');
+    if (!grid) return;
+
+    grid.innerHTML = `<div class="col-span-3 flex items-center justify-center gap-2 py-16"
+      style="color:var(--text-muted);">
+      <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span class="text-sm font-poppins">Loading clinics...</span></div>`;
+
+    try {
+      // Obtener especialidades del catálogo para mapear filtros
+      let url = '/api/businesses?type=clinic';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Error loading clinics');
+      allClinics = await res.json();
+
+      // Filtrar por especialidad
+      let filtered = allClinics;
+      if (filter !== 'all') {
+        filtered = allClinics.filter(c => {
+          const specs = (c.specialties || []).map(s => s.name.toLowerCase());
+          const filterMap = {
+            emergency: ['emergency', 'urgencias'],
+            surgery: ['surgery', 'cirugía', 'cirugia'],
+            cardiology: ['cardiology', 'cardiología', 'cardiologia'],
+            dental: ['dental', 'odontología', 'odontologia'],
+            lab: ['laboratory', 'laboratorio', 'lab']
+          };
+          const terms = filterMap[filter] || [filter];
+          return specs.some(s => terms.some(t => s.includes(t))) || c.is_24h && filter === 'emergency';
+        });
+      }
+
+      // Filtrar por búsqueda de texto
+      if (search) {
+        const q = search.toLowerCase();
+        filtered = filtered.filter(c =>
+          (c.name || '').toLowerCase().includes(q) ||
+          (c.address || '').toLowerCase().includes(q) ||
+          (c.zone || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Ordenar
+      const sort = document.getElementById('sort-select')?.value || 'rating';
+      if (sort === 'rating') filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      else if (sort === 'name') filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      if (countEl) countEl.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-3 text-center py-16">
+          <p class="text-4xl mb-3">🏥</p>
+          <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
+          <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p></div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(renderClinicCard).join('');
+    } catch (err) {
+      grid.innerHTML = `<div class="col-span-3 text-center py-16">
+        <p class="text-4xl mb-3">⚠️</p>
+        <p class="font-poppins font-medium" style="color:#dc2626;">Error loading clinics</p>
+        <p class="text-sm mt-1" style="color:var(--text-muted);">${err.message}</p></div>`;
+    }
+  }
+
   document.querySelectorAll('.clinic-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.clinic-filter-btn')
-        .forEach(b => b.classList.remove('clinic-filter-active'));
+      document.querySelectorAll('.clinic-filter-btn').forEach(b => b.classList.remove('clinic-filter-active'));
       btn.classList.add('clinic-filter-active');
-      applyFiltersAndSort();
+      activeFilter = btn.dataset.filter;
+      const search = document.getElementById('clinic-search')?.value.trim() || '';
+      fetchAndRender(activeFilter, search);
     });
   });
 
-  // Sort
   document.getElementById('sort-select')?.addEventListener('change', () => {
-    applyFiltersAndSort();
+    const search = document.getElementById('clinic-search')?.value.trim() || '';
+    fetchAndRender(activeFilter, search);
   });
 
-  // Load initial data
-  initClinicsView();
+  document.getElementById('btn-load-more')?.addEventListener('click', () => {
+    // Cargar más — implementar paginación cuando sea necesario
+  });
+
+  // Carga inicial
+  fetchAndRender();
 }
