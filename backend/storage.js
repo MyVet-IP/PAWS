@@ -23,7 +23,7 @@ class Storage {
     );
   }
 
-  async createUser(name, email, password, phone = null, role = 'owner') {
+  async createUser(name, email, password, phone = null, role = 'user') {
     const result = await db.get(
       `INSERT INTO users (name, email, password, phone, role)
        VALUES ($1, $2, $3, $4, $5)
@@ -193,22 +193,33 @@ class Storage {
     return { success: true };
   }
 
+  // Tipos de animal
+
+  async getAllAnimalTypes() {
+    return await db.all('SELECT * FROM animal_types ORDER BY animal_type_id ASC');
+  }
+
   // Mascotas
 
   async getAllPets() {
     return await db.all(
-      `SELECT p.*, u.name AS owner_name
+      `SELECT p.pet_id, p.user_id, p.name, p.animal_type_id, at.name AS animal_type_name,
+              p.breed, p.birth_date, p.weight_kg, p.created_at, u.name AS owner_name
        FROM pets p
        JOIN users u ON u.user_id = p.user_id
+       JOIN animal_types at ON at.animal_type_id = p.animal_type_id
        ORDER BY p.pet_id ASC`
     );
   }
 
   async getPetById(id) {
     return await db.get(
-      `SELECT p.*, u.name AS owner_name, u.email AS owner_email, u.phone AS owner_phone
+      `SELECT p.pet_id, p.user_id, p.name, p.animal_type_id, at.name AS animal_type_name,
+              p.breed, p.birth_date, p.weight_kg, p.created_at,
+              u.name AS owner_name, u.email AS owner_email, u.phone AS owner_phone
        FROM pets p
        JOIN users u ON u.user_id = p.user_id
+       JOIN animal_types at ON at.animal_type_id = p.animal_type_id
        WHERE p.pet_id = $1`,
       [id]
     );
@@ -216,18 +227,23 @@ class Storage {
 
   async getPetsByUser(user_id) {
     return await db.all(
-      'SELECT * FROM pets WHERE user_id = $1 ORDER BY pet_id ASC',
+      `SELECT p.pet_id, p.user_id, p.name, p.animal_type_id, at.name AS animal_type_name,
+              p.breed, p.birth_date, p.weight_kg, p.created_at
+       FROM pets p
+       JOIN animal_types at ON at.animal_type_id = p.animal_type_id
+       WHERE p.user_id = $1
+       ORDER BY p.pet_id ASC`,
       [user_id]
     );
   }
 
   async createPet(data) {
-    const { name, species, breed, birth_date, weight_kg, user_id } = data;
+    const { name, animal_type_id, breed, birth_date, weight_kg, user_id } = data;
     const result = await db.get(
-      `INSERT INTO pets (name, species, breed, birth_date, weight_kg, user_id)
+      `INSERT INTO pets (name, animal_type_id, breed, birth_date, weight_kg, user_id)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING pet_id`,
-      [name, species, breed || null, birth_date || null, weight_kg || null, user_id]
+      [name, animal_type_id, breed || null, birth_date || null, weight_kg || null, user_id]
     );
     return await this.getPetById(result.pet_id);
   }
@@ -237,11 +253,11 @@ class Storage {
     const values = [];
     let p = 1;
 
-    if (data.name !== undefined)       { fields.push(`name = $${p++}`); values.push(data.name); }
-    if (data.species !== undefined)    { fields.push(`species = $${p++}`); values.push(data.species); }
-    if (data.breed !== undefined)      { fields.push(`breed = $${p++}`); values.push(data.breed); }
-    if (data.birth_date !== undefined) { fields.push(`birth_date = $${p++}`); values.push(data.birth_date); }
-    if (data.weight_kg !== undefined)  { fields.push(`weight_kg = $${p++}`); values.push(data.weight_kg); }
+    if (data.name !== undefined)            { fields.push(`name = $${p++}`); values.push(data.name); }
+    if (data.animal_type_id !== undefined)  { fields.push(`animal_type_id = $${p++}`); values.push(data.animal_type_id); }
+    if (data.breed !== undefined)           { fields.push(`breed = $${p++}`); values.push(data.breed); }
+    if (data.birth_date !== undefined)      { fields.push(`birth_date = $${p++}`); values.push(data.birth_date); }
+    if (data.weight_kg !== undefined)       { fields.push(`weight_kg = $${p++}`); values.push(data.weight_kg); }
 
     if (fields.length === 0) return await this.getPetById(id);
 

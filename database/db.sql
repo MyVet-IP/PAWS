@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS businesses (
   zone VARCHAR(100),
   latitude DECIMAL(10,7),
   longitude DECIMAL(10,7),
-  image_url VARCHAR(255),
-  status VARCHAR(60) DEFAULT 'active',
+  image_url VARCHAR(500),
+  status VARCHAR(60) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended')),
   nit VARCHAR(50),
   nit_verified VARCHAR(30),
   nit_verified_at TIMESTAMP,
@@ -44,12 +44,13 @@ CREATE TABLE IF NOT EXISTS pets (
   pet_id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
   name VARCHAR(120) NOT NULL,
-  species VARCHAR(80) NOT NULL,
+  animal_type_id INTEGER NOT NULL,
   breed VARCHAR(100),
   birth_date DATE,
   weight_kg DECIMAL(6,2),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id)
 );
 
 
@@ -90,7 +91,7 @@ CREATE TABLE IF NOT EXISTS daycares (
 
 CREATE TABLE IF NOT EXISTS vets (
   vet_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL,
+  business_id INTEGER NOT NULL UNIQUE,
   license_number VARCHAR(100),
   FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
 );
@@ -137,7 +138,7 @@ CREATE TABLE IF NOT EXISTS medical_records (
   next_visit_date DATE,
   follow_up_notes TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
   FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE RESTRICT,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
@@ -188,7 +189,7 @@ CREATE TABLE IF NOT EXISTS shelter_pets (
   image_url VARCHAR(255),
   status VARCHAR(30) DEFAULT 'available' CHECK (status IN ('available', 'adopted', 'fostered', 'medical_hold')),
   intake_date DATE,
-  intake_reason VARCHAR(200),
+  intake_reason VARCHAR(50) CHECK (intake_reason IN ('stray', 'owner_surrender', 'abandoned', 'rescue', 'transfer', 'other')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE CASCADE
 );
@@ -201,6 +202,7 @@ CREATE TABLE IF NOT EXISTS daycare_slots (
   end_time TIME NOT NULL,
   capacity INTEGER NOT NULL DEFAULT 1,
   is_active BOOLEAN DEFAULT TRUE,
+  UNIQUE (daycare_id, day_of_week, start_time),
   FOREIGN KEY (daycare_id) REFERENCES daycares(daycare_id) ON DELETE CASCADE
 );
 
@@ -260,12 +262,26 @@ CREATE INDEX IF NOT EXISTS idx_emergency_messages_business ON emergency_messages
 CREATE INDEX IF NOT EXISTS idx_emergency_messages_emergency ON emergency_messages(emergency_id);
 CREATE INDEX IF NOT EXISTS idx_schedules_business ON schedules(business_id);
 CREATE INDEX IF NOT EXISTS idx_shelter_pets_shelter ON shelter_pets(shelter_id);
+CREATE INDEX IF NOT EXISTS idx_shelter_pets_status ON shelter_pets(status);
 CREATE INDEX IF NOT EXISTS idx_adoptions_shelter ON adoptions(shelter_id);
 CREATE INDEX IF NOT EXISTS idx_adoptions_user ON adoptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_daycare_slots_daycare ON daycare_slots(daycare_id);
 CREATE INDEX IF NOT EXISTS idx_daycare_bookings_slot ON daycare_bookings(slot_id);
 CREATE INDEX IF NOT EXISTS idx_daycare_bookings_user ON daycare_bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_vets_business ON vets(business_id);
+
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_medical_records_updated_at
+  BEFORE UPDATE ON medical_records
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 
 INSERT INTO users (name, email, password, phone, role) VALUES
@@ -332,10 +348,10 @@ INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES
   (8, 3), (8, 9), (8, 6)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO pets (user_id, name, species, breed, birth_date, weight_kg) VALUES
-  (2, 'Bruno', 'Dog', 'Golden Retriever', '2023-03-15', 30.5),
-  (2, 'Mochi', 'Cat', 'Persian',          '2024-03-15', 4.2),
-  (3, 'Coco',  'Dog', 'French Bulldog',   '2022-03-15', 12.0),
-  (4, 'Nina',  'Cat', 'Siamese',          '2025-03-15', 3.8),
-  (5, 'Dante', 'Dog', 'Labrador',         '2020-03-15', 32.0)
+INSERT INTO pets (user_id, name, animal_type_id, breed, birth_date, weight_kg) VALUES
+  (2, 'Bruno', (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'Golden Retriever', '2023-03-15', 30.5),
+  (2, 'Mochi', (SELECT animal_type_id FROM animal_types WHERE name = 'Cat'), 'Persian',          '2024-03-15', 4.2),
+  (3, 'Coco',  (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'French Bulldog',   '2022-03-15', 12.0),
+  (4, 'Nina',  (SELECT animal_type_id FROM animal_types WHERE name = 'Cat'), 'Siamese',          '2025-03-15', 3.8),
+  (5, 'Dante', (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'Labrador',         '2020-03-15', 32.0)
 ON CONFLICT DO NOTHING;

@@ -167,6 +167,15 @@ app.post('/api/specialties', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ======================== ANIMAL TYPES ========================
+
+app.get('/api/animal-types', async (req, res, next) => {
+  try {
+    const types = await storage.getAllAnimalTypes();
+    res.json(types);
+  } catch (err) { next(err); }
+});
+
 // ======================== PETS (was /api/mascotas) ========================
 
 app.get('/api/pets', async (req, res, next) => {
@@ -186,9 +195,9 @@ app.get('/api/pets/:id', async (req, res, next) => {
 
 app.post('/api/pets', async (req, res, next) => {
   try {
-    const { name, species, user_id } = req.body;
-    if (!name || !species || !user_id) {
-      return res.status(400).json({ error: 'name, species and user_id are required' });
+    const { name, animal_type_id, user_id } = req.body;
+    if (!name || !animal_type_id || !user_id) {
+      return res.status(400).json({ error: 'name, animal_type_id and user_id are required' });
     }
     const pet = await storage.createPet(req.body);
     res.status(201).json(pet);
