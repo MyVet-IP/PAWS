@@ -21,7 +21,7 @@ const routes = {
 };
 
 export function router() {
-  const path = window.location.hash.slice(1) || "/";
+  const fullPath = window.location.hash.slice(1) || "/";
   const path = fullPath.split("?")[0];
   const app = document.getElementById("app");
 
