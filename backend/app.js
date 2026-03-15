@@ -31,21 +31,15 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (email, done) => {
     try {
-
         const user = await db.get(
             "SELECT * FROM users WHERE email = $1",
             [email]
         );
-
         done(null, user);
-
     } catch (error) {
-
         done(error, null);
-
     }
 });
-
 
 // ── Estáticos del frontend ───────────────────────────────────────────────────
 const noCache = {
@@ -58,6 +52,16 @@ app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
 
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ ok: true, message: 'API corriendo' }));
+
+// ── Animal types (catálogo para el formulario de mascotas) ───────────────────
+app.get('/api/animal-types', async (req, res, next) => {
+    try {
+        const types = await db.all('SELECT * FROM animal_types ORDER BY animal_type_id ASC');
+        res.json(types);
+    } catch (err) {
+        next(err);
+    }
+});
 
 // ── Rutas API ─────────────────────────────────────────────────────────────────
 app.use('/api/auth', require('./routes/auth'));
@@ -74,49 +78,30 @@ app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
     res.sendFile(path.join(__dirname, '..', 'index.html'))
 );
 
-// ── REGISTER DB ──────────────────────────────────────────────────────────────────────
-
+// ── REGISTER ──────────────────────────────────────────────────────────────────
 app.post("/api/register", async (req, res) => {
-
     const { name, email, password, role } = req.body;
-
+    // Map frontend role values to DB-valid values ('admin'|'user'|'business')
+    const roleMap = { owner: 'user', vet: 'business', business: 'business', admin: 'admin' };
+    const dbRole = roleMap[role] || 'user';
     try {
-
-        // verificar si el email ya existe
         const existingUser = await db.get(
             "SELECT user_id FROM users WHERE email = $1",
             [email]
         );
-
         if (existingUser) {
-            return res.status(400).json({
-                message: "Este correo ya está registrado"
-            });
+            return res.status(400).json({ message: "Este correo ya está registrado" });
         }
-
-        // encriptar contraseña
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // insertar usuario
         await db.run(
             "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4)",
-            [name, email, hashedPassword, role]
+            [name, email, hashedPassword, dbRole]
         );
-
-        res.status(201).json({
-            message: "Usuario registrado correctamente"
-        });
-
+        res.status(201).json({ message: "Usuario registrado correctamente" });
     } catch (error) {
-
         console.error(error);
-
-        res.status(500).json({
-            message: "Error en el servidor :P"
-        });
-
+        res.status(500).json({ message: "Error en el servidor :P" });
     }
-
 });
 
 // ── Error handlers (siempre al final) ────────────────────────────────────────
@@ -134,7 +119,7 @@ async function startServer() {
             console.log(`========================================\n`);
         });
     } catch (err) {
-        console.error('Error iniciando servidor:', err);
+        console.error('Failed to start server:', err.message);
         process.exit(1);
     }
 }

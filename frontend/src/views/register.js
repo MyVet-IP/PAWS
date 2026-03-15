@@ -350,7 +350,7 @@ export function registerEvents() {
                 showMessage("Account created successfully! Redirecting...", true);
 
                 setTimeout(() => {
-                    window.location.hash = "/#/login";
+                    window.location.hash = "/login";
                 }, 1500);
 
             } catch (error) {

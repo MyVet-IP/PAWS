@@ -31,7 +31,7 @@ const routes = {
   "/login": () => {
     const user = getUser();
     if (user) {
-      window.location.hash = "/#/user-dashboard";
+      window.location.hash = "/user-dashboard";
       return "";
     }
     return loginPage();
