@@ -80,7 +80,7 @@ export function navbarController() {
     <div class="navbar-inner">
 
       <!-- LOGO -->
-      <a class="navbar-logo" href="#/" onclick="window.location.hash='#/';return false;">
+      <a class="navbar-logo" href="#/" onclick="window.location.hash='/';return false;">
         <img src="./frontend/assets/images/PAWS_logo_bgless.png"
              alt="PAWS logo"
              class="navbar-logo-img"
@@ -179,10 +179,10 @@ export function navbarEvents() {
 
   // ── Sign in ───────────────────────────────
   document.getElementById("btn-login")?.addEventListener("click", () => {
-    window.location.hash = "#/login";
+    window.location.hash = "/login";
   });
   document.getElementById("btn-login-mobile")?.addEventListener("click", () => {
-    window.location.hash = "#/login";
+    window.location.hash = "/login";
   });
 
   // ── Active link highlight ─────────────────
@@ -380,7 +380,7 @@ export function navbarEvents() {
     input.value = "";
     clearBtn?.classList.add("hidden");
     hideDropdown();
-    window.location.hash = hash;
+    window.location.hash = hash.startsWith('#') ? hash.slice(1) : hash;
   }
 
   function highlightItem(items) {

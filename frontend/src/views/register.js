@@ -340,7 +340,7 @@ export function registerEvents() {
                     return;
                 }
                 showMessage("Account created successfully! Redirecting...", true);
-                setTimeout(() => { window.location.hash = "#/login"; }, 1500);
+                setTimeout(() => { window.location.hash = "/login"; }, 1500);
             } catch {
                 showMessage("Connection error. Please try again.", false);
             }
