@@ -412,10 +412,10 @@ CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(date, business_
 
 --  PAWS — Seed data completo
 
--- ─────────────────────────────────────────────────────────────
+
 --  1. USERS
---  user_id: 1=Admin, 2=Andres, 3=Camila, 4=Juan, 5=Natalia
--- ─────────────────────────────────────────────────────────────
+
+
 INSERT INTO users (name, email, password, phone, role) VALUES
   ('Admin PAWS',      'admin@paws.local',           '123456', NULL,         'admin'),
   ('Andres Restrepo', 'andres.restrepo@gmail.com',  '123456', '3046712893', 'user'),
@@ -424,32 +424,27 @@ INSERT INTO users (name, email, password, phone, role) VALUES
   ('Natalia Herrera', 'nherrera.med@outlook.com',   '123456', '3157823046', 'user')
 ON CONFLICT (email) DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  2. ANIMAL TYPES
---  animal_type_id: 1=Dog, 2=Cat, 3=Bird, 4=Rabbit, 5=Exotic, 6=Reptile, 7=Fish
--- ─────────────────────────────────────────────────────────────
+
+
 INSERT INTO animal_types (name) VALUES
   ('Dog'), ('Cat'), ('Bird'), ('Rabbit'), ('Exotic'), ('Reptile'), ('Fish')
 ON CONFLICT (name) DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  3. SPECIALTIES
---  specialty_id: 1=Vaccination, 2=Grooming, 3=Surgery, 4=X-Ray,
---                5=Dental, 6=Cardiology, 7=Laboratory, 8=Physiotherapy,
---                9=Emergency, 10=Boarding
--- ─────────────────────────────────────────────────────────────
+
+
 INSERT INTO specialties (name) VALUES
   ('Vaccination'), ('Grooming'), ('Surgery'), ('X-Ray'), ('Dental'),
   ('Cardiology'), ('Laboratory'), ('Physiotherapy'), ('Emergency'), ('Boarding')
 ON CONFLICT (name) DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  4. BUSINESSES
---  Todas las clinicas usan user_id=1 (Admin es el dueño del negocio)
---  nit obligatorio para todos excepto dog_walker
---  business_id: 1-8=clinicas, 9=shelter, 10=petshop, 11=daycare,
---               12=dog_walker, 13=vet
--- ─────────────────────────────────────────────────────────────
+
+
 INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, email, zone, city, latitude, longitude, image_url, status, nit, nit_verified) VALUES
   -- Clínicas (business_id 1-8)
   (1, 'clinic', 'Clinica Veterinaria El Poblado',     'Cra. 43A #16-22, El Poblado',   '6042567890', '573193052287', 'elpoblado@vetpaws.co',   'El Poblado',    'Medellín', 6.2086, -75.5659, './frontend/assets/images/lllll.jpg', 'active', '900111001-1', 'verified'),
@@ -460,22 +455,16 @@ INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, 
   (1, 'clinic', 'Veterinaria Bello Norte',            'Cra. 50 #45-67, Bello',         '6044234567', '573193052287', 'bello@vetpaws.co',       'Bello',         'Bello',    6.3295, -75.5593, './frontend/assets/images/lllll.jpg', 'active', '900111006-6', 'verified'),
   (1, 'clinic', 'Clinica Veterinaria Robledo',        'Cra. 80 #65-12, Robledo',       '6042901234', '573193052287', 'robledo@vetpaws.co',     'Robledo',       'Medellín', 6.2722, -75.6100, './frontend/assets/images/lllll.jpg', 'active', '900111007-7', 'verified'),
   (1, 'clinic', 'Veterinaria La Candelaria',          'Cll. 44 #52-25, La Candelaria', '6042512345', '573193052287', 'candelaria@vetpaws.co',  'La Candelaria', 'Medellín', 6.2518, -75.5636, './frontend/assets/images/lllll.jpg', 'active', '900111008-8', 'verified'),
-  -- Shelter (business_id 9)
   (2, 'shelter', 'Refugio Patitas Felices',           'Cll. 30 #80-15, Robledo',       '6042111222', '573201112222', 'refugio@patitas.co',     'Robledo',       'Medellín', 6.2680, -75.6080, './frontend/assets/images/lllll.jpg', 'active', '900222001-1', 'verified'),
-  -- Petshop (business_id 10)
   (3, 'petshop', 'Pet Store Laureles',               'Cra. 73 #44-20, Laureles',       '6043555666', '573205556666', 'tienda@petstore.co',     'Laureles',      'Medellín', 6.2460, -75.5880, './frontend/assets/images/lllll.jpg', 'active', '900333001-1', 'verified'),
-  -- Daycare (business_id 11)
   (4, 'daycare', 'Guarderia Caniland',               'Cra. 65 #34-10, Laureles',       '6043777888', '573207778888', 'guarderia@caniland.co',  'Laureles',      'Medellín', 6.2430, -75.5950, './frontend/assets/images/lllll.jpg', 'active', '900444001-1', 'verified'),
-  -- Dog walker (business_id 12) — sin nit, es persona natural
   (5, 'dog_walker', 'Carlos Paseos Caninos',         'Cll. 10 #43-55, El Poblado',     '3158889900', '573158889900', 'carlos@paseos.co',       'El Poblado',    'Medellín', 6.2100, -75.5700, NULL,                                 'active', NULL, NULL),
-  -- Vet independiente (business_id 13)
   (1, 'vet', 'Dr. Ramirez Veterinario',              'Cra. 43 #18-30, El Poblado',     '6042999000', '573209990000', 'dramirez@vet.co',        'El Poblado',    'Medellín', 6.2090, -75.5670, './frontend/assets/images/lllll.jpg', 'active', '900555001-1', 'verified')
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  5. CLINICS — detalle de cada business_id tipo clinic
---  clinic_id: 1-8 → business_id 1-8
--- ─────────────────────────────────────────────────────────────
+
+--  5. CLINICS 
+
 INSERT INTO clinics (business_id, service_type, is_24h, rating) VALUES
   (1, 'private', TRUE,  4.9),
   (2, 'private', FALSE, 4.8),
@@ -487,48 +476,41 @@ INSERT INTO clinics (business_id, service_type, is_24h, rating) VALUES
   (8, 'public',  TRUE,  4.3)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  6. SHELTER — detalle
---  shelter_id: 1 → business_id 9
--- ─────────────────────────────────────────────────────────────
+
+--  6. SHELTER 
+
 INSERT INTO shelters (business_id) VALUES (9)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  7. PETSHOP — detalle
---  petshop_id: 1 → business_id 10
--- ─────────────────────────────────────────────────────────────
+
+--  7. PETSHOP 
+
 INSERT INTO petshops (business_id) VALUES (10)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  8. DAYCARE — detalle
---  daycare_id: 1 → business_id 11
--- ─────────────────────────────────────────────────────────────
+
+--  8. DAYCARE 
+
 INSERT INTO daycares (business_id) VALUES (11)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  9. DOG WALKER — detalle
---  walker_id: 1 → business_id 12
--- ─────────────────────────────────────────────────────────────
+
+--  9. DOG WALKER 
+
 INSERT INTO dog_walkers (business_id, bio, service_area) VALUES
-  (12, 'Paseador certificado con 5 años de experiencia. Grupos máximo de 4 perros.',
-       'El Poblado, Laureles, Envigado')
+  (12, 'Paseador certificado con 5 años de experiencia. Grupos máximo de 4 perros.','El Poblado, Laureles, Envigado')
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  10. VETS — detalle
---  vet_id: 1 → business_id 13
--- ─────────────────────────────────────────────────────────────
+
+--  10. VETS 
+
 INSERT INTO vets (business_id, license_number) VALUES
   (13, 'VET-COL-2019-04521')
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  11. CLINIC SPECIALTIES
---  clinic_id 1-8, specialty_id 1-10
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES
   (1, 3), (1, 4), (1, 5), (1, 9),
   (2, 6), (2, 1), (2, 7),
@@ -540,9 +522,9 @@ INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES
   (8, 3), (8, 9), (8, 6)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  12. CLINIC ANIMAL TYPES
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO clinic_animal_types (clinic_id, animal_type_id) VALUES
   (1, 1), (1, 2),
   (2, 1), (2, 2), (2, 3),
@@ -554,23 +536,23 @@ INSERT INTO clinic_animal_types (clinic_id, animal_type_id) VALUES
   (8, 1), (8, 2), (8, 5)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  13. VET SPECIALTIES — vet_id 1
--- ─────────────────────────────────────────────────────────────
+
+--  13. VET SPECIALTIES 
+
 INSERT INTO vet_specialties (vet_id, specialty_id) VALUES
   (1, 1), (1, 5), (1, 3)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  14. VET ANIMAL TYPES — vet_id 1
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO vet_animal_types (vet_id, animal_type_id) VALUES
   (1, 1), (1, 2)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  15. SCHEDULES — horarios para todas las clínicas + daycare
--- ─────────────────────────────────────────────────────────────
+
+--  15. SCHEDULES
+
 INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open) VALUES
   -- Clinica El Poblado (24h — is_open=true todos los días)
   (1, 'Monday',    '00:00', '23:59', TRUE),
@@ -598,11 +580,9 @@ INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open)
   (11, 'Sunday',    NULL,    NULL,    FALSE)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  16. PETS
---  animal_type_id: 1=Dog, 2=Cat
---  pet_id: 1=Bruno, 2=Mochi, 3=Coco, 4=Nina, 5=Dante
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO pets (user_id, name, animal_type_id, breed, birth_date, weight_kg) VALUES
   (2, 'Bruno', 1, 'Golden Retriever', '2023-03-15', 30.5),
   (2, 'Mochi', 2, 'Persian',          '2024-03-15',  4.2),
@@ -611,10 +591,9 @@ INSERT INTO pets (user_id, name, animal_type_id, breed, birth_date, weight_kg) V
   (5, 'Dante', 1, 'Labrador',         '2020-03-15', 32.0)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  17. DAYCARE SLOTS — daycare_id 1 (Caniland)
---  slot_id: 1=lun-vie mañana, 2=lun-vie tarde, 3=sabado mañana
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO daycare_slots (daycare_id, day_of_week, start_time, end_time, capacity, is_active) VALUES
   (1, 'Monday',    '07:00', '13:00', 8, TRUE),
   (1, 'Monday',    '13:00', '19:00', 8, TRUE),
@@ -629,10 +608,9 @@ INSERT INTO daycare_slots (daycare_id, day_of_week, start_time, end_time, capaci
   (1, 'Saturday',  '07:00', '14:00', 5, TRUE)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  18. DAYCARE BOOKINGS
---  slot_id 1=lun mañana, 3=mar mañana, 5=mie mañana
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO daycare_bookings (slot_id, pet_id, user_id, booking_date, status, notes) VALUES
   (1, 1, 2, '2026-04-07', 'confirmed', 'Bruno — día completo mañana'),
   (2, 1, 2, '2026-04-07', 'confirmed', 'Bruno — día completo tarde'),
@@ -642,9 +620,9 @@ INSERT INTO daycare_bookings (slot_id, pet_id, user_id, booking_date, status, no
   (3, 3, 3, '2026-03-25', 'cancelled', 'Camila canceló por lluvia')
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
---  19. SHELTER PETS — shelter_id 1 (Patitas Felices)
--- ─────────────────────────────────────────────────────────────
+
+--  19. SHELTER PETS 
+
 INSERT INTO shelter_pets (shelter_id, name, species, breed, birth_date, weight_kg, gender, description, status, intake_date, intake_reason) VALUES
   (1, 'Luna',   'Cat', 'Mestiza',          '2022-06-10', 3.2, 'female', 'Gata tranquila y cariñosa, buena con niños.',         'available', '2025-11-01', 'stray'),
   (1, 'Rocky',  'Dog', 'Mestizo',          '2021-03-20', 18.0,'male',   'Perro activo, necesita espacio. Esterilizado.',        'available', '2025-10-15', 'surrendered'),
@@ -653,11 +631,9 @@ INSERT INTO shelter_pets (shelter_id, name, species, breed, birth_date, weight_k
   (1, 'Mia',    'Dog', 'Beagle Mestiza',   '2024-02-14', 8.5, 'female', 'Cachorra curiosa y enérgica.',                        'available', '2026-02-01', 'stray')
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  20. ADOPTIONS
---  Pelusa (shelter_pet_id 3, status=reserved) es adoptada por Juan (user_id 4)
---  Se crea una nueva mascota en pets para Juan
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO pets (user_id, name, animal_type_id, breed, birth_date, weight_kg) VALUES
   (4, 'Pelusa', 2, 'Angora', '2023-01-05', 2.8)
 ON CONFLICT DO NOTHING;
@@ -670,10 +646,9 @@ ON CONFLICT DO NOTHING;
 -- Actualizar status de Pelusa en shelter_pets
 UPDATE shelter_pets SET status = 'adopted' WHERE shelter_pet_id = 3;
 
--- ─────────────────────────────────────────────────────────────
+
 --  21. MEDICAL RECORDS
---  clinic_id nullable — algunos registros sin clínica (subidos por dueño)
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO medical_records (pet_id, clinic_id, user_id, veterinarian, visit_date, visit_type, reason, diagnosis, treatment, notes, next_visit_date) VALUES
   (1, 1, 2, 'Dr. García',   '2026-01-15 10:00', 'Checkup',     'Control anual',               'Saludable, peso ideal',             'Ninguno',                         'Excelente condición general',    '2027-01-15'),
   (1, 1, 2, 'Dr. García',   '2025-08-20 09:30', 'Vaccination', 'Vacunas anuales',             'Al día en vacunación',              'DHPP + Rabia',                    NULL,                             '2026-08-20'),
@@ -685,16 +660,16 @@ INSERT INTO medical_records (pet_id, clinic_id, user_id, veterinarian, visit_dat
   (4, NULL, 4, NULL,        '2026-01-10 00:00', 'Other',       'Registro subido por el dueño','Historial de clínica anterior',     NULL,                              'Archivo adjunto pendiente',      NULL)
 ON CONFLICT DO NOTHING;
 
--- ─────────────────────────────────────────────────────────────
+
 --  22. EMERGENCIES
---  Solo clinics y vets reciben emergencias (business_id 1-8, 13)
--- ─────────────────────────────────────────────────────────────
+
 INSERT INTO emergencies (pet_id, business_id, description, status, resolved_at) VALUES
   (1, 1, 'Bruno ingirió un juguete pequeño. Vómitos desde hace 2 horas.',      'resolved',    '2025-11-10 14:30'),
   (5, 3, 'Dante convulsionó por 3 minutos. Primera vez que ocurre.',            'resolved',    '2025-12-20 20:00'),
   (3, 1, 'Coco no puede apoyar pata trasera derecha tras caída.',               'in_progress', NULL),
   (2, 2, 'Mochi dejó de comer hace 48 horas y está muy decaída.',               'open',        NULL)
 ON CONFLICT DO NOTHING;
+
 
 --  23. EMERGENCY MESSAGES
 
@@ -705,6 +680,7 @@ INSERT INTO emergency_messages (business_id, emergency_id, message, contact_name
   (2, 4, 'Mochi lleva 2 días sin comer, qué hago?',                            'Andres Restrepo', '3046712893', 'whatsapp', 'pending'),
   (1, NULL, 'Consulta: cuánto cuesta una radiografía de cadera?',              'Juan Gomez',      '3204561738', 'whatsapp', 'resolved')
 ON CONFLICT DO NOTHING;
+
 
 --  24. APPOINTMENTS
 
