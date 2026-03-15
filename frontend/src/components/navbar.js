@@ -7,42 +7,42 @@ import { getUser } from "../utils.js";
 // ─────────────────────────────────────────────
 const SEARCH_INDEX = [
   // Clinics (hardcoded — see TODO above)
-  { label: "Clínica San Juan Pet",  category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "El Poblado, Medellín" },
-  { label: "VetCare Laureles",      category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Laureles, Medellín" },
+  { label: "Clínica San Juan Pet", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "El Poblado, Medellín" },
+  { label: "VetCare Laureles", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Laureles, Medellín" },
   { label: "Animal House Envigado", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Envigado, Medellín" },
-  { label: "PetSalud Belén",        category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Belén, Medellín" },
-  { label: "Vet 24 Sabaneta",       category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Sabaneta, Medellín" },
+  { label: "PetSalud Belén", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Belén, Medellín" },
+  { label: "Vet 24 Sabaneta", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Sabaneta, Medellín" },
 
   // Services
-  { label: "Vaccination",    category: "Services", icon: "💉", hash: "#/services", desc: "Preventive vaccines for your pet" },
-  { label: "Surgery",        category: "Services", icon: "🔬", hash: "#/services", desc: "Specialized surgical procedures" },
-  { label: "Consultation",   category: "Services", icon: "🩺", hash: "#/services", desc: "General veterinary consultation" },
-  { label: "Dental Cleaning",category: "Services", icon: "🦷", hash: "#/services", desc: "Professional dental hygiene" },
-  { label: "Deworming",      category: "Services", icon: "💊", hash: "#/services", desc: "Internal and external deworming" },
-  { label: "X-Ray",          category: "Services", icon: "📋", hash: "#/services", desc: "Diagnostic imaging" },
-  { label: "Laboratory",     category: "Services", icon: "🧪", hash: "#/services", desc: "Blood and urine tests" },
-  { label: "Pet Shop",       category: "Services", icon: "🛍️", hash: "#/services", desc: "Food, accessories and toys" },
-  { label: "Grooming",       category: "Services", icon: "✂️", hash: "#/services", desc: "Bath, cut and styling" },
-  { label: "Dermatology",    category: "Services", icon: "🐾", hash: "#/services", desc: "Skin and coat care" },
+  { label: "Vaccination", category: "Services", icon: "💉", hash: "#/services", desc: "Preventive vaccines for your pet" },
+  { label: "Surgery", category: "Services", icon: "🔬", hash: "#/services", desc: "Specialized surgical procedures" },
+  { label: "Consultation", category: "Services", icon: "🩺", hash: "#/services", desc: "General veterinary consultation" },
+  { label: "Dental Cleaning", category: "Services", icon: "🦷", hash: "#/services", desc: "Professional dental hygiene" },
+  { label: "Deworming", category: "Services", icon: "💊", hash: "#/services", desc: "Internal and external deworming" },
+  { label: "X-Ray", category: "Services", icon: "📋", hash: "#/services", desc: "Diagnostic imaging" },
+  { label: "Laboratory", category: "Services", icon: "🧪", hash: "#/services", desc: "Blood and urine tests" },
+  { label: "Pet Shop", category: "Services", icon: "🛍️", hash: "#/services", desc: "Food, accessories and toys" },
+  { label: "Grooming", category: "Services", icon: "✂️", hash: "#/services", desc: "Bath, cut and styling" },
+  { label: "Dermatology", category: "Services", icon: "🐾", hash: "#/services", desc: "Skin and coat care" },
 
   // Pages
-  { label: "Clinics near me", category: "Pages", icon: "📍", hash: "#/clinics",       desc: "Find all clinics in Medellín" },
-  { label: "Emergency",       category: "Pages", icon: "🚨", hash: "#/emergency",    desc: "24/7 urgent veterinary care" },
-  { label: "Map",             category: "Pages", icon: "🗺️", hash: "#/map-page",     desc: "Interactive clinic map" },
-  { label: "Tips & Health",   category: "Pages", icon: "💡", hash: "#/tips",         desc: "Care tips for your pet" },
-  { label: "Specialists",     category: "Pages", icon: "👨‍⚕️", hash: "#/specialists",  desc: "Certified veterinary specialists" },
-  { label: "About us",        category: "Pages", icon: "🐾", hash: "#/about-us",     desc: "Know the PAWS team" },
-  { label: "Work with us",    category: "Pages", icon: "💼", hash: "#/work-with-us", desc: "Join the PAWS network" },
-  { label: "Contact",         category: "Pages", icon: "📩", hash: "#/contact",      desc: "Get in touch with us" },
-  { label: "Register",        category: "Pages", icon: "✨", hash: "#/register",     desc: "Create your free account" },
+  { label: "Clinics near me", category: "Pages", icon: "📍", hash: "#/clinics", desc: "Find all clinics in Medellín" },
+  { label: "Emergency", category: "Pages", icon: "🚨", hash: "#/emergency", desc: "24/7 urgent veterinary care" },
+  { label: "Map", category: "Pages", icon: "🗺️", hash: "#/map-page", desc: "Interactive clinic map" },
+  { label: "Tips & Health", category: "Pages", icon: "💡", hash: "#/tips", desc: "Care tips for your pet" },
+  { label: "Specialists", category: "Pages", icon: "👨‍⚕️", hash: "#/specialists", desc: "Certified veterinary specialists" },
+  { label: "About us", category: "Pages", icon: "🐾", hash: "#/about-us", desc: "Know the PAWS team" },
+  { label: "Work with us", category: "Pages", icon: "💼", hash: "#/work-with-us", desc: "Join the PAWS network" },
+  { label: "Contact", category: "Pages", icon: "📩", hash: "#/contact", desc: "Get in touch with us" },
+  { label: "Register", category: "Pages", icon: "✨", hash: "#/register", desc: "Create your free account" },
 ];
 
 // Nav links — defined once, reused for desktop and mobile
 const NAV_LINKS = [
-  { href: "#/clinics",   label: "Clinics",      icon: "🏥" },
-  { href: "#/emergency", label: "Emergencies",  icon: "✴️" },
-  { href: "#/services",  label: "Services",     icon: "🧼" },
-  { href: "#/tips",      label: "Tips",         icon: "💡" },
+  { href: "#/clinics", label: "Clinics", icon: "🏥" },
+  { href: "#/emergency", label: "Emergencies", icon: "✴️" },
+  { href: "#/services", label: "Services", icon: "🧼" },
+  { href: "#/tips", label: "Tips", icon: "💡" },
 ];
 
 // ─────────────────────────────────────────────
@@ -200,8 +200,8 @@ export function navbarEvents() {
   updateActiveLinks();
 
   // ── Hamburger toggle ──────────────────────
-  const hamburgerBtn  = document.getElementById("hamburger-btn");
-  const mobileMenu    = document.getElementById("mobile-menu");
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
   const hamburgerIcon = document.getElementById("hamburger-icon");
 
   const closeMobileMenu = () => {
@@ -245,15 +245,15 @@ export function navbarEvents() {
   });
 
   // ── Desktop search ────────────────────────
-  const input     = document.getElementById("navbar-search");
-  const dropdown  = document.getElementById("search-dropdown");
-  const clearBtn  = document.getElementById("search-clear");
+  const input = document.getElementById("navbar-search");
+  const dropdown = document.getElementById("search-dropdown");
+  const clearBtn = document.getElementById("search-clear");
   const searchBox = document.getElementById("search-box");
 
   if (!input || !dropdown) return;
 
   let selectedIndex = -1;
-  let lastResults   = [];
+  let lastResults = [];
 
   input.addEventListener("focus", () => {
     searchBox.classList.add("focused");
@@ -311,7 +311,7 @@ export function navbarEvents() {
     const q = query.toLowerCase();
     const results = SEARCH_INDEX.filter(item =>
       item.label.toLowerCase().includes(q) ||
-      item.desc.toLowerCase().includes(q)  ||
+      item.desc.toLowerCase().includes(q) ||
       item.category.toLowerCase().includes(q)
     ).slice(0, 12);
 
