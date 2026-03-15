@@ -55,26 +55,18 @@ app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ ok: true, message: 'API corriendo' }));
 
-// ── Animal types ───────────────────
-app.get('/api/animal-types', async (req, res, next) => {
-    try {
-        const types = await db.all('SELECT * FROM animal_types ORDER BY animal_type_id ASC');
-        res.json(types);
-    } catch (err) {
-        next(err);
-    }
-});
-
 // ── Rutas API ─────────────────────────────────────────────────────────────────
-app.use('/auth', require('./routes/auth'));
-app.use('/api/ai', require('./routes/ai'));
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/pets', require('./routes/pets'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/businesses', require('./routes/businesses'));
-app.use('/api/emergencies', require('./routes/emergencies'));
-app.use('/api/appointments', require('./routes/appointments'));
+app.use('/auth',              require('./routes/auth'));
+app.use('/api/auth',          require('./routes/auth'));
+app.use('/api/ai',            require('./routes/ai'));
+app.use('/api/pets',          require('./routes/pets'));
+app.use('/api/users',         require('./routes/users'));
+app.use('/api/businesses',    require('./routes/businesses'));
+app.use('/api/emergencies',   require('./routes/emergencies'));
+app.use('/api/appointments',  require('./routes/appointments'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
+app.use('/api/shelters',      require('./routes/shelters'));
+app.use('/api/daycares',      require('./routes/daycares'));
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>

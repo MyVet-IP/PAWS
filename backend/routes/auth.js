@@ -11,11 +11,22 @@ const authController = require("../controllers/authController");
 const { authenticateToken } = require('../middleware/auth');
 const authController = require('../controllers/authController');
 
+const rateLimit = require('express-rate-limit');
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 10,
+    message: { error: 'Too many attempts. Try again in 15 minutes.' }
+});
+
+router.post('/login', authLimiter, authController.login);
+router.post('/register', authLimiter, authController.register);
+
 
 /* LOGIN NORMAL */
 
-router.post("/register", authController.register);
-router.post("/login", authController.login);
+// router.post("/register", authController.register);
+// router.post("/login", authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', authController.logout);
 router.get('/me', authenticateToken, authController.me);
