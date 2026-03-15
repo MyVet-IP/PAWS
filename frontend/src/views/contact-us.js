@@ -8,7 +8,7 @@ export function contactUsPage() {
   ];
 
   const channels = [
-    { icon: 'mail', label: 'Email', value: 'riwi_paws@gmail.com', sub: 'We reply within 24 hours', color: 'purple', href: 'mailto:riwi.paws@gmail.com' },
+    { icon: 'mail', label: 'Email', value: 'riwi.paws@gmail.com', sub: 'We reply within 24 hours', color: 'purple', href: 'mailto:riwi.paws@gmail.com' },
     { icon: 'chat', label: 'WhatsApp', value: '+57 302 226 6234', sub: 'Mon - Fri, 8am - 6pm', color: 'green', href: 'https://wa.me/573022266234' },
     { icon: 'location_on', label: 'Location', value: 'Medellin, Antioquia', sub: 'Serving the Aburra Valley', color: 'blue', href: '#' },
     { icon: 'photo_camera', label: 'Instagram', value: '@paws.medellin', sub: 'Daily pet tips & updates', color: 'yellow', href: 'https://instagram.com' }

@@ -333,6 +333,13 @@ export function dashboardPage() {
 // ─────────────────────────────────────────────
 export function dashboardEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  // Agregar esto antes de cualquier fetch:
+  if (!user || !user.user_id) {
+    console.error('No user_id found in localStorage', user);
+    return;
+  }
+
   const modal = document.getElementById('modal-add-pet');
 
   // ── Username ──────────────────────────────
