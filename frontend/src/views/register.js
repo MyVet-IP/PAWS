@@ -199,6 +199,8 @@ export function registerEvents() {
     const registerForm = document.getElementById("register-form");
     const formMessage = document.getElementById("form-message");
     const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirmPassword");
+    const confirmMsg = document.getElementById("confirm-password-msg");
 
     // ── Password visibility toggles ──────────
     function setupPasswordToggle(toggleId, inputId) {
@@ -340,7 +342,7 @@ export function registerEvents() {
                     return;
                 }
                 showMessage("Account created successfully! Redirecting...", true);
-                setTimeout(() => { window.location.hash = "#/login"; }, 1500);
+                setTimeout(() => { window.location.hash = "/login"; }, 1500);
             } catch {
                 showMessage("Connection error. Please try again.", false);
             }

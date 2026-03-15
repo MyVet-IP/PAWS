@@ -125,3 +125,24 @@ export function checkAuth(role) {
 
   return true;
 }
+
+export function clearAuth() {
+  localStorage.removeItem('user');
+}
+
+export async function authFetch(input, init = {}) {
+  const config = { ...init, credentials: 'include' };
+  const res = await fetch(input, config);
+  if (res.status === 401 || res.status === 403) {
+    clearAuth();
+  }
+  return res;
+}
+
+export async function logoutUser() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  } catch { }
+  clearAuth();
+  window.location.hash = '#/login';
+}

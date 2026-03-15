@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
 passport.serializeUser((user, done) => {
     done(null, user.email);
@@ -53,7 +55,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ ok: true, message: 'API corriendo' }));
 
-// ── Animal types (catálogo para el formulario de mascotas) ───────────────────
+// ── Animal types ───────────────────
 app.get('/api/animal-types', async (req, res, next) => {
     try {
         const types = await db.all('SELECT * FROM animal_types ORDER BY animal_type_id ASC');
@@ -64,15 +66,15 @@ app.get('/api/animal-types', async (req, res, next) => {
 });
 
 // ── Rutas API ─────────────────────────────────────────────────────────────────
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/pets', require('./routes/pets'));
-app.use('/api/businesses', require('./routes/businesses'));
-app.use('/api/appointments', require('./routes/appointments'));
-app.use('/api/medical-records', require('./routes/medicalRecords'));
-app.use('/api/emergencies', require('./routes/emergencies'));
 app.use('/auth', require('./routes/auth'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/pets', require('./routes/pets'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/businesses', require('./routes/businesses'));
+app.use('/api/emergencies', require('./routes/emergencies'));
+app.use('/api/appointments', require('./routes/appointments'));
+app.use('/api/medical-records', require('./routes/medicalRecords'));
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>

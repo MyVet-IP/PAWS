@@ -1,7 +1,5 @@
 /* ========================================
-   Emergency Page
-   ✅ PAWS Design Tokens
-   ✅ Existing styles migrated
+  Emergency Page
    ======================================== */
 
 /* ── Urgency options ────────────────────────── */
@@ -11,12 +9,12 @@
 
 .urgency-option:hover {
   border-color: var(--text-highlight);
-  background: rgba(241,192,232,0.10);
+  background: rgba(241, 192, 232, 0.10);
 }
 
 .urgency-option.selected {
   border-color: var(--text-highlight);
-  background: rgba(241,192,232,0.20);
+  background: rgba(241, 192, 232, 0.20);
 }
 
 /* ── Emergency clinic cards ─────────────────── */
@@ -35,8 +33,15 @@
 }
 
 @keyframes badge-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.70; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.70;
+  }
 }
 
 /* ── Call button ────────────────────────────── */
@@ -46,7 +51,7 @@
 
 .call-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(220,38,38,0.30);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.30);
 }
 
 /* ── WhatsApp button ────────────────────────── */
@@ -56,7 +61,7 @@
 
 .whatsapp-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(34,197,94,0.30);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.30);
 }
 
 /* ── Tips section ───────────────────────────── */
@@ -65,7 +70,7 @@
 }
 
 .tip-item:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255, 255, 255, 0.60);
   border-radius: var(--radius-md);
 }
 
@@ -89,7 +94,7 @@
 #triage-symptoms:focus,
 #triage-species:focus {
   border-color: #ea580c;
-  box-shadow: 0 0 0 3px rgba(234,88,12,0.12);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
 }
 
 /* ── Map placeholder container ──────────────── */
@@ -136,7 +141,7 @@
 
 .dark .urgency-option:hover {
   border-color: var(--color-green);
-  background: rgba(185,251,192,0.10);
+  background: rgba(185, 251, 192, 0.10);
 }
 
 .dark .emergency-clinic-card {

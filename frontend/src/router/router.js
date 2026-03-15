@@ -96,13 +96,13 @@ const routes = {
 };
 
 const PROTECTED = {
-  "/user-dashboard":        "user",
-  "/pet-profile":           "user",
-  "/appointments":          "user",
-  "/veterinary":            "business",
+  "/user-dashboard": "user",
+  "/pet-profile": "user",
+  "/appointments": "user",
+  "/veterinary": "business",
   "/business-appointments": "business",
-  "/medical-records":       "business",
-  "/admin-dashboard":       "admin",
+  "/medical-records": "user",
+  "/admin-dashboard": "admin",
 };
 
 export function router() {

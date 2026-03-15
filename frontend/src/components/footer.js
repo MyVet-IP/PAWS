@@ -44,12 +44,12 @@ export function Footer() {
           </h4>
           <div class="flex flex-col gap-2">
             ${[
-              { href: "#/clinics",     label: "Veterinary Clinics" },
-              { href: "#/emergency",   label: "24/7 Emergency" },
-              { href: "#/services",    label: "Our Services" },
-              { href: "#/specialists", label: "Specialists" },
-              { href: "#/map-page",    label: "Clinic Map" },
-            ].map(l => `
+      { href: "#/clinics", label: "Veterinary Clinics" },
+      { href: "#/emergency", label: "24/7 Emergency" },
+      { href: "#/services", label: "Our Services" },
+      { href: "#/specialists", label: "Specialists" },
+      { href: "#/map-page", label: "Clinic Map" },
+    ].map(l => `
               <a href="${l.href}" class="footer-link">${l.label}</a>
             `).join('')}
           </div>
@@ -63,11 +63,11 @@ export function Footer() {
           </h4>
           <div class="flex flex-col gap-2">
             ${[
-              { href: "#/about-us",     label: "About Us" },
-              { href: "#/tips",         label: "Health Tips" },
-              { href: "#/work-with-us", label: "Work with Us" },
-              { href: "#/contact",      label: "Contact" },
-            ].map(l => `
+      { href: "#/about-us", label: "About Us" },
+      { href: "#/tips", label: "Health Tips" },
+      { href: "#/work-with-us", label: "Work with Us" },
+      { href: "#/contact", label: "Contact" },
+    ].map(l => `
               <a href="${l.href}" class="footer-link">${l.label}</a>
             `).join('')}
           </div>

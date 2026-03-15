@@ -1,15 +1,93 @@
 ﻿const db = require('../db');
 
 module.exports = {
+    async upsertSchedule(business_id, days) {
+        // days = [{ day_of_week, open_time, close_time, is_open }, ...]
+        for (const day of days) {
+            const { day_of_week, open_time, close_time, is_open } = day;
+            await db.run(
+                `INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open)
+                VALUES ($1, $2, $3, $4, $5)
+                ON CONFLICT (business_id, day_of_week)
+                DO UPDATE SET open_time = $3, close_time = $4, is_open = $5`,
+                [business_id, day_of_week, open_time || null, close_time || null, is_open ?? true]
+            );
+        }
+        return this.getSchedule(business_id);
+    },
+
+    async addSpecialty(business_id, specialty_id) {
+        const biz = await db.get(
+            `SELECT business_id, business_type FROM businesses WHERE business_id = $1`,
+            [business_id]
+        );
+        if (!biz) return null;
+
+        if (biz.business_type === 'clinic') {
+            const clinic = await db.get(
+                `SELECT clinic_id FROM clinics WHERE business_id = $1`, [business_id]
+            );
+            if (!clinic) return null;
+            await db.run(
+                `INSERT INTO clinic_specialties (clinic_id, specialty_id)
+                VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+                [clinic.clinic_id, specialty_id]
+            );
+        } else if (biz.business_type === 'vet') {
+            const vet = await db.get(
+                `SELECT vet_id FROM vets WHERE business_id = $1`, [business_id]
+            );
+            if (!vet) return null;
+            await db.run(
+                `INSERT INTO vet_specialties (vet_id, specialty_id)
+                VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+                [vet.vet_id, specialty_id]
+            );
+        }
+        return this._getSpecialties(business_id, biz.business_type);
+    },
+
+    async removeSpecialty(business_id, specialty_id) {
+        const biz = await db.get(
+            `SELECT business_id, business_type FROM businesses WHERE business_id = $1`,
+            [business_id]
+        );
+        if (!biz) return null;
+
+        if (biz.business_type === 'clinic') {
+            const clinic = await db.get(
+                `SELECT clinic_id FROM clinics WHERE business_id = $1`, [business_id]
+            );
+            if (clinic) {
+                await db.run(
+                    `DELETE FROM clinic_specialties WHERE clinic_id = $1 AND specialty_id = $2`,
+                    [clinic.clinic_id, specialty_id]
+                );
+            }
+        } else if (biz.business_type === 'vet') {
+            const vet = await db.get(
+                `SELECT vet_id FROM vets WHERE business_id = $1`, [business_id]
+            );
+            if (vet) {
+                await db.run(
+                    `DELETE FROM vet_specialties WHERE vet_id = $1 AND specialty_id = $2`,
+                    [vet.vet_id, specialty_id]
+                );
+            }
+        }
+        return this._getSpecialties(business_id, biz.business_type);
+    },
+
     // ─── READ ─────────────────────────────────────────────────────────────────
 
-    async getAll({ type = null, zone = null } = {}) {
+    async getAll({ type = null, zone = null, city = null } = {}) {
         const conditions = ['b.status = $1'];
         const values = ['active'];
         let i = 2;
 
         if (type) { conditions.push(`b.business_type = $${i++}`); values.push(type); }
         if (zone) { conditions.push(`b.zone ILIKE $${i++}`); values.push(`%${zone}%`); }
+        if (city) { conditions.push(`b.city ILIKE $${i++}`); values.push(`%${city}%`); }
 
         const businesses = await db.all(
             `SELECT b.*, c.is_24h, c.rating, c.service_type

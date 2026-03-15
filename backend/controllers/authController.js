@@ -1,48 +1,104 @@
 ﻿const authStorage = require('../storage/authStorage');
+const jwt = require('jsonwebtoken');
+
+const ACCESS_EXPIRES = '15m';
+const REFRESH_EXPIRES_SECONDS = 60 * 60 * 24 * 7; // 7 días
+
+function createAccessToken(payload) {
+    return jwt.sign(payload, process.env.JWT_SECRET || 'dev-secret', { expiresIn: ACCESS_EXPIRES });
+}
+
+function createRefreshToken(payload) {
+    const secret = process.env.REFRESH_SECRET || process.env.JWT_SECRET || 'dev-secret';
+    return jwt.sign(payload, secret, { expiresIn: `${REFRESH_EXPIRES_SECONDS}s` });
+}
 
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password, phone, role } = req.body;
-
-        if (!name || !email || !password) {
+        if (!name || !email || !password)
             return res.status(400).json({ error: 'name, email y password son requeridos' });
-        }
 
         const existing = await authStorage.getUserByEmail(email);
-        if (existing) {
+        if (existing)
             return res.status(400).json({ error: 'El email ya está registrado' });
-        }
 
         const user = await authStorage.createUser({ name, email, password, phone, role });
         res.status(201).json(user);
-
-    } catch (err) {
-        next(err);
-    }
+    } catch (err) { next(err); }
 };
 
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({ error: 'email y password son requeridos' });
-        }
+        if (!email || !password)
+            return res.status(400).json({ error: 'Email y password son requeridos' });
 
         const user = await authStorage.getUserByEmail(email);
-        if (!user) {
-            return res.status(401).json({ error: 'Credenciales inválidas' });
-        }
+        if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
         const valid = await authStorage.verifyPassword(password, user.password);
-        if (!valid) {
-            return res.status(401).json({ error: 'Credenciales inválidas' });
-        }
+        if (!valid) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-        const { password: _pw, ...safeUser } = user;
-        res.json(safeUser);
+        const payload = { id: user.user_id, email: user.email, role: user.role };
+        const accessToken = createAccessToken(payload);
+        const refreshToken = createRefreshToken(payload);
 
-    } catch (err) {
-        next(err);
-    }
+        const expiresAt = new Date(Date.now() + REFRESH_EXPIRES_SECONDS * 1000);
+        await authStorage.createRefreshToken(user.user_id, refreshToken, expiresAt);
+
+        const cookieOpts = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        };
+        res.cookie('access_token', accessToken, { ...cookieOpts, maxAge: 15 * 60 * 1000 });
+        res.cookie('refresh_token', refreshToken, { ...cookieOpts, maxAge: REFRESH_EXPIRES_SECONDS * 1000 });
+
+        const { password: _, ...safeUser } = user;
+        res.json({ user: safeUser });
+    } catch (err) { next(err); }
+};
+
+exports.refresh = async (req, res, next) => {
+    try {
+        const token = req.cookies?.refresh_token;
+        if (!token) return res.status(401).json({ error: 'Refresh token missing' });
+
+        const secret = process.env.REFRESH_SECRET || process.env.JWT_SECRET || 'dev-secret';
+        let payload;
+        try { payload = jwt.verify(token, secret); }
+        catch { return res.status(403).json({ error: 'Invalid refresh token' }); }
+
+        const stored = await authStorage.getRefreshToken(token);
+        if (!stored) return res.status(403).json({ error: 'Refresh token revoked' });
+
+        const accessToken = createAccessToken({ id: payload.id, email: payload.email, role: payload.role });
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 15 * 60 * 1000
+        });
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+};
+
+exports.logout = async (req, res, next) => {
+    try {
+        const token = req.cookies?.refresh_token;
+        if (token) await authStorage.deleteRefreshToken(token);
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
+        res.json({ ok: true });
+    } catch (err) { next(err); }
+};
+
+exports.me = async (req, res, next) => {
+    try {
+        const user = await authStorage.getUserById(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        const { password: _, ...safe } = user;
+        res.json(safe);
+    } catch (err) { next(err); }
 };

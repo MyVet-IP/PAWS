@@ -3,11 +3,11 @@ const { validateBody } = require('../middleware');
 const businessesController = require('../controllers/businessesController');
 const appointmentsController = require('../controllers/appointmentsController');
 
-// Catálogos
+// Catalogs
 router.get('/specialties', businessesController.getAllSpecialties);
 router.get('/animal-types', businessesController.getAllAnimalTypes);
 
-// CRUD negocios
+// CRUD business
 router.get('/', businessesController.getAll);
 router.get('/:id', businessesController.getById);
 router.post('/',
@@ -17,10 +17,15 @@ router.post('/',
 router.put('/:id', businessesController.update);
 router.delete('/:id', businessesController.remove);
 
-// Horarios
+// Schedules
 router.get('/:id/schedule', businessesController.getSchedule);
+router.put('/:id/schedule', businessesController.upsertSchedule);
 
-// Citas del negocio
+// Specialities
+router.post('/:id/specialties', businessesController.addSpecialty);
+router.delete('/:id/specialties/:specialty_id', businessesController.removeSpecialty);
+
+// Enterprise meetings
 router.get('/:id/appointments', appointmentsController.getByBusiness);
 
 module.exports = router;

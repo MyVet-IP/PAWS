@@ -77,7 +77,7 @@ export function landingPage() {
                 <h2 class="text-3xl md:text-4xl font-bold text-text-primary mb-3 font-poppins">Featured Clinics</h2>
                 <p class="text-text-soft font-roboto max-w-md">We carefully select clinics with the best ratings and specialized services for your family's peace of mind.</p>
             </div>
-            <a href="/#/clinics" class="text-text-highlight hover:text-text-highlight/80 font-medium flex items-center gap-2 font-poppins transition group">
+            <a href="#/clinics" class="text-text-highlight hover:text-text-highlight/80 font-medium flex items-center gap-2 font-poppins transition group">
                 View all clinics
                 <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
@@ -225,7 +225,7 @@ function renderClinicCards(clinics) {
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-text-primary font-poppins mb-2">Pet Care Clinic</h3>
                     <p class="text-text-soft text-sm mb-4 font-roboto">Professional veterinary services for your pets</p>
-                    <button onclick="window.location.hash='/#/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
+                    <button onclick="window.location.hash='/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
                         View details
                     </button>
                 </div>
@@ -242,7 +242,7 @@ function renderClinicCards(clinics) {
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-text-primary font-poppins mb-2">Emergency Center</h3>
                     <p class="text-text-soft text-sm mb-4 font-roboto">Round the clock emergency pet care services</p>
-                    <button onclick="window.location.hash='/#/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
+                    <button onclick="window.location.hash='/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
                         View details
                     </button>
                 </div>
@@ -259,7 +259,7 @@ function renderClinicCards(clinics) {
                 <div class="p-6">
                     <h3 class="text-xl font-semibold text-text-primary font-poppins mb-2">Wellness Spa</h3>
                     <p class="text-text-soft text-sm mb-4 font-roboto">Grooming and wellness services for pets</p>
-                    <button onclick="window.location.hash='/#/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
+                    <button onclick="window.location.hash='/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
                         View details
                     </button>
                 </div>
@@ -287,7 +287,7 @@ function renderClinicCards(clinics) {
                     </div>
                 </div>
                 <p class="text-text-soft text-sm mb-4 font-roboto">${clinic.address}</p>
-                <button onclick="window.location.hash='/#/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
+                <button onclick="window.location.hash='/clinics'" class="w-full bg-paws-purple/20 hover:bg-paws-purple/30 text-text-highlight font-semibold py-2 rounded-xl transition font-poppins">
                     View details
                 </button>
             </div>

@@ -317,6 +317,8 @@ export function dashboardPage() {
             onblur="this.style.borderColor='var(--bg-muted)';this.style.boxShadow='none'"/>
         </div>
 
+        <p id="pet-error-msg" class="text-xs text-center" style="color:#ef4444;min-height:16px;"></p>
+
         <button id="btn-save-pet"
           class="w-full py-3 rounded-xl font-poppins font-bold text-sm text-white transition"
           style="background:var(--text-highlight);transition:var(--transition-fast);"
@@ -346,7 +348,11 @@ export function dashboardEvents() {
   }
 
   // ── Modal ─────────────────────────────────
-  const openModal = () => { if (modal) modal.style.display = 'flex'; };
+  const openModal = () => {
+    if (modal) modal.style.display = 'flex';
+    const errMsg = document.getElementById('pet-error-msg');
+    if (errMsg) errMsg.textContent = '';
+  };
   const closeModal = () => { if (modal) modal.style.display = 'none'; };
 
   document.getElementById('btn-add-pet')?.addEventListener('click', openModal);
@@ -386,7 +392,8 @@ export function dashboardEvents() {
         loadPets(user);
       } else {
         const err = await res.json();
-        console.error('Error saving pet:', err);
+        const errMsg = document.getElementById('pet-error-msg');
+        if (errMsg) errMsg.textContent = err.error || 'Could not save pet. Try again.';
       }
     } catch (err) {
       console.error('Error adding pet:', err);
@@ -462,7 +469,7 @@ async function loadPets(user) {
       return `
       <div class="bg-white rounded-2xl p-4 cursor-pointer transition"
            style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);transition:var(--transition-fast);"
-           onclick="window.location.hash='#/pet-profile'"
+           onclick="window.location.hash='/pet-profile'"
            onmouseenter="this.style.boxShadow='var(--shadow-soft)';this.style.transform='translateY(-2px)'"
            onmouseleave="this.style.boxShadow='var(--shadow-card)';this.style.transform='none'">
         <div class="flex items-center gap-3 mb-3">
@@ -492,7 +499,7 @@ async function loadPets(user) {
     grid.innerHTML = `
       <div class="col-span-2 text-center py-4">
         <p class="text-sm" style="color:var(--text-muted);">Could not load pets.
-          <button onclick="loadPets(JSON.parse(localStorage.getItem('user')||'null'))" class="underline"
+          <button onclick="window.location.reload()" class="underline"
                   style="color:var(--text-highlight);">Retry</button>
         </p>
       </div>`;

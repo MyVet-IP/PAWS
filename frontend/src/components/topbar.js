@@ -395,7 +395,7 @@ export function topbarEvents() {
       input.value = "";
       clearBtn?.classList.add("hidden");
       hideDropdown();
-      window.location.hash = hash;
+      window.location.hash = hash.startsWith('#') ? hash.slice(1) : hash;
     }
 
     function highlightItem(items) {

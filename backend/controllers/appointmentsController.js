@@ -2,6 +2,26 @@ const appointmentsStorage = require('../storage/appointmentsStorage');
 
 const VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'no_show'];
 
+exports.getById = async (req, res, next) => {
+    try {
+        const appointment = await appointmentsStorage.getById(req.params.id);
+        if (!appointment) return res.status(404).json({ error: 'Cita no encontrada' });
+        res.json(appointment);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.update = async (req, res, next) => {
+    try {
+        const appointment = await appointmentsStorage.update(req.params.id, req.body);
+        if (!appointment) return res.status(404).json({ error: 'Cita no encontrada' });
+        res.json(appointment);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.getAll = async (req, res, next) => {
     try {
         const { status } = req.query;

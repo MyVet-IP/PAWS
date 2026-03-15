@@ -8,45 +8,49 @@ const bcrypt = require("bcrypt");
 const db = require("../db");
 const authController = require("../controllers/authController");
 
+const { authenticateToken } = require('../middleware/auth');
+
 
 /* LOGIN NORMAL */
 
 router.post("/register", authController.register);
 router.post("/login", authController.login);
-
+router.post('/refresh', authController.refresh);
+router.post('/logout', authController.logout);
+router.get('/me', authenticateToken, authController.me);
 
 /* GOOGLE STRATEGY */
 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-passport.use(new GoogleStrategy({
+    passport.use(new GoogleStrategy({
 
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
 
-}, async (accessToken, refreshToken, profile, done) => {
+    }, async (accessToken, refreshToken, profile, done) => {
 
-    try {
+        try {
 
-        const email =
-            profile.emails?.[0]?.value ||
-            profile._json?.email;
+            const email =
+                profile.emails?.[0]?.value ||
+                profile._json?.email;
 
-        const name = profile.displayName;
+            const name = profile.displayName;
 
-        if (!email) {
-            return done(new Error("Google account has no email"), null);
+            if (!email) {
+                return done(new Error("Google account has no email"), null);
+            }
+
+            return done(null, { email, name });
+
+        } catch (error) {
+
+            return done(error, null);
+
         }
 
-        return done(null, { email, name });
-
-    } catch (error) {
-
-        return done(error, null);
-
-    }
-
-}));
+    }));
 } // end if GOOGLE credentials
 
 

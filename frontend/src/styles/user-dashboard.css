@@ -1,7 +1,5 @@
 /* ========================================
-   User Dashboard
-   ✅ PAWS Design Tokens
-   ✅ Responsive breakpoints
+  User Dashboard
    ======================================== */
 
 /* ── Layout ─────────────────────────────────── */
@@ -55,7 +53,9 @@
   flex-shrink: 0;
 }
 
-.btn-add-pet:hover { opacity: 0.88; }
+.btn-add-pet:hover {
+  opacity: 0.88;
+}
 
 /* ── Stats grid ─────────────────────────────── */
 .dash-stats {
@@ -69,6 +69,7 @@
   .dash-stats {
     grid-template-columns: 1fr;
   }
+
   .stat-card-appointment {
     grid-column: 1;
   }
@@ -92,7 +93,9 @@
 }
 
 @media (max-width: 640px) {
-  .stat-card-appointment { grid-column: 1; }
+  .stat-card-appointment {
+    grid-column: 1;
+  }
 }
 
 .stat-appointment-bar {
@@ -115,8 +118,15 @@
   flex-shrink: 0;
 }
 
-.stat-icon-green { background: rgba(185,251,192,0.35); color: var(--color-green-dark); }
-.stat-icon-purple { background: rgba(241,192,232,0.35); color: var(--text-highlight); }
+.stat-icon-green {
+  background: rgba(185, 251, 192, 0.35);
+  color: var(--color-green-dark);
+}
+
+.stat-icon-purple {
+  background: rgba(241, 192, 232, 0.35);
+  color: var(--text-highlight);
+}
 
 .stat-label {
   font-family: 'Poppins', sans-serif;
@@ -158,13 +168,15 @@
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 10px;
-  background: rgba(106,76,147,0.10);
+  background: rgba(106, 76, 147, 0.10);
   color: var(--text-highlight);
   text-decoration: none;
   transition: var(--transition-fast);
 }
 
-.btn-book:hover { background: rgba(106,76,147,0.18); }
+.btn-book:hover {
+  background: rgba(106, 76, 147, 0.18);
+}
 
 /* ── Main grid ──────────────────────────────── */
 .dash-main-grid {
@@ -180,8 +192,17 @@
   }
 }
 
-.dash-left  { display: flex; flex-direction: column; gap: 16px; }
-.dash-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.dash-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dash-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 /* ── Section headers ────────────────────────── */
 .section-header {
@@ -210,7 +231,9 @@
   transition: var(--transition-fast);
 }
 
-.section-link:hover { opacity: 0.75; }
+.section-link:hover {
+  opacity: 0.75;
+}
 
 /* ── Pets grid ──────────────────────────────── */
 .pets-grid {
@@ -220,7 +243,9 @@
 }
 
 @media (max-width: 480px) {
-  .pets-grid { grid-template-columns: 1fr; }
+  .pets-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pets-loading {
@@ -242,13 +267,14 @@
   box-shadow: var(--shadow-card);
   border: 1px solid var(--bg-muted);
   transition: var(--transition-fast);
-  min-width: 0; /* prevents overflow in grid */
+  min-width: 0;
+  /* prevents overflow in grid */
 }
 
 .pet-card:hover {
   box-shadow: var(--shadow-soft);
   transform: translateY(-2px);
-  border-color: rgba(106,76,147,0.20);
+  border-color: rgba(106, 76, 147, 0.20);
 }
 
 .pet-card-top {
@@ -269,7 +295,10 @@
   flex-shrink: 0;
 }
 
-.pet-info { flex: 1; min-width: 0; }
+.pet-info {
+  flex: 1;
+  min-width: 0;
+}
 
 .pet-name {
   font-family: 'Poppins', sans-serif;
@@ -302,7 +331,7 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(185,251,192,0.35);
+  background: rgba(185, 251, 192, 0.35);
   color: var(--color-green-dark);
 }
 
@@ -329,7 +358,7 @@
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: rgba(185,251,192,0.30);
+  background: rgba(185, 251, 192, 0.30);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,14 +397,14 @@
 
 .pet-add-card:hover {
   border-color: var(--text-highlight);
-  background: rgba(106,76,147,0.03);
+  background: rgba(106, 76, 147, 0.03);
 }
 
 .pet-add-icon {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: rgba(106,76,147,0.10);
+  background: rgba(106, 76, 147, 0.10);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -411,13 +440,15 @@
   transition: var(--transition-fast);
 }
 
-.clinic-row:hover { border-color: var(--text-highlight); }
+.clinic-row:hover {
+  border-color: var(--text-highlight);
+}
 
 .clinic-icon {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(144,189,244,0.25);
+  background: rgba(144, 189, 244, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -425,7 +456,10 @@
   flex-shrink: 0;
 }
 
-.clinic-info { flex: 1; min-width: 0; }
+.clinic-info {
+  flex: 1;
+  min-width: 0;
+}
 
 .clinic-name {
   font-family: 'Poppins', sans-serif;
@@ -481,7 +515,9 @@
   margin-bottom: 10px;
 }
 
-.tip-icon { font-size: 20px; }
+.tip-icon {
+  font-size: 20px;
+}
 
 .tip-title {
   font-family: 'Poppins', sans-serif;
@@ -509,7 +545,9 @@
   transition: var(--transition-fast);
 }
 
-.tip-link:hover { opacity: 0.75; }
+.tip-link:hover {
+  opacity: 0.75;
+}
 
 /* ── Quick actions ──────────────────────────── */
 .quick-actions-card {
@@ -547,15 +585,41 @@
   transition: var(--transition-fast);
 }
 
-.quick-emergency   { background: #FEF2F2; color: #dc2626; }
-.quick-appointment { background: rgba(144,189,244,0.20); color: #2563eb; }
-.quick-map         { background: rgba(185,251,192,0.25); color: var(--color-green-dark); }
-.quick-records     { background: rgba(241,192,232,0.25); color: var(--text-highlight); }
+.quick-emergency {
+  background: #FEF2F2;
+  color: #dc2626;
+}
 
-.quick-emergency:hover   { background: #FEE2E2; }
-.quick-appointment:hover { background: rgba(144,189,244,0.38); }
-.quick-map:hover         { background: rgba(185,251,192,0.45); }
-.quick-records:hover     { background: rgba(241,192,232,0.45); }
+.quick-appointment {
+  background: rgba(144, 189, 244, 0.20);
+  color: #2563eb;
+}
+
+.quick-map {
+  background: rgba(185, 251, 192, 0.25);
+  color: var(--color-green-dark);
+}
+
+.quick-records {
+  background: rgba(241, 192, 232, 0.25);
+  color: var(--text-highlight);
+}
+
+.quick-emergency:hover {
+  background: #FEE2E2;
+}
+
+.quick-appointment:hover {
+  background: rgba(144, 189, 244, 0.38);
+}
+
+.quick-map:hover {
+  background: rgba(185, 251, 192, 0.45);
+}
+
+.quick-records:hover {
+  background: rgba(241, 192, 232, 0.45);
+}
 
 /* ── Modal ──────────────────────────────────── */
 .modal-overlay {
@@ -565,7 +629,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(51,51,51,0.50);
+  background: rgba(51, 51, 51, 0.50);
   backdrop-filter: blur(6px);
 }
 
@@ -609,12 +673,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
   transition: var(--transition-fast);
 }
 
-.modal-close-btn:hover { background: rgba(255,255,255,0.28); }
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
 
 .modal-body {
   padding: 20px 24px;
@@ -624,7 +690,11 @@
 }
 
 /* ── Form inputs (shared with modal) ────────── */
-.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
 .form-label {
   font-family: 'Poppins', sans-serif;
@@ -649,7 +719,7 @@
 
 .form-input:focus {
   border-color: var(--text-highlight);
-  box-shadow: 0 0 0 3px rgba(106,76,147,0.12);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.12);
 }
 
 .btn-save-pet {
@@ -666,4 +736,6 @@
   transition: var(--transition-fast);
 }
 
-.btn-save-pet:hover { opacity: 0.88; }
+.btn-save-pet:hover {
+  opacity: 0.88;
+}

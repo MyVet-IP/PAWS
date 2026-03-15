@@ -1,9 +1,5 @@
 /* ========================================
-   Vet Dashboard
-   ✅ PAWS Design Tokens
-   ✅ Responsive services grid
-   ✅ Mobile-visible delete/edit buttons
-   ✅ backdrop-filter fallback
+  Vet Dashboard
    ======================================== */
 
 /* ── Services grid ──────────────────────────── */
@@ -86,8 +82,13 @@
   color: #ef4444;
 }
 
-.btn-edit-member:hover   { background: rgba(144,189,244,0.30); }
-.btn-delete-member:hover { background: #FEE2E2; }
+.btn-edit-member:hover {
+  background: rgba(144, 189, 244, 0.30);
+}
+
+.btn-delete-member:hover {
+  background: #FEE2E2;
+}
 
 /* Team action buttons container — hidden on desktop, show on hover */
 .group .flex.gap-1 {
@@ -106,11 +107,6 @@
   }
 }
 
-/* ── Stats grid responsive ──────────────────── */
-.grid.grid-cols-4 {
-  /* Already responsive via Tailwind — extra safety */
-}
-
 @media (max-width: 640px) {
   .grid.grid-cols-4 {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -118,17 +114,17 @@
 }
 
 /* ── Two-column layout responsive ───────────── */
-#vet-dashboard-root > div.flex.gap-6 {
+#vet-dashboard-root>div.flex.gap-6 {
   display: flex;
   gap: 24px;
 }
 
 @media (max-width: 768px) {
-  #vet-dashboard-root > div.flex.gap-6 {
+  #vet-dashboard-root>div.flex.gap-6 {
     flex-direction: column;
   }
 
-  #vet-dashboard-root > div.flex.gap-6 > div[style*="width:280px"] {
+  #vet-dashboard-root>div.flex.gap-6>div[style*="width:280px"] {
     width: 100% !important;
     min-width: unset !important;
   }

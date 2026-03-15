@@ -30,7 +30,10 @@ CREATE TABLE IF NOT EXISTS businesses (
   city VARCHAR(100),
   latitude DECIMAL(10,7),
   longitude DECIMAL(10,7),
+  website VARCHAR(500),
   image_url VARCHAR(500),
+  rating_average DECIMAL(3,2) DEFAULT 0.00,
+  rating_count INTEGER DEFAULT 0,
   status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active','inactive','draft')),
   nit VARCHAR(20),
   nit_verified VARCHAR(20) CHECK (nit_verified IN ('pending','verified','rejected')),
@@ -83,7 +86,6 @@ CREATE TABLE IF NOT EXISTS clinics (
   business_id INTEGER NOT NULL UNIQUE,
   service_type VARCHAR(20) DEFAULT 'private' CHECK (service_type IN ('public','private')),
   is_24h BOOLEAN DEFAULT FALSE,
-  rating DECIMAL(3,2) DEFAULT 0.00,
   FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
 );
 
@@ -352,6 +354,25 @@ CREATE TABLE IF NOT EXISTS appointments (
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER NOT NULL,
+  token      VARCHAR(512) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reviews (
+  review_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL REFERENCES businesses(business_id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(business_id, user_id)
+);
+
 --  INDEXES
 
 -- users
@@ -409,6 +430,8 @@ CREATE INDEX IF NOT EXISTS idx_emergency_msg_emergency ON emergency_messages(eme
 CREATE INDEX IF NOT EXISTS idx_appointments_user ON appointments(user_id);
 CREATE INDEX IF NOT EXISTS idx_appointments_pet ON appointments(pet_id);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(date, business_id); 
+
+CREATE INDEX IF NOT EXISTS idx_reviews_business ON reviews(business_id);
 
 --  PAWS — Seed data completo
 

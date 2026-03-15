@@ -3,8 +3,8 @@ const { validateBody } = require('../middleware');
 const emergenciesController = require('../controllers/emergenciesController');
 
 router.get('/', emergenciesController.getAll);
-router.get('/messages', emergenciesController.getAllMessages);
 router.get('/:id', emergenciesController.getById);
+router.get('/messages', emergenciesController.getAllMessages);
 router.post('/',
     validateBody(['pet_id', 'business_id', 'description']),
     emergenciesController.create
