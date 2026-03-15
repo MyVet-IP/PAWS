@@ -40,7 +40,7 @@ window.searchClinics = function () {
 
 // Inicializar aplicación
 function initApp() {
-  console.log('VetCare App iniciada');
+  console.log('PAWS App inicializated');
   // Cargar router
   router();
 }
