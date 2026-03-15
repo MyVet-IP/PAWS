@@ -31,7 +31,13 @@ const routes = {
   "/login": () => {
     const user = getUser();
     if (user) {
-      window.location.hash = "/user-dashboard";
+      if (user.role === 'business') {
+        window.location.hash = "/veterinary";
+      } else if (user.role === 'admin') {
+        window.location.hash = "/admin-dashboard";
+      } else {
+        window.location.hash = "/user-dashboard";
+      }
       return "";
     }
     return loginPage();
@@ -222,14 +228,14 @@ function pageEvents() {
   if (loginBtn && loginBtn.textContent.includes('Sign In')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '/#/login';
+      window.location.hash = '/login';
     });
   }
 
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '/#/clinics';
+      window.location.hash = '/clinics';
     });
   }
 

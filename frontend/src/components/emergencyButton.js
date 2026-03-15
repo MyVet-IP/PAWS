@@ -34,7 +34,7 @@ export function EmergencyButton() {
   `;
 
   btn.addEventListener("dblclick", () => {
-    window.location.hash = '#/emergency';
+    window.location.hash = '/emergency';
   });
 
   document.body.appendChild(btn);

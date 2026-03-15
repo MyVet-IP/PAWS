@@ -137,7 +137,7 @@ export function dashboardEvents() {
   // Update username
   const nameEl = document.getElementById('dash-username');
   if (nameEl && user) {
-    nameEl.textContent = `Welcome, ${user.nombre?.split(' ')[0] || 'User'}!`;
+    nameEl.textContent = `Welcome, ${user.name?.split(' ')[0] || 'User'}!`;
   }
 
   // Logout button
@@ -145,7 +145,7 @@ export function dashboardEvents() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('user');
-      window.location.hash = '/#/';
+      window.location.hash = '/';
     });
   }
 
@@ -176,16 +176,22 @@ export function dashboardEvents() {
     addForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = JSON.parse(localStorage.getItem('user'));
+      const animalTypesRes = await fetch('/api/animal-types');
+      const animalTypes = await animalTypesRes.json();
+      const speciesName = document.getElementById('pet-especie').value;
+      const animalType = animalTypes.find(t => t.name === speciesName);
+      const ageVal = parseInt(document.getElementById('pet-edad').value) || 0;
+      const birthYear = new Date().getFullYear() - ageVal;
       const body = {
-        nombre: document.getElementById('pet-nombre').value,
-        especie: document.getElementById('pet-especie').value,
-        raza: document.getElementById('pet-raza').value,
-        edad: parseInt(document.getElementById('pet-edad').value),
-        id_cliente: user?.id_cliente
+        name: document.getElementById('pet-nombre').value,
+        animal_type_id: animalType?.animal_type_id || null,
+        breed: document.getElementById('pet-raza').value || null,
+        birth_date: `${birthYear}-01-01`,
+        user_id: user?.user_id
       };
 
       try {
-        const res = await fetch('/api/mascotas', {
+        const res = await fetch('/api/pets', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -216,11 +222,11 @@ async function loadPets() {
   if (!grid || !user) return;
 
   try {
-    const res = await fetch(`/api/users/${user.id_cliente}/dashboard`);
+    const res = await fetch(`/api/users/${user.user_id}/dashboard`);
     if (!res.ok) throw new Error('Failed to load pets');
 
     const data = await res.json();
-    const pets = data.mascotas || [];
+    const pets = data.pets || [];
 
     if (countEl) countEl.textContent = pets.length;
 
@@ -243,11 +249,11 @@ async function loadPets() {
 
     const cards = pets.map(p => `
       <div class="bg-white rounded-3xl shadow-sm w-64 p-6 hover:shadow-md hover:-translate-y-1 transition group border border-gray-100">
-        <div class="w-full h-40 bg-gradient-to-br ${p.especie === 'Cat' ? 'from-purple-100 to-pink-100' : 'from-green-100 to-blue-100'} rounded-2xl mb-4 flex items-center justify-center text-5xl">
-          ${p.especie === 'Cat' ? '🐱' : p.especie === 'Dog' ? '🐶' : '🐾'}
+        <div class="w-full h-40 bg-gradient-to-br ${p.species_name === 'Cat' ? 'from-purple-100 to-pink-100' : 'from-green-100 to-blue-100'} rounded-2xl mb-4 flex items-center justify-center text-5xl">
+          ${p.species_name === 'Cat' ? '🐱' : p.species_name === 'Dog' ? '🐶' : '🐾'}
         </div>
-        <h3 class="font-bold text-lg text-gray-800">${p.nombre}</h3>
-        <p class="text-gray-400 text-sm mb-4">${p.raza || p.especie} · ${p.edad} ${p.edad === 1 ? 'year' : 'years'}</p>
+        <h3 class="font-bold text-lg text-gray-800">${p.name}</h3>
+        <p class="text-gray-400 text-sm mb-4">${p.breed || p.species_name || '-'} · ${p.birth_date ? new Date().getFullYear() - new Date(p.birth_date).getFullYear() : '-'} yrs</p>
         <button class="w-full bg-green-100 hover:bg-green-200 text-green-800 font-medium py-2 rounded-xl text-sm transition">
           View profile
         </button>

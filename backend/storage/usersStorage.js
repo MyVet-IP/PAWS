@@ -80,8 +80,11 @@ module.exports = {
         if (!user) return null;
 
         const pets = await db.all(
-            `SELECT pet_id, name, species, breed, birth_date, weight_kg, created_at
-            FROM pets WHERE user_id = $1 ORDER BY pet_id ASC`,
+            `SELECT p.pet_id, p.name, p.breed, p.birth_date, p.weight_kg, p.created_at,
+                    at.name AS species_name
+            FROM pets p
+            LEFT JOIN animal_types at ON at.animal_type_id = p.animal_type_id
+            WHERE p.user_id = $1 ORDER BY p.pet_id ASC`,
             [user_id]
         );
 

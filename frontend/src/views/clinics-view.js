@@ -87,9 +87,9 @@ export function clinicsPage() {
       function searchClinicsHere() {
         const location = document.getElementById('clinic-search').value;
         if (location.trim()) {
-          window.location.hash = \`/#/clinicas?location=\${encodeURIComponent(location)}\`;
+          window.location.hash = \`/clinics?location=\${encodeURIComponent(location)}\`;
         } else {
-          window.location.hash = '/#/clinicas';
+          window.location.hash = '/clinics';
         }
       }
 
