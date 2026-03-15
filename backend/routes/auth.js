@@ -9,7 +9,6 @@ const db = require("../db");
 const authController = require("../controllers/authController");
 
 const { authenticateToken } = require('../middleware/auth');
-const authController = require('../controllers/authController');
 
 
 /* LOGIN NORMAL */
