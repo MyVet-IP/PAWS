@@ -13,9 +13,6 @@ export function clinicsPage() {
               <h1 class="text-3xl font-bold text-gray-900">Veterinary Clinics</h1>
               <p class="text-gray-600 mt-2">Find the best care for your pet</p>
             </div>
-            <button onclick="window.location.hash='/#/'" class="text-purple-600 hover:text-purple-700 font-medium">
-              ← Back to home
-            </button>
           </div>
         </div>
       </header>

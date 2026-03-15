@@ -1,10 +1,5 @@
 import { getUser } from "../utils.js";
 
-// ─────────────────────────────────────────────
-//  Aside — usa clases Tailwind del config propio
-//  Solo style="" donde el valor es DINÁMICO
-//  (gradientes, colores con opacidad custom, etc.)
-// ─────────────────────────────────────────────
 export function Aside() {
   const user = getUser();
   if (!user) return "";
@@ -22,7 +17,6 @@ export function Aside() {
     style="width:240px;min-width:240px;
            background:linear-gradient(160deg,#6A4C93 0%,#8B5FBF 50%,#7A3FA0 100%);">
 
-    <!-- Blobs decorativos — solo con style porque son gradientes custom -->
     <div class="absolute pointer-events-none" style="width:180px;height:180px;border-radius:50%;
       background:rgba(185,251,192,0.10);top:-50px;left:-50px;filter:blur(35px);"></div>
     <div class="absolute pointer-events-none" style="width:130px;height:130px;border-radius:50%;
@@ -255,7 +249,7 @@ function ownerMenu(currentHash) {
 function vetMenu(currentHash) {
   const links = [
     { href: "#/veterinary", label: "Dashboard", icon: "📊" },
-    { href: "#/appointments", label: "Appointments", icon: "📅" },
+    { href: "#/business-appointments", label: "Appointments", icon: "📅" },
     { href: "#/pet-profile", label: "Patients", icon: "🐾" },
     { href: "#/medical-records", label: "Medical Records", icon: "📋" },
   ];
