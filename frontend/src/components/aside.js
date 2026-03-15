@@ -13,7 +13,7 @@ export function Aside() {
 
   return `
   <aside id="app-aside"
-    class="h-screen flex flex-col overflow-hidden relative font-poppins"
+    class="hidden md:flex h-screen flex-col overflow-hidden relative font-poppins"
     style="width:240px;min-width:240px;
            background:linear-gradient(160deg,#6A4C93 0%,#8B5FBF 50%,#7A3FA0 100%);">
 

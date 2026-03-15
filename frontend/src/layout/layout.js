@@ -36,16 +36,16 @@ export function Layout(content) {
 
           ${Aside(role)}
 
-          <div class="flex-1 flex flex-col">
+          <div class="flex-1 flex flex-col min-w-0">
 
             ${Topbar(role, currentPath)}
 
             <main class="flex-1 overflow-y-auto p-6">
               ${content}
             </main>
-             ${Footer()}
+
           </div>
-          
+
         </div>
 
       `;

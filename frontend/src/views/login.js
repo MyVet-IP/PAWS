@@ -330,13 +330,16 @@ export function loginEvents() {
                 return;
             }
 
+            // Backend returns { user: {...} }
+            const userData = data.user || data;
+
             // Store session
-            localStorage.setItem('user', JSON.stringify(data));
+            localStorage.setItem('user', JSON.stringify(userData));
 
             // Redirect based on role
-            if (data.role === 'business') {
+            if (userData.role === 'business') {
                 window.location.hash = '/veterinary';
-            } else if (data.role === 'admin') {
+            } else if (userData.role === 'admin') {
                 window.location.hash = '/admin-dashboard';
             } else {
                 window.location.hash = '/user-dashboard';
