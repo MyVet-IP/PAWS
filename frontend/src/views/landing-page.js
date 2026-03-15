@@ -139,10 +139,10 @@ export function landingPage() {
                 <h2 class="text-3xl md:text-4xl font-bold text-text-primary mb-6 font-poppins text-balance">Ready to give your pet the care they deserve?</h2>
                 <p class="text-text-soft mb-8 font-roboto">Join thousands of pet owners who trust PAWS for their furry friends' health.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button onclick="window.location.hash='/#/register'" class="btn btn-primary px-8 py-4 text-base">
+                    <button onclick="window.location.hash='/register'" class="btn btn-primary px-8 py-4 text-base">
                         Start today free
                     </button>
-                    <button onclick="window.location.hash='/#/register'" class="btn btn-secondary px-8 py-4 text-base">
+                    <button onclick="window.location.hash='/register'" class="btn btn-secondary px-8 py-4 text-base">
                         I'm a clinic
                     </button>
                 </div>
