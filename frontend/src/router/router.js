@@ -95,6 +95,16 @@ const routes = {
   }
 };
 
+const PROTECTED = {
+  "/user-dashboard":        "user",
+  "/pet-profile":           "user",
+  "/appointments":          "user",
+  "/veterinary":            "business",
+  "/business-appointments": "business",
+  "/medical-records":       "business",
+  "/admin-dashboard":       "admin",
+};
+
 export function router() {
   const fullHash = window.location.hash.slice(1) || "/";
   const path = fullHash.split("?")[0];
@@ -108,6 +118,10 @@ export function router() {
     if (!viewFunction) {
       app.innerHTML = "<h1>Page not found</h1>";
       return;
+    }
+
+    if (path in PROTECTED) {
+      if (!checkAuth(PROTECTED[path])) return;
     }
 
     const html = viewFunction();
@@ -244,9 +258,10 @@ function pageEvents() {
 
     if (!link.dataset.listener) {
       link.addEventListener("click", (e) => {
+        e.preventDefault();
         const href = link.getAttribute("href");
         if (href && href !== '#') {
-          window.location.hash = href;
+          window.location.hash = href.startsWith('#') ? href.slice(1) : href;
         }
       });
 
