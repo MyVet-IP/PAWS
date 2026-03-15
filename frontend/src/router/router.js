@@ -11,6 +11,7 @@ import { aboutUsPage, aboutUsEvents } from "../views/about-us.js";
 import { EmergencyButton } from "../components/emergencyButton.js";
 import { registerPage, registerEvents } from "../views/register.js";
 import { landingPage, landingEvents } from "../views/landing-page.js";
+import { servicesPage, servicesPageEvents } from "../views/services.js";
 import { emergencyPage, emergencyEvents } from "../views/emergency.js";
 import { contactUsPage, contactUsEvents } from "../views/contact-us.js";
 import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
@@ -40,6 +41,7 @@ const routes = {
   "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
   "/veterinary": vetDashboardPage,
+  "/services": servicesPage,
 
   "/tips": healthTipsPage,
   "/map-page": loadMapPage,
@@ -145,6 +147,10 @@ function runPageEvents(path) {
 
     case "/veterinary":
       vetDashboardEvents();
+      break;
+
+    case "/services":
+      servicesPageEvents();
       break;
 
     case "/about-us":
