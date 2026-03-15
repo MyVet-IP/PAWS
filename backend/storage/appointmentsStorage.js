@@ -97,7 +97,51 @@ module.exports = {
         );
     },
 
-    // UPDATE
+    // READ BY ID
+
+    async getById(appointment_id) {
+        return db.get(
+            `SELECT a.appointment_id, a.date, a.time, a.status, a.notes, a.created_at,
+                    a.user_id, a.business_id, a.pet_id,
+                    p.name AS pet_name, p.pet_id,
+                    u.name AS owner_name, u.phone AS owner_phone, u.user_id,
+                    b.name AS business_name, b.address, b.phone AS business_phone,
+                    b.business_id
+            FROM appointments a
+            INNER JOIN pets p ON p.pet_id = a.pet_id
+            INNER JOIN users u ON u.user_id = a.user_id
+            INNER JOIN businesses b ON b.business_id = a.business_id
+            WHERE a.appointment_id = $1`,
+            [appointment_id]
+        );
+    },
+
+    // UPDATE FIELDS
+
+    async update(appointment_id, data) {
+        const allowed = ['date', 'time', 'notes', 'status'];
+        const fields = [];
+        const values = [];
+        let i = 1;
+
+        for (const key of allowed) {
+            if (data[key] !== undefined) {
+                fields.push(`${key} = $${i++}`);
+                values.push(data[key]);
+            }
+        }
+
+        if (fields.length === 0) return this.getById(appointment_id);
+
+        values.push(appointment_id);
+        await db.run(
+            `UPDATE appointments SET ${fields.join(', ')} WHERE appointment_id = $${i}`,
+            values
+        );
+        return this.getById(appointment_id);
+    },
+
+    // UPDATE STATUS
 
     async updateStatus(appointment_id, status) {
         await db.run(

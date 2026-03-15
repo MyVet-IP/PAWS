@@ -3,7 +3,15 @@
 module.exports = {
     // ─── EMERGENCIES ──────────────────────────────────────────────────────────
 
-    async getAllEmergencies() {
+    async getAllEmergencies({ status = null } = {}) {
+        const conditions = [];
+        const values = [];
+        let i = 1;
+
+        if (status) { conditions.push(`e.status = $${i++}`); values.push(status); }
+
+        const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+
         return db.all(
             `SELECT e.*,
                     p.name AS pet_name,
@@ -13,7 +21,9 @@ module.exports = {
             FROM emergencies e
             INNER JOIN pets p        ON p.pet_id      = e.pet_id
             INNER JOIN businesses b  ON b.business_id = e.business_id
-            ORDER BY e.created_at DESC`
+            ${where}
+            ORDER BY e.created_at DESC`,
+            values
         );
     },
 

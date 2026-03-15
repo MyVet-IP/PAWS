@@ -102,6 +102,21 @@ module.exports = {
             );
         }
 
-        return { user, pets };
+        const upcoming_appointments = await db.all(
+            `SELECT a.appointment_id, a.date, a.time, a.status, a.notes,
+                    p.name AS pet_name, p.pet_id,
+                    b.name AS business_name, b.address, b.phone, b.business_id
+            FROM appointments a
+            INNER JOIN pets p       ON p.pet_id       = a.pet_id
+            INNER JOIN businesses b ON b.business_id  = a.business_id
+            WHERE a.user_id = $1
+              AND a.date >= CURRENT_DATE
+              AND a.status IN ('pending', 'confirmed')
+            ORDER BY a.date ASC, a.time ASC
+            LIMIT 5`,
+            [user_id]
+        );
+
+        return { user, pets, upcoming_appointments };
     }
 };

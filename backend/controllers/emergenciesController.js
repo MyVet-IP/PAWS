@@ -5,7 +5,8 @@ const businessesStorage = require('../storage/businessesStorage');
 
 exports.getAll = async (req, res, next) => {
     try {
-        const emergencies = await emergenciesStorage.getAllEmergencies();
+        const { status } = req.query;
+        const emergencies = await emergenciesStorage.getAllEmergencies({ status });
         res.json(emergencies);
     } catch (err) {
         next(err);

@@ -1,9 +1,44 @@
 ﻿const businessesStorage = require('../storage/businessesStorage');
 
+exports.upsertSchedule = async (req, res, next) => {
+    try {
+        const { days } = req.body;
+        if (!Array.isArray(days) || days.length === 0) {
+            return res.status(400).json({ error: 'days debe ser un array con al menos un elemento' });
+        }
+        const schedule = await businessesStorage.upsertSchedule(req.params.id, days);
+        res.json(schedule);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.addSpecialty = async (req, res, next) => {
+    try {
+        const { specialty_id } = req.body;
+        if (!specialty_id) return res.status(400).json({ error: 'specialty_id requerido' });
+        const specialties = await businessesStorage.addSpecialty(req.params.id, specialty_id);
+        if (!specialties) return res.status(404).json({ error: 'Negocio no encontrado' });
+        res.json(specialties);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.removeSpecialty = async (req, res, next) => {
+    try {
+        const specialties = await businessesStorage.removeSpecialty(req.params.id, req.params.specialty_id);
+        if (!specialties) return res.status(404).json({ error: 'Negocio no encontrado' });
+        res.json(specialties);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.getAll = async (req, res, next) => {
     try {
-        const { type, zone } = req.query;
-        const businesses = await businessesStorage.getAll({ type, zone });
+        const { type, zone, city } = req.query;
+        const businesses = await businessesStorage.getAll({ type, zone, city });
         res.json(businesses);
     } catch (err) {
         next(err);
