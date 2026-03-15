@@ -1,9 +1,5 @@
 /* ========================================
    Map Page
-   ✅ Inline styles extracted from JS
-   ✅ PAWS Design Tokens
-   ✅ Fixed map container height
-   ✅ Sidebar max-height for mobile
    ======================================== */
 
 /* ── Page wrapper ───────────────────────────── */
@@ -65,7 +61,7 @@
 
 #map-search:focus {
   border-color: var(--text-highlight);
-  box-shadow: 0 0 0 3px rgba(106,76,147,0.12);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.12);
 }
 
 /* ── Filter button ──────────────────────────── */
@@ -87,7 +83,7 @@
 
 .map-filter-btn:hover {
   border-color: var(--text-highlight);
-  background: rgba(106,76,147,0.06);
+  background: rgba(106, 76, 147, 0.06);
 }
 
 /* ── Results count bar ──────────────────────── */
@@ -124,12 +120,12 @@
 
 .clinic-card:hover {
   border-color: var(--text-highlight);
-  box-shadow: 0 3px 10px rgba(106,76,147,0.10);
+  box-shadow: 0 3px 10px rgba(106, 76, 147, 0.10);
 }
 
 .clinic-card.active {
   border-color: var(--text-highlight);
-  background: rgba(106,76,147,0.04);
+  background: rgba(106, 76, 147, 0.04);
 }
 
 /* ── Clinic card icon ───────────────────────── */
@@ -142,7 +138,7 @@
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
-  background: rgba(106,76,147,0.10);
+  background: rgba(106, 76, 147, 0.10);
 }
 
 /* ── Clinic card badges ─────────────────────── */
@@ -160,7 +156,7 @@
   font-size: 10px;
   padding: 2px 7px;
   border-radius: 999px;
-  background: rgba(185,251,192,0.40);
+  background: rgba(185, 251, 192, 0.40);
   color: var(--color-green-dark);
   font-family: 'Poppins', sans-serif;
 }
@@ -188,7 +184,9 @@
   padding: 0;
 }
 
-.btn-clinic-detail:hover { opacity: 0.75; }
+.btn-clinic-detail:hover {
+  opacity: 0.75;
+}
 
 /* ── Empty state ────────────────────────────── */
 #clinic-empty {
@@ -201,14 +199,17 @@
   text-align: center;
 }
 
-#clinic-empty.visible { display: flex; }
+#clinic-empty.visible {
+  display: flex;
+}
 
 /* ── Map container ──────────────────────────── */
 .map-container {
   flex: 1;
   position: relative;
   background: #E8EAE9;
-  min-height: 400px; /* prevents collapse on mobile */
+  min-height: 400px;
+  /* prevents collapse on mobile */
 }
 
 #mapContainer {
@@ -236,7 +237,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 14px;
-  background: rgba(106,76,147,0.12);
+  background: rgba(106, 76, 147, 0.12);
 }
 
 /* ── Filter chips ───────────────────────────── */
@@ -273,11 +274,13 @@
   display: none;
   align-items: flex-start;
   justify-content: flex-start;
-  background: rgba(51,51,51,0.35);
+  background: rgba(51, 51, 51, 0.35);
   backdrop-filter: blur(3px);
 }
 
-#modal-filters.open { display: flex; }
+#modal-filters.open {
+  display: flex;
+}
 
 .filter-modal-card {
   position: absolute;
@@ -323,11 +326,13 @@
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(51,51,51,0.50);
+  background: rgba(51, 51, 51, 0.50);
   backdrop-filter: blur(6px);
 }
 
-#modal-clinic-detail.open { display: flex; }
+#modal-clinic-detail.open {
+  display: flex;
+}
 
 .detail-modal-card {
   background: white;
@@ -360,12 +365,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
   transition: var(--transition-fast);
 }
 
-.detail-modal-close:hover { background: rgba(255,255,255,0.28); }
+.detail-modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
 
 /* Detail info icon boxes */
 .detail-info-icon {
@@ -386,7 +393,7 @@
   font-size: 12px;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
-  background: rgba(106,76,147,0.10);
+  background: rgba(106, 76, 147, 0.10);
   color: var(--text-highlight);
 }
 
@@ -400,13 +407,14 @@
 
 #dc-focus:hover {
   border-color: var(--text-highlight);
-  background: rgba(106,76,147,0.05);
+  background: rgba(106, 76, 147, 0.05);
 }
 
 /* ── backdrop-filter fallback ───────────────── */
 @supports not (backdrop-filter: blur(6px)) {
+
   #modal-filters,
   #modal-clinic-detail {
-    background: rgba(30,20,50,0.75) !important;
+    background: rgba(30, 20, 50, 0.75) !important;
   }
 }

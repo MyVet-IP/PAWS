@@ -1,7 +1,5 @@
 /* ========================================
-   Medical Records
-   ✅ All inline styles extracted here
-   ✅ PAWS Design Tokens
+  Medical Records
    ======================================== */
 
 /* ── Page wrapper ───────────────────────────── */
@@ -64,7 +62,9 @@
   padding: 0;
 }
 
-.mr-back-btn:hover { opacity: 0.75; }
+.mr-back-btn:hover {
+  opacity: 0.75;
+}
 
 /* ── Stats ──────────────────────────────────── */
 .mr-stats {
@@ -74,7 +74,9 @@
 }
 
 @media (max-width: 640px) {
-  .mr-stats { grid-template-columns: repeat(2, 1fr); }
+  .mr-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .mr-stat-card {
@@ -99,7 +101,10 @@
   color: var(--text-highlight);
 }
 
-.mr-stat-icon svg { width: 100%; height: 100%; }
+.mr-stat-icon svg {
+  width: 100%;
+  height: 100%;
+}
 
 .mr-stat-value {
   font-family: 'Poppins', sans-serif;
@@ -171,7 +176,7 @@
 .pet-selector:hover,
 .pet-selector.active {
   border-color: var(--text-highlight);
-  background: rgba(106,76,147,0.05);
+  background: rgba(106, 76, 147, 0.05);
 }
 
 .pet-sel-avatar {
@@ -216,7 +221,10 @@
   white-space: nowrap;
 }
 
-.mr-chip:hover { border-color: var(--text-highlight); color: var(--text-highlight); }
+.mr-chip:hover {
+  border-color: var(--text-highlight);
+  color: var(--text-highlight);
+}
 
 .mr-chip-active {
   background: var(--text-highlight) !important;
@@ -256,7 +264,9 @@
   transition: var(--transition-fast);
 }
 
-.mr-add-btn:hover { opacity: 0.88; }
+.mr-add-btn:hover {
+  opacity: 0.88;
+}
 
 /* ── Records list ───────────────────────────── */
 .mr-records-list {
@@ -279,7 +289,7 @@
 .mr-record-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-medium);
-  border-color: rgba(106,76,147,0.20);
+  border-color: rgba(106, 76, 147, 0.20);
 }
 
 .mr-record-inner {
@@ -402,8 +412,14 @@
   font-family: 'Roboto', sans-serif;
 }
 
-.mr-empty-icon { font-size: 36px; margin-bottom: 8px; }
-.mr-empty-text { font-size: 13px; }
+.mr-empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.mr-empty-text {
+  font-size: 13px;
+}
 
 .mr-empty-full {
   background: white;
@@ -414,7 +430,10 @@
   border: 1px solid var(--bg-muted);
 }
 
-.mr-empty-icon-lg { font-size: 52px; margin-bottom: 14px; }
+.mr-empty-icon-lg {
+  font-size: 52px;
+  margin-bottom: 14px;
+}
 
 .mr-empty-title {
   font-family: 'Poppins', sans-serif;
@@ -436,7 +455,7 @@
 .mr-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.40);
+  background: rgba(0, 0, 0, 0.40);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -507,10 +526,20 @@
   color: var(--text-muted);
 }
 
-.mr-modal-close svg { width: 16px; height: 16px; }
-.mr-modal-close:hover { background: #E5E7EB; }
+.mr-modal-close svg {
+  width: 16px;
+  height: 16px;
+}
 
-.mr-modal-body { display: flex; flex-direction: column; gap: 12px; }
+.mr-modal-close:hover {
+  background: #E5E7EB;
+}
+
+.mr-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 /* Detail rows */
 .mr-detail-rows {
@@ -531,11 +560,22 @@
   font-size: 13px;
 }
 
-.mr-detail-row:last-child { border-bottom: none; }
-.mr-detail-row span:first-child { color: var(--text-muted); }
-.mr-detail-row span:last-child  { color: var(--text-primary); font-weight: 500; }
+.mr-detail-row:last-child {
+  border-bottom: none;
+}
 
-.mr-detail-section { margin-bottom: 4px; }
+.mr-detail-row span:first-child {
+  color: var(--text-muted);
+}
+
+.mr-detail-row span:last-child {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.mr-detail-section {
+  margin-bottom: 4px;
+}
 
 .mr-detail-heading {
   font-family: 'Poppins', sans-serif;
@@ -558,7 +598,7 @@
 }
 
 .mr-followup-text {
-  background: rgba(185,251,192,0.20);
+  background: rgba(185, 251, 192, 0.20);
   border: 1px solid var(--color-green);
 }
 
@@ -623,10 +663,12 @@
 
 .mr-input:focus {
   border-color: var(--text-highlight);
-  box-shadow: 0 0 0 3px rgba(106,76,147,0.12);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.12);
 }
 
-.mr-textarea { resize: vertical; }
+.mr-textarea {
+  resize: vertical;
+}
 
 .mr-submit-btn {
   width: 100%;
@@ -643,12 +685,23 @@
   transition: var(--transition-fast);
 }
 
-.mr-submit-btn:hover { opacity: 0.88; }
+.mr-submit-btn:hover {
+  opacity: 0.88;
+}
 
 /* ── Animations ─────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.fade-up { animation: fadeUp 0.35s ease forwards; }
+.fade-up {
+  animation: fadeUp 0.35s ease forwards;
+}
