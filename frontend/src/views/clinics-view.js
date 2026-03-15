@@ -234,7 +234,7 @@ function renderClinicCard(clinic) {
 // ─────────────────────────────────────────────
 //  renderGrid — renders filtered + sorted list
 // ─────────────────────────────────────────────
-export async function initClinicsView() {
+export async function renderGrid() {
   const grid = document.getElementById('clinics-grid');
   const countEl = document.getElementById('results-count');
   if (!grid) return;
