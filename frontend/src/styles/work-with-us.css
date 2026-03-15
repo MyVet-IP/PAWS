@@ -1,0 +1,542 @@
+/* ========== Work With Us Page Styles ========== */
+
+/* Page Layout */
+.work-page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #fef9ff 0%, #f5f8ff 60%, #f0fdf4 100%);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+.work-header {
+    background: white;
+    box-shadow: var(--shadow-card);
+    border-bottom: 1px solid #f0e8ff;
+}
+
+.work-header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+    .work-header-content {
+        padding: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .work-header-content {
+        padding: 24px 32px;
+    }
+}
+
+.work-header-info {
+    flex: 1;
+}
+
+.work-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-yellow);
+    color: #d97706;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-page-subtitle {
+    margin-top: 4px;
+    color: var(--text-soft);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+}
+
+.work-back-btn {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: var(--text-highlight);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.work-back-btn:hover {
+    opacity: 0.75;
+}
+
+/* Main Content */
+.work-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 16px;
+}
+
+@media (min-width: 640px) {
+    .work-main {
+        padding: 48px 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .work-main {
+        padding: 48px 32px;
+    }
+}
+
+/* Roles Section */
+.work-roles-section {
+    margin-bottom: 64px;
+}
+
+.work-section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.work-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-section-subtitle {
+    color: var(--text-muted);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* Roles Grid */
+.work-roles-grid {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .work-roles-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Role Card */
+.work-role-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.work-role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10);
+}
+
+.work-role-accent {
+    height: 5px;
+}
+
+.work-role-accent--green {
+    background: var(--color-green);
+}
+
+.work-role-accent--purple {
+    background: var(--color-purple);
+}
+
+.work-role-accent--blue {
+    background: var(--color-blue);
+}
+
+.work-role-accent--yellow {
+    background: var(--color-yellow);
+}
+
+.work-role-content {
+    padding: 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.work-role-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.work-role-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.work-role-icon--green {
+    background: var(--color-green);
+}
+
+.work-role-icon--purple {
+    background: var(--color-purple);
+}
+
+.work-role-icon--blue {
+    background: var(--color-blue);
+}
+
+.work-role-icon--yellow {
+    background: var(--color-yellow);
+}
+
+.work-role-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-role-desc {
+    color: var(--text-soft);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Perk Item */
+.work-perks {
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+.work-perk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text-soft);
+}
+
+.work-perk-item:last-child {
+    border-bottom: none;
+}
+
+.work-perk-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.work-perk-check--green {
+    background: var(--color-green);
+    color: #059669;
+}
+
+.work-perk-check--purple {
+    background: var(--color-purple);
+    color: var(--text-highlight);
+}
+
+.work-perk-check--blue {
+    background: var(--color-blue);
+    color: #2563eb;
+}
+
+.work-perk-check--yellow {
+    background: var(--color-yellow);
+    color: #d97706;
+}
+
+.work-role-cta {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+    text-align: center;
+}
+
+.work-role-cta:hover {
+    opacity: 0.85;
+}
+
+.work-role-cta--green {
+    background: var(--color-green);
+    color: #059669;
+}
+
+.work-role-cta--purple {
+    background: var(--color-purple);
+    color: var(--text-highlight);
+}
+
+.work-role-cta--blue {
+    background: var(--color-blue);
+    color: #2563eb;
+}
+
+.work-role-cta--yellow {
+    background: var(--color-yellow);
+    color: #d97706;
+}
+
+/* Why Section */
+.work-why-section {
+    margin-bottom: 64px;
+}
+
+.work-why-grid {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .work-why-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.work-why-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+.work-benefit-item:last-child {
+    border-bottom: none;
+}
+
+.work-benefit-icon {
+    font-size: 1.3rem;
+}
+
+/* Stats Card */
+.work-stats-card {
+    background: linear-gradient(135deg, #6A4C93, #8b5cf6);
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    color: white;
+    text-align: center;
+}
+
+.work-stats-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.work-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.work-stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-stat-label {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    font-family: 'Roboto', sans-serif;
+}
+
+.work-stats-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+/* Form Section */
+.work-form-container {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 48px;
+    box-shadow: var(--shadow-medium);
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.work-form-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.work-form-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+}
+
+.work-form-subtitle {
+    color: var(--text-muted);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+}
+
+.work-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.work-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.work-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-soft);
+}
+
+.work-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: var(--radius-md);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.work-form-input:focus {
+    border-color: var(--text-highlight);
+}
+
+.work-form-select {
+    background: white;
+    cursor: pointer;
+}
+
+.work-form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.work-submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--text-highlight);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.work-submit-btn:hover {
+    background: #5a3d80;
+}
+
+.work-success-msg {
+    display: none;
+    text-align: center;
+    color: #059669;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.work-success-msg.show {
+    display: block;
+}
+
+/* Animations */
+@keyframes workFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.work-fade-up {
+    animation: workFadeUp 0.45s ease forwards;
+}
+
+.work-fade-up-delay-1 {
+    animation-delay: 0.08s;
+}
+
+.work-fade-up-delay-2 {
+    animation-delay: 0.16s;
+}
+
+.work-fade-up-delay-3 {
+    animation-delay: 0.24s;
+}
