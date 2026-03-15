@@ -5,9 +5,12 @@ module.exports = {
 
     async getAll() {
         return db.all(
-            `SELECT user_id, name, email, phone, role, created_at
-            FROM users
-            ORDER BY user_id ASC`
+            `SELECT u.user_id, u.name, u.email, u.phone, u.role, u.created_at,
+                    COUNT(p.pet_id) AS pet_count
+            FROM users u
+            LEFT JOIN pets p ON p.user_id = u.user_id
+            GROUP BY u.user_id, u.name, u.email, u.phone, u.role, u.created_at
+            ORDER BY u.user_id ASC`
         );
     },
 
@@ -64,8 +67,13 @@ module.exports = {
         return this.getById(user_id);
     },
 
-    // ─── DASHBOARD ────────────────────────────────────────────────────────────
-    // Devuelve el user + sus mascotas + historial médico de cada mascota
+    // ─── DELETE 
+
+    async remove(user_id) {
+        await db.run(`DELETE FROM users WHERE user_id = $1`, [user_id]);
+    },
+
+    // ─── DASHBOARD 
 
     async getDashboard(user_id) {
         const user = await this.getById(user_id);

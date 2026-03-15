@@ -68,6 +68,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/pets', require('./routes/pets'));
 app.use('/api/businesses', require('./routes/businesses'));
+app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/emergencies', require('./routes/emergencies'));
 app.use('/auth', require('./routes/auth'));

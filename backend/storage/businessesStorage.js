@@ -128,6 +128,12 @@ module.exports = {
         return this.getById(business_id);
     },
 
+    // ─── DELETE ───────────────────────────────────────────────────────────────
+
+    async remove(business_id) {
+        await db.run(`DELETE FROM businesses WHERE business_id = $1`, [business_id]);
+    },
+
     // ─── PRIVADOS ─────────────────────────────────────────────────────────────
 
     async _getSpecialties(business_id, type) {

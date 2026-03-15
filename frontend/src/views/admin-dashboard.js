@@ -520,7 +520,7 @@ export function adminDashboardEvents() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('user');
-            window.location.hash = '#/';
+            window.location.hash = '/';
         });
     }
 
@@ -635,10 +635,10 @@ function initModals() {
 async function loadStats() {
     try {
         const [usersRes, petsRes, businessesRes, appointmentsRes] = await Promise.all([
-            fetch('/api/clientes'),
-            fetch('/api/mascotas'),
-            fetch('/api/establecimientos'),
-            fetch('/api/citas')
+            fetch('/api/users'),
+            fetch('/api/pets'),
+            fetch('/api/businesses'),
+            fetch('/api/appointments')
         ]);
 
         const users = await usersRes.json();
@@ -652,8 +652,8 @@ async function loadStats() {
         document.getElementById('stat-appointments').textContent = appointments.length || 0;
 
         // Pet statistics
-        const dogs = pets.filter(p => p.especie === 'Dog' || p.especie === 'Perro').length;
-        const cats = pets.filter(p => p.especie === 'Cat' || p.especie === 'Gato').length;
+        const dogs = pets.filter(p => p.species_name === 'Dog' || p.species_name === 'Perro').length;
+        const cats = pets.filter(p => p.species_name === 'Cat' || p.species_name === 'Gato').length;
         const other = pets.length - dogs - cats;
 
         document.getElementById('dogs-count').textContent = dogs;
@@ -670,7 +670,7 @@ async function loadUsers() {
     if (!tbody) return;
 
     try {
-        const res = await fetch('/api/clientes');
+        const res = await fetch('/api/users');
         const users = await res.json();
 
         if (users.length === 0) {
@@ -684,24 +684,24 @@ async function loadUsers() {
       <tr>
         <td>
           <div class="admin-user-cell">
-            <div class="admin-avatar ${avatarColors[i % avatarColors.length]}">${(user.nombre || 'U')[0].toUpperCase()}</div>
+            <div class="admin-avatar ${avatarColors[i % avatarColors.length]}">${(user.name || 'U')[0].toUpperCase()}</div>
             <div class="admin-user-info">
-              <h4>${user.nombre || 'Unknown'}</h4>
+              <h4>${user.name || 'Unknown'}</h4>
             </div>
           </div>
         </td>
         <td>${user.email || '-'}</td>
-        <td>${user.telefono || '-'}</td>
+        <td>${user.phone || '-'}</td>
         <td><span class="admin-status verified">${user.pet_count || 0} pets</span></td>
         <td>${formatDate(user.created_at)}</td>
         <td>
           <div class="admin-actions">
-            <button class="admin-action-btn edit" onclick="editUser(${user.id_cliente})" title="Edit">
+            <button class="admin-action-btn edit" onclick="editUser(${user.user_id})" title="Edit">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
               </svg>
             </button>
-            <button class="admin-action-btn delete" onclick="confirmDeleteUser(${user.id_cliente})" title="Delete">
+            <button class="admin-action-btn delete" onclick="confirmDeleteUser(${user.user_id})" title="Delete">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
@@ -722,11 +722,11 @@ async function loadPets(filterSpecies = '') {
     if (!tbody) return;
 
     try {
-        const res = await fetch('/api/mascotas');
+        const res = await fetch('/api/pets');
         let pets = await res.json();
 
         if (filterSpecies) {
-            pets = pets.filter(p => p.especie === filterSpecies);
+            pets = pets.filter(p => p.species_name === filterSpecies);
         }
 
         if (pets.length === 0) {
@@ -735,8 +735,8 @@ async function loadPets(filterSpecies = '') {
         }
 
         tbody.innerHTML = pets.map(pet => {
-            const isCat = pet.especie === 'Cat' || pet.especie === 'Gato';
-            const isDog = pet.especie === 'Dog' || pet.especie === 'Perro';
+            const isCat = pet.species_name === 'Cat' || pet.species_name === 'Gato';
+            const isDog = pet.species_name === 'Dog' || pet.species_name === 'Perro';
             const speciesClass = isDog ? 'owner' : isCat ? 'vet' : 'business';
             return `
       <tr>
@@ -744,23 +744,23 @@ async function loadPets(filterSpecies = '') {
           <div class="admin-user-cell">
             <div class="admin-avatar ${isCat ? 'blue' : 'green'}" style="font-size:1.1rem;">${isCat ? '🐱' : '🐶'}</div>
             <div class="admin-user-info">
-              <h4>${pet.nombre || 'Unknown'}</h4>
+              <h4>${pet.name || 'Unknown'}</h4>
             </div>
           </div>
         </td>
-        <td><span class="admin-role ${speciesClass}">${pet.especie || '-'}</span></td>
-        <td>${pet.raza || '-'}</td>
-        <td>${pet.edad || '-'} yrs</td>
+        <td><span class="admin-role ${speciesClass}">${pet.species_name || '-'}</span></td>
+        <td>${pet.breed || '-'}</td>
+        <td>${pet.birth_date ? new Date(pet.birth_date).getFullYear() : '-'}</td>
         <td>${pet.owner_name || '-'}</td>
         <td>
           <div class="admin-actions">
-            <button class="admin-action-btn view" onclick="viewPet(${pet.id_mascota})" title="View">
+            <button class="admin-action-btn view" onclick="viewPet(${pet.pet_id})" title="View">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
               </svg>
             </button>
-            <button class="admin-action-btn delete" onclick="confirmDeletePet(${pet.id_mascota})" title="Delete">
+            <button class="admin-action-btn delete" onclick="confirmDeletePet(${pet.pet_id})" title="Delete">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
@@ -781,11 +781,11 @@ async function loadBusinesses(filterType = '') {
     if (!tbody) return;
 
     try {
-        const res = await fetch('/api/establecimientos');
+        const res = await fetch('/api/businesses');
         let businesses = await res.json();
 
         if (filterType) {
-            businesses = businesses.filter(b => b.tipo === filterType);
+            businesses = businesses.filter(b => b.business_type === filterType);
         }
 
         if (businesses.length === 0) {
@@ -794,7 +794,7 @@ async function loadBusinesses(filterType = '') {
         }
 
         tbody.innerHTML = businesses.map(business => {
-            const typeClass = business.tipo === 'clinic' ? 'owner' : business.tipo === 'petshop' ? 'business' : 'vet';
+            const typeClass = business.business_type === 'clinic' ? 'owner' : business.business_type === 'petshop' ? 'business' : 'vet';
             return `
       <tr>
         <td>
@@ -805,13 +805,13 @@ async function loadBusinesses(filterType = '') {
               </svg>
             </div>
             <div class="admin-user-info">
-              <h4>${business.nombre || 'Unknown'}</h4>
+              <h4>${business.name || 'Unknown'}</h4>
             </div>
           </div>
         </td>
-        <td><span class="admin-role ${typeClass}">${business.tipo || '-'}</span></td>
-        <td>${business.direccion || '-'}</td>
-        <td>${business.telefono || '-'}</td>
+        <td><span class="admin-role ${typeClass}">${business.business_type || '-'}</span></td>
+        <td>${business.address || '-'}</td>
+        <td>${business.phone || '-'}</td>
         <td>
           <span style="color: #f59e0b; font-size: 0.8rem;">
             ${'★'.repeat(Math.floor(business.rating || 0))}${'☆'.repeat(5 - Math.floor(business.rating || 0))}
@@ -820,12 +820,12 @@ async function loadBusinesses(filterType = '') {
         </td>
         <td>
           <div class="admin-actions">
-            <button class="admin-action-btn edit" onclick="editBusiness(${business.id_establecimiento})" title="Edit">
+            <button class="admin-action-btn edit" onclick="editBusiness(${business.business_id})" title="Edit">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
               </svg>
             </button>
-            <button class="admin-action-btn delete" onclick="confirmDeleteBusiness(${business.id_establecimiento})" title="Delete">
+            <button class="admin-action-btn delete" onclick="confirmDeleteBusiness(${business.business_id})" title="Delete">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
@@ -846,12 +846,9 @@ async function loadAppointments(filterStatus = '') {
     if (!tbody) return;
 
     try {
-        const res = await fetch('/api/citas');
+        const url = filterStatus ? `/api/appointments?status=${filterStatus}` : '/api/appointments';
+        const res = await fetch(url);
         let appointments = await res.json();
-
-        if (filterStatus) {
-            appointments = appointments.filter(a => a.estado === filterStatus);
-        }
 
         if (appointments.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7"><div class="admin-empty-state"><p>No appointments found</p></div></td></tr>';
@@ -860,20 +857,20 @@ async function loadAppointments(filterStatus = '') {
 
         tbody.innerHTML = appointments.map(apt => `
       <tr>
-        <td>${formatDate(apt.fecha)}</td>
-        <td>${apt.hora || '-'}</td>
+        <td>${formatDate(apt.date)}</td>
+        <td>${apt.time || '-'}</td>
         <td>${apt.pet_name || '-'}</td>
         <td>${apt.owner_name || '-'}</td>
         <td>${apt.business_name || '-'}</td>
-        <td><span class="admin-status ${getStatusClass(apt.estado)}">${apt.estado || 'pending'}</span></td>
+        <td><span class="admin-status ${getStatusClass(apt.status)}">${apt.status || 'pending'}</span></td>
         <td>
           <div class="admin-actions">
-            <button class="admin-action-btn view" onclick="updateAppointmentStatus(${apt.id_cita})" title="Update Status">
+            <button class="admin-action-btn view" onclick="updateAppointmentStatus(${apt.appointment_id})" title="Update Status">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </button>
-            <button class="admin-action-btn delete" onclick="confirmDeleteAppointment(${apt.id_cita})" title="Cancel">
+            <button class="admin-action-btn delete" onclick="confirmDeleteAppointment(${apt.appointment_id})" title="Cancel">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -892,14 +889,13 @@ async function loadAppointments(filterStatus = '') {
 async function saveUser() {
     const id = document.getElementById('user-id').value;
     const data = {
-        nombre: document.getElementById('user-nombre').value,
+        name: document.getElementById('user-nombre').value,
         email: document.getElementById('user-email').value,
-        telefono: document.getElementById('user-telefono').value,
-        direccion: document.getElementById('user-direccion').value
+        phone: document.getElementById('user-telefono').value
     };
 
     try {
-        const url = id ? `/api/clientes/${id}` : '/api/clientes';
+        const url = id ? `/api/users/${id}` : '/api/users';
         const method = id ? 'PUT' : 'POST';
         await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         loadUsers();
@@ -913,15 +909,20 @@ async function saveUser() {
 async function saveBusiness() {
     const id = document.getElementById('business-id').value;
     const data = {
-        nombre: document.getElementById('business-nombre').value,
-        tipo: document.getElementById('business-tipo').value,
-        direccion: document.getElementById('business-direccion').value,
-        telefono: document.getElementById('business-telefono').value,
-        horario: document.getElementById('business-horario').value
+        name: document.getElementById('business-nombre').value,
+        business_type: document.getElementById('business-tipo').value,
+        address: document.getElementById('business-direccion').value,
+        phone: document.getElementById('business-telefono').value
     };
 
+    if (!id) {
+        // For new businesses, include user_id from logged-in admin
+        const adminUser = JSON.parse(localStorage.getItem('user') || '{}');
+        data.user_id = adminUser.id || adminUser.user_id;
+    }
+
     try {
-        const url = id ? `/api/establecimientos/${id}` : '/api/establecimientos';
+        const url = id ? `/api/businesses/${id}` : '/api/businesses';
         const method = id ? 'PUT' : 'POST';
         await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         loadBusinesses();
@@ -934,14 +935,14 @@ async function saveBusiness() {
 // Global functions for onclick handlers
 window.editUser = async function (id) {
     try {
-        const res = await fetch(`/api/clientes/${id}`);
+        const res = await fetch(`/api/users/${id}`);
         const user = await res.json();
         document.getElementById('modal-user-title').textContent = 'Edit User';
         document.getElementById('user-id').value = id;
-        document.getElementById('user-nombre').value = user.nombre || '';
+        document.getElementById('user-nombre').value = user.name || '';
         document.getElementById('user-email').value = user.email || '';
-        document.getElementById('user-telefono').value = user.telefono || '';
-        document.getElementById('user-direccion').value = user.direccion || '';
+        document.getElementById('user-telefono').value = user.phone || '';
+        document.getElementById('user-direccion').value = '';
         document.getElementById('modal-user')?.classList.add('open');
     } catch (error) {
         console.error('Error loading user:', error);
@@ -951,7 +952,7 @@ window.editUser = async function (id) {
 window.confirmDeleteUser = function (id) {
     document.getElementById('delete-message').textContent = 'Are you sure you want to delete this user? All associated data will be removed.';
     deleteCallback = async () => {
-        await fetch(`/api/clientes/${id}`, { method: 'DELETE' });
+        await fetch(`/api/users/${id}`, { method: 'DELETE' });
         loadUsers();
         loadStats();
     };
@@ -959,13 +960,13 @@ window.confirmDeleteUser = function (id) {
 };
 
 window.viewPet = function (id) {
-    window.location.hash = `#/pet-profile/${id}`;
+    window.location.hash = `/pet-profile/${id}`;
 };
 
 window.confirmDeletePet = function (id) {
     document.getElementById('delete-message').textContent = 'Are you sure you want to delete this pet? All medical records will be removed.';
     deleteCallback = async () => {
-        await fetch(`/api/mascotas/${id}`, { method: 'DELETE' });
+        await fetch(`/api/pets/${id}`, { method: 'DELETE' });
         loadPets();
         loadStats();
     };
@@ -974,15 +975,15 @@ window.confirmDeletePet = function (id) {
 
 window.editBusiness = async function (id) {
     try {
-        const res = await fetch(`/api/establecimientos/${id}`);
+        const res = await fetch(`/api/businesses/${id}`);
         const business = await res.json();
         document.getElementById('modal-business-title').textContent = 'Edit Business';
         document.getElementById('business-id').value = id;
-        document.getElementById('business-nombre').value = business.nombre || '';
-        document.getElementById('business-tipo').value = business.tipo || '';
-        document.getElementById('business-direccion').value = business.direccion || '';
-        document.getElementById('business-telefono').value = business.telefono || '';
-        document.getElementById('business-horario').value = business.horario || '';
+        document.getElementById('business-nombre').value = business.name || '';
+        document.getElementById('business-tipo').value = business.business_type || '';
+        document.getElementById('business-direccion').value = business.address || '';
+        document.getElementById('business-telefono').value = business.phone || '';
+        document.getElementById('business-horario').value = '';
         document.getElementById('modal-business')?.classList.add('open');
     } catch (error) {
         console.error('Error loading business:', error);
@@ -992,7 +993,7 @@ window.editBusiness = async function (id) {
 window.confirmDeleteBusiness = function (id) {
     document.getElementById('delete-message').textContent = 'Are you sure you want to delete this business?';
     deleteCallback = async () => {
-        await fetch(`/api/establecimientos/${id}`, { method: 'DELETE' });
+        await fetch(`/api/businesses/${id}`, { method: 'DELETE' });
         loadBusinesses();
         loadStats();
     };
@@ -1003,10 +1004,10 @@ window.updateAppointmentStatus = async function (id) {
     const newStatus = prompt('Enter new status (pending, confirmed, completed, cancelled):');
     if (newStatus && ['pending', 'confirmed', 'completed', 'cancelled'].includes(newStatus)) {
         try {
-            await fetch(`/api/citas/${id}`, {
+            await fetch(`/api/appointments/${id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ estado: newStatus })
+                body: JSON.stringify({ status: newStatus })
             });
             loadAppointments();
         } catch (error) {
@@ -1018,7 +1019,7 @@ window.updateAppointmentStatus = async function (id) {
 window.confirmDeleteAppointment = function (id) {
     document.getElementById('delete-message').textContent = 'Are you sure you want to cancel this appointment?';
     deleteCallback = async () => {
-        await fetch(`/api/citas/${id}`, { method: 'DELETE' });
+        await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
         loadAppointments();
         loadStats();
     };
@@ -1027,12 +1028,12 @@ window.confirmDeleteAppointment = function (id) {
 
 // Export users to CSV
 function exportUsers() {
-    fetch('/api/clientes')
+    fetch('/api/users')
         .then(res => res.json())
         .then(users => {
             const csv = [
-                ['Name', 'Email', 'Phone', 'Address', 'Joined'].join(','),
-                ...users.map(u => [u.nombre, u.email, u.telefono, u.direccion, u.created_at].join(','))
+                ['Name', 'Email', 'Phone', 'Role', 'Joined'].join(','),
+                ...users.map(u => [u.name, u.email, u.phone, u.role, u.created_at].join(','))
             ].join('\n');
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
