@@ -352,6 +352,15 @@ CREATE TABLE IF NOT EXISTS appointments (
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER NOT NULL,
+  token      VARCHAR(512) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 --  INDEXES
 
 -- users

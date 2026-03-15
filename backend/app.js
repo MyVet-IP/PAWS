@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
 passport.serializeUser((user, done) => {
     done(null, user.email);
