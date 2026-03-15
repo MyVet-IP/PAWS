@@ -27,7 +27,16 @@ import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } 
 const PUBLIC_PATHS = ["/", "/login", "/register"];
 
 const routes = {
-  "/": landingPage,
+  "/": () => {
+    const user = getUser();
+    if (user) {
+      if (user.role === 'business') window.location.hash = '/veterinary';
+      else if (user.role === 'admin') window.location.hash = '/admin-dashboard';
+      else window.location.hash = '/user-dashboard';
+      return "";
+    }
+    return landingPage();
+  },
   "/login": () => {
     const user = getUser();
     if (user) {
@@ -235,24 +244,6 @@ function runPageEvents(path) {
 
 // Function to initialize navigation events
 function pageEvents() {
-  // Landing page navigation buttons
-  const loginBtn = document.querySelector('.btn-primary');
-  const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');
-
-  if (loginBtn && loginBtn.textContent.includes('Sign In')) {
-    loginBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = '/login';
-    });
-  }
-
-  if (searchBtn) {
-    searchBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = '/clinics';
-    });
-  }
-
   // Navbar links
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
