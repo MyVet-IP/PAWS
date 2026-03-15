@@ -125,7 +125,7 @@ export function router() {
   try {
 
     if (!viewFunction) {
-      notFoundPage;
+      app.innerHTML = Layout(notFoundPage());
       return;
     }
 
