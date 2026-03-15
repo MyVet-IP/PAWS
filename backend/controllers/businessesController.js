@@ -70,3 +70,12 @@ exports.getAllAnimalTypes = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.remove = async (req, res, next) => {
+    try {
+        await businessesStorage.remove(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        next(err);
+    }
+};

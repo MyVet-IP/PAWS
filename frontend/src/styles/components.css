@@ -14,7 +14,7 @@
   filter: brightness(0.95);
 }
 
-/* BOTÓN SECUNDARIO */
+/* BOTÓN SECUNDARIO  */
 
 .btn-secondary {
   background: white;
@@ -27,4 +27,18 @@
 
 .btn-secondary:hover {
   background: var(--purple-pastel);
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.card-soft {
+  background: var(--background-soft);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
 }

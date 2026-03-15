@@ -37,3 +37,12 @@ exports.getDashboard = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.remove = async (req, res, next) => {
+    try {
+        await usersStorage.remove(req.params.id);
+        res.json({ success: true });
+    } catch (err) {
+        next(err);
+    }
+};

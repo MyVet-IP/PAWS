@@ -1,0 +1,141 @@
+/* ========================================
+  Pet Profile
+   ======================================== */
+
+/* ── Main grid responsive ───────────────────── */
+/* On mobile: single column */
+@media (max-width: 640px) {
+  .grid.lg\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Health Reminders grid ──────────────────── */
+/* Mobile: 1 col — sm: 3 cols */
+.grid.sm\:grid-cols-3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid.sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Detail row borders ─────────────────────── */
+/* Replace border-gray-100 with PAWS token */
+.space-y-1>div {
+  border-bottom-color: var(--bg-muted);
+}
+
+/* ── Allergy badges ─────────────────────────── */
+/* Replace hardcoded rgba(255,207,210,0.4) with token */
+.allergy-badge {
+  background: rgba(255, 207, 210, 0.40);
+  /* = var(--color-pink) with opacity */
+  color: #be185d;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ── Condition badges ───────────────────────── */
+/* Replace hardcoded rgba(251,248,204,0.7) with token */
+.condition-badge {
+  background: rgba(251, 248, 204, 0.70);
+  /* = var(--color-yellow) with opacity */
+  color: #92400e;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ── Medical history card icons ─────────────── */
+/* Replace hardcoded hex colors with tokens */
+.history-icon-checkup {
+  background: var(--purple-pastel);
+}
+
+.history-icon-dental {
+  background: var(--color-blue);
+}
+
+.history-icon-vaccine {
+  background: var(--color-green);
+}
+
+.history-icon-treatment {
+  background: var(--color-pink);
+}
+
+/* ── History card hover ─────────────────────── */
+.bg-white.rounded-2xl.shadow-card.p-4 {
+  transition: var(--transition-fast);
+}
+
+.bg-white.rounded-2xl.shadow-card.p-4:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+/* ── Reminder cards hover ───────────────────── */
+.bg-white.rounded-2xl.shadow-card.p-5 {
+  transition: var(--transition-fast);
+}
+
+/* ── Pet stats quick grid ───────────────────── */
+/* bg-surface-soft → var(--bg-muted) */
+.bg-surface-soft {
+  background: var(--bg-soft);
+}
+
+/* ── Load more button ───────────────────────── */
+/* Replace border-gray-200 with token */
+.px-6.py-2\.5.border.border-gray-200 {
+  border-color: var(--bg-muted);
+}
+
+/* ── Modal form inputs ──────────────────────── */
+/* Replace border-gray-200 with token */
+#modal-edit-pet input,
+#modal-edit-pet select {
+  border-color: var(--bg-muted) !important;
+}
+
+#modal-edit-pet input:focus,
+#modal-edit-pet select:focus {
+  border-color: var(--text-highlight) !important;
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.15) !important;
+}
+
+/* Cancel button border */
+#btn-pet-cancel {
+  border-color: var(--bg-muted);
+  color: var(--text-soft);
+}
+
+#btn-pet-cancel:hover {
+  border-color: var(--text-muted);
+}
+
+/* ── Modal backdrop fallback ────────────────── */
+@supports not (backdrop-filter: blur(6px)) {
+  #modal-edit-pet {
+    background: rgba(30, 20, 50, 0.75) !important;
+  }
+}
+
+/* ── Mobile: action bar ─────────────────────── */
+@media (max-width: 480px) {
+  .flex.items-center.justify-between.mb-6 {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .flex.items-center.justify-between.mb-6>div.flex.gap-3 {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { validateBody } = require('../middleware');
 const businessesController = require('../controllers/businessesController');
+const appointmentsController = require('../controllers/appointmentsController');
 
 // Catálogos
 router.get('/specialties', businessesController.getAllSpecialties);
@@ -14,8 +15,12 @@ router.post('/',
     businessesController.create
 );
 router.put('/:id', businessesController.update);
+router.delete('/:id', businessesController.remove);
 
 // Horarios
 router.get('/:id/schedule', businessesController.getSchedule);
+
+// Citas del negocio
+router.get('/:id/appointments', appointmentsController.getByBusiness);
 
 module.exports = router;

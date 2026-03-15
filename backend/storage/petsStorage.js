@@ -5,9 +5,10 @@ module.exports = {
 
     async getAll() {
         return db.all(
-            `SELECT p.*, u.name AS owner_name
+            `SELECT p.*, u.name AS owner_name, at.name AS species_name
             FROM pets p
             INNER JOIN users u ON u.user_id = p.user_id
+            LEFT JOIN animal_types at ON at.animal_type_id = p.animal_type_id
             ORDER BY p.pet_id ASC`
         );
     },
@@ -31,12 +32,12 @@ module.exports = {
 
     // ─── CREATE ───────────────────────────────────────────────────────────────
 
-    async create({ name, species, breed = null, birth_date = null, weight_kg = null, user_id }) {
+    async create({ name, animal_type_id, breed = null, birth_date = null, weight_kg = null, user_id }) {
         const result = await db.get(
-            `INSERT INTO pets (name, species, breed, birth_date, weight_kg, user_id)
+            `INSERT INTO pets (name, animal_type_id, breed, birth_date, weight_kg, user_id)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING pet_id`,
-            [name, species, breed, birth_date, weight_kg, user_id]
+            [name, animal_type_id, breed, birth_date, weight_kg, user_id]
         );
         return this.getById(result.pet_id);
     },
@@ -44,7 +45,7 @@ module.exports = {
     // ─── UPDATE ───────────────────────────────────────────────────────────────
 
     async update(pet_id, data) {
-        const allowed = ['name', 'species', 'breed', 'birth_date', 'weight_kg'];
+        const allowed = ['name', 'animal_type_id', 'breed', 'birth_date', 'weight_kg'];
         const fields = [];
         const values = [];
         let i = 1;

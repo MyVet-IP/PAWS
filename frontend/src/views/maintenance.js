@@ -20,5 +20,5 @@ export function maintenancePage() {
 
 export function maintenanceEvents() {
   const back = document.getElementById('btn-maintenance-back');
-  if (back) back.addEventListener('click', () => { window.location.hash = '#/'; });
+  if (back) back.addEventListener('click', () => { window.location.hash = '/#/'; });
 }

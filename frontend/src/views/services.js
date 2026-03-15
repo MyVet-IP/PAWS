@@ -233,7 +233,7 @@ export function servicesPageEvents() {
   const pills = document.querySelectorAll('#pp-filters .pp-pill');
   const cards = document.querySelectorAll('#pp-cards .pp-service-card');
   const track = document.getElementById('pp-cards');
-  const dots  = document.querySelectorAll('#pp-dots .pp-dot');
+  const dots = document.querySelectorAll('#pp-dots .pp-dot');
   const empty = document.getElementById('pp-empty');
 
   function syncDots() {
@@ -282,7 +282,7 @@ export function servicesPageEvents() {
       bookBtn.addEventListener('click', e => {
         e.stopPropagation();
         // route to maintenance view
-        window.location.hash = '#/maintenance';
+        window.location.hash = '/maintenance';
       });
     }
   });
@@ -292,7 +292,7 @@ export function servicesPageEvents() {
   if (viewAllBtn) {
     viewAllBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '#/maintenance';
+      window.location.hash = '/maintenance';
     });
   }
 
