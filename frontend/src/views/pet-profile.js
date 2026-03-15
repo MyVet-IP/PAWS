@@ -421,90 +421,147 @@ export function petProfilepage() {
 //  petProfileEvents — registra listeners
 //  Llámalo desde el router
 // ─────────────────────────────────────────────
-export function petProfileEvents() {
-  const modal    = document.getElementById("modal-edit-pet");
-  const closeBtn = document.getElementById("modal-pet-close");
-  const cancelBtn= document.getElementById("btn-pet-cancel");
-  const saveBtn  = document.getElementById("btn-pet-save");
-  const success  = document.getElementById("pet-edit-success");
+export async function petProfileEvents() {
+  // ── Leer pet_id guardado desde el dashboard ──────────────
+  const petId = localStorage.getItem('selectedPetId');
 
-  // Botones que abren el modal
-  ["btn-edit-pet", "btn-edit-pet-full"].forEach(id => {
-    document.getElementById(id)?.addEventListener("click", () => {
+  // ── Cargar datos de la mascota ────────────────────────────
+  if (petId) {
+    try {
+      const res = await fetch(`/api/pets/${petId}`);
+      if (res.ok) {
+        const p = await res.json();
+
+        // Nombre y raza (header de la card)
+        const nameEl  = document.getElementById('pet-display-name');
+        const breedEl = document.getElementById('pet-display-breed');
+        if (nameEl)  nameEl.textContent  = p.name  || '—';
+        if (breedEl) breedEl.textContent = p.breed || p.species_name || '—';
+
+        // Avatar emoji según especie
+        const avatarEl = document.querySelector('#pet-avatar-wrapper span');
+        if (avatarEl) {
+          const s = (p.species_name || '').toLowerCase();
+          avatarEl.textContent = s.includes('cat') ? '🐱' : s.includes('dog') ? '🐕' : '🐾';
+        }
+
+        // Quick stats
+        const ageEl    = document.getElementById('pet-display-age');
+        const weightEl = document.getElementById('pet-display-weight');
+        if (ageEl) {
+          if (p.birth_date) {
+            const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
+            ageEl.textContent = `${yrs} ${yrs === 1 ? 'yr' : 'yrs'}`;
+          } else {
+            ageEl.textContent = '—';
+          }
+        }
+        if (weightEl) weightEl.textContent = p.weight_kg ? `${p.weight_kg} kg` : '—';
+
+        // Detail rows
+        const speciesEl   = document.getElementById('pet-display-species');
+        const birthdayEl  = document.getElementById('pet-display-birthday');
+        const microchipEl = document.getElementById('pet-display-microchip');
+        if (speciesEl)   speciesEl.textContent   = p.species_name || '—';
+        if (birthdayEl)  birthdayEl.textContent  = p.birth_date
+          ? new Date(p.birth_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+          : '—';
+        if (microchipEl) microchipEl.textContent = '—'; // no viene en la API aún
+
+        // Actualizar subtítulo del modal de edición
+        const modalSub = document.querySelector('#modal-edit-pet p');
+        if (modalSub) modalSub.textContent = `Update ${p.name}'s information`;
+      }
+    } catch (err) {
+      console.error('Error loading pet:', err);
+    }
+
+    // ── Cargar historial médico ─────────────────────────────
+    try {
+      const res = await fetch(`/api/medical-records/pet/${petId}`);
+      if (res.ok) {
+        const records = await res.json();
+        _renderHistory(records);
+      }
+    } catch (err) {
+      console.error('Error loading history:', err);
+    }
+  }
+
+  // ── Modal de edición (listeners existentes) ───────────────
+  const modal     = document.getElementById('modal-edit-pet');
+  const closeBtn  = document.getElementById('modal-pet-close');
+  const cancelBtn = document.getElementById('btn-pet-cancel');
+  const saveBtn   = document.getElementById('btn-pet-save');
+  const success   = document.getElementById('pet-edit-success');
+
+  ['btn-edit-pet', 'btn-edit-pet-full'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () => {
       _fillPetModal();
-      if (modal) modal.style.display = "flex";
+      if (modal) modal.style.display = 'flex';
     });
   });
 
-  // Cerrar — X y Cancel
-  const closeModal = () => { if (modal) modal.style.display = "none"; };
-  closeBtn?.addEventListener("click",  closeModal);
-  cancelBtn?.addEventListener("click", closeModal);
-  modal?.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+  const closeModal = () => { if (modal) modal.style.display = 'none'; };
+  closeBtn?.addEventListener('click',  closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-  // Guardar
-  saveBtn?.addEventListener("click", () => {
+  saveBtn?.addEventListener('click', () => {
     _applyPetChanges();
     if (success) {
-      success.style.display = "block";
-      setTimeout(() => {
-        success.style.display = "none";
-        closeModal();
-      }, 1600);
+      success.style.display = 'block';
+      setTimeout(() => { success.style.display = 'none'; closeModal(); }, 1600);
     }
   });
 }
 
 // ─────────────────────────────────────────────
-//  Helpers
+//  _renderHistory
 // ─────────────────────────────────────────────
+function _renderHistory(records) {
+  const container = document.querySelector('section:last-of-type .flex.flex-col.gap-3');
+  if (!container) return;
 
-/** Rellena el modal con los valores actuales mostrados en la card */
-function _fillPetModal() {
-  const map = {
-    "pet-edit-name":      "pet-display-name",
-    "pet-edit-breed":     "pet-display-breed",
-    "pet-edit-age":       "pet-display-age",
-    "pet-edit-weight":    "pet-display-weight",
-    "pet-edit-gender":    "pet-display-gender",
-    "pet-edit-color":     "pet-display-color",
-    "pet-edit-birthday":  "pet-display-birthday",
-    "pet-edit-microchip": "pet-display-microchip",
+  if (!records || records.length === 0) {
+    container.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-card p-6 flex flex-col items-center gap-2 text-center">
+        <span class="text-3xl">📋</span>
+        <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">No medical records yet</p>
+        <p class="text-xs" style="color:var(--text-muted);">Records will appear here after vet visits</p>
+      </div>`;
+    return;
+  }
+
+  const TYPE_MAP = {
+    checkup:   { icon: '🩺', color: '#F1C0E8' },
+    vaccine:   { icon: '💉', color: '#B9FBC0' },
+    dental:    { icon: '🦷', color: '#90BDF4' },
   };
 
-  Object.entries(map).forEach(([inputId, displayId]) => {
-    const input   = document.getElementById(inputId);
-    const display = document.getElementById(displayId);
-    if (input && display) input.value = display.textContent.trim();
-  });
+  container.innerHTML = records.map(r => {
+    const t      = TYPE_MAP[r.visit_type] || { icon: '💊', color: '#FFCFD2' };
+    const title  = r.reason || r.diagnosis || r.visit_type || 'Visit';
+    const desc   = r.treatment || r.notes || '—';
+    const date   = r.visit_date
+      ? new Date(r.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      : '—';
+    const clinic = r.clinic_name ? `<p class="text-xs mt-0.5" style="color:var(--text-muted);">${r.clinic_name}</p>` : '';
 
-  // Sincronizar selects
-  const speciesInput = document.getElementById("pet-edit-species");
-  // No hay display id para species — lo dejamos como está
-
-  const genderInput  = document.getElementById("pet-edit-gender");
-  const genderDisplay= document.getElementById("pet-display-gender");
-  if (genderInput && genderDisplay) genderInput.value = genderDisplay.textContent.trim();
-}
-
-/** Aplica los valores del modal a los elementos de la card */
-function _applyPetChanges() {
-  const map = {
-    "pet-edit-name":      "pet-display-name",
-    "pet-edit-breed":     "pet-display-breed",
-    "pet-edit-age":       "pet-display-age",
-    "pet-edit-weight":    "pet-display-weight",
-    "pet-edit-gender":    "pet-display-gender",
-    "pet-edit-color":     "pet-display-color",
-    "pet-edit-birthday":  "pet-display-birthday",
-    "pet-edit-microchip": "pet-display-microchip",
-  };
-
-  Object.entries(map).forEach(([inputId, displayId]) => {
-    const input   = document.getElementById(inputId);
-    const display = document.getElementById(displayId);
-    if (input && display && input.value.trim()) {
-      display.textContent = input.value.trim();
-    }
-  });
+    return `
+      <div class="bg-white rounded-2xl shadow-card p-4 hover:shadow-soft transition">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base"
+               style="background:${t.color};">${t.icon}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2 mb-0.5">
+              <h3 class="font-bold text-text-primary font-poppins text-sm">${title}</h3>
+              <span class="text-xs text-text-muted font-poppins shrink-0">${date}</span>
+            </div>
+            ${clinic}
+            <p class="text-text-soft text-xs leading-relaxed mt-0.5">${desc}</p>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
