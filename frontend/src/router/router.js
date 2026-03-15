@@ -2,6 +2,7 @@ import { getUser, checkAuth } from "../utils.js";
 import { Layout } from "../layout/layout.js";
 import { AuthLayout } from "../layout/auth-layout.js";
 import { Aside, asideEvents } from "../components/aside.js";
+import { notFoundPage } from "../components/404-not-found.js";
 
 import { clinicsPage } from "../views/clinics-view.js";
 import { healthTipsPage } from "../views/health-tips.js";
@@ -111,20 +112,29 @@ export function router() {
   console.log("Router ejecutado en path:", path);
   const app = document.getElementById("app");
 
-  const viewFunction = routes[path];
+  // Dynamic segment support: /pet-profile/:id
+  let resolvedPath = path;
+  let routeParams = {};
+  if (path.startsWith('/pet-profile/')) {
+    const id = parseInt(path.split('/pet-profile/')[1]);
+    if (id) { routeParams.pet_id = id; resolvedPath = '/pet-profile'; }
+  }
+
+  const viewFunction = routes[resolvedPath] || routes[path];
 
   try {
 
     if (!viewFunction) {
-      app.innerHTML = "<h1>Page not found</h1>";
+      notFoundPage;
       return;
     }
 
-    if (path in PROTECTED) {
-      if (!checkAuth(PROTECTED[path])) return;
+    const authKey = resolvedPath in PROTECTED ? resolvedPath : path;
+    if (authKey in PROTECTED) {
+      if (!checkAuth(PROTECTED[authKey])) return;
     }
 
-    const html = viewFunction();
+    const html = resolvedPath === '/pet-profile' ? viewFunction(routeParams) : viewFunction();
 
     // ===== Layout selector =====
     if (path === "/login" || path === "/register") {
@@ -138,7 +148,7 @@ export function router() {
     EmergencyButton();
 
     // ===== Page-specific events =====
-    runPageEvents(path);
+    runPageEvents(resolvedPath, routeParams);
 
   } catch (error) {
 
@@ -155,7 +165,7 @@ export function router() {
 
 // ==================== PAGE EVENTS ====================
 
-function runPageEvents(path) {
+function runPageEvents(path, params = {}) {
 
   if (!PUBLIC_PATHS.includes(path)) {
     asideEvents();
@@ -192,7 +202,7 @@ function runPageEvents(path) {
       break;
 
     case "/pet-profile":
-      petProfileEvents();
+      petProfileEvents(params.pet_id);
       break
 
     case "/veterinary":
@@ -270,6 +280,3 @@ function pageEvents() {
     }
   });
 }
-
-
-

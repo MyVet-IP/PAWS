@@ -18,7 +18,7 @@ const upload = multer({
     }
 });
 
-// ── Extract fields from a document (Groq vision) ──────────────────────────────
+// ── Extract fields from a document ──────────────────────────────
 router.post('/extract', upload.single('file'), medicalRecordsController.extract);
 
 // ── CRUD ──────────────────────────────────────────────────────────────────────
