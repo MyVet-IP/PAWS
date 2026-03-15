@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -49,9 +49,9 @@ passport.deserializeUser(async (email, done) => {
 
 // ── Estáticos del frontend ───────────────────────────────────────────────────
 const noCache = {
-  etag: false,
-  lastModified: false,
-  setHeaders: res => res.setHeader('Cache-Control', 'no-store')
+    etag: false,
+    lastModified: false,
+    setHeaders: res => res.setHeader('Cache-Control', 'no-store')
 };
 app.use(express.static(path.join(__dirname, '..'), noCache));
 app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
@@ -67,10 +67,11 @@ app.use('/api/businesses', require('./routes/businesses'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/emergencies', require('./routes/emergencies'));
 app.use('/auth', require('./routes/auth'));
+app.use('/api/ai', require('./routes/ai'));
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
-  res.sendFile(path.join(__dirname, '..', 'index.html'))
+    res.sendFile(path.join(__dirname, '..', 'index.html'))
 );
 
 // ── REGISTER DB ──────────────────────────────────────────────────────────────────────
@@ -124,18 +125,18 @@ app.use(errorHandler);
 
 // ── Arranque ──────────────────────────────────────────────────────────────────
 async function startServer() {
-  try {
-    await db.initialize();
-    app.listen(PORT, () => {
-      console.log(`\n========================================`);
-      console.log(` Server: http://localhost:${PORT}`);
-      console.log(` API:    http://localhost:${PORT}/api/health`);
-      console.log(`========================================\n`);
-    });
-  } catch (err) {
-    console.error('Error iniciando servidor:', err);
-    process.exit(1);
-  }
+    try {
+        await db.initialize();
+        app.listen(PORT, () => {
+            console.log(`\n========================================`);
+            console.log(` Server: http://localhost:${PORT}`);
+            console.log(` API:    http://localhost:${PORT}/api/health`);
+            console.log(`========================================\n`);
+        });
+    } catch (err) {
+        console.error('Error iniciando servidor:', err);
+        process.exit(1);
+    }
 }
 
 process.on('SIGINT', async () => { await db.close(); process.exit(0); });
