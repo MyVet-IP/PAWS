@@ -247,8 +247,8 @@ export function clinicsEvents() {
   document.getElementById('btn-clinic-search')?.addEventListener('click', () => {
     const location = document.getElementById('clinic-search')?.value.trim();
     window.location.hash = location
-      ? `#/clinics?location=${encodeURIComponent(location)}`
-      : '#/clinics';
+      ? `/clinics?location=${encodeURIComponent(location)}`
+      : '/clinics';
   });
 
   // Search on Enter
