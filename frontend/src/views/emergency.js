@@ -68,7 +68,7 @@ export function emergencyPage() {
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition group"
                style="border:2px solid #FECACA; background:#FEF2F2;"
                onmouseenter="this.style.borderColor='#dc2626'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=10]').checked?'#dc2626':'#FECACA'">
+               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;10&quot;]').checked?'#dc2626':'#FECACA'">
           <input type="radio" name="urgency" value="10" class="mt-1 flex-shrink-0"
                  style="width:18px;height:18px;accent-color:#dc2626;"
                  onchange="document.querySelectorAll('.urgency-label').forEach(l=>l.style.borderColor='');
@@ -90,7 +90,7 @@ export function emergencyPage() {
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
                style="border:2px solid #FED7AA; background:#FFF7ED;"
                onmouseenter="this.style.borderColor='#ea580c'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=5]').checked?'#ea580c':'#FED7AA'">
+               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;5&quot;]').checked?'#ea580c':'#FED7AA'">
           <input type="radio" name="urgency" value="5" class="mt-1 flex-shrink-0"
                  style="width:18px;height:18px;accent-color:#ea580c;"
                  onchange="document.querySelectorAll('label[onmouseenter]').forEach(l=>l.style.borderColor=l.querySelector('input')?.checked?'':''); this.closest('label').style.borderColor='#ea580c'"/>
@@ -111,7 +111,7 @@ export function emergencyPage() {
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
                style="border:2px solid #BBF7D0; background:#F0FDF4;"
                onmouseenter="this.style.borderColor='#16a34a'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=2]').checked?'#16a34a':'#BBF7D0'">
+               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;2&quot;]').checked?'#16a34a':'#BBF7D0'">
           <input type="radio" name="urgency" value="2" class="mt-1 flex-shrink-0"
                  style="width:18px;height:18px;accent-color:#16a34a;"
                  onchange="this.closest('label').style.borderColor='#16a34a'"/>
