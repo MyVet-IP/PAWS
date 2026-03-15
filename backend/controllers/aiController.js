@@ -28,76 +28,73 @@ function setCache(key, data) {
 // ─── Endpoints ─────────────────────────────────────────────
 exports.recommendClinic = async (req, res, next) => {
   try {
-
-    console.log('DB_HOST:', process.env.DB_HOST);
-    console.log('DB_NAME:', process.env.DB_NAME);
-    const { sintomas, especie } = req.body;
-    if (!sintomas || !especie) {
-      return res.status(400).json({ error: 'Se requieren los campos: sintomas, especie' });
+    const { symptoms, species } = req.body;
+    if (!symptoms || !species) {
+      return res.status(400).json({ error: 'Fields required: symptoms, species' });
     }
 
     const clinicas = await businessesStorage.getAll({ type: 'clinic' });
 
     const client = getClient();
     if (!client) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY no configurada' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
     }
 
     const clinicasResumen = clinicas.map(c => ({
       business_id: c.business_id,
-      name: c.name,
-      address: c.address,
-      zone: c.zone,
-      whatsapp: c.whatsapp,
-      is_24h: c.is_24h,
-      rating: c.rating,
+      name:        c.name,
+      address:     c.address,
+      zone:        c.zone,
+      whatsapp:    c.whatsapp,
+      is_24h:      c.is_24h,
+      rating:      c.rating,
       specialties: (c.specialties || []).map(s => s.name)
     }));
 
-    const prompt = `Eres un asistente veterinario experto en Medellín, Colombia.
+    const prompt = `You are an expert veterinary assistant in Medellin, Colombia.
 
-Un dueño de mascota describe esta situación:
-- Especie: ${especie}
-- Síntomas: ${sintomas}
+A pet owner describes this situation:
+- Species: ${species}
+- Symptoms: ${symptoms}
 
-Clínicas veterinarias disponibles (en JSON):
+Available veterinary clinics (JSON):
 ${JSON.stringify(clinicasResumen, null, 2)}
 
-Analiza los síntomas y selecciona las 3 clínicas MÁS ADECUADAS considerando:
-1. Que sus especialidades coincidan con los síntomas descritos
-2. Disponibilidad 24h si la urgencia lo requiere
-3. Calificación (rating)
+Analyze the symptoms and select the 3 MOST SUITABLE clinics considering:
+1. Their specialties match the described symptoms
+2. 24h availability if urgency requires it
+3. Rating
 
-Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+Respond ONLY with valid JSON, no additional text, with this exact structure:
 {
-  "recomendadas": [
-    { "business_id": <número>, "razon": "<explicación breve>" }
+  "recommended": [
+    { "business_id": <number>, "reason": "<brief explanation of why this clinic>" }
   ]
 }`;
 
-    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent(prompt);
+    const model   = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result  = await model.generateContent(prompt);
     const rawText = result.response.text().trim()
       .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
 
     const parsed = JSON.parse(rawText);
 
-    const clinicasMap = new Map(clinicas.map(c => [c.business_id, c]));
-    const recomendadas = (parsed.recomendadas || []).map(r => {
+    const clinicasMap   = new Map(clinicas.map(c => [c.business_id, c]));
+    const recommended   = (parsed.recommended || []).map(r => {
       const c = clinicasMap.get(r.business_id) || {};
       return {
         business_id: r.business_id,
-        name: c.name || 'N/A',
-        address: c.address || 'N/A',
-        zone: c.zone || 'N/A',
-        whatsapp: c.whatsapp || null,
-        razon: r.razon
+        name:        c.name     || 'N/A',
+        address:     c.address  || 'N/A',
+        zone:        c.zone     || 'N/A',
+        whatsapp:    c.whatsapp || null,
+        reason:      r.reason
       };
     });
 
     res.json({
-      recomendadas,
-      advertencia: 'Esta sugerencia no reemplaza al veterinario'
+      recommended,
+      warning: 'This suggestion does not replace a veterinarian'
     });
 
   } catch (err) {
@@ -107,32 +104,32 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
 
 exports.petSymptomTriage = async (req, res, next) => {
   try {
-    const { sintomas, especie } = req.body;
-    if (!sintomas || !especie) {
-      return res.status(400).json({ error: 'Se requieren los campos: sintomas, especie' });
+    const { symptoms, species } = req.body;
+    if (!symptoms || !species) {
+      return res.status(400).json({ error: 'Fields required: symptoms, species' });
     }
 
     const client = getClient();
     if (!client) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY no configurada' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
     }
 
-    const prompt = `Eres un veterinario experto en triaje de emergencias animales.
+    const prompt = `You are an expert veterinarian in animal emergency triage.
 
-Un dueño describe esta situación:
-- Especie: ${especie}
-- Síntomas: ${sintomas}
+A pet owner describes this situation:
+- Species: ${species}
+- Symptoms: ${symptoms}
 
-Clasifica la urgencia según estas reglas ESTRICTAS:
-- ALTA  → riesgo de vida inminente (dificultad respiratoria, convulsiones, trauma, sangrado intenso, fiebre muy alta, inconsciencia)
-- MEDIA → requiere atención veterinaria en las próximas 24-48 horas
-- BAJA  → monitorear en casa, visita de rutina si los síntomas persisten
+Classify the urgency according to these STRICT rules:
+- HIGH   → imminent risk of life (breathing difficulty, seizures, trauma, heavy bleeding, very high fever, unconsciousness)
+- MEDIUM → requires veterinary attention within the next 24-48 hours
+- LOW    → monitor at home, routine visit if symptoms persist
 
-Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+Respond ONLY with valid JSON, no additional text, with this exact structure:
 {
-  "urgencia": "ALTA" | "MEDIA" | "BAJA",
-  "explicacion": "<razonamiento clínico breve>",
-  "accion_recomendada": "<qué debe hacer el dueño ahora mismo>"
+  "urgency": "HIGH" | "MEDIUM" | "LOW",
+  "explanation": "<brief clinical reasoning>",
+  "recommended_action": "<what the owner should do right now>"
 }`;
 
     const model   = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
@@ -143,10 +140,10 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
     const parsed = JSON.parse(rawText);
 
     res.json({
-      urgencia:           parsed.urgencia,
-      explicacion:        parsed.explicacion,
-      accion_recomendada: parsed.accion_recomendada,
-      disclaimer:         'Esta clasificación es orientativa y no reemplaza al veterinario'
+      urgency:            parsed.urgency,
+      explanation:        parsed.explanation,
+      recommended_action: parsed.recommended_action,
+      disclaimer:         'This classification is indicative and does not replace a veterinarian'
     });
 
   } catch (err) {
@@ -156,38 +153,38 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
 
 exports.careTips = async (req, res, next) => {
   try {
-    const { especie, raza, edad_años, tema } = req.body;
-    if (!especie || !tema) {
-      return res.status(400).json({ error: 'Se requieren los campos: especie, tema' });
+    const { species, breed, age_years, topic } = req.body;
+    if (!species || !topic) {
+      return res.status(400).json({ error: 'Fields required: species, topic' });
     }
 
-    // 1. Revisar caché
-    const cacheKey = `${especie}-${raza || 'sin-raza'}-${tema}`;
+    // 1. Check cache
+    const cacheKey = `${species}-${breed || 'no-breed'}-${topic}`;
     const cached   = getCached(cacheKey);
     if (cached) {
-      return res.json({ ...cached, desde_cache: true });
+      return res.json({ ...cached, from_cache: true });
     }
 
     const client = getClient();
     if (!client) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY no configurada' });
+      return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
     }
 
-    // 2. Llamar a Gemini
-    const edadTexto = edad_años != null ? `${edad_años} año(s)` : 'edad desconocida';
-    const razaTexto = raza || 'raza no especificada';
+    // 2. Call Gemini
+    const ageText   = age_years != null ? `${age_years} year(s)` : 'unknown age';
+    const breedText = breed || 'unspecified breed';
 
-    const prompt = `Eres un veterinario experto en bienestar y cuidado animal.
+    const prompt = `You are an expert veterinarian in animal welfare and care.
 
-Genera consejos prácticos de cuidado para:
-- Especie: ${especie}
-- Raza:    ${razaTexto}
-- Edad:    ${edadTexto}
-- Tema:    ${tema}
+Generate practical care tips for:
+- Species: ${species}
+- Breed:   ${breedText}
+- Age:     ${ageText}
+- Topic:   ${topic}
 
-Proporciona exactamente 5 tips concretos, útiles y específicos para esta mascota.
+Provide exactly 5 concrete, useful and specific tips for this pet.
 
-Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+Respond ONLY with valid JSON, no additional text, with this exact structure:
 {
   "tips": ["tip 1", "tip 2", "tip 3", "tip 4", "tip 5"]
 }`;
@@ -201,13 +198,13 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura 
 
     const responseData = {
       tips:   parsed.tips,
-      fuente: 'Generado por IA — consulta siempre con tu veterinario'
+      source: 'AI generated — always consult your veterinarian'
     };
 
-    // 3. Guardar en caché
+    // 3. Save to cache
     setCache(cacheKey, responseData);
 
-    res.json({ ...responseData, desde_cache: false });
+    res.json({ ...responseData, from_cache: false });
 
   } catch (err) {
     next(err);
