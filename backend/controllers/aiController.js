@@ -119,34 +119,34 @@ exports.petSymptomTriage = async (req, res, next) => {
 
     const prompt = `Eres un veterinario experto en triaje de emergencias animales.
 
-    Un dueño describe esta situación:
-    - Especie: ${especie}
-    - Síntomas: ${sintomas}
+Un dueño describe esta situación:
+- Especie: ${especie}
+- Síntomas: ${sintomas}
 
-    Clasifica la urgencia según estas reglas ESTRICTAS:
-    - ALTA  → riesgo de vida inminente (dificultad respiratoria, convulsiones, trauma, sangrado intenso, fiebre muy alta, inconsciencia)
-    - MEDIA → requiere atención veterinaria en las próximas 24-48 horas
-    - BAJA  → monitorear en casa, visita de rutina si los síntomas persisten
+Clasifica la urgencia según estas reglas ESTRICTAS:
+- ALTA  → riesgo de vida inminente (dificultad respiratoria, convulsiones, trauma, sangrado intenso, fiebre muy alta, inconsciencia)
+- MEDIA → requiere atención veterinaria en las próximas 24-48 horas
+- BAJA  → monitorear en casa, visita de rutina si los síntomas persisten
 
-    Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
-    {
-      "urgencia": "ALTA" | "MEDIA" | "BAJA",
-      "explicacion": "<razonamiento clínico breve>",
-      "accion_recomendada": "<qué debe hacer el dueño ahora mismo>"
-    }`;
+Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+{
+  "urgencia": "ALTA" | "MEDIA" | "BAJA",
+  "explicacion": "<razonamiento clínico breve>",
+  "accion_recomendada": "<qué debe hacer el dueño ahora mismo>"
+}`;
 
-    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent(prompt);
+    const model   = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result  = await model.generateContent(prompt);
     const rawText = result.response.text().trim()
       .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
 
     const parsed = JSON.parse(rawText);
 
     res.json({
-      urgencia: parsed.urgencia,
-      explicacion: parsed.explicacion,
+      urgencia:           parsed.urgencia,
+      explicacion:        parsed.explicacion,
       accion_recomendada: parsed.accion_recomendada,
-      disclaimer: 'Esta clasificación es orientativa y no reemplaza al veterinario'
+      disclaimer:         'Esta clasificación es orientativa y no reemplaza al veterinario'
     });
 
   } catch (err) {
@@ -156,7 +156,59 @@ exports.petSymptomTriage = async (req, res, next) => {
 
 exports.careTips = async (req, res, next) => {
   try {
-    res.json({ mensaje: 'proximamente' });
+    const { especie, raza, edad_años, tema } = req.body;
+    if (!especie || !tema) {
+      return res.status(400).json({ error: 'Se requieren los campos: especie, tema' });
+    }
+
+    // 1. Revisar caché
+    const cacheKey = `${especie}-${raza || 'sin-raza'}-${tema}`;
+    const cached   = getCached(cacheKey);
+    if (cached) {
+      return res.json({ ...cached, desde_cache: true });
+    }
+
+    const client = getClient();
+    if (!client) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY no configurada' });
+    }
+
+    // 2. Llamar a Gemini
+    const edadTexto = edad_años != null ? `${edad_años} año(s)` : 'edad desconocida';
+    const razaTexto = raza || 'raza no especificada';
+
+    const prompt = `Eres un veterinario experto en bienestar y cuidado animal.
+
+Genera consejos prácticos de cuidado para:
+- Especie: ${especie}
+- Raza:    ${razaTexto}
+- Edad:    ${edadTexto}
+- Tema:    ${tema}
+
+Proporciona exactamente 5 tips concretos, útiles y específicos para esta mascota.
+
+Responde ÚNICAMENTE con JSON válido, sin texto adicional, con esta estructura exacta:
+{
+  "tips": ["tip 1", "tip 2", "tip 3", "tip 4", "tip 5"]
+}`;
+
+    const model   = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result  = await model.generateContent(prompt);
+    const rawText = result.response.text().trim()
+      .replace(/^```json/, '').replace(/^```/, '').replace(/```$/, '').trim();
+
+    const parsed = JSON.parse(rawText);
+
+    const responseData = {
+      tips:   parsed.tips,
+      fuente: 'Generado por IA — consulta siempre con tu veterinario'
+    };
+
+    // 3. Guardar en caché
+    setCache(cacheKey, responseData);
+
+    res.json({ ...responseData, desde_cache: false });
+
   } catch (err) {
     next(err);
   }
