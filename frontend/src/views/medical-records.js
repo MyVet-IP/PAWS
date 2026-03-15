@@ -1,10 +1,3 @@
-// ─────────────────────────────────────────────
-//  medical-records.js
-//  ✅ Inline styles extracted to medical-records.css
-//  ✅ PAWS design tokens applied
-//  ✅ Hover states on record cards
-// ─────────────────────────────────────────────
-
 export function medicalRecordsPage() {
   return `
   <div class="mr-wrapper">
@@ -148,6 +141,27 @@ export function medicalRecordsPage() {
       </div>
 
       <form id="form-add-record" class="mr-form">
+
+        <!-- ── AI DOCUMENT EXTRACTION ─────────────────────────────── -->
+        <div class="mr-form-group mr-upload-section">
+          <label class="mr-label">Import from document
+            <span class="mr-label-hint">PNG, JPG or PDF — AI will fill the form automatically</span>
+          </label>
+          <div class="mr-upload-zone" id="upload-zone">
+            <svg class="mr-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0
+                   01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="mr-upload-text">Drop file here or <span class="mr-upload-link">browse</span></p>
+            <p class="mr-upload-hint">Max 10 MB</p>
+            <input type="file" id="record-file-input" accept=".png,.jpg,.jpeg,.pdf"
+                   style="display:none"/>
+          </div>
+          <div id="upload-status" class="mr-upload-status hidden"></div>
+        </div>
+
+        <!-- ── FORM FIELDS ────────────────────────────────────────── -->
         <div class="mr-form-group">
           <label class="mr-label">Pet *</label>
           <select id="record-pet" required class="mr-input">
@@ -158,13 +172,15 @@ export function medicalRecordsPage() {
           <label class="mr-label">Visit Type *</label>
           <select id="record-type" required class="mr-input">
             <option value="">Select type...</option>
-            <option value="checkup">Checkup</option>
-            <option value="vaccination">Vaccination</option>
-            <option value="surgery">Surgery</option>
-            <option value="emergency">Emergency</option>
-            <option value="dental">Dental</option>
-            <option value="grooming">Grooming</option>
-            <option value="other">Other</option>
+            <option value="Checkup">Checkup</option>
+            <option value="Vaccination">Vaccination</option>
+            <option value="Surgery">Surgery</option>
+            <option value="Deworming">Deworming</option>
+            <option value="Dental">Dental</option>
+            <option value="Emergency">Emergency</option>
+            <option value="Follow-up">Follow-up</option>
+            <option value="Grooming">Grooming</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div class="mr-form-group">
@@ -177,19 +193,23 @@ export function medicalRecordsPage() {
         </div>
         <div class="mr-form-group">
           <label class="mr-label">Reason for Visit</label>
-          <input type="text" id="record-reason" placeholder="Annual checkup, vaccination, etc." class="mr-input"/>
+          <input type="text" id="record-reason"
+                 placeholder="Annual checkup, vaccination, etc." class="mr-input"/>
         </div>
         <div class="mr-form-group">
           <label class="mr-label">Diagnosis</label>
-          <textarea id="record-diagnosis" rows="2" placeholder="Diagnosis details..." class="mr-input mr-textarea"></textarea>
+          <textarea id="record-diagnosis" rows="2"
+                    placeholder="Diagnosis details..." class="mr-input mr-textarea"></textarea>
         </div>
         <div class="mr-form-group">
           <label class="mr-label">Treatment</label>
-          <textarea id="record-treatment" rows="2" placeholder="Treatment prescribed..." class="mr-input mr-textarea"></textarea>
+          <textarea id="record-treatment" rows="2"
+                    placeholder="Treatment prescribed..." class="mr-input mr-textarea"></textarea>
         </div>
         <div class="mr-form-group">
           <label class="mr-label">Notes</label>
-          <textarea id="record-notes" rows="2" placeholder="Additional notes..." class="mr-input mr-textarea"></textarea>
+          <textarea id="record-notes" rows="2"
+                    placeholder="Additional notes..." class="mr-input mr-textarea"></textarea>
         </div>
         <button type="submit" class="mr-submit-btn">Save Record</button>
       </form>
@@ -205,10 +225,10 @@ export function medicalRecordsEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   if (!user) return;
 
-  let allRecords    = [];
-  let allPets       = [];
+  let allRecords = [];
+  let allPets = [];
   let selectedPetId = 'all';
-  let selectedFilter= 'all';
+  let selectedFilter = 'all';
 
   loadPets();
   loadRecords();
@@ -227,6 +247,9 @@ export function medicalRecordsEvents() {
   document.getElementById('btn-add-record')?.addEventListener('click', () => {
     document.getElementById('modal-add-record').classList.add('open');
   });
+
+  // ── FILE UPLOAD + AI EXTRACTION ──────────────────────────────────────────
+  initUploadZone();
 
   // Add record form
   document.getElementById('form-add-record')?.addEventListener('submit', async e => {
@@ -281,11 +304,11 @@ export function medicalRecordsEvents() {
       </div>`;
 
     const petOptions = allPets.map(pet => {
-      const petId   = pet.pet_id || pet.id_mascota;
+      const petId = pet.pet_id || pet.id_mascota;
       const petName = pet.nombre || pet.name;
       const species = pet.especie || pet.species || '';
-      const bg      = species === 'Cat' ? 'var(--color-pink)' : 'var(--color-green)';
-      const emoji   = species === 'Cat' ? '🐱' : species === 'Dog' ? '🐶' : '🐾';
+      const bg = species === 'Cat' ? 'var(--color-pink)' : 'var(--color-green)';
+      const emoji = species === 'Cat' ? '🐱' : species === 'Dog' ? '🐶' : '🐾';
       return `
         <div class="pet-selector ${selectedPetId === petId ? 'active' : ''}"
              data-pet-id="${petId}" onclick="window.selectPet(${petId})">
@@ -302,21 +325,21 @@ export function medicalRecordsEvents() {
     if (!select) return;
     select.innerHTML = '<option value="">Select a pet...</option>' +
       allPets.map(pet => {
-        const petId   = pet.pet_id || pet.id_mascota;
+        const petId = pet.pet_id || pet.id_mascota;
         const petName = pet.nombre || pet.name;
         return `<option value="${petId}">${petName}</option>`;
       }).join('');
   }
 
   function updateStats() {
-    const total    = allRecords.length;
+    const total = allRecords.length;
     const checkups = allRecords.filter(r => r.visit_type === 'checkup').length;
     const vaccines = allRecords.filter(r => r.visit_type === 'vaccination').length;
     const upcoming = allRecords.filter(r =>
       r.next_visit_date && new Date(r.next_visit_date) > new Date()
     ).length;
 
-    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-checkups').textContent = checkups;
     document.getElementById('stat-vaccines').textContent = vaccines;
     document.getElementById('stat-upcoming').textContent = upcoming;
@@ -338,20 +361,20 @@ export function medicalRecordsEvents() {
 
     // Type color map using PAWS tokens
     const TYPE_COLORS = {
-      checkup:     { bg: 'var(--color-green)', text: 'var(--color-green-dark)' },
-      vaccination: { bg: 'var(--color-blue)',  text: '#2563eb' },
-      surgery:     { bg: 'var(--color-pink)',  text: '#dc2626' },
-      emergency:   { bg: 'var(--color-pink)',  text: '#dc2626' },
-      dental:      { bg: 'var(--color-yellow)',text: '#d97706' },
-      grooming:    { bg: 'var(--purple-pastel)',text: 'var(--text-highlight)' },
-      other:       { bg: 'var(--bg-muted)',    text: 'var(--text-muted)' },
+      checkup: { bg: 'var(--color-green)', text: 'var(--color-green-dark)' },
+      vaccination: { bg: 'var(--color-blue)', text: '#2563eb' },
+      surgery: { bg: 'var(--color-pink)', text: '#dc2626' },
+      emergency: { bg: 'var(--color-pink)', text: '#dc2626' },
+      dental: { bg: 'var(--color-yellow)', text: '#d97706' },
+      grooming: { bg: 'var(--purple-pastel)', text: 'var(--text-highlight)' },
+      other: { bg: 'var(--bg-muted)', text: 'var(--text-muted)' },
     };
 
     container.innerHTML = filtered.map((record, i) => {
       const visitDate = record.visit_date
         ? new Date(record.visit_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         : 'No date';
-      const colors  = TYPE_COLORS[record.visit_type] || TYPE_COLORS.other;
+      const colors = TYPE_COLORS[record.visit_type] || TYPE_COLORS.other;
       const petName = record.pet_name || 'Unknown Pet';
 
       return `
@@ -384,7 +407,7 @@ export function medicalRecordsEvents() {
               </div>
 
               ${record.reason ? `<p class="mr-record-detail"><strong>Reason:</strong> ${record.reason}</p>` : ''}
-              ${record.diagnosis ? `<p class="mr-record-detail"><strong>Diagnosis:</strong> ${record.diagnosis.substring(0,100)}${record.diagnosis.length > 100 ? '...' : ''}</p>` : ''}
+              ${record.diagnosis ? `<p class="mr-record-detail"><strong>Diagnosis:</strong> ${record.diagnosis.substring(0, 100)}${record.diagnosis.length > 100 ? '...' : ''}</p>` : ''}
 
               ${record.next_visit_date ? `
                 <div class="mr-next-visit">
@@ -424,7 +447,7 @@ export function medicalRecordsEvents() {
     if (!record) return;
 
     const visitDate = record.visit_date
-      ? new Date(record.visit_date).toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
+      ? new Date(record.visit_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
       : 'No date recorded';
 
     document.getElementById('modal-title').textContent =
@@ -457,7 +480,7 @@ export function medicalRecordsEvents() {
           <span style="font-size:1.4rem;">📅</span>
           <div>
             <p class="mr-next-visit-label">Next Scheduled Visit</p>
-            <p class="mr-next-visit-value">${new Date(record.next_visit_date).toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })}</p>
+            <p class="mr-next-visit-value">${new Date(record.next_visit_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
         </div>` : ''}
       ${record.follow_up_notes ? `
@@ -476,8 +499,123 @@ export function medicalRecordsEvents() {
     document.getElementById('modal-add-record').classList.remove('open');
 
   // ── Submit new record ─────────────────────
+  // ── Upload zone + AI autocomplete ──────────────────────────────────────────
+  function initUploadZone() {
+    const zone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('record-file-input');
+    const status = document.getElementById('upload-status');
+    if (!zone || !fileInput) return;
+
+    // Click on zone or the "browse" link opens the file picker
+    zone.addEventListener('click', () => fileInput.click());
+
+    // Drag and drop
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('mr-upload-zone--over');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('mr-upload-zone--over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('mr-upload-zone--over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFileSelected(file);
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFileSelected(fileInput.files[0]);
+    });
+
+    async function handleFileSelected(file) {
+      const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+      if (!allowed.includes(file.type)) {
+        showStatus('error', 'Only PNG, JPG and PDF files are accepted.');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showStatus('error', 'File exceeds the 10 MB limit.');
+        return;
+      }
+
+      // Show selected file name in the zone
+      zone.querySelector('.mr-upload-text').textContent = `Selected: ${file.name}`;
+
+      // Store the file reference for submit
+      zone.dataset.selectedFile = file.name;
+      window._mrSelectedFile = file;
+
+      showStatus('loading', 'Reading document with AI...');
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/medical-records/extract', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          showStatus('error', err.error || 'Failed to read the document.');
+          return;
+        }
+
+        const { fields } = await res.json();
+        fillForm(fields);
+        showStatus('success', 'Form filled from document — review and adjust if needed.');
+      } catch (err) {
+        console.error('Extraction error:', err);
+        showStatus('error', 'Could not connect to the AI service. Fill the form manually.');
+      }
+    }
+
+    function fillForm(fields) {
+      if (!fields) return;
+
+      // visit_type — match against the select options
+      const typeSelect = document.getElementById('record-type');
+      if (fields.visit_type && typeSelect) {
+        const opt = [...typeSelect.options].find(
+          o => o.value.toLowerCase() === fields.visit_type.toLowerCase()
+        );
+        if (opt) typeSelect.value = opt.value;
+      }
+
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val) el.value = val;
+      };
+
+      setVal('record-date', fields.visit_date);
+      setVal('record-vet', fields.veterinarian);
+      setVal('record-reason', fields.reason);
+      setVal('record-diagnosis', fields.diagnosis);
+      setVal('record-treatment', fields.treatment);
+      setVal('record-notes', fields.notes);
+
+      // next_visit_date isn't a visible field in the current form,
+      // store it as a data attribute so submitNewRecord can pick it up
+      const form = document.getElementById('form-add-record');
+      if (form && fields.next_visit_date) {
+        form.dataset.nextVisitDate = fields.next_visit_date;
+      }
+    }
+
+    function showStatus(type, message) {
+      status.classList.remove('hidden', 'mr-status--loading', 'mr-status--success', 'mr-status--error');
+      status.classList.add(`mr-status--${type}`);
+      const icons = {
+        loading: '⏳',
+        success: '✅',
+        error: '❌'
+      };
+      status.textContent = `${icons[type]} ${message}`;
+    }
+  }
+
   async function submitNewRecord() {
-    const petId     = document.getElementById('record-pet').value;
+    const petId = document.getElementById('record-pet').value;
     const visitType = document.getElementById('record-type').value;
 
     if (!petId || !visitType) {
@@ -485,25 +623,45 @@ export function medicalRecordsEvents() {
       return;
     }
 
-    const body = {
-      pet_id:      parseInt(petId),
-      user_id:     user.user_id || user.id_cliente,
-      visit_type:  visitType,
-      visit_date:  document.getElementById('record-date').value      || null,
-      veterinarian:document.getElementById('record-vet').value       || null,
-      reason:      document.getElementById('record-reason').value    || null,
-      diagnosis:   document.getElementById('record-diagnosis').value || null,
-      treatment:   document.getElementById('record-treatment').value || null,
-      notes:       document.getElementById('record-notes').value     || null,
+    const form = document.getElementById('form-add-record');
+    const nextVisitDate = form?.dataset.nextVisitDate || null;
+    const selectedFile = window._mrSelectedFile || null;
+
+    const formData = new FormData();
+    formData.append('pet_id', parseInt(petId));
+    formData.append('user_id', user.user_id || user.id_cliente);
+    formData.append('visit_type', visitType);
+
+    const textFields = {
+      visit_date: document.getElementById('record-date').value,
+      veterinarian: document.getElementById('record-vet').value,
+      reason: document.getElementById('record-reason').value,
+      diagnosis: document.getElementById('record-diagnosis').value,
+      treatment: document.getElementById('record-treatment').value,
+      notes: document.getElementById('record-notes').value,
     };
+
+    for (const [key, val] of Object.entries(textFields)) {
+      if (val) formData.append(key, val);
+    }
+
+    if (nextVisitDate) formData.append('next_visit_date', nextVisitDate);
+    if (selectedFile) formData.append('file', selectedFile);
 
     try {
       const res = await fetch('/api/medical-records', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(body),
+        method: 'POST',
+        body: formData
       });
+
       if (res.ok) {
+        window._mrSelectedFile = null;
+        if (form) delete form.dataset.nextVisitDate;
+
+        const uploadZoneText = document.getElementById('upload-zone')?.querySelector('.mr-upload-text');
+        if (uploadZoneText) uploadZoneText.innerHTML = 'Drop file here or <span class="mr-upload-link">browse</span>';
+        document.getElementById('upload-status')?.classList.add('hidden');
+
         window.closeAddModal();
         document.getElementById('form-add-record').reset();
         loadRecords();

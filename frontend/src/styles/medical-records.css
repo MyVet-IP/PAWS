@@ -1,6 +1,4 @@
-/* ========================================
-  Medical Records
-   ======================================== */
+/* Medical Records */
 
 /* ── Page wrapper ───────────────────────────── */
 .mr-wrapper {
@@ -687,6 +685,89 @@
 
 .mr-submit-btn:hover {
   opacity: 0.88;
+}
+
+/* ── Upload zone ─────────────────────────────── */
+.mr-upload-section {
+  margin-bottom: 1.25rem;
+}
+
+.mr-label-hint {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted, #6B7280);
+  margin-top: 2px;
+}
+
+.mr-upload-zone {
+  border: 1.5px dashed var(--color-purple, #6A4C93);
+  border-radius: var(--radius-md, 12px);
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--transition-fast, 150ms ease),
+    border-color var(--transition-fast, 150ms ease);
+  background: var(--bg-soft, #F9FAFB);
+}
+
+.mr-upload-zone:hover,
+.mr-upload-zone--over {
+  background: rgba(106, 76, 147, 0.06);
+  border-color: var(--text-highlight, #6A4C93);
+}
+
+.mr-upload-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--text-highlight, #6A4C93);
+  margin: 0 auto 8px;
+  display: block;
+}
+
+.mr-upload-text {
+  font-size: 13px;
+  color: var(--text-soft, #4A4A4A);
+  margin: 0 0 4px;
+}
+
+.mr-upload-link {
+  color: var(--text-highlight, #6A4C93);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.mr-upload-hint {
+  font-size: 11px;
+  color: var(--text-muted, #6B7280);
+  margin: 0;
+}
+
+.mr-upload-status {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.mr-upload-status.hidden {
+  display: none;
+}
+
+.mr-status--loading {
+  background: #EFF6FF;
+  color: #1E40AF;
+}
+
+.mr-status--success {
+  background: #F0FDF4;
+  color: #166534;
+}
+
+.mr-status--error {
+  background: #FEF2F2;
+  color: #991B1B;
 }
 
 /* ── Animations ─────────────────────────────── */
