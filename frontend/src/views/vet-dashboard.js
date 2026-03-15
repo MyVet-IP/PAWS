@@ -237,7 +237,7 @@ export function vetDashboardPage() {
       </div>
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Phone</label>
-        <input id="vp-phone" type="tel" placeholder="+57 300 000 0000" value="${data.phone}" style="${INP}" onfocus="${FOCUS}" onblur="${BLUR}"/>
+        <input id="vp-phone" type="tel" placeholder="+57 302 226 6234" value="${data.phone}" style="${INP}" onfocus="${FOCUS}" onblur="${BLUR}"/>
       </div>
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Address</label>

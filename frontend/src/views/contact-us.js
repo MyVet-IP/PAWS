@@ -8,8 +8,8 @@ export function contactUsPage() {
   ];
 
   const channels = [
-    { icon: 'mail', label: 'Email', value: 'hola@paws.com.co', sub: 'We reply within 24 hours', color: 'purple', href: 'mailto:hola@paws.com.co' },
-    { icon: 'chat', label: 'WhatsApp', value: '+57 300 000 0000', sub: 'Mon - Fri, 8am - 6pm', color: 'green', href: 'https://wa.me/573000000000' },
+    { icon: 'mail', label: 'Email', value: 'riwi_paws@gmail.com', sub: 'We reply within 24 hours', color: 'purple', href: 'mailto:riwi.paws@gmail.com' },
+    { icon: 'chat', label: 'WhatsApp', value: '+57 302 226 6234', sub: 'Mon - Fri, 8am - 6pm', color: 'green', href: 'https://wa.me/573022266234' },
     { icon: 'location_on', label: 'Location', value: 'Medellin, Antioquia', sub: 'Serving the Aburra Valley', color: 'blue', href: '#' },
     { icon: 'photo_camera', label: 'Instagram', value: '@paws.medellin', sub: 'Daily pet tips & updates', color: 'yellow', href: 'https://instagram.com' }
   ];
@@ -112,7 +112,7 @@ export function contactUsPage() {
               </div>
               <p class="contact-help-title">Still have questions?</p>
               <p class="contact-help-text">Our team is online Mon-Fri, 8am-6pm</p>
-              <a href="https://wa.me/573000000000" target="_blank" class="contact-help-btn">
+              <a href="https://wa.me/573022266234" target="_blank" class="contact-help-btn">
                 <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle; margin-right: 4px;">chat</span>
                 Chat on WhatsApp
               </a>
@@ -154,7 +154,7 @@ export function contactUsEvents() {
     }
   };
 
-  window.submitContact = function () {
+  window.submitContact = async function () {
     const name = document.getElementById('c-name').value.trim();
     const email = document.getElementById('c-email').value.trim();
     const message = document.getElementById('c-message').value.trim();
@@ -168,11 +168,48 @@ export function contactUsEvents() {
       return;
     }
 
-    // In production: POST to /api/contact
-    console.log('Contact form:', { name, email, message, topic: window.selectedTopic });
-    document.getElementById('c-success').classList.add('show');
-    document.getElementById('c-name').value = '';
-    document.getElementById('c-email').value = '';
-    document.getElementById('c-message').value = '';
+    // Disable button while sending
+    const btn = document.querySelector('.contact-submit-btn');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg style="display:inline;width:16px;height:16px;vertical-align:middle;
+                  margin-right:6px;animation:spin 1s linear infinite;"
+           viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+        <path d="M4 12a8 8 0 018-8" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      Sending...
+    `;
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message, topic: window.selectedTopic })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('c-success').classList.add('show');
+        document.getElementById('c-name').value = '';
+        document.getElementById('c-email').value = '';
+        document.getElementById('c-message').value = '';
+        // Reset topic selection
+        document.querySelectorAll('.contact-topic-btn').forEach((b, i) => {
+          b.classList.toggle('active', i === 0);
+        });
+        window.selectedTopic = 'General Question';
+      } else {
+        alert(data.error || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      console.error('Contact submit error:', err);
+      alert('Connection error. Please check your internet and try again.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
   };
 }
