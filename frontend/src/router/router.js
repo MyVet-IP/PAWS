@@ -4,16 +4,25 @@ import { AuthLayout } from "../layout/auth-layout.js";
 import { Aside, asideEvents } from "../components/aside.js";
 
 import { clinicsPage } from "../views/clinics-view.js";
-import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
+import { healthTipsPage } from "../views/health-tips.js";
 import { loginPage, loginEvents } from "../views/login.js";
-import { landingPage, landingEvents } from "../views/landing-page.js";
-import { emergencyPage, emergencyEvents } from "../views/emergency.js";
+import { loadMapPage, loadMapEvents } from "../views/map-page.js";
+import { aboutUsPage, aboutUsEvents } from "../views/about-us.js";
 import { EmergencyButton } from "../components/emergencyButton.js";
 import { registerPage, registerEvents } from "../views/register.js";
+import { landingPage, landingEvents } from "../views/landing-page.js";
+import { servicesPage, servicesPageEvents } from "../views/services.js";
+import { emergencyPage, emergencyEvents } from "../views/emergency.js";
+import { contactUsPage, contactUsEvents } from "../views/contact-us.js";
+import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
+import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
+import { specialistsPage, specialistsEvents } from "../views/specialists.js";
 import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
-import { loadMapPage, loadMapEvents } from "../views/map-page.js";
-import { healthTipsPage } from "../views/health-tips.js";
+import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
+import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
+import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
+import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
 
 const PUBLIC_PATHS = ["/", "/login", "/register"];
 
@@ -22,30 +31,31 @@ const routes = {
   "/login": () => {
     const user = getUser();
     if (user) {
-      window.location.hash = "#/user-dashboard";
+      window.location.hash = "/#/user-dashboard";
       return "";
     }
     return loginPage();
   },
 
-  "/register": registerPage,
   "/clinics": clinicsPage,
+  "/register": registerPage,
   "/emergency": emergencyPage,
-  "/pet-profile": () => {
-    if (!checkAuth("owner")) return;
-    return petProfilepage();
-  },
-  "/veterinary": () => {
-    if (!checkAuth("vet")) return;
-    return vetDashboardPage();
-  },
+  "/pet-profile": petProfilepage,
+  "/veterinary": vetDashboardPage,
+  "/services": servicesPage,
 
-  "/user-dashboard": () => {
-    if (!checkAuth("owner")) return;
-    return dashboardPage();
-  },
-  "/map-page": loadMapPage,
   "/tips": healthTipsPage,
+  "/map-page": loadMapPage,
+  "/about-us": aboutUsPage,
+  "/contact": contactUsPage,
+  "/work-with-us": workWithUsPage,
+  "/specialists": specialistsPage,
+  "/user-dashboard": dashboardPage,
+  "/medical-records": medicalRecordsPage,
+  "/admin-dashboard": adminDashboardPage,
+  "/appointments": userScheduleAppointmentsPage,
+  "/business-appointments": businessScheduleAppointmentsPage,
+
 
   "/unauthorized": () => `
     <div class="p-10 text-center">
@@ -126,6 +136,10 @@ function runPageEvents(path) {
       dashboardEvents();
       break;
 
+    case "/admin-dashboard":
+      adminDashboardEvents();
+      break;
+
     case "/map-page":
       loadMapEvents();
       break;
@@ -141,6 +155,38 @@ function runPageEvents(path) {
     case "/veterinary":
       vetDashboardEvents();
       break;
+
+    case "/services":
+      servicesPageEvents();
+      break;
+
+    case "/about-us":
+      aboutUsEvents();
+      break;
+
+    case "/contact":
+      contactUsEvents();
+      break;
+
+    case "/work-with-us":
+      workWithUsEvents();
+      break;
+
+    case "/specialists":
+      specialistsEvents();
+      break;
+
+    case "/medical-records":
+      medicalRecordsEvents();
+      break;
+
+    case "/appointments":
+      userScheduleAppointmentsEvents();
+      break;
+
+    case "/business-appointments":
+      businessScheduleAppointmentsEvents();
+      break;
   }
 }
 
@@ -153,14 +199,14 @@ function pageEvents() {
   if (loginBtn && loginBtn.textContent.includes('Sign In')) {
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '#/login';
+      window.location.hash = '/#/login';
     });
   }
 
   if (searchBtn) {
     searchBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.hash = '#/clinics';
+      window.location.hash = '/#/clinics';
     });
   }
 

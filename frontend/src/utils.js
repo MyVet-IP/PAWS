@@ -76,8 +76,37 @@ export function hideLoading() {
   }
 }
 
+// Screen Loading
+
+export function showPageLoading(target = document.body) {
+  const pageLoader = document.createElement('div');
+  pageLoader.id = 'loading-screen';
+  pageLoader.className = 'fixed inset-0 bg-surface-soft dark:bg-dark-bg flex items-center justify-center z-[9999] transition-opacity duration-500';
+  pageLoader.innerHTML = `
+  <div class="text-center">
+    <div class="w-16 h-16 mx-auto mb-4 relative">
+      <div class="absolute inset-0 rounded-full border-4 border-paws-green animate-ping"></div>
+      <div
+        class="absolute inset-2 rounded-full border-4 border-t-paws-purple border-r-paws-pink border-b-paws-blue border-l-paws-yellow animate-spin"">
+      </div>
+    </div>
+    <p class="text-text-highlight dark:text-paws-purple font-poppins font-semibold animate-pulse-soft">Loading VetCare...</p>
+  </div>
+  `;
+  target.appendChild(pageLoader);
+}
+
+export function hidePageLoading() {
+  const pageLoader = document.getElementById('loading-screen');
+  if (pageLoader) {
+    pageLoader.style.opacity = '0';
+    setTimeout(() => pageLoader.remove(), 500);
+  }
+}
+
+
 // utils.js
-export function getUser(){
+export function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 
@@ -85,12 +114,12 @@ export function getUser(){
 export function checkAuth(role) {
   const user = getUser(); // ya tienes getUser importado
   if (!user) {
-    window.location.hash = "#/unauthorized";
+    window.location.hash = "/#/unauthorized";
     return false;
   }
 
   if (user.role !== role) {
-    window.location.hash = "#/unauthorized";
+    window.location.hash = "/#/unauthorized";
     return false;
   }
 

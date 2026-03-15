@@ -162,7 +162,7 @@ export function registerPage() {
                 <div class="flex items-start gap-3">
                     <input type="checkbox" id="terms" class="w-4 h-4 mt-1 rounded border-gray-300 text-paws-purple focus:ring-paws-purple" required>
                     <label for="terms" class="text-sm text-text-soft">
-                        I agree to the <a href="#/terms" class="text-text-highlight hover:underline">Terms of Service</a> and <a href="#/privacy" class="text-text-highlight hover:underline">Privacy Policy</a>
+                        I agree to the <a href="/#/terms" class="text-text-highlight hover:underline">Terms of Service</a> and <a href="/#/privacy" class="text-text-highlight hover:underline">Privacy Policy</a>
                     </label>
                 </div>
 
@@ -174,7 +174,7 @@ export function registerPage() {
                 <!-- Sign In Link -->
                 <p class="text-center text-sm text-text-soft">
                     Already have an account?
-                    <a href="#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
+                    <a href="/#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
                 </p>
 
                 <!-- Footer -->
@@ -186,8 +186,8 @@ export function registerPage() {
                         <span>Your data is protected</span>
                     </div>
                     <div class="flex gap-4">
-                        <a href="#/terms" class="hover:text-text-primary transition">Terms</a>
-                        <a href="#/privacy" class="hover:text-text-primary transition">Privacy</a>
+                        <a href="/#/terms" class="hover:text-text-primary transition">Terms</a>
+                        <a href="/#/privacy" class="hover:text-text-primary transition">Privacy</a>
                     </div>
                 </div>
             </form>
@@ -206,12 +206,12 @@ export function registerEvents() {
     function setupPasswordToggle(toggleId, inputId) {
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
-        
+
         if (toggle && input) {
             toggle.addEventListener('click', () => {
                 const type = input.type === 'password' ? 'text' : 'password';
                 input.type = type;
-                
+
                 const icon = toggle.querySelector('svg');
                 if (type === 'text') {
                     icon.innerHTML = `
@@ -249,10 +249,10 @@ export function registerEvents() {
             document.getElementById('strength-4')
         ];
         const strengthText = document.getElementById('strength-text');
-        
+
         const colors = ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
         const texts = ['Weak', 'Fair', 'Good', 'Strong'];
-        
+
         strengthBars.forEach((bar, index) => {
             bar.className = 'h-1 flex-1 rounded-full transition-colors';
             if (index < strength) {
@@ -261,7 +261,7 @@ export function registerEvents() {
                 bar.classList.add('bg-gray-200');
             }
         });
-        
+
         if (password.length > 0) {
             strengthText.textContent = `Password strength: ${texts[strength - 1] || 'Very weak'}`;
             strengthText.className = 'text-xs';
@@ -280,13 +280,13 @@ export function registerEvents() {
     // Form message helper
     function showMessage(message, success) {
         formMessage.classList.remove("hidden", "bg-red-50", "text-red-700", "bg-green-50", "text-green-700", "border-red-200", "border-green-200");
-        
+
         if (success) {
             formMessage.classList.add("bg-green-50", "text-green-700", "border", "border-green-200");
         } else {
             formMessage.classList.add("bg-red-50", "text-red-700", "border", "border-red-200");
         }
-        
+
         formMessage.textContent = message;
     }
 
@@ -350,7 +350,7 @@ export function registerEvents() {
                 showMessage("Account created successfully! Redirecting...", true);
 
                 setTimeout(() => {
-                    window.location.hash = "#/login";
+                    window.location.hash = "/#/login";
                 }, 1500);
 
             } catch (error) {

@@ -132,7 +132,7 @@ export function loginPage() {
                             <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-paws-purple focus:ring-paws-purple">
                             <span class="text-sm text-text-soft">Remember me</span>
                         </label>
-                        <a href="#/forgot-password" class="text-sm text-text-highlight hover:underline font-medium">
+                        <a href="/#/forgot-password" class="text-sm text-text-highlight hover:underline font-medium">
                             Forgot password?
                         </a>
                     </div>
@@ -204,7 +204,7 @@ export function loginPage() {
                             <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-paws-purple focus:ring-paws-purple">
                             <span class="text-sm text-text-soft">Remember me</span>
                         </label>
-                        <a href="#/forgot-password" class="text-sm text-text-highlight hover:underline font-medium">
+                        <a href="/#/forgot-password" class="text-sm text-text-highlight hover:underline font-medium">
                             Forgot password?
                         </a>
                     </div>
@@ -232,16 +232,16 @@ export function loginPage() {
                 <div class="mt-8 text-center">
                     <p class="text-sm text-text-soft">
                         Don't have an account?
-                        <a href="#/register" class="text-text-highlight font-semibold hover:underline ml-1">
+                        <a href="/#/register" class="text-text-highlight font-semibold hover:underline ml-1">
                             Create Account
                         </a>
                     </p>
                 </div>
 
                 <div class="mt-6 pt-6 border-t border-gray-100 flex items-center justify-center gap-6 text-xs text-text-muted">
-                    <a href="#/terms" class="hover:text-text-primary transition">Terms</a>
-                    <a href="#/privacy" class="hover:text-text-primary transition">Privacy</a>
-                    <a href="#/help" class="hover:text-text-primary transition">Help</a>
+                    <a href="/#/terms" class="hover:text-text-primary transition">Terms</a>
+                    <a href="/#/privacy" class="hover:text-text-primary transition">Privacy</a>
+                    <a href="/#/help" class="hover:text-text-primary transition">Help</a>
                 </div>
             </div>
         </div>
@@ -280,12 +280,12 @@ export function loginEvents() {
     function setupPasswordToggle(toggleId, inputId) {
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
-        
+
         if (toggle && input) {
             toggle.addEventListener('click', () => {
                 const type = input.type === 'password' ? 'text' : 'password';
                 input.type = type;
-                
+
                 // Update icon
                 const icon = toggle.querySelector('svg');
                 if (type === 'text') {
@@ -308,10 +308,10 @@ export function loginEvents() {
     // Form submission handler
     async function handleLogin(e, emailId, passwordId, role) {
         e.preventDefault();
-        
+
         const email = document.getElementById(emailId).value.trim();
         const password = document.getElementById(passwordId).value;
-        
+
         errorBox.classList.add('hidden');
         errorBox.textContent = '';
 
@@ -321,9 +321,9 @@ export function loginEvents() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, role })
             });
-            
+
             const data = await res.json();
-            
+
             if (!res.ok) {
                 errorBox.textContent = data.error || 'Login failed. Please try again.';
                 errorBox.classList.remove('hidden');
@@ -335,13 +335,13 @@ export function loginEvents() {
 
             // Redirect based on role
             if (data.role === 'owner') {
-                window.location.hash = '#/user-dashboard';
+                window.location.hash = '/#/user-dashboard';
             } else if (data.role === 'vet' || data.role === 'clinic') {
-                window.location.hash = '#/veterinary';
+                window.location.hash = '/#/veterinary';
             } else if (data.role === 'admin') {
-                window.location.hash = '#/admin-dashboard';
+                window.location.hash = '/#/admin-dashboard';
             } else {
-                window.location.hash = '#/user-dashboard';
+                window.location.hash = '/#/user-dashboard';
             }
         } catch (error) {
             errorBox.textContent = 'Connection error. Please try again.';

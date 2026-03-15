@@ -5,93 +5,113 @@
   <meta charset="UTF-8">
   <title>PAWS - Pet Care Platform</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PAWS connects pet owners in Medellin with the best veterinary professionals. Find clinics, schedule appointments, and care for your best friend.">
+  <meta name="description"
+    content="PAWS connects pet owners in Medellin with the best veterinary professionals. Find clinics, schedule appointments, and care for your best friend.">
   <link rel="icon" href="./frontend/assets/icons/favicon.svg" type="image/svg+xml">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
   <link rel="stylesheet" href="./frontend/src/styles/index.css">
+  <link rel="stylesheet" href="./frontend/src/styles/layout.css">
+  <link rel="stylesheet" href="./frontend/src/styles/about-us.css">
+  <link rel="stylesheet" href="./frontend/src/styles/emergency.css">
+  <link rel="stylesheet" href="./frontend/src/styles/components.css">
+  <link rel="stylesheet" href="./frontend/src/styles/contact-us.css">
+  <link rel="stylesheet" href="./frontend/src/styles/specialist.css">
+  <link rel="stylesheet" href="./frontend/src/styles/healt-tips.css">
+  <link rel="stylesheet" href="./frontend/src/styles/work-with-us.css">
+  <link rel="stylesheet" href="./frontend/src/styles/medical-records.css">
+  <link rel="stylesheet" href="./frontend/src/styles/users-appointments.css">
+  <link rel="stylesheet" href="./frontend/src/styles/bussines-appointment.css">
+  <link rel="stylesheet" href="./frontend/src/styles/admin-dashboard.css">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          // Primary brand colors
-          paws: {
-            green: "#B9FBC0",
-            greenDark: "#9FEFA8",
-            purple: "#F1C0E8",
-            purpleDark: "#E5A8D9",
-            // Secondary colors
-            yellow: "#FBF8CC",
-            blue: "#90BDF4",
-            blueDark: "#7AAEE8",
-            pink: "#FFCFD2",
-            pinkDark: "#FFB8BD",
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Primary brand colors
+            paws: {
+              green: "#B9FBC0",
+              greenDark: "#9FEFA8",
+              purple: "#F1C0E8",
+              purpleDark: "#E5A8D9",
+              // Secondary colors
+              yellow: "#FBF8CC",
+              blue: "#90BDF4",
+              blueDark: "#7AAEE8",
+              pink: "#FFCFD2",
+              pinkDark: "#FFB8BD",
+            },
+            // Text colors
+            text: {
+              primary: "#333333",
+              soft: "#4A4A4A",
+              highlight: "#6A4C93",
+              muted: "#6B7280",
+            },
+            // Background colors
+            surface: {
+              light: "#FFFFFF",
+              soft: "#F9FAFB",
+              muted: "#F3F4F6",
+            },
+            // Dark mode surfaces
+            dark: {
+              bg: "#1F2937",
+              surface: "#374151",
+              muted: "#4B5563",
+            }
           },
-          // Text colors
-          text: {
-            primary: "#333333",
-            soft: "#4A4A4A",
-            highlight: "#6A4C93",
-            muted: "#6B7280",
+          fontFamily: {
+            poppins: ["Poppins", "sans-serif"],
+            roboto: ["Roboto", "sans-serif"],
           },
-          // Background colors
-          surface: {
-            light: "#FFFFFF",
-            soft: "#F9FAFB",
-            muted: "#F3F4F6",
+          borderRadius: {
+            'sm': '8px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '24px',
+            '2xl': '32px',
+            '3xl': '48px',
           },
-          // Dark mode surfaces
-          dark: {
-            bg: "#1F2937",
-            surface: "#374151",
-            muted: "#4B5563",
-          }
-        },
-        fontFamily: {
-          poppins: ["Poppins", "sans-serif"],
-          roboto: ["Roboto", "sans-serif"],
-        },
-        borderRadius: {
-          'sm': '8px',
-          'md': '12px',
-          'lg': '16px',
-          'xl': '24px',
-          '2xl': '32px',
-          '3xl': '48px',
-        },
-        boxShadow: {
-          'soft': '0 4px 10px rgba(0,0,0,0.08)',
-          'medium': '0 8px 24px rgba(0,0,0,0.12)',
-          'card': '0 2px 8px rgba(0,0,0,0.06)',
-        },
-        animation: {
-          'fade-in': 'fadeIn 0.3s ease-out',
-          'slide-up': 'slideUp 0.4s ease-out',
-          'scale-in': 'scaleIn 0.2s ease-out',
-        },
-        keyframes: {
-          fadeIn: {
-            '0%': { opacity: '0' },
-            '100%': { opacity: '1' },
+          boxShadow: {
+            'soft': '0 4px 10px rgba(0,0,0,0.08)',
+            'medium': '0 8px 24px rgba(0,0,0,0.12)',
+            'card': '0 2px 8px rgba(0,0,0,0.06)',
           },
-          slideUp: {
-            '0%': { opacity: '0', transform: 'translateY(10px)' },
-            '100%': { opacity: '1', transform: 'translateY(0)' },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'scale-in': 'scaleIn 0.2s ease-out',
           },
-          scaleIn: {
-            '0%': { opacity: '0', transform: 'scale(0.95)' },
-            '100%': { opacity: '1', transform: 'scale(1)' },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            scaleIn: {
+              '0%': { opacity: '0', transform: 'scale(0.95)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
           },
-        },
+        }
       }
     }
-  }
   </script>
 </head>
 
 <body id="app" class="min-h-screen bg-surface-soft font-roboto text-text-primary antialiased">
+  <div id="loading-screen"></div>
   <script type="module" src="./frontend/src/main.js"></script>
 </body>
 

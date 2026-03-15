@@ -65,7 +65,7 @@ export function dashboardPage() {
   <!-- PETS SECTION -->
   <div class="flex items-center justify-between mb-5">
     <h2 class="text-lg font-semibold text-gray-800">Your pets</h2>
-    <a href="#/pet-profile" class="text-green-600 hover:underline text-sm font-medium flex items-center gap-1">
+    <a href="/#/pet-profile" class="text-green-600 hover:underline text-sm font-medium flex items-center gap-1">
       View all
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -133,43 +133,43 @@ export function dashboardPage() {
 
 export function dashboardEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
- 
+
   // Update username
   const nameEl = document.getElementById('dash-username');
   if (nameEl && user) {
     nameEl.textContent = `Welcome, ${user.nombre?.split(' ')[0] || 'User'}!`;
   }
- 
+
   // Logout button
   const logoutBtn = document.getElementById('btn-logout');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('user');
-      window.location.hash = '#/';
+      window.location.hash = '/#/';
     });
   }
- 
+
   // Add pet modal — open
   const addPetBtn = document.getElementById('btn-add-pet');
   const modal = document.getElementById('modal-add-pet');
   const modalClose = document.getElementById('modal-close');
- 
+
   if (addPetBtn && modal) {
     addPetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
   }
- 
+
   // Add pet modal — close via X button
   if (modalClose && modal) {
     modalClose.addEventListener('click', () => modal.classList.add('hidden'));
   }
- 
+
   // Close modal clicking backdrop
   if (modal) {
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.classList.add('hidden');
     });
   }
- 
+
   // Add pet form submit
   const addForm = document.getElementById('add-pet-form');
   if (addForm) {
@@ -177,13 +177,13 @@ export function dashboardEvents() {
       e.preventDefault();
       const user = JSON.parse(localStorage.getItem('user'));
       const body = {
-        nombre:    document.getElementById('pet-nombre').value,
-        especie:   document.getElementById('pet-especie').value,
-        raza:      document.getElementById('pet-raza').value,
-        edad:      parseInt(document.getElementById('pet-edad').value),
+        nombre: document.getElementById('pet-nombre').value,
+        especie: document.getElementById('pet-especie').value,
+        raza: document.getElementById('pet-raza').value,
+        edad: parseInt(document.getElementById('pet-edad').value),
         id_cliente: user?.id_cliente
       };
- 
+
       try {
         const res = await fetch('/api/mascotas', {
           method: 'POST',
@@ -200,30 +200,30 @@ export function dashboardEvents() {
       }
     });
   }
- 
+
   // Initial load
   loadPets();
 }
- 
+
 // ─────────────────────────────────────────────
 //  loadPets — fetches and renders the pet grid
 // ─────────────────────────────────────────────
 async function loadPets() {
-  const grid    = document.getElementById('pets-grid');
+  const grid = document.getElementById('pets-grid');
   const countEl = document.getElementById('pets-count');
-  const user    = JSON.parse(localStorage.getItem('user') || 'null');
- 
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
   if (!grid || !user) return;
- 
+
   try {
     const res = await fetch(`/api/users/${user.id_cliente}/dashboard`);
     if (!res.ok) throw new Error('Failed to load pets');
- 
+
     const data = await res.json();
     const pets = data.mascotas || [];
- 
+
     if (countEl) countEl.textContent = pets.length;
- 
+
     const addCard = `
       <div onclick="document.getElementById('modal-add-pet').classList.remove('hidden')"
            class="w-64 border-2 border-dashed border-green-300 rounded-3xl flex flex-col items-center justify-center py-16 text-gray-400 cursor-pointer hover:border-green-500 hover:bg-green-50 transition group">
@@ -235,12 +235,12 @@ async function loadPets() {
         <p class="font-medium text-gray-500">Add pet</p>
       </div>
     `;
- 
+
     if (pets.length === 0) {
       grid.innerHTML = addCard.replace('Add pet', 'Add your first pet');
       return;
     }
- 
+
     const cards = pets.map(p => `
       <div class="bg-white rounded-3xl shadow-sm w-64 p-6 hover:shadow-md hover:-translate-y-1 transition group border border-gray-100">
         <div class="w-full h-40 bg-gradient-to-br ${p.especie === 'Cat' ? 'from-purple-100 to-pink-100' : 'from-green-100 to-blue-100'} rounded-2xl mb-4 flex items-center justify-center text-5xl">
@@ -253,9 +253,9 @@ async function loadPets() {
         </button>
       </div>
     `).join('');
- 
+
     grid.innerHTML = cards + addCard;
- 
+
   } catch (error) {
     console.error(error);
     grid.innerHTML = `<p class="text-gray-400">Unable to load pets. Please try again.</p>`;

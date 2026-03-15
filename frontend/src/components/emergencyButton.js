@@ -1,6 +1,6 @@
 // emergencyButton.js
 export function EmergencyButton() {
-  
+
   console.log("EmergencyButton ejecutado");
 
   // 💀 Eliminar botón previo si existe

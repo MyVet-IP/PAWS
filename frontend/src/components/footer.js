@@ -23,10 +23,6 @@ export function Footer() {
           <!-- 🔗 Links -->
           <nav class="flex flex-wrap justify-center gap-6 text-sm text-gray-600">
 
-            <a href="#/" class="hover:text-green-600 transition">
-              Home
-            </a>
-
             <a href="#/clinics" class="hover:text-green-600 transition">
               Clinics
             </a>
@@ -35,7 +31,7 @@ export function Footer() {
               Emergency
             </a>
 
-            <a href="#/about" class="hover:text-purple-600 transition">
+            <a href="#/about-us" class="hover:text-purple-600 transition">
               About Us
             </a>
 
