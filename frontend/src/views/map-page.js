@@ -1,9 +1,3 @@
-// ─────────────────────────────────────────────
-//  map-page.js  — solo parte visual
-//  Sidebar: search bar + botón filtro + cards
-//  Filtros en modal pequeño
-//  Detalle de clínica en modal
-// ─────────────────────────────────────────────
 
 const CLINICS_SAMPLE = [
   {

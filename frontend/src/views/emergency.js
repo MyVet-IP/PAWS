@@ -289,7 +289,7 @@ export async function emergencyEvents() {
                   </svg>
                   Call Now
                 </a>` : ''}
-              <button onclick="window.location.hash='/#/clinics'"
+              <button onclick="window.location.hash='#/clinics'"
                 class="flex-1 py-2 rounded-xl font-poppins font-semibold text-sm transition"
                 style="border:2px solid #FCA5A5;color:#dc2626;"
                 onmouseenter="this.style.background='#FEF2F2'"

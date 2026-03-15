@@ -1,4 +1,3 @@
-// User Schedule Appointments Page - PAWS Pet Care Platform
 export function userScheduleAppointmentsPage() {
   return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
@@ -14,7 +13,7 @@ export function userScheduleAppointmentsPage() {
               <h1 class="text-3xl font-bold" style="color: #333333; font-family: 'Poppins', sans-serif;">My Appointments</h1>
               <p class="mt-1" style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.95rem;">Schedule and manage veterinary appointments for your pets</p>
             </div>
-            <button onclick="window.location.hash='/#/user-dashboard'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
+            <button onclick="window.location.hash='#/user-dashboard'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
               Back to Dashboard
             </button>
           </div>

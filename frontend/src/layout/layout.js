@@ -1,6 +1,6 @@
 import { navbarController, navbarEvents } from "../components/navbar.js";
 import { Aside } from "../components/aside.js";
-import { Topbar } from "../components/topbar.js";
+import { Topbar, topbarEvents } from "../components/topbar.js";
 import { getUser } from "../utils.js";
 import { Footer } from "../components/footer.js";
 
@@ -29,6 +29,8 @@ export function Layout(content) {
   }
 
   // if is user or vet.
+  setTimeout(topbarEvents, 0); 
+
   return `
         <div class="flex h-screen">
 
