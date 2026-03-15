@@ -1,0 +1,15 @@
+# Dependencias — se instalan dentro del contenedor
+node_modules
+
+# Variables de entorno — se configuran en Azure, no van en la imagen
+.env
+
+# Git
+.git
+.gitignore
+
+# Archivos que no necesita la app en producción
+docs
+*.pdf
+*.md
+test-connection.js

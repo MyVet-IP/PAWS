@@ -1,78 +1,17 @@
-
---  PAWS Database Schema - PostgreSQL
-
-
---  USERS
---  Roles:
---    user     : pet owners, use the app to find services
---    business : owns a business profile (clinics, daycares, etc.)
---    admin    : platform management
-BEGIN;
-
-
-
 CREATE TABLE IF NOT EXISTS users (
   user_id SERIAL PRIMARY KEY,
   name VARCHAR(120) NOT NULL,
-  email VARCHAR(180) NOT NULL UNIQUE,
+  email VARCHAR(180) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   phone VARCHAR(30),
-  role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'business', 'admin')),
+  role VARCHAR(30) DEFAULT 'user' CHECK (role IN ('user', 'business', 'admin')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-
---  BUSINESSES
---  One row per registered business. Linked to the owner user.
---  Each business_type has its own detail table below.
---
---  NIT / legal registration (Colombia):
---    - Required for all business types except 'dog_walker'
---      (dog walkers are natural persons, not legal entities)
---    - Enforced via CHECK constraint at DB level
---    - nit_verified tracks the verification workflow:
---        pending  → submitted, awaiting review
---        verified → confirmed legitimate
---        rejected → invalid or fraudulent
---    - nit_verified is NULL for dog_walkers (not applicable)
-
-CREATE TABLE IF NOT EXISTS businesses (
-  business_id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL UNIQUE,
-  business_type VARCHAR(20) NOT NULL CHECK (business_type IN ('clinic','daycare','shelter','petshop','vet','dog_walker')),
-  name VARCHAR(140) NOT NULL,
-  address VARCHAR(200),
-  phone VARCHAR(30),
-  whatsapp VARCHAR(30),
-  email VARCHAR(180),
-  zone VARCHAR(100),
-  latitude DECIMAL(10,7),
-  longitude DECIMAL(10,7),
-  image_url VARCHAR(500),
-  status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active','inactive','draft')),
-  nit VARCHAR(20),
-  nit_verified VARCHAR(20) CHECK (nit_verified IN ('pending','verified','rejected')),
-  nit_verified_at TIMESTAMP,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  -- NIT constraint enforced
-  CONSTRAINT chk_nit_required CHECK (
-    (business_type = 'dog_walker' AND nit IS NULL AND nit_verified IS NULL)
-    OR
-    (business_type <> 'dog_walker' AND nit IS NOT NULL)
-  ),
-
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
---  SPECIALTIES  (catalog - used by clinics and vets)
 
 CREATE TABLE IF NOT EXISTS specialties (
   specialty_id SERIAL PRIMARY KEY,
   name VARCHAR(120) NOT NULL UNIQUE
 );
-
---  ANIMAL TYPES  (catalog - used by clinics and vets)
 
 CREATE TABLE IF NOT EXISTS animal_types (
   animal_type_id SERIAL PRIMARY KEY,
@@ -80,9 +19,82 @@ CREATE TABLE IF NOT EXISTS animal_types (
 );
 
 
---  SCHEDULES
---  Shared by all business types.
---  UNIQUE (business_id, day_of_week) prevents duplicate days.
+CREATE TABLE IF NOT EXISTS businesses (
+  business_id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  business_type VARCHAR(30) NOT NULL CHECK (business_type IN ('clinic', 'shelter', 'petshop', 'dog_walker', 'daycare')),
+  name VARCHAR(140) NOT NULL,
+  address VARCHAR(200) NOT NULL,
+  phone VARCHAR(30),
+  whatsapp VARCHAR(30),
+  email VARCHAR(180),
+  zone VARCHAR(100),
+  latitude DECIMAL(10,7),
+  longitude DECIMAL(10,7),
+  image_url VARCHAR(500),
+  status VARCHAR(60) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended')),
+  nit VARCHAR(50),
+  nit_verified VARCHAR(30),
+  nit_verified_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS pets (
+  pet_id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  name VARCHAR(120) NOT NULL,
+  animal_type_id INTEGER NOT NULL,
+  breed VARCHAR(100),
+  birth_date DATE,
+  weight_kg DECIMAL(6,2),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS clinics (
+  clinic_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  service_type VARCHAR(20) DEFAULT 'public' CHECK (service_type IN ('public', 'private')),
+  is_24h BOOLEAN DEFAULT FALSE,
+  rating DECIMAL(2,1) DEFAULT 0,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS shelters (
+  shelter_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS petshops (
+  petshop_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS dog_walkers (
+  walker_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  bio TEXT,
+  service_area VARCHAR(200),
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS daycares (
+  daycare_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS vets (
+  vet_id SERIAL PRIMARY KEY,
+  business_id INTEGER NOT NULL UNIQUE,
+  license_number VARCHAR(100),
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS schedules (
   schedule_id SERIAL PRIMARY KEY,
@@ -95,16 +107,41 @@ CREATE TABLE IF NOT EXISTS schedules (
   FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS emergencies (
+  emergency_id SERIAL PRIMARY KEY,
+  pet_id INTEGER NOT NULL,
+  business_id INTEGER NOT NULL,
+  description TEXT NOT NULL,
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'resolved', 'cancelled')),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  resolved_at TIMESTAMP,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE RESTRICT
+);
 
---  CLINICS  (detail table for business_type = 'clinic')
 
-CREATE TABLE IF NOT EXISTS clinics (
-  clinic_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL UNIQUE,
-  service_type VARCHAR(20) DEFAULT 'private' CHECK (service_type IN ('public','private')),
-  is_24h BOOLEAN DEFAULT FALSE,
-  rating DECIMAL(3,2) DEFAULT 0.00,
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS medical_records (
+  record_id SERIAL PRIMARY KEY,
+  pet_id INTEGER NOT NULL,
+  clinic_id INTEGER NOT NULL,
+  user_id INTEGER,
+  visit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  visit_type VARCHAR(50) DEFAULT 'general',
+  reason TEXT,
+  diagnosis TEXT,
+  treatment TEXT,
+  notes TEXT,
+  file_url VARCHAR(500),
+  file_original_name VARCHAR(255),
+  file_mime_type VARCHAR(100),
+  file_size_bytes INTEGER,
+  next_visit_date DATE,
+  follow_up_notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS clinic_specialties (
@@ -123,16 +160,6 @@ CREATE TABLE IF NOT EXISTS clinic_animal_types (
   FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE
 );
 
-
---  VETS  (detail table for business_type = 'vet')
-
-CREATE TABLE IF NOT EXISTS vets (
-  vet_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL UNIQUE,
-  license_number VARCHAR(60),  -- Professional veterinary license
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS vet_specialties (
   vet_id INTEGER NOT NULL,
   specialty_id INTEGER NOT NULL,
@@ -142,120 +169,12 @@ CREATE TABLE IF NOT EXISTS vet_specialties (
 );
 
 CREATE TABLE IF NOT EXISTS vet_animal_types (
-  vet_id INTEGER  NOT NULL,
+  vet_id INTEGER NOT NULL,
   animal_type_id INTEGER NOT NULL,
   PRIMARY KEY (vet_id, animal_type_id),
   FOREIGN KEY (vet_id) REFERENCES vets(vet_id) ON DELETE CASCADE,
   FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE
 );
-
-
---  PETSHOPS  (detail table for business_type = 'petshop')
-CREATE TABLE IF NOT EXISTS petshops (
-  petshop_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL UNIQUE,
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
-);
-
-
---  DOG WALKERS  (detail table for business_type = 'dog_walker')
---  Natural persons — no NIT required.
-CREATE TABLE IF NOT EXISTS dog_walkers (
-  walker_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL UNIQUE,
-  bio TEXT,
-  service_area VARCHAR(200),  -- Neighborhoods / zones they cover
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
-);
-
-
---  DAYCARES  (detail table for business_type = 'daycare')
-CREATE TABLE IF NOT EXISTS daycares (
-  daycare_id SERIAL PRIMARY KEY,
-  business_id INTEGER NOT NULL UNIQUE,
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
-);
-
-
---  DAYCARE SLOTS
---  Defines the weekly time slots a daycare offers.
---  capacity = max pets that can be booked per slot instance.
---
---  Example:
---    Monday  | 08:00 - 13:00 | capacity 10
---    Monday  | 13:00 - 18:00 | capacity 8
-
-CREATE TABLE IF NOT EXISTS daycare_slots (
-  slot_id SERIAL PRIMARY KEY,
-  daycare_id INTEGER NOT NULL,
-  day_of_week VARCHAR(10) NOT NULL CHECK (day_of_week IN ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')),
-  start_time TIME NOT NULL,
-  end_time TIME NOT NULL,
-  capacity INTEGER NOT NULL CHECK (capacity > 0),
-  is_active BOOLEAN DEFAULT TRUE,
-  FOREIGN KEY (daycare_id) REFERENCES daycares(daycare_id) ON DELETE CASCADE
-);
-
-
-
---  PETS  (owned animals) — defined here so daycare_bookings
---  and medical_records can reference it below
-
-CREATE TABLE IF NOT EXISTS pets (
-  pet_id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  name VARCHAR(120) NOT NULL,
-  species VARCHAR(80) NOT NULL,
-  breed VARCHAR(100),
-  birth_date DATE,
-  weight_kg DECIMAL(5,2),
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-
-
---  DAYCARE BOOKINGS
---  A user books a specific slot on a specific calendar date.
---
---  daycare_id removed — slot already belongs to a daycare,
---  join via daycare_slots to get it if needed.
---
---  Availability check (enforced in application layer):
---    SELECT COUNT(*) FROM daycare_bookings
---    WHERE slot_id = $1
---      AND booking_date = $2
---      AND status NOT IN ('cancelled','no_show')
---    → must be < daycare_slots.capacity
-
-CREATE TABLE IF NOT EXISTS daycare_bookings (
-  booking_id SERIAL PRIMARY KEY,
-  slot_id INTEGER NOT NULL,
-  pet_id INTEGER NOT NULL,
-  user_id INTEGER NOT NULL,
-  booking_date DATE NOT NULL,
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending','confirmed','completed','cancelled','no_show')),
-  notes TEXT,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (slot_id) REFERENCES daycare_slots(slot_id) ON DELETE RESTRICT,
-  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT
-);
-
-
---  SHELTERS  (detail table for business_type = 'shelter')
-
-CREATE TABLE IF NOT EXISTS shelters (
-  shelter_id SERIAL PRIMARY KEY,
-  business_id INTEGER  NOT NULL UNIQUE,
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
-);
-
-
---  SHELTER PETS  (animals without an owner, up for adoption)
---  Separate from `pets` — they have no owner yet.
---  On adoption: a row is created in `pets` and `adoptions`,
---  and this record's status is updated to 'adopted'.
 
 CREATE TABLE IF NOT EXISTS shelter_pets (
   shelter_pet_id SERIAL PRIMARY KEY,
@@ -264,97 +183,28 @@ CREATE TABLE IF NOT EXISTS shelter_pets (
   species VARCHAR(80) NOT NULL,
   breed VARCHAR(100),
   birth_date DATE,
-  weight_kg DECIMAL(5,2),
-  gender VARCHAR(10) CHECK (gender IN ('male','female','unknown')),
+  weight_kg DECIMAL(6,2),
+  gender VARCHAR(20),
   description TEXT,
-  image_url VARCHAR(500),
-  status VARCHAR(20) DEFAULT 'available' CHECK (status IN ('available','reserved','adopted','deceased')),
-  intake_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  intake_reason VARCHAR(100) CHECK (intake_reason IN ('rescued','surrendered','stray','transferred','other')),
+  image_url VARCHAR(255),
+  status VARCHAR(30) DEFAULT 'available' CHECK (status IN ('available', 'adopted', 'fostered', 'medical_hold')),
+  intake_date DATE,
+  intake_reason VARCHAR(50) CHECK (intake_reason IN ('stray', 'owner_surrender', 'abandoned', 'rescue', 'transfer', 'other')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE RESTRICT
+  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE CASCADE
 );
 
-
---  ADOPTIONS
---  Flow:
---    1. User picks an available shelter_pet
---    2. A new row is inserted into `pets` (now owned)
---    3. Adoption row is created linking everything
---    4. shelter_pets.status → 'adopted'
-
-CREATE TABLE IF NOT EXISTS adoptions (
-  adoption_id SERIAL PRIMARY KEY,
-  shelter_id INTEGER NOT NULL,
-  shelter_pet_id INTEGER NOT NULL,
-  user_id INTEGER NOT NULL,
-  pet_id INTEGER NOT NULL,  -- New row in pets created at adoption
-  adoption_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  notes TEXT,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE RESTRICT,
-  FOREIGN KEY (shelter_pet_id) REFERENCES shelter_pets(shelter_pet_id) ON DELETE RESTRICT,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
-  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE RESTRICT
+CREATE TABLE IF NOT EXISTS daycare_slots (
+  slot_id SERIAL PRIMARY KEY,
+  daycare_id INTEGER NOT NULL,
+  day_of_week VARCHAR(10) NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  capacity INTEGER NOT NULL DEFAULT 1,
+  is_active BOOLEAN DEFAULT TRUE,
+  UNIQUE (daycare_id, day_of_week, start_time),
+  FOREIGN KEY (daycare_id) REFERENCES daycares(daycare_id) ON DELETE CASCADE
 );
-
-
-
---  MEDICAL RECORDS
---  One record per clinical event.
---  The uploaded file (PDF/image) is the source of truth.
---  clinic_id nullable — owner can upload records manually.
-
-CREATE TABLE IF NOT EXISTS medical_records (
-  record_id SERIAL PRIMARY KEY,
-  pet_id INTEGER NOT NULL,
-  clinic_id INTEGER,                -- NULL = uploaded by owner, no clinic
-  user_id INTEGER NOT NULL,
-  veterinarian VARCHAR(120),
-  visit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  visit_type VARCHAR(60) NOT NULL CHECK (visit_type IN ('Checkup','Vaccination','Surgery','Deworming','Dental','Emergency','Follow-up','Grooming','Other')),
-  reason TEXT,
-  diagnosis TEXT,
-  treatment TEXT,
-  notes TEXT,
-
-  -- Attached file
-  file_url VARCHAR(500),
-  file_original_name VARCHAR(255),
-  file_mime_type VARCHAR(80),
-  file_size_bytes INTEGER,
-
-  next_visit_date DATE,
-  follow_up_notes TEXT,
-
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
-  FOREIGN KEY (clinic_id) REFERENCES clinics(clinic_id) ON DELETE SET NULL,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT
-);
-
-
-
---  EMERGENCIES
---  Only clinics and vets should receive emergencies.
---  Validated at application layer via business_type check.
-
-CREATE TABLE IF NOT EXISTS emergencies (
-  emergency_id SERIAL PRIMARY KEY,
-  pet_id INTEGER NOT NULL,
-  business_id INTEGER NOT NULL,
-  description TEXT NOT NULL,
-  status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open','in_progress','resolved')),
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  resolved_at TIMESTAMP,
-  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
-  FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE RESTRICT
-);
-
-
---  EMERGENCY MESSAGES
 
 CREATE TABLE IF NOT EXISTS emergency_messages (
   message_id SERIAL PRIMARY KEY,
@@ -363,16 +213,63 @@ CREATE TABLE IF NOT EXISTS emergency_messages (
   message TEXT NOT NULL,
   contact_name VARCHAR(120) NOT NULL,
   contact_phone VARCHAR(30),
-  channel VARCHAR(30) DEFAULT 'whatsapp' CHECK (channel IN ('whatsapp','sms','email','call')),
-  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending','sent','resolved')),
+  channel VARCHAR(30) DEFAULT 'whatsapp',
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'resolved')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE RESTRICT,
   FOREIGN KEY (emergency_id) REFERENCES emergencies(emergency_id) ON DELETE SET NULL
 );
 
 
+CREATE TABLE IF NOT EXISTS adoptions (
+  adoption_id SERIAL PRIMARY KEY,
+  shelter_id INTEGER NOT NULL,
+  shelter_pet_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  pet_id INTEGER,
+  adoption_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (shelter_id) REFERENCES shelters(shelter_id) ON DELETE RESTRICT,
+  FOREIGN KEY (shelter_pet_id) REFERENCES shelter_pets(shelter_pet_id) ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE SET NULL
+);
 
---  TRIGGER — auto-update medical_records.updated_at
+CREATE TABLE IF NOT EXISTS daycare_bookings (
+  booking_id SERIAL PRIMARY KEY,
+  slot_id INTEGER NOT NULL,
+  pet_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  booking_date DATE NOT NULL,
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+  notes TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (slot_id) REFERENCES daycare_slots(slot_id) ON DELETE RESTRICT,
+  FOREIGN KEY (pet_id) REFERENCES pets(pet_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+
+CREATE INDEX IF NOT EXISTS idx_businesses_user ON businesses(user_id);
+CREATE INDEX IF NOT EXISTS idx_businesses_type ON businesses(business_type);
+CREATE INDEX IF NOT EXISTS idx_pets_user ON pets(user_id);
+CREATE INDEX IF NOT EXISTS idx_medical_records_pet ON medical_records(pet_id);
+CREATE INDEX IF NOT EXISTS idx_medical_records_clinic ON medical_records(clinic_id);
+CREATE INDEX IF NOT EXISTS idx_emergencies_pet ON emergencies(pet_id);
+CREATE INDEX IF NOT EXISTS idx_emergencies_business ON emergencies(business_id);
+CREATE INDEX IF NOT EXISTS idx_emergency_messages_business ON emergency_messages(business_id);
+CREATE INDEX IF NOT EXISTS idx_emergency_messages_emergency ON emergency_messages(emergency_id);
+CREATE INDEX IF NOT EXISTS idx_schedules_business ON schedules(business_id);
+CREATE INDEX IF NOT EXISTS idx_shelter_pets_shelter ON shelter_pets(shelter_id);
+CREATE INDEX IF NOT EXISTS idx_shelter_pets_status ON shelter_pets(status);
+CREATE INDEX IF NOT EXISTS idx_adoptions_shelter ON adoptions(shelter_id);
+CREATE INDEX IF NOT EXISTS idx_adoptions_user ON adoptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_slots_daycare ON daycare_slots(daycare_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_bookings_slot ON daycare_bookings(slot_id);
+CREATE INDEX IF NOT EXISTS idx_daycare_bookings_user ON daycare_bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_vets_business ON vets(business_id);
+
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
@@ -382,67 +279,79 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trg_medical_records_updated_at ON medical_records;
-CREATE TRIGGER trg_medical_records_updated_at
-BEFORE UPDATE ON medical_records
-FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+CREATE OR REPLACE TRIGGER trg_medical_records_updated_at
+  BEFORE UPDATE ON medical_records
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 
+INSERT INTO users (name, email, password, phone, role) VALUES
+  ('Admin PAWS',       'admin@paws.local',            '123456', NULL,          'admin'),
+  ('Andres Restrepo',  'andres.restrepo@gmail.com',   '123456', '3046712893',  'user'),
+  ('Camila Montoya',   'camila.montoya@hotmail.com',  '123456', '3113489205',  'user'),
+  ('Juan Gomez',       'juangomez94@gmail.com',       '123456', '3204561738',  'user'),
+  ('Natalia Herrera',  'nherrera.med@outlook.com',    '123456', '3157823046',  'user')
+ON CONFLICT (email) DO NOTHING;
 
---  INDEXES
+INSERT INTO businesses (user_id, business_type, name, address, phone, whatsapp, zone, latitude, longitude, image_url, status) VALUES
+  (1, 'clinic', 'Clinica Veterinaria El Poblado',     'Cra. 43A #16-22, El Poblado, Medellin',   '6042567890', '573193052287', 'El Poblado',    6.2086,  -75.5659, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Centro Medico Veterinario Laureles', 'Cra. 76 #33-45, Laureles, Medellin',      '6043234567', '573193052287', 'Laureles',      6.2442,  -75.5906, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria Envigado',               'Cll. 38 Sur #43-12, Envigado, Antioquia', '6044512380', '573193052287', 'Envigado',      6.1700,  -75.5920, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Clinica Animal Belen',               'Cra. 76 #50-23, Belen, Medellin',         '6043987654', '573193052287', 'Belen',         6.2364,  -75.6108, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'VetSalud Sabaneta',                  'Cll. 77 Sur #43-10, Sabaneta, Antioquia', '6044678901', '573193052287', 'Sabaneta',      6.1516,  -75.6149, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria Bello Norte',            'Cra. 50 #45-67, Bello, Antioquia',        '6044234567', '573193052287', 'Bello',         6.3295,  -75.5593, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Clinica Veterinaria Robledo',        'Cra. 80 #65-12, Robledo, Medellin',       '6042901234', '573193052287', 'Robledo',       6.2722,  -75.6100, './frontend/assets/images/lllll.jpg', 'active'),
+  (1, 'clinic', 'Veterinaria La Candelaria',          'Cll. 44 #52-25, La Candelaria, Medellin', '6042512345', '573193052287', 'La Candelaria', 6.2518,  -75.5636, './frontend/assets/images/lllll.jpg', 'active')
+ON CONFLICT DO NOTHING;
 
--- users
-CREATE INDEX IF NOT EXISTS idx_businesses_user ON businesses(user_id);
-CREATE INDEX IF NOT EXISTS idx_businesses_type ON businesses(business_type);
-CREATE INDEX IF NOT EXISTS idx_businesses_zone ON businesses(zone);
--- map queries: find businesses near a location
-CREATE INDEX IF NOT EXISTS idx_businesses_location ON businesses(latitude, longitude);
+INSERT INTO clinics (business_id, service_type, is_24h, rating) VALUES
+  (1, 'private', TRUE,  4.9),
+  (2, 'private', FALSE, 4.8),
+  (3, 'public',  TRUE,  5.0),
+  (4, 'public',  FALSE, 4.7),
+  (5, 'private', FALSE, 4.6),
+  (6, 'public',  FALSE, 4.4),
+  (7, 'public',  FALSE, 4.5),
+  (8, 'public',  TRUE,  4.3)
+ON CONFLICT DO NOTHING;
 
--- schedules
-CREATE INDEX IF NOT EXISTS idx_schedules_business ON schedules(business_id);
+INSERT INTO specialties (name) VALUES
+  ('Vaccination'),
+  ('Grooming'),
+  ('Surgery'),
+  ('X-Ray'),
+  ('Dental'),
+  ('Cardiology'),
+  ('Laboratory'),
+  ('Physiotherapy'),
+  ('Emergency'),
+  ('Boarding')
+ON CONFLICT (name) DO NOTHING;
 
--- clinics
-CREATE INDEX IF NOT EXISTS idx_clinic_specialties ON clinic_specialties(clinic_id);
-CREATE INDEX IF NOT EXISTS idx_clinic_animal_types ON clinic_animal_types(clinic_id);
+INSERT INTO animal_types (name) VALUES
+  ('Dog'),
+  ('Cat'),
+  ('Bird'),
+  ('Rabbit'),
+  ('Exotic'),
+  ('Reptile'),
+  ('Fish')
+ON CONFLICT (name) DO NOTHING;
 
--- vets
-CREATE INDEX IF NOT EXISTS idx_vet_specialties ON vet_specialties(vet_id);
-CREATE INDEX IF NOT EXISTS idx_vet_animal_types ON vet_animal_types(vet_id);
+INSERT INTO clinic_specialties (clinic_id, specialty_id) VALUES
+  (1, 3), (1, 4), (1, 5), (1, 9),
+  (2, 6), (2, 1), (2, 7),
+  (3, 7), (3, 8), (3, 9),
+  (4, 1), (4, 5), (4, 2),
+  (5, 3), (5, 4), (5, 10),
+  (6, 1), (6, 2), (6, 10),
+  (7, 1), (7, 7), (7, 5),
+  (8, 3), (8, 9), (8, 6)
+ON CONFLICT DO NOTHING;
 
--- pets
-CREATE INDEX IF NOT EXISTS idx_pets_user ON pets(user_id);
-
--- medical records
-CREATE INDEX IF NOT EXISTS idx_medical_records_pet ON medical_records(pet_id);
-CREATE INDEX IF NOT EXISTS idx_medical_records_clinic ON medical_records(clinic_id);
-CREATE INDEX IF NOT EXISTS idx_medical_records_user ON medical_records(user_id);
-CREATE INDEX IF NOT EXISTS idx_medical_records_date ON medical_records(visit_date);
-
--- daycare
-CREATE INDEX IF NOT EXISTS idx_daycare_slots_daycare ON daycare_slots(daycare_id);
-CREATE INDEX IF NOT EXISTS idx_daycare_bookings_slot ON daycare_bookings(slot_id);
-CREATE INDEX IF NOT EXISTS idx_daycare_bookings_date ON daycare_bookings(booking_date);
-CREATE INDEX IF NOT EXISTS idx_daycare_bookings_pet ON daycare_bookings(pet_id);
-CREATE INDEX IF NOT EXISTS idx_daycare_bookings_user ON daycare_bookings(user_id);
-
--- shelters
-CREATE INDEX IF NOT EXISTS idx_shelter_pets_shelter ON shelter_pets(shelter_id);
--- partial index: only indexes pets that are actually available — keeps it small and fast
-CREATE INDEX IF NOT EXISTS idx_shelter_pets_available ON shelter_pets(shelter_id)
-  WHERE status = 'available';
-
--- adoptions
-CREATE INDEX IF NOT EXISTS idx_adoptions_shelter ON adoptions(shelter_id);
-CREATE INDEX IF NOT EXISTS idx_adoptions_user ON adoptions(user_id);
-CREATE INDEX IF NOT EXISTS idx_adoptions_pet ON adoptions(pet_id);
-
--- emergencies
-CREATE INDEX IF NOT EXISTS idx_emergencies_pet ON emergencies(pet_id);
-CREATE INDEX IF NOT EXISTS idx_emergencies_business ON emergencies(business_id);
-CREATE INDEX IF NOT EXISTS idx_emergency_msg_business ON emergency_messages(business_id);
-CREATE INDEX IF NOT EXISTS idx_emergency_msg_emergency ON emergency_messages(emergency_id);
-
-
-
-COMMIT;
-
+INSERT INTO pets (user_id, name, animal_type_id, breed, birth_date, weight_kg) VALUES
+  (2, 'Bruno', (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'Golden Retriever', '2023-03-15', 30.5),
+  (2, 'Mochi', (SELECT animal_type_id FROM animal_types WHERE name = 'Cat'), 'Persian',          '2024-03-15', 4.2),
+  (3, 'Coco',  (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'French Bulldog',   '2022-03-15', 12.0),
+  (4, 'Nina',  (SELECT animal_type_id FROM animal_types WHERE name = 'Cat'), 'Siamese',          '2025-03-15', 3.8),
+  (5, 'Dante', (SELECT animal_type_id FROM animal_types WHERE name = 'Dog'), 'Labrador',         '2020-03-15', 32.0)
+ON CONFLICT DO NOTHING;
