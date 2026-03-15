@@ -6,53 +6,114 @@
 // ─────────────────────────────────────────────
 
 // ── Estado desde localStorage ─────────────────
+// ── Defaults locales (se sobreescriben con datos de la API) ──
+const VET_DEFAULTS = {
+  clinicName: "My Clinic",
+  description: "We provide comprehensive care for pets with modern technology, specialized staff, and a focus on animal wellbeing.",
+  phone: "",
+  address: "Medellin, Colombia",
+  schedule: [
+    { day: "Monday", hours: "09:00 - 20:00", closed: false },
+    { day: "Tuesday", hours: "10:00 - 18:00", closed: false },
+    { day: "Wednesday", hours: "10:00 - 18:00", closed: false },
+    { day: "Thursday", hours: "10:00 - 18:00", closed: false },
+    { day: "Friday", hours: "10:00 - 18:00", closed: false },
+    { day: "Saturday", hours: "10:00 - 14:00", closed: false },
+    { day: "Sunday", hours: "", closed: true },
+  ],
+  services: [
+    { id: 1, label: "Vaccination", bg: "bg-paws-green/20", icon: "syringe" },
+    { id: 2, label: "Consultation", bg: "bg-paws-blue/20", icon: "clipboard" },
+    { id: 3, label: "X-Ray", bg: "bg-paws-pink/20", icon: "document" },
+    { id: 4, label: "Laboratory", bg: "bg-paws-purple/20", icon: "lab" },
+    { id: 5, label: "Surgery", bg: "bg-paws-yellow/30", icon: "heart" },
+    { id: 6, label: "Deworming", bg: "bg-paws-green/20", icon: "plus" },
+  ],
+  team: [
+    { id: 1, initials: "CC", name: "Dr. Carlos Cardona", role: "General Veterinary", bg: "bg-paws-green" },
+    { id: 2, initials: "AR", name: "Dra. Ana Ruiz", role: "Specialist in Surgery", bg: "bg-paws-pink" },
+  ],
+};
+
 function getVetData() {
-  const defaults = {
-    clinicName:  "My Clinic",
-    description: "We provide comprehensive care for pets with modern technology, specialized staff, and a focus on animal wellbeing. Our commitment is to offer precise diagnoses and close service for each patient.",
-    phone:       "",
-    address:     "Medellin, Colombia",
-    schedule: [
-      { day: "Monday",    hours: "09:00 - 20:00", closed: false },
-      { day: "Tuesday",   hours: "10:00 - 18:00", closed: false },
-      { day: "Wednesday", hours: "10:00 - 18:00", closed: false },
-      { day: "Thursday",  hours: "10:00 - 18:00", closed: false },
-      { day: "Friday",    hours: "10:00 - 18:00", closed: false },
-      { day: "Saturday",  hours: "10:00 - 14:00", closed: false },
-      { day: "Sunday",    hours: "",               closed: true  },
-    ],
-    services: [
-      { id: 1, label: "Vaccination",  bg: "bg-paws-green/20",  icon: "syringe"   },
-      { id: 2, label: "Consultation", bg: "bg-paws-blue/20",   icon: "clipboard" },
-      { id: 3, label: "X-Ray",        bg: "bg-paws-pink/20",   icon: "document"  },
-      { id: 4, label: "Laboratory",   bg: "bg-paws-purple/20", icon: "lab"       },
-      { id: 5, label: "Surgery",      bg: "bg-paws-yellow/30", icon: "heart"     },
-      { id: 6, label: "Deworming",    bg: "bg-paws-green/20",  icon: "plus"      },
-    ],
-    team: [
-      { id: 1, initials: "CC", name: "Dr. Carlos Cardona", role: "General Veterinary",    bg: "bg-paws-green" },
-      { id: 2, initials: "AR", name: "Dra. Ana Ruiz",      role: "Specialist in Surgery", bg: "bg-paws-pink"  },
-    ],
-  };
   try {
     const saved = localStorage.getItem("vet_dashboard");
-    return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
-  } catch { return defaults; }
+    return saved ? { ...VET_DEFAULTS, ...JSON.parse(saved) } : { ...VET_DEFAULTS };
+  } catch { return { ...VET_DEFAULTS }; }
 }
 
 function saveVetData(data) {
   localStorage.setItem("vet_dashboard", JSON.stringify(data));
 }
 
+// ── Carga datos del negocio desde la API y actualiza el estado local ──
+async function loadBusinessFromAPI() {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user) return;
+    const userId = user.user_id || user.id;
+
+    const res = await fetch("/api/businesses");
+    if (!res.ok) return;
+    const businesses = await res.json();
+    const biz = businesses.find(b => b.user_id === userId);
+    if (!biz) return;
+
+    // Mapear campos de la API al formato local
+    const local = getVetData();
+    local.clinicName = biz.name || local.clinicName;
+    local.phone = biz.phone || local.phone;
+    local.address = biz.address || local.address;
+    local.description = biz.description || local.description;
+    local._business_id = biz.business_id;
+
+    // Mapear horario si viene de la API
+    if (biz.schedule && biz.schedule.length > 0) {
+      local.schedule = biz.schedule.map(s => ({
+        day: s.day_of_week,
+        hours: s.is_open ? `${s.open_time || ''} - ${s.close_time || ''}` : '',
+        closed: !s.is_open
+      }));
+    }
+
+    saveVetData(local);
+
+    // Actualizar DOM si ya está montado
+    const el = id => document.getElementById(id);
+    if (el("vet-banner-name")) el("vet-banner-name").textContent = local.clinicName;
+    if (el("vet-description")) el("vet-description").textContent = local.description;
+    if (el("vet-address")) el("vet-address").textContent = local.address;
+
+    return local;
+  } catch (err) {
+    console.error("Error loading business from API:", err);
+  }
+}
+
+// ── Persiste cambios del perfil en la API ──
+async function saveProfileToAPI(data) {
+  try {
+    const businessId = data._business_id;
+    if (!businessId) return;
+    await fetch(`/api/businesses/${businessId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: data.clinicName, phone: data.phone, address: data.address })
+    });
+  } catch (err) {
+    console.error("Error saving profile to API:", err);
+  }
+}
+
 // ── SVG paths por tipo de icono ───────────────
 function serviceIconPath(type) {
   const icons = {
-    syringe:   `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
+    syringe: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
     clipboard: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>`,
-    document:  `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>`,
-    lab:       `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
-    heart:     `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>`,
-    plus:      `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>`,
+    document: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>`,
+    lab: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
+    heart: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>`,
+    plus: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>`,
   };
   return icons[type] || icons.plus;
 }
@@ -127,7 +188,7 @@ const INP = `width:100%;padding:9px 12px;font-size:13px;border:1px solid #E5E7EB
              border-radius:12px;font-family:'Roboto',sans-serif;outline:none;
              transition:border-color 150ms,box-shadow 150ms;box-sizing:border-box;`;
 const FOCUS = `this.style.borderColor='#6A4C93';this.style.boxShadow='0 0 0 3px rgba(106,76,147,0.15)'`;
-const BLUR  = `this.style.borderColor='#E5E7EB';this.style.boxShadow='none'`;
+const BLUR = `this.style.borderColor='#E5E7EB';this.style.boxShadow='none'`;
 
 // ── Modal wrapper helper ──────────────────────
 function modal(id, title, subtitle, body) {
@@ -163,12 +224,12 @@ function modal(id, title, subtitle, body) {
 // ─────────────────────────────────────────────
 export function vetDashboardPage() {
   const data = getVetData();
-  const bgOptions   = ["bg-paws-green/20","bg-paws-blue/20","bg-paws-pink/20","bg-paws-purple/20","bg-paws-yellow/30"];
-  const iconOptions = ["syringe","clipboard","document","lab","heart","plus"];
-  const bgMembers   = ["bg-paws-green","bg-paws-pink","bg-paws-blue","bg-paws-purple","bg-paws-yellow"];
+  const bgOptions = ["bg-paws-green/20", "bg-paws-blue/20", "bg-paws-pink/20", "bg-paws-purple/20", "bg-paws-yellow/30"];
+  const iconOptions = ["syringe", "clipboard", "document", "lab", "heart", "plus"];
+  const bgMembers = ["bg-paws-green", "bg-paws-pink", "bg-paws-blue", "bg-paws-purple", "bg-paws-yellow"];
 
   // ── Modal: Edit Profile + General Info ──────
-  const modalProfile = modal("modal-vet-profile", "Edit Clinic Profile", "Saved to localStorage", `
+  const modalProfile = modal("modal-vet-profile", "Edit Clinic Profile", "Saved", `
     <div class="flex flex-col gap-4">
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Clinic name</label>
@@ -234,7 +295,7 @@ export function vetDashboardPage() {
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Background color</label>
         <select id="svc-bg" class="w-full border border-gray-200 rounded-xl font-roboto text-text-primary outline-none bg-white" style="padding:9px 12px;font-size:13px;" onfocus="${FOCUS}" onblur="${BLUR}">
-          ${bgOptions.map(b => `<option value="${b}">${b.replace('bg-paws-','').replace('/20','').replace('/30','')}</option>`).join('')}
+          ${bgOptions.map(b => `<option value="${b}">${b.replace('bg-paws-', '').replace('/20', '').replace('/30', '')}</option>`).join('')}
         </select>
       </div>
       <div>
@@ -272,7 +333,7 @@ export function vetDashboardPage() {
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Avatar color</label>
         <select id="tm-bg" class="w-full border border-gray-200 rounded-xl font-roboto text-text-primary outline-none bg-white" style="padding:9px 12px;font-size:13px;" onfocus="${FOCUS}" onblur="${BLUR}">
-          ${bgMembers.map(b => `<option value="${b}">${b.replace('bg-paws-','')}</option>`).join('')}
+          ${bgMembers.map(b => `<option value="${b}">${b.replace('bg-paws-', '')}</option>`).join('')}
         </select>
       </div>
       <div style="height:1px;background:#F3F4F6;"></div>
@@ -456,8 +517,10 @@ export function vetDashboardPage() {
 // ─────────────────────────────────────────────
 export function vetDashboardEvents() {
   let data = getVetData();
+  // Cargar datos reales desde la API en segundo plano
+  loadBusinessFromAPI().then(apiData => { if (apiData) data = apiData; });
 
-  const openModal  = id => { const m = document.getElementById(id); if (m) m.style.display = "flex"; };
+  const openModal = id => { const m = document.getElementById(id); if (m) m.style.display = "flex"; };
   const closeModal = id => { const m = document.getElementById(id); if (m) m.style.display = "none"; };
 
   const showSuccess = (elId, modalId) => {
@@ -473,7 +536,7 @@ export function vetDashboardEvents() {
   });
 
   // ── Backdrop click ───────────────────────────
-  ["modal-vet-profile","modal-vet-schedule","modal-vet-service","modal-vet-team"].forEach(id => {
+  ["modal-vet-profile", "modal-vet-schedule", "modal-vet-service", "modal-vet-team"].forEach(id => {
     document.getElementById(id)?.addEventListener("click", e => {
       if (e.target === document.getElementById(id)) closeModal(id);
     });
@@ -484,26 +547,27 @@ export function vetDashboardEvents() {
   // ────────────────────────────────────────────
   document.getElementById("btn-open-profile")?.addEventListener("click", () => {
     data = getVetData();
-    document.getElementById("vp-name").value        = data.clinicName;
-    document.getElementById("vp-phone").value       = data.phone;
-    document.getElementById("vp-address").value     = data.address;
+    document.getElementById("vp-name").value = data.clinicName;
+    document.getElementById("vp-phone").value = data.phone;
+    document.getElementById("vp-address").value = data.address;
     document.getElementById("vp-description").value = data.description;
     openModal("modal-vet-profile");
   });
 
   document.getElementById("btn-save-profile")?.addEventListener("click", () => {
     data = getVetData();
-    data.clinicName  = document.getElementById("vp-name").value.trim()        || data.clinicName;
-    data.phone       = document.getElementById("vp-phone").value.trim();
-    data.address     = document.getElementById("vp-address").value.trim()     || data.address;
+    data.clinicName = document.getElementById("vp-name").value.trim() || data.clinicName;
+    data.phone = document.getElementById("vp-phone").value.trim();
+    data.address = document.getElementById("vp-address").value.trim() || data.address;
     data.description = document.getElementById("vp-description").value.trim() || data.description;
     saveVetData(data);
+    saveProfileToAPI(data);
 
     // Live DOM update
     const el = id => document.getElementById(id);
     if (el("vet-banner-name")) el("vet-banner-name").textContent = data.clinicName;
     if (el("vet-description")) el("vet-description").textContent = data.description;
-    if (el("vet-address"))     el("vet-address").textContent     = data.address;
+    if (el("vet-address")) el("vet-address").textContent = data.address;
 
     showSuccess("profile-success", "modal-vet-profile");
   });
@@ -533,7 +597,7 @@ export function vetDashboardEvents() {
     data = getVetData();
     data.schedule = data.schedule.map((s, i) => ({
       ...s,
-      hours:  document.querySelector(`.schedule-hours[data-index="${i}"]`)?.value.trim() || s.hours,
+      hours: document.querySelector(`.schedule-hours[data-index="${i}"]`)?.value.trim() || s.hours,
       closed: document.querySelector(`.schedule-closed[data-index="${i}"]`)?.checked ?? s.closed,
     }));
     saveVetData(data);
@@ -547,7 +611,7 @@ export function vetDashboardEvents() {
   // ────────────────────────────────────────────
   document.getElementById("btn-open-service")?.addEventListener("click", () => {
     document.getElementById("svc-edit-id").value = "";
-    document.getElementById("svc-name").value    = "";
+    document.getElementById("svc-name").value = "";
     const titleEl = document.querySelector("#modal-vet-service .modal-title");
     if (titleEl) titleEl.textContent = "Add Service";
     openModal("modal-vet-service");
@@ -555,9 +619,9 @@ export function vetDashboardEvents() {
 
   document.getElementById("btn-save-service")?.addEventListener("click", () => {
     const editId = document.getElementById("svc-edit-id").value;
-    const label  = document.getElementById("svc-name").value.trim();
-    const bg     = document.getElementById("svc-bg").value;
-    const icon   = document.getElementById("svc-icon").value;
+    const label = document.getElementById("svc-name").value.trim();
+    const bg = document.getElementById("svc-bg").value;
+    const icon = document.getElementById("svc-icon").value;
     if (!label) return;
 
     data = getVetData();
@@ -579,7 +643,7 @@ export function vetDashboardEvents() {
   //  4. TEAM
   // ────────────────────────────────────────────
   document.getElementById("btn-open-team")?.addEventListener("click", () => {
-    ["tm-edit-id","tm-name","tm-initials","tm-role"].forEach(id => {
+    ["tm-edit-id", "tm-name", "tm-initials", "tm-role"].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = "";
     });
     const titleEl = document.querySelector("#modal-vet-team .modal-title");
@@ -588,18 +652,18 @@ export function vetDashboardEvents() {
   });
 
   document.getElementById("btn-save-member")?.addEventListener("click", () => {
-    const editId   = document.getElementById("tm-edit-id").value;
-    const name     = document.getElementById("tm-name").value.trim();
+    const editId = document.getElementById("tm-edit-id").value;
+    const name = document.getElementById("tm-name").value.trim();
     const initials = document.getElementById("tm-initials").value.trim().toUpperCase();
-    const role     = document.getElementById("tm-role").value.trim();
-    const bg       = document.getElementById("tm-bg").value;
+    const role = document.getElementById("tm-role").value.trim();
+    const bg = document.getElementById("tm-bg").value;
     if (!name) return;
 
     data = getVetData();
     if (editId) {
       data.team = data.team.map(m => String(m.id) === editId ? { ...m, name, initials, role, bg } : m);
     } else {
-      data.team.push({ id: Date.now(), name, initials: initials || name.slice(0,2).toUpperCase(), role, bg });
+      data.team.push({ id: Date.now(), name, initials: initials || name.slice(0, 2).toUpperCase(), role, bg });
     }
     saveVetData(data);
     const list = document.getElementById("team-list");
@@ -642,11 +706,11 @@ export function vetDashboardEvents() {
         data = getVetData();
         const m = data.team.find(t => String(t.id) === String(btn.dataset.id));
         if (!m) return;
-        document.getElementById("tm-edit-id").value   = String(m.id);
-        document.getElementById("tm-name").value      = m.name;
-        document.getElementById("tm-initials").value  = m.initials;
-        document.getElementById("tm-role").value      = m.role;
-        document.getElementById("tm-bg").value        = m.bg;
+        document.getElementById("tm-edit-id").value = String(m.id);
+        document.getElementById("tm-name").value = m.name;
+        document.getElementById("tm-initials").value = m.initials;
+        document.getElementById("tm-role").value = m.role;
+        document.getElementById("tm-bg").value = m.bg;
         const titleEl = document.querySelector("#modal-vet-team .modal-title");
         if (titleEl) titleEl.textContent = "Edit Member";
         openModal("modal-vet-team");

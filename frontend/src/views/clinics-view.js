@@ -136,11 +136,11 @@ function renderClinicCard(clinic) {
 
       <!-- Image -->
       <div class="relative h-44 overflow-hidden" style="background:var(--bg-muted);">
-        <img src="${clinic.imagen || './frontend/assets/images/clinic-placeholder.jpg'}"
-             alt="${clinic.nombre}"
+        <img src="${clinic.image_url || './frontend/assets/images/clinic-placeholder.jpg'}"
+             alt="${clinic.name}"
              class="w-full h-full object-cover"/>
         <div class="absolute top-3 left-3 flex gap-2">
-          ${clinic.estado === 'Activa' ? `
+          ${clinic.status === 'active' ? `
             <span class="text-xs font-bold px-2.5 py-1 rounded-full"
                   style="background:var(--color-green);color:var(--text-primary);">
               ● Open
@@ -148,14 +148,14 @@ function renderClinicCard(clinic) {
         </div>
         <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full"
              style="background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);">
-          <span class="text-xs font-bold" style="color:#d97706;">★ ${clinic.rating || '4.9'}</span>
+          <span class="text-xs font-bold" style="color:#d97706;">★ ${clinic.rating || '—'}</span>
         </div>
       </div>
 
       <!-- Body -->
       <div class="p-5">
         <h3 class="font-bold font-poppins mb-1" style="font-size:15px;color:var(--text-primary);">
-          ${clinic.nombre}
+          ${clinic.name}
         </h3>
         <div class="flex items-start gap-1.5 mb-4" style="color:var(--text-muted);">
           <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,7 +164,7 @@ function renderClinicCard(clinic) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span class="text-xs">${clinic.direccion}</span>
+          <span class="text-xs">${clinic.address || clinic.zone || ''}</span>
         </div>
 
         <!-- Action buttons -->
@@ -178,7 +178,7 @@ function renderClinicCard(clinic) {
                onmouseleave="this.style.opacity='1'">
               📞 Call
             </a>` : ''}
-          <button onclick="viewClinicDetails(${clinic.id_veterinaria})"
+          <button onclick="viewClinicDetails(${clinic.business_id})"
             class="flex-1 py-2 px-3 rounded-xl font-poppins font-semibold text-xs transition"
             style="border:1.5px solid var(--text-highlight);color:var(--text-highlight);
                    background:transparent;transition:var(--transition-fast);"
@@ -188,7 +188,7 @@ function renderClinicCard(clinic) {
           </button>
         </div>
 
-        <button onclick="window.open('https://api.whatsapp.com/send/?phone=%2B573193052287&text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.nombre)}&type=phone_number&app_absent=0','_blank')"
+        <button onclick="window.open('https://api.whatsapp.com/send/?phone=%2B573193052287&text=Hola%20quiero%20informacion%20sobre%20${encodeURIComponent(clinic.name)}&type=phone_number&app_absent=0','_blank')"
           class="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl
                  font-poppins font-semibold text-xs text-white transition"
           style="background:#16a34a;transition:var(--transition-fast);"
@@ -211,7 +211,7 @@ export async function initClinicsView() {
   if (!grid) return;
 
   try {
-    const res = await fetch('/api/clinics');
+    const res = await fetch('/api/businesses?type=clinic');
     if (!res.ok) throw new Error('Error loading clinics');
     const clinics = await res.json();
 
@@ -256,26 +256,99 @@ export function clinicsEvents() {
     if (e.key === 'Enter') document.getElementById('btn-clinic-search')?.click();
   });
 
-  // Filter chips
+  // Filter chips — conectados con la API
+  let allClinics = [];
+  let activeFilter = 'all';
+
+  async function fetchAndRender(filter = 'all', search = '') {
+    const grid = document.getElementById('clinics-grid');
+    const countEl = document.getElementById('results-count');
+    if (!grid) return;
+
+    grid.innerHTML = `<div class="col-span-3 flex items-center justify-center gap-2 py-16"
+      style="color:var(--text-muted);">
+      <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span class="text-sm font-poppins">Loading clinics...</span></div>`;
+
+    try {
+      // Obtener especialidades del catálogo para mapear filtros
+      let url = '/api/businesses?type=clinic';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Error loading clinics');
+      allClinics = await res.json();
+
+      // Filtrar por especialidad
+      let filtered = allClinics;
+      if (filter !== 'all') {
+        filtered = allClinics.filter(c => {
+          const specs = (c.specialties || []).map(s => s.name.toLowerCase());
+          const filterMap = {
+            emergency: ['emergency', 'urgencias'],
+            surgery: ['surgery', 'cirugía', 'cirugia'],
+            cardiology: ['cardiology', 'cardiología', 'cardiologia'],
+            dental: ['dental', 'odontología', 'odontologia'],
+            lab: ['laboratory', 'laboratorio', 'lab']
+          };
+          const terms = filterMap[filter] || [filter];
+          return specs.some(s => terms.some(t => s.includes(t))) || c.is_24h && filter === 'emergency';
+        });
+      }
+
+      // Filtrar por búsqueda de texto
+      if (search) {
+        const q = search.toLowerCase();
+        filtered = filtered.filter(c =>
+          (c.name || '').toLowerCase().includes(q) ||
+          (c.address || '').toLowerCase().includes(q) ||
+          (c.zone || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Ordenar
+      const sort = document.getElementById('sort-select')?.value || 'rating';
+      if (sort === 'rating') filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      else if (sort === 'name') filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      if (countEl) countEl.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-3 text-center py-16">
+          <p class="text-4xl mb-3">🏥</p>
+          <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
+          <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p></div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(renderClinicCard).join('');
+    } catch (err) {
+      grid.innerHTML = `<div class="col-span-3 text-center py-16">
+        <p class="text-4xl mb-3">⚠️</p>
+        <p class="font-poppins font-medium" style="color:#dc2626;">Error loading clinics</p>
+        <p class="text-sm mt-1" style="color:var(--text-muted);">${err.message}</p></div>`;
+    }
+  }
+
   document.querySelectorAll('.clinic-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.clinic-filter-btn')
-        .forEach(b => b.classList.remove('clinic-filter-active'));
+      document.querySelectorAll('.clinic-filter-btn').forEach(b => b.classList.remove('clinic-filter-active'));
       btn.classList.add('clinic-filter-active');
-      // filterClinics(btn.dataset.filter) — conectar cuando la lógica esté lista
+      activeFilter = btn.dataset.filter;
+      const search = document.getElementById('clinic-search')?.value.trim() || '';
+      fetchAndRender(activeFilter, search);
     });
   });
 
-  // Sort select
-  document.getElementById('sort-select')?.addEventListener('change', e => {
-    // sortClinics(e.target.value) — conectar cuando la lógica esté lista
+  document.getElementById('sort-select')?.addEventListener('change', () => {
+    const search = document.getElementById('clinic-search')?.value.trim() || '';
+    fetchAndRender(activeFilter, search);
   });
 
-  // Load more
   document.getElementById('btn-load-more')?.addEventListener('click', () => {
-    // loadMoreClinics() — conectar cuando la lógica esté lista
+    // Cargar más — implementar paginación cuando sea necesario
   });
 
-  // Load initial data
-  initClinicsView();
+  // Carga inicial
+  fetchAndRender();
 }

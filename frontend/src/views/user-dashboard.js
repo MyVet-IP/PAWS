@@ -355,17 +355,25 @@ export function dashboardEvents() {
 
   // ── Save pet ──────────────────────────────
   document.getElementById('btn-save-pet')?.addEventListener('click', async () => {
-    const nombre = document.getElementById('pet-nombre')?.value.trim();
-    const especie = document.getElementById('pet-especie')?.value;
-    const raza = document.getElementById('pet-raza')?.value.trim();
-    const edad = parseInt(document.getElementById('pet-edad')?.value);
+    const name = document.getElementById('pet-nombre')?.value.trim();
+    const species = document.getElementById('pet-especie')?.value;
+    const breed = document.getElementById('pet-raza')?.value.trim();
+    const age = parseInt(document.getElementById('pet-edad')?.value);
 
-    if (!nombre || isNaN(edad)) return;
+    if (!name || isNaN(age)) return;
 
-    const body = { nombre, especie, raza, edad, id_cliente: user?.id_cliente };
+    // animal_type_id: 1=Dog, 2=Cat, 3=Other (según seed de la BD)
+    const SPECIES_MAP = { Dog: 1, Cat: 2, Other: 3 };
+    const animal_type_id = SPECIES_MAP[species] || 3;
+
+    // birth_date aproximada a partir de la edad en años
+    const birthYear = new Date().getFullYear() - age;
+    const birth_date = `${birthYear}-01-01`;
+
+    const body = { name, animal_type_id, breed: breed || null, birth_date, user_id: user?.user_id || user?.id };
 
     try {
-      const res = await fetch('/api/mascotas', {
+      const res = await fetch('/api/pets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -376,6 +384,9 @@ export function dashboardEvents() {
         document.getElementById('pet-raza').value = '';
         document.getElementById('pet-edad').value = '';
         loadPets(user);
+      } else {
+        const err = await res.json();
+        console.error('Error saving pet:', err);
       }
     } catch (err) {
       console.error('Error adding pet:', err);
@@ -396,7 +407,8 @@ async function loadPets(user) {
   if (!grid || !user) return;
 
   try {
-    const res = await fetch(`/api/users/${user.id_cliente}/dashboard`);
+    const userId = user.user_id || user.id;
+    const res = await fetch(`/api/users/${userId}/dashboard`);
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
     const pets = data.pets || [];
@@ -435,34 +447,43 @@ async function loadPets(user) {
       return;
     }
 
-    const cards = pets.map(p => `
+    // API devuelve: pet_id, name, breed, species_name, birth_date, medical_records
+    const cards = pets.map(p => {
+      const species = p.species_name || '';
+      const isCat = species.toLowerCase().includes('cat');
+      const emoji = isCat ? '🐱' : species.toLowerCase().includes('dog') ? '🐶' : '🐾';
+      const bg = isCat ? 'rgba(241,192,232,0.30)' : 'rgba(185,251,192,0.30)';
+      const records = (p.medical_records || []).length;
+      let ageText = '';
+      if (p.birth_date) {
+        const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
+        ageText = `${yrs} ${yrs === 1 ? 'year' : 'years'}`;
+      }
+      return `
       <div class="bg-white rounded-2xl p-4 cursor-pointer transition"
-           style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);
-                  transition:var(--transition-fast);"
+           style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);transition:var(--transition-fast);"
            onclick="window.location.hash='#/pet-profile'"
            onmouseenter="this.style.boxShadow='var(--shadow-soft)';this.style.transform='translateY(-2px)'"
            onmouseleave="this.style.boxShadow='var(--shadow-card)';this.style.transform='none'">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-               style="background:${p.especie === 'Cat'
-        ? 'rgba(241,192,232,0.30)'
-        : 'rgba(185,251,192,0.30)'};">
-            ${p.especie === 'Cat' ? '🐱' : p.especie === 'Dog' ? '🐶' : '🐾'}
-          </div>
+               style="background:${bg};">${emoji}</div>
           <div class="flex-1 min-w-0">
-            <p class="font-bold font-poppins text-sm truncate" style="color:var(--text-primary);">${p.nombre}</p>
-            <p class="text-xs truncate" style="color:var(--text-muted);">${p.raza || p.especie}</p>
+            <p class="font-bold font-poppins text-sm truncate" style="color:var(--text-primary);">${p.name}</p>
+            <p class="text-xs truncate" style="color:var(--text-muted);">${p.breed || species}</p>
           </div>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
-                style="background:rgba(185,251,192,0.35);color:var(--color-green-dark);">
-            ${p.edad} ${p.edad === 1 ? 'year' : 'years'}
-          </span>
-          <span class="text-xs font-semibold font-poppins" style="color:var(--text-highlight);">View →</span>
+          ${ageText
+          ? `<span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    style="background:rgba(185,251,192,0.35);color:var(--color-green-dark);">${ageText}</span>`
+          : '<span></span>'}
+          ${records > 0
+          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);">📋 ${records} record${records !== 1 ? 's' : ''}</span>`
+          : `<span class="text-xs font-semibold font-poppins" style="color:var(--text-highlight);">View →</span>`}
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
     grid.innerHTML = cards + addCard;
 
@@ -471,7 +492,7 @@ async function loadPets(user) {
     grid.innerHTML = `
       <div class="col-span-2 text-center py-4">
         <p class="text-sm" style="color:var(--text-muted);">Could not load pets.
-          <button onclick="dashboardEvents()" class="underline"
+          <button onclick="loadPets(JSON.parse(localStorage.getItem('user')||'null'))" class="underline"
                   style="color:var(--text-highlight);">Retry</button>
         </p>
       </div>`;
@@ -484,17 +505,25 @@ async function loadPets(user) {
 async function loadNextAppointment(user) {
   if (!user) return;
   try {
-    const res = await fetch(`/api/users/${user.id_cliente}/appointments`);
+    const userId = user.user_id || user.id;
+    const res = await fetch(`/api/users/${userId}/appointments`);
     if (!res.ok) return;
-    const data = await res.json();
-    const next = Array.isArray(data) ? data[0] : null;
+    const appointments = await res.json();
+    // Filtrar solo citas futuras y tomar la primera
+    const now = new Date();
+    const upcoming = (Array.isArray(appointments) ? appointments : [])
+      .filter(a => new Date(a.date) >= now && a.status !== 'cancelled');
+    const next = upcoming[0] || null;
 
     const textEl = document.getElementById('next-appointment-text');
     const subEl = document.getElementById('next-appointment-sub');
 
     if (next && textEl) {
-      textEl.textContent = next.tipo || next.title || 'Appointment scheduled';
-      if (subEl) subEl.textContent = next.fecha || next.date || '';
+      textEl.textContent = next.business_name || next.notes || 'Appointment scheduled';
+      if (subEl) {
+        const d = new Date(next.date);
+        subEl.textContent = `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${next.time || ''}`;
+      }
     }
   } catch {
     // silently fail — default text already shown

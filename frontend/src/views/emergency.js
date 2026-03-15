@@ -240,11 +240,14 @@ export async function emergencyEvents() {
     }
 
     try {
-      const response = await fetch('/api/veterinarias');
+      const response = await fetch('/api/businesses?type=clinic');
+      if (!response.ok) throw new Error('Error fetching clinics');
       const clinics = await response.json();
 
+      // Filtrar clínicas 24h o que tengan especialidad de emergencia
       const emergencyClinics = clinics.filter(c =>
-        c.servicios_emergencia || c.servicios?.includes('Emergencias 24/7')
+        c.is_24h === true ||
+        (c.specialties || []).some(s => s.name.toLowerCase().includes('emergenc') || s.name.toLowerCase().includes('urgenc'))
       );
 
       if (countEl) countEl.textContent = `${emergencyClinics.length} found`;
@@ -264,7 +267,7 @@ export async function emergencyEvents() {
              style="border-left:4px solid #dc2626;">
           <div class="p-5">
             <div class="flex items-start justify-between mb-3">
-              <h3 class="font-bold text-text-primary font-poppins">${clinic.nombre}</h3>
+              <h3 class="font-bold text-text-primary font-poppins">${clinic.name}</h3>
               <span class="text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0 ml-2"
                     style="background:#dc2626;color:white;">24/7</span>
             </div>
@@ -274,11 +277,11 @@ export async function emergencyEvents() {
                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
-              ${clinic.direccion || 'Address not available'}
+              ${clinic.address || clinic.zone || 'Address not available'}
             </p>
             <div class="flex gap-2">
-              ${clinic.telefono ? `
-                <a href="tel:${clinic.telefono}"
+              ${clinic.phone ? `
+                <a href="tel:${clinic.phone}"
                    class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl font-poppins font-semibold text-sm text-white transition"
                    style="background:#dc2626;"
                    onmouseenter="this.style.background='#b91c1c'"

@@ -1,0 +1,169 @@
+/* ========================================
+   Vet Dashboard
+   ✅ PAWS Design Tokens
+   ✅ Responsive services grid
+   ✅ Mobile-visible delete/edit buttons
+   ✅ backdrop-filter fallback
+   ======================================== */
+
+/* ── Services grid ──────────────────────────── */
+/* Desktop: 4 cols — Tablet: 2 cols — Mobile: 2 cols */
+#services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  #services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  #services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+/* ── Service card delete button ─────────────── */
+/* Desktop: visible on hover via group-hover */
+/* Mobile/touch: always visible */
+.btn-delete-service {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #dc2626;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  /* Hidden on desktop — shown via group-hover in JS */
+  opacity: 0;
+}
+
+.btn-delete-service:hover {
+  background: #FCA5A5;
+}
+
+/* On touch devices — always show */
+@media (hover: none) {
+  .btn-delete-service {
+    opacity: 1 !important;
+  }
+}
+
+/* ── Team member action buttons ─────────────── */
+/* Desktop: visible on hover via group-hover */
+/* Mobile/touch: always visible */
+.btn-edit-member,
+.btn-delete-member {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.btn-edit-member {
+  background: var(--bg-muted);
+  color: var(--text-highlight);
+}
+
+.btn-delete-member {
+  background: var(--bg-muted);
+  color: #ef4444;
+}
+
+.btn-edit-member:hover   { background: rgba(144,189,244,0.30); }
+.btn-delete-member:hover { background: #FEE2E2; }
+
+/* Team action buttons container — hidden on desktop, show on hover */
+.group .flex.gap-1 {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.group:hover .flex.gap-1 {
+  opacity: 1;
+}
+
+/* On touch devices — always visible */
+@media (hover: none) {
+  .group .flex.gap-1 {
+    opacity: 1 !important;
+  }
+}
+
+/* ── Stats grid responsive ──────────────────── */
+.grid.grid-cols-4 {
+  /* Already responsive via Tailwind — extra safety */
+}
+
+@media (max-width: 640px) {
+  .grid.grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Two-column layout responsive ───────────── */
+#vet-dashboard-root > div.flex.gap-6 {
+  display: flex;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  #vet-dashboard-root > div.flex.gap-6 {
+    flex-direction: column;
+  }
+
+  #vet-dashboard-root > div.flex.gap-6 > div[style*="width:280px"] {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+}
+
+/* ── Modal backdrop-filter fallback ─────────── */
+/* For devices that don't support backdrop-filter */
+[id^="modal-vet-"] {
+  /* Primary: blur backdrop */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Fallback: darker overlay if backdrop-filter not supported */
+@supports not (backdrop-filter: blur(6px)) {
+  [id^="modal-vet-"] {
+    background: rgba(30, 20, 50, 0.75) !important;
+  }
+}
+
+/* ── Schedule display ───────────────────────── */
+#schedule-display .flex {
+  border-color: var(--bg-muted);
+}
+
+/* ── Vet banner responsive ──────────────────── */
+@media (max-width: 480px) {
+  #vet-dashboard-root .relative.rounded-2xl .flex.items-center.justify-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  #vet-dashboard-root .relative.rounded-2xl button {
+    width: 100%;
+    justify-content: center;
+  }
+}

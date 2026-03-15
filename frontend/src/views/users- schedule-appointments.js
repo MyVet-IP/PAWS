@@ -203,6 +203,7 @@ export function userScheduleAppointmentsPage() {
 }
 
 export function userScheduleAppointmentsEvents() {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
   let allAppointments = [];
   let allPets = [];
   let allClinics = [];
@@ -252,11 +253,13 @@ export function userScheduleAppointmentsEvents() {
   // ─── Load Functions ─────────────────────────────────────────
 
   async function loadPets() {
+    if (!user) return;
     try {
-      const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/dashboard`);
+      const userId = user.user_id || user.id;
+      const res = await fetch(`/api/users/${userId}/dashboard`);
       if (res.ok) {
         const data = await res.json();
-        allPets = data.mascotas || data.pets || [];
+        allPets = data.pets || [];
         renderBookingPets();
       }
     } catch (err) {
@@ -266,7 +269,7 @@ export function userScheduleAppointmentsEvents() {
 
   async function loadClinics() {
     try {
-      const res = await fetch('/api/clinics');
+      const res = await fetch('/api/businesses?type=clinic');
       if (res.ok) {
         allClinics = await res.json();
         renderBookingClinics();
@@ -277,10 +280,10 @@ export function userScheduleAppointmentsEvents() {
   }
 
   async function loadAppointments() {
+    if (!user) { allAppointments = []; updateStats(); renderAppointments(); return; }
     try {
-      // Note: Replace with actual appointments endpoint when available
-      // For now using mock data structure
-      const res = await fetch(`/api/users/${user.user_id || user.id_cliente}/appointments`);
+      const userId = user.user_id || user.id;
+      const res = await fetch(`/api/users/${userId}/appointments`);
       if (res.ok) {
         allAppointments = await res.json();
       } else {
@@ -460,10 +463,10 @@ export function userScheduleAppointmentsEvents() {
     }
 
     container.innerHTML = allPets.map(pet => {
-      const petId = pet.pet_id || pet.id_mascota;
-      const petName = pet.nombre || pet.name;
-      const emoji = pet.especie === 'Cat' || pet.species === 'Cat' ? '&#128049;' : '&#128054;';
-      const bgColor = pet.especie === 'Cat' || pet.species === 'Cat' ? '#F1C0E8' : '#B9FBC0';
+      const petId = pet.pet_id;
+      const petName = pet.name;
+      const emoji = (pet.species_name || '').toLowerCase().includes('cat') ? '&#128049;' : '&#128054;';
+      const bgColor = (pet.species_name || '').toLowerCase().includes('cat') ? '#F1C0E8' : '#B9FBC0';
       const isSelected = bookingData.pet?.id === petId;
 
       return `
@@ -474,7 +477,7 @@ export function userScheduleAppointmentsEvents() {
             </div>
             <div>
               <p style="font-weight:600; color:#333; font-family:'Poppins',sans-serif; font-size:0.9rem;">${petName}</p>
-              <p style="font-size:0.8rem; color:#6b7280; font-family:'Roboto',sans-serif;">${pet.especie || pet.species || 'Pet'}</p>
+              <p style="font-size:0.8rem; color:#6b7280; font-family:'Roboto',sans-serif;">${pet.species_name || 'Pet'}</p>
             </div>
           </div>
         </div>
@@ -496,19 +499,19 @@ export function userScheduleAppointmentsEvents() {
     }
 
     container.innerHTML = allClinics.map(clinic => {
-      const clinicId = clinic.clinic_id || clinic.id_clinica;
-      const clinicName = clinic.nombre || clinic.name;
+      const clinicId = clinic.business_id;
+      const clinicName = clinic.name;
       const isSelected = bookingData.clinic?.id === clinicId;
 
       return `
-        <div class="clinic-card ${isSelected ? 'selected' : ''}" onclick="window.selectBookingClinic(${clinicId}, '${clinicName}', '${clinic.direccion || clinic.address || ''}')">
+        <div class="clinic-card ${isSelected ? 'selected' : ''}" onclick="window.selectBookingClinic(${clinicId}, '${clinicName}', '${clinic.address || clinic.zone || ''}')">
           <div style="display:flex; align-items:center; gap:12px;">
             <div style="width:48px; height:48px; border-radius:12px; background:#90BDF4; display:flex; align-items:center; justify-content:center; font-size:1.3rem;">
               &#127973;
             </div>
             <div style="flex:1;">
               <p style="font-weight:600; color:#333; font-family:'Poppins',sans-serif; font-size:0.9rem;">${clinicName}</p>
-              <p style="font-size:0.8rem; color:#6b7280; font-family:'Roboto',sans-serif;">${clinic.direccion || clinic.address || 'Address not available'}</p>
+              <p style="font-size:0.8rem; color:#6b7280; font-family:'Roboto',sans-serif;">${clinic.address || clinic.zone || 'Address not available'}</p>
             </div>
             ${clinic.rating ? `
               <div style="display:flex; align-items:center; gap:4px;">
@@ -766,19 +769,18 @@ export function userScheduleAppointmentsEvents() {
     bookingData.reason = document.getElementById('booking-reason').value;
     bookingData.notes = document.getElementById('booking-notes').value;
 
+    const userId = user.user_id || user.id;
     const body = {
       pet_id: bookingData.pet.id,
-      user_id: user.user_id || user.id_cliente,
-      clinic_id: bookingData.clinic.id,
+      user_id: userId,
+      business_id: bookingData.clinic.id,
       date: bookingData.date,
       time: bookingData.time,
-      reason: bookingData.reason,
-      notes: bookingData.notes,
+      notes: bookingData.notes || bookingData.reason || null,
       status: 'pending'
     };
 
     try {
-      // Note: Replace with actual endpoint
       const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -803,7 +805,7 @@ export function userScheduleAppointmentsEvents() {
           appointment_id: Date.now(),
           pet_id: bookingData.pet.id,
           pet_name: bookingData.pet.name,
-          clinic_id: bookingData.clinic.id,
+          business_id: bookingData.clinic.id,
           clinic_name: bookingData.clinic.name,
           address: bookingData.clinic.address,
           date: bookingData.date,

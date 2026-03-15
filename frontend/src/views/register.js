@@ -1,7 +1,7 @@
 export function registerPage() {
     return `
-    <section class="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-paws-purple/20 via-white to-paws-green/20">
-        <div class="w-full max-w-2xl bg-white rounded-3xl shadow-medium p-8 lg:p-10 animate-fade-in">
+    <section class="register-section">
+        <div class="register-card animate-fade-in">
 
             <!-- Header -->
             <div class="text-center mb-8">
@@ -16,15 +16,12 @@ export function registerPage() {
 
             <!-- Progress Steps -->
             <div class="flex justify-center items-center gap-4 mb-8">
-                <div class="flex items-center gap-2" id="step-1-indicator">
+                <div class="flex items-center gap-2">
                     <span class="w-8 h-8 rounded-full bg-paws-purple text-text-primary flex items-center justify-center text-sm font-semibold">1</span>
                     <span class="text-sm font-medium text-text-primary">Information</span>
                 </div>
-                <!-- Connector — usa var en lugar de bg-gray-200 -->
-                <div class="w-12 h-0.5" id="step-connector"
-                     style="background:var(--bg-muted);"></div>
-                <div class="flex items-center gap-2" id="step-2-indicator">
-                    <!-- Step 2 badge -->
+                <div class="w-12 h-0.5" style="background:var(--bg-muted);"></div>
+                <div class="flex items-center gap-2">
                     <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold"
                           style="background:var(--bg-muted);color:var(--text-muted);">2</span>
                     <span class="text-sm" style="color:var(--text-muted);">Account Type</span>
@@ -37,45 +34,27 @@ export function registerPage() {
             <!-- Registration Form -->
             <form id="register-form" class="space-y-6">
 
-                <!-- Step 1: Basic Information -->
-                <div id="step-1" class="space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Basic Information -->
+                <div class="space-y-5">
+                    <div class="register-fields-grid">
+
                         <div>
                             <label for="name" class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
-                            <input
-                                id="name"
-                                type="text"
-                                placeholder="John Doe"
-                                class="input"
-                                required
-                                autocomplete="name"
-                            >
+                            <input id="name" type="text" placeholder="John Doe"
+                                class="input" required autocomplete="name">
                         </div>
 
                         <div>
                             <label for="email" class="block text-sm font-medium text-text-primary mb-2">Email Address</label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                class="input"
-                                required
-                                autocomplete="email"
-                            >
+                            <input id="email" type="email" placeholder="you@example.com"
+                                class="input" required autocomplete="email">
                         </div>
 
                         <div>
                             <label for="password" class="block text-sm font-medium text-text-primary mb-2">Password</label>
                             <div class="relative">
-                                <input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Min. 8 characters"
-                                    class="input pr-12"
-                                    required
-                                    minlength="8"
-                                    autocomplete="new-password"
-                                >
+                                <input id="password" type="password" placeholder="Min. 8 characters"
+                                    class="input pr-12" required minlength="8" autocomplete="new-password">
                                 <button type="button" id="toggle-password"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition"
                                     aria-label="Toggle password visibility">
@@ -90,14 +69,8 @@ export function registerPage() {
                         <div>
                             <label for="confirmPassword" class="block text-sm font-medium text-text-primary mb-2">Confirm Password</label>
                             <div class="relative">
-                                <input
-                                    id="confirmPassword"
-                                    type="password"
-                                    placeholder="Repeat your password"
-                                    class="input pr-12"
-                                    required
-                                    autocomplete="new-password"
-                                >
+                                <input id="confirmPassword" type="password" placeholder="Repeat your password"
+                                    class="input pr-12" required autocomplete="new-password">
                                 <button type="button" id="toggle-confirm-password"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition"
                                     aria-label="Toggle password visibility">
@@ -107,10 +80,12 @@ export function registerPage() {
                                     </svg>
                                 </button>
                             </div>
+                            <!-- Confirm password visual feedback -->
+                            <p id="confirm-password-msg" class="confirm-msg hidden"></p>
                         </div>
                     </div>
 
-                    <!-- Password Strength Indicator -->
+                    <!-- Password Strength -->
                     <div class="space-y-2">
                         <div class="flex gap-1">
                             <div id="strength-1" class="strength-bar"></div>
@@ -122,14 +97,12 @@ export function registerPage() {
                     </div>
                 </div>
 
-                <!-- Divider -->
+                <!-- Account Type -->
                 <div class="pt-6" style="border-top:1px solid var(--bg-muted);">
                     <h2 class="text-center text-text-primary font-poppins font-semibold mb-6">
                         How are you joining us?
                     </h2>
-
-                    <!-- Account Type Selection -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="register-fields-grid">
 
                         <!-- Pet Owner -->
                         <label class="relative cursor-pointer group">
@@ -146,7 +119,6 @@ export function registerPage() {
                                 <h3 class="font-poppins font-semibold text-text-primary mb-2">Pet Owner</h3>
                                 <p class="text-xs text-text-soft leading-relaxed">I'm looking for the best veterinary services for my pets</p>
                             </div>
-                            <!-- Check indicator -->
                             <div class="role-check absolute top-4 right-4 w-5 h-5 rounded-full border-2 flex items-center justify-center"
                                  style="border-color:var(--bg-muted);">
                                 <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
@@ -180,12 +152,10 @@ export function registerPage() {
                     </div>
                 </div>
 
-                <!-- Terms Agreement -->
+                <!-- Terms -->
                 <div class="flex items-start gap-3">
-                    <input type="checkbox" id="terms"
-                        class="w-4 h-4 mt-1 rounded"
-                        style="accent-color:var(--text-highlight);"
-                        required>
+                    <input type="checkbox" id="terms" class="w-4 h-4 mt-1 rounded"
+                        style="accent-color:var(--text-highlight);" required>
                     <label for="terms" class="text-sm text-text-soft">
                         I agree to the
                         <a href="#/terms" class="text-text-highlight hover:underline">Terms of Service</a>
@@ -199,7 +169,7 @@ export function registerPage() {
                     Create Account
                 </button>
 
-                <!-- Sign In Link -->
+                <!-- Sign In -->
                 <p class="text-center text-sm text-text-soft">
                     Already have an account?
                     <a href="#/login" class="text-text-highlight font-semibold hover:underline ml-1">Sign In</a>
@@ -235,7 +205,6 @@ export function registerEvents() {
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
         if (!toggle || !input) return;
-
         toggle.addEventListener('click', () => {
             const type = input.type === 'password' ? 'text' : 'password';
             input.type = type;
@@ -243,13 +212,11 @@ export function registerEvents() {
             if (type === 'text') {
                 icon.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                `;
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>`;
             } else {
                 icon.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                `;
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
             }
         });
     }
@@ -258,6 +225,9 @@ export function registerEvents() {
     setupPasswordToggle('toggle-confirm-password', 'confirmPassword');
 
     // ── Password strength ─────────────────────
+    const STRENGTH_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e'];
+    const STRENGTH_LABELS = ['Weak', 'Fair', 'Good', 'Strong'];
+
     function checkPasswordStrength(password) {
         let strength = 0;
         if (password.length >= 8) strength++;
@@ -267,50 +237,65 @@ export function registerEvents() {
         return strength;
     }
 
-    // Strength bar colors using PAWS tokens / semantic colors
-    const STRENGTH_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e'];
-    const STRENGTH_LABELS = ['Weak', 'Fair', 'Good', 'Strong'];
-
     function updatePasswordStrength(password) {
         const strength = checkPasswordStrength(password);
         const bars = [1, 2, 3, 4].map(i => document.getElementById(`strength-${i}`));
         const strengthText = document.getElementById('strength-text');
-
         bars.forEach((bar, i) => {
             if (!bar) return;
-            bar.style.background = i < strength
-                ? STRENGTH_COLORS[strength - 1]
-                : 'var(--bg-muted)';
+            bar.style.background = i < strength ? STRENGTH_COLORS[strength - 1] : 'var(--bg-muted)';
         });
-
         if (strengthText) {
-            if (password.length > 0) {
-                strengthText.textContent = `Password strength: ${STRENGTH_LABELS[strength - 1] || 'Very weak'}`;
-                strengthText.style.color = STRENGTH_COLORS[strength - 1] || '#ef4444';
-            } else {
-                strengthText.textContent = '';
-                strengthText.style.color = 'var(--text-muted)';
-            }
+            strengthText.textContent = password.length > 0
+                ? `Password strength: ${STRENGTH_LABELS[strength - 1] || 'Very weak'}`
+                : '';
+            strengthText.style.color = STRENGTH_COLORS[strength - 1] || '#ef4444';
         }
     }
 
-    passwordInput?.addEventListener('input', e => updatePasswordStrength(e.target.value));
+    passwordInput?.addEventListener('input', e => {
+        updatePasswordStrength(e.target.value);
+        // Re-validate confirm if already typed
+        if (confirmInput?.value) validateConfirmPassword();
+    });
+
+    // ── Confirm password visual validation ────
+    function validateConfirmPassword() {
+        const pw = passwordInput?.value || '';
+        const confirm = confirmInput?.value || '';
+        if (!confirmMsg || !confirmInput) return;
+
+        if (confirm.length === 0) {
+            confirmMsg.classList.add('hidden');
+            confirmInput.style.borderColor = 'var(--bg-muted)';
+            return;
+        }
+
+        if (pw === confirm) {
+            confirmMsg.textContent = '✓ Passwords match';
+            confirmMsg.classList.remove('hidden', 'confirm-msg-error');
+            confirmMsg.classList.add('confirm-msg-success');
+            confirmInput.style.borderColor = '#22c55e';
+        } else {
+            confirmMsg.textContent = '✗ Passwords do not match';
+            confirmMsg.classList.remove('hidden', 'confirm-msg-success');
+            confirmMsg.classList.add('confirm-msg-error');
+            confirmInput.style.borderColor = '#ef4444';
+        }
+    }
+
+    confirmInput?.addEventListener('input', validateConfirmPassword);
 
     // ── Form message helper ───────────────────
     function showMessage(message, success) {
         if (!formMessage) return;
         formMessage.classList.remove('hidden');
         formMessage.textContent = message;
-        // Use PAWS token colors instead of Tailwind bg-red-50 etc.
         formMessage.style.background = success
-            ? 'rgba(185,251,192,0.30)'
-            : 'rgba(255,207,210,0.40)';
-        formMessage.style.color = success
-            ? 'var(--color-green-dark)'
-            : '#dc2626';
+            ? 'rgba(185,251,192,0.30)' : 'rgba(255,207,210,0.40)';
+        formMessage.style.color = success ? 'var(--color-green-dark)' : '#dc2626';
         formMessage.style.border = success
-            ? '1px solid var(--color-green)'
-            : '1px solid var(--color-pink)';
+            ? '1px solid var(--color-green)' : '1px solid var(--color-pink)';
     }
 
     // ── Form submission ───────────────────────
@@ -335,7 +320,9 @@ export function registerEvents() {
                 showMessage("Please accept the Terms of Service", false); return;
             }
             if (password !== confirmPassword) {
-                showMessage("Passwords do not match", false); return;
+                showMessage("Passwords do not match", false);
+                validateConfirmPassword();
+                return;
             }
             if (password.length < 8) {
                 showMessage("Password must be at least 8 characters", false); return;
@@ -347,17 +334,13 @@ export function registerEvents() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, email, password, role: role.value }),
                 });
-
                 const data = await response.json();
-
                 if (!response.ok) {
                     showMessage(data.message || data.error || "Registration failed", false);
                     return;
                 }
-
                 showMessage("Account created successfully! Redirecting...", true);
                 setTimeout(() => { window.location.hash = "#/login"; }, 1500);
-
             } catch {
                 showMessage("Connection error. Please try again.", false);
             }
