@@ -199,6 +199,8 @@ export function registerEvents() {
     const registerForm = document.getElementById("register-form");
     const formMessage = document.getElementById("form-message");
     const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirmPassword");
+    const confirmMsg = document.getElementById("confirm-password-msg");
 
     // ── Password visibility toggles ──────────
     function setupPasswordToggle(toggleId, inputId) {
