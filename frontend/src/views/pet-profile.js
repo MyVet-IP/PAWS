@@ -122,7 +122,7 @@ export function petProfilepage() {
                 { id: 'pet-display-color',     label: 'Color',     value: pet.color,     highlight: false },
                 { id: 'pet-display-microchip', label: 'Microchip', value: pet.microchip, highlight: true  },
               ].map(d => `
-                <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                <div class="flex justify-between items-center py-2 border-b last:border-0">
                   <span class="text-text-muted text-sm">${d.label}</span>
                   <span id="${d.id}" class="font-medium text-sm ${d.highlight ? 'text-text-highlight' : 'text-text-primary'}">
                     ${d.value}
@@ -154,7 +154,7 @@ export function petProfilepage() {
               <div class="flex flex-wrap gap-2">
                 ${pet.allergies.map(a => `
                   <span class="px-3 py-1 rounded-full text-xs font-medium"
-                        style="background:rgba(255,207,210,0.4);color:#be185d;">${a}</span>
+                        class="allergy-badge">${a}</span>
                 `).join('')}
               </div>
             </div>
@@ -166,7 +166,7 @@ export function petProfilepage() {
               <div class="flex flex-wrap gap-2">
                 ${pet.conditions.map(c => `
                   <span class="px-3 py-1 rounded-full text-xs font-medium"
-                        style="background:rgba(251,248,204,0.7);color:#92400e;">${c}</span>
+                        class="condition-badge">${c}</span>
                 `).join('')}
               </div>
             </div>
@@ -212,8 +212,7 @@ export function petProfilepage() {
             ${history.map(h => `
               <div class="bg-white rounded-2xl shadow-card p-4 hover:shadow-soft transition">
                 <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base"
-                       style="background:${h.color};">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-base history-icon-${h.type}">
                     ${h.type === 'checkup' ? '🩺' : h.type === 'dental' ? '🦷' : h.type === 'vaccine' ? '💉' : '💊'}
                   </div>
                   <div class="flex-1 min-w-0">
