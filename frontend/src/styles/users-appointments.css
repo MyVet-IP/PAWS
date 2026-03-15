@@ -1,0 +1,255 @@
+.appointment-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appointment-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.09);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.status-pending {
+    background: #FBF8CC;
+    color: #d97706;
+}
+
+.status-confirmed {
+    background: #B9FBC0;
+    color: #059669;
+}
+
+.status-completed {
+    background: #90BDF4;
+    color: #2563eb;
+}
+
+.status-cancelled {
+    background: #FFCFD2;
+    color: #dc2626;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7280;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tab-btn.active {
+    background: #6A4C93;
+    color: white;
+}
+
+.tab-btn:hover:not(.active) {
+    background: #f3f4f6;
+}
+
+.calendar-day {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+}
+
+.calendar-day:hover {
+    background: #f3f4f6;
+}
+
+.calendar-day.today {
+    border-color: #6A4C93;
+}
+
+.calendar-day.selected {
+    background: #6A4C93;
+    color: white;
+}
+
+.calendar-day.has-appointment::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #B9FBC0;
+}
+
+.time-slot {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.time-slot:hover {
+    border-color: #6A4C93;
+    color: #6A4C93;
+}
+
+.time-slot.selected {
+    background: #6A4C93;
+    border-color: #6A4C93;
+    color: white;
+}
+
+.time-slot.unavailable {
+    background: #f3f4f6;
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.clinic-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1.5px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.clinic-card:hover,
+.clinic-card.selected {
+    border-color: #6A4C93;
+    background: #faf5ff;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.95);
+    transition: transform 0.2s;
+}
+
+.modal-overlay.open .modal-content {
+    transform: scale(1);
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-up {
+    animation: fadeUp 0.4s ease forwards;
+}
+
+.step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s;
+}
+
+.step-dot.active {
+    background: #6A4C93;
+    color: white;
+}
+
+.step-dot.completed {
+    background: #B9FBC0;
+    color: #059669;
+}
+
+.step-dot.pending {
+    background: #e5e7eb;
+    color: #9ca3af;
+}
+
+.step-line {
+    height: 2px;
+    width: 40px;
+    background: #e5e7eb;
+}
+
+.step-line.active {
+    background: #6A4C93;
+}
