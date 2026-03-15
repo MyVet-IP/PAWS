@@ -64,11 +64,28 @@ const routes = {
       </h1>
       <p>You don't have permission to view this page.</p>
     </div>
-  `
+  `,
+
+  "/google-login-success": () => {
+    try {
+      const params = new URLSearchParams(window.location.hash.split("?")[1] || "");
+      const user = JSON.parse(decodeURIComponent(params.get("user") || "{}"));
+      if (user && user.email) {
+        localStorage.setItem("user", JSON.stringify(user));
+        window.location.hash = "/user-dashboard";
+      } else {
+        window.location.hash = "/login";
+      }
+    } catch (e) {
+      window.location.hash = "/login";
+    }
+    return "";
+  }
 };
 
 export function router() {
-  const path = window.location.hash.slice(1) || "/";
+  const fullHash = window.location.hash.slice(1) || "/";
+  const path = fullHash.split("?")[0];
   console.log("Router ejecutado en path:", path);
   const app = document.getElementById("app");
 
