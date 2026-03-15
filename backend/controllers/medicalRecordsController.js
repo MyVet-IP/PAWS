@@ -1,11 +1,11 @@
 ﻿const path = require('path');
 const fs = require('fs');
-const medicalRecordsStorage = require('../storage/medicalRecordsStorage');
-const { extractMedicalRecord } = require('../services/groqService');
+const medicalRecordsStorage = require('../storage/medicalRecordsStorage.js');
+const { extractMedicalRecord } = require('../services/geminiService.js');
 
 // ─── POST /api/medical-records/extract ───────────────────────────────────────
 // Receives a PDF or image via multipart/form-data (field: "file"),
-// sends it to Groq vision, and returns extracted form fields.
+// sends it to Demini vision, and returns extracted form fields.
 // The file is NOT saved here — saving happens on the normal POST / create.
 exports.extract = async (req, res, next) => {
     try {
