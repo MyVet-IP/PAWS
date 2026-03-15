@@ -1,9 +1,4 @@
-// ─────────────────────────────────────────────
 //  user-dashboard.js
-//  Contenido interno del <main>
-//  El Layout ya inyecta Aside + Topbar
-//  ✅ Migrado al sistema de tokens PAWS
-// ─────────────────────────────────────────────
 
 const HEALTH_TIPS = [
   { icon: "💧", tip: "Make sure your pet always has fresh water available — hydration is key to kidney health.", color: "var(--color-blue)" },
@@ -469,7 +464,7 @@ async function loadPets(user) {
       return `
       <div class="bg-white rounded-2xl p-4 cursor-pointer transition"
            style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);transition:var(--transition-fast);"
-           onclick="window.location.hash='/pet-profile'"
+           onclick="window.location.hash='/pet-profile/' + ${p.pet_id}"
            onmouseenter="this.style.boxShadow='var(--shadow-soft)';this.style.transform='translateY(-2px)'"
            onmouseleave="this.style.boxShadow='var(--shadow-card)';this.style.transform='none'">
         <div class="flex items-center gap-3 mb-3">
