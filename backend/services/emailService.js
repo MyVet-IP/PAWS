@@ -193,7 +193,7 @@ async function sendContactNotification({ name, email, topic, message }) {
 
     await transporter.sendMail({
         from: `"PAWS Contact Form" <${process.env.GMAIL_USER}>`,
-        to: 'riwi_paws@gmail.com',
+        to: 'riwi.paws@gmail.com',
         replyTo: email,
         subject: `[PAWS Contact] ${topic} — ${name}`,
         html: buildContactNotificationHTML({ name, email, topic, message }),
