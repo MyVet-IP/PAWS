@@ -30,7 +30,8 @@ export function EmergencyButton() {
     color: "white",
     border: "none",
     cursor: "grab",
-    zIndex: "9990",
+    // Keep below chat widget z-index so the chat container appears above the emergency button
+    zIndex: "9000",
   });
 
   btn.className = "emergency-float-btn";
@@ -62,7 +63,10 @@ export function EmergencyButton() {
   });
 
   document.body.appendChild(btn);
+  // Position the button a bit above any bottom-right fixed widget (chat) if detected
+  positionAboveChatIfPresent(btn);
   makeDraggable(btn);
+  // We'll keep the emergency button stacked above other fixed widgets by default.
 
   // Hide button when navigating to /emergency
   window.addEventListener("hashchange", () => {
@@ -72,6 +76,51 @@ export function EmergencyButton() {
       existing.remove();
     }
   });
+}
+
+// Try to find a fixed-position element in the bottom-right quadrant (likely the chat toggle)
+function findBottomRightFixedElement() {
+  const els = Array.from(document.querySelectorAll('body *'));
+  let best = null;
+  for (const el of els) {
+    try {
+      const cs = getComputedStyle(el);
+      if (cs.position !== 'fixed') continue;
+      const rect = el.getBoundingClientRect();
+      // candidate should be near bottom-right
+      const nearRight = (rect.left + rect.width) > (window.innerWidth - 200);
+      const nearBottom = (rect.top + rect.height) > (window.innerHeight - 200);
+      if (!nearRight || !nearBottom) continue;
+      const distance = Math.hypot(window.innerWidth - (rect.left + rect.width), window.innerHeight - (rect.top + rect.height));
+      if (!best || distance < best.distance) best = { el, rect, distance };
+    } catch (e) { /* ignore */ }
+  }
+  return best ? best.rect : null;
+}
+
+function positionAboveChatIfPresent(btn) {
+  try {
+    const gap = 12; // px between chat and emergency button
+    const rect = findBottomRightFixedElement();
+    if (rect) {
+      // rect.top + rect.height = bottom coordinate from top; compute bottom offset
+      const candidateBottomOffset = Math.round(window.innerHeight - (rect.top + rect.height));
+      const newBottom = candidateBottomOffset + Math.round(rect.height) + gap;
+      // set bottom as pixels and keep right at 24px
+      btn.style.bottom = newBottom + 'px';
+      btn.style.right = '24px';
+      // ensure it's below chat visually by lowering z-index if needed
+      // chat usually has higher z-index; keep button lower so chat overlays it
+      btn.style.zIndex = '9000';
+    } else {
+      // fallback: keep it slightly above default (100px) to be safe
+      btn.style.bottom = '100px';
+      btn.style.right = '24px';
+      btn.style.zIndex = '9000';
+    }
+  } catch (e) {
+    // ignore and keep default
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -110,10 +159,10 @@ function makeDraggable(element) {
 
     const btnW = element.offsetWidth;
     const btnH = element.offsetHeight;
+
+    // Basic viewport clamps
     const maxX = window.innerWidth - btnW - 8;
     const maxY = window.innerHeight - btnH - 8;
-
-    // Clamp within viewport with 8px margin
     const newLeft = Math.min(Math.max(8, startLeft + dx), maxX);
     const newTop = Math.min(Math.max(8, startTop + dy), maxY);
 
@@ -152,9 +201,14 @@ function makeDraggable(element) {
     const maxX = window.innerWidth - btnW - 8;
     const maxY = window.innerHeight - btnH - 8;
 
-    element.style.left = Math.min(Math.max(8, startLeft + dx), maxX) + "px";
-    element.style.top = Math.min(Math.max(8, startTop + dy), maxY) + "px";
+    const newLeft = Math.min(Math.max(8, startLeft + dx), maxX);
+    const newTop = Math.min(Math.max(8, startTop + dy), maxY);
+    element.style.left = newLeft + "px";
+    element.style.top = newTop + "px";
   }, { passive: true });
 
   document.addEventListener("touchend", () => { isDragging = false; });
 }
+
+// Compute an exclusion zone (top-left corner) for the chat widget area
+// Note: exclusion-zone logic was intentionally removed to allow stacking of widgets.

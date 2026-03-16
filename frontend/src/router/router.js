@@ -5,7 +5,7 @@ import { Aside, asideEvents } from "../components/aside.js";
 import { notFoundPage } from "../components/404-not-found.js";
 
 import { clinicsPage } from "../views/clinics-view.js";
-import { healthTipsPage } from "../views/health-tips.js";
+import { healthTipsPage, healthTipsEvents } from "../views/health-tips.js";
 import { loginPage, loginEvents } from "../views/login.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
 import { aboutUsPage, aboutUsEvents } from "../views/about-us.js";
@@ -237,6 +237,10 @@ function runPageEvents(path, params = {}) {
 
     case "/specialists":
       specialistsEvents();
+      break;
+
+    case "/tips":
+      healthTipsEvents();
       break;
 
     case "/medical-records":

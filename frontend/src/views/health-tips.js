@@ -198,12 +198,193 @@ export function healthTipsPage() {
         alert('Thanks for subscribing! Check your inbox soon 🐾');
         document.getElementById('newsletter-email').value = '';
       }
-    </script>
+      <!-- N8N Chatbot CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   `;
 }
 
 export async function healthTipsEvents() {
   // Events handled inline via onclick (filter + newsletter)
+
+  // Initialize n8n chat widget (robust loader + diagnostics)
+  try {
+    console.log('[healthTipsEvents] initializing n8n chat...');
+
+    // Ensure stylesheet for n8n chat is present in <head>
+    (function ensureN8nCss() {
+      const href = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css';
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = href;
+        document.head.appendChild(l);
+        console.log('[healthTipsEvents] n8n chat stylesheet injected in head');
+      }
+    })();
+
+    // Inject theme overrides for the n8n chat widget using PAWS design tokens
+    (function injectN8nTheme() {
+      if (document.getElementById('paws-n8n-theme')) return;
+      try {
+        const docStyle = getComputedStyle(document.documentElement);
+        const colorPrimary = docStyle.getPropertyValue('--color-purple') || '#6A4C93';
+        const colorAccent = docStyle.getPropertyValue('--color-green') || '#B9FBC0';
+        const textPrimary = docStyle.getPropertyValue('--text-primary') || '#333333';
+        const textMuted = docStyle.getPropertyValue('--color-muted') || '#9CA3AF';
+        const radius = docStyle.getPropertyValue('--radius-md') || '12px';
+        const shadow = docStyle.getPropertyValue('--shadow-medium') || '0 8px 24px rgba(0,0,0,0.12)';
+        const zToast = docStyle.getPropertyValue('--z-toast') || '10000';
+
+        const css = `:root {
+          /* PAWS -> n8n chat theme overrides */
+          --chat--color--primary: ${colorPrimary};
+          --chat--color--accent: ${colorAccent};
+          --chat--heading--color: ${textPrimary};
+          --chat--text--color: ${textPrimary};
+          --chat--input--placeholder--color: ${textMuted};
+          --chat--window--border-radius: ${radius};
+          --chat--toggle--border-radius: ${radius};
+          /* border color matching PAWS branding */
+          --chat--window--border-color: ${colorPrimary};
+          --chat--window--border: 1px solid ${colorPrimary};
+          --chat--toggle--border-color: ${colorPrimary};
+          --chat--window--box-shadow: ${shadow};
+          /* Make window and overlay less transparent for better readability */
+          --chat--window--background: rgba(255,255,255,0.98);
+          --chat--overlay--background: rgba(0,0,0,0.28);
+          /* Toggle/button backgrounds use solid brand color to stand out */
+          --chat--toggle--background: ${colorPrimary};
+          --chat--toggle--background-hover: ${colorAccent};
+          --chat--toggle--icon-color: #ffffff;
+          --chat--window--z-index: ${zToast};
+          /* Position slightly above footer and to the right to match PAWS spacing */
+          --chat--window--bottom: 28px;
+          --chat--window--right: 28px;
+        }`;
+
+        const s = document.createElement('style');
+        s.id = 'paws-n8n-theme';
+        s.appendChild(document.createTextNode(css));
+        document.head.appendChild(s);
+        console.log('[healthTipsEvents] injected PAWS -> n8n theme overrides');
+      } catch (e) {
+        console.warn('[healthTipsEvents] failed to inject n8n theme overrides', e);
+      }
+    })();
+
+    // Helper to detect if a chat DOM node is present
+    function isChatMounted() {
+      try {
+        if (document.querySelector('[data-n8n-chat], [data-chat]')) return true;
+        const byRole = Array.from(document.querySelectorAll('[role="dialog"], [aria-label]')).find(el => {
+          const aria = (el.getAttribute('aria-label') || '').toLowerCase();
+          return aria.includes('chat') || aria.includes('assistant');
+        });
+        if (byRole) return true;
+        // fallback: any fixed element near bottom-right large enough
+        const fixedEls = Array.from(document.querySelectorAll('body *')).filter(el => {
+          try { const cs = getComputedStyle(el); return cs.position === 'fixed'; } catch (e) { return false; }
+        });
+        for (const el of fixedEls) {
+          const r = el.getBoundingClientRect();
+          if (r.width > 200 && r.height > 200 && (r.left + r.width) > (window.innerWidth - 200) && (r.top + r.height) > (window.innerHeight - 200)) return true;
+        }
+        return false;
+      } catch (e) { return false; }
+    }
+
+    // Flags for library vs instance
+    window.n8nChatLibLoaded = window.n8nChatLibLoaded || false;
+    window.n8nChatInstance = window.n8nChatInstance || false;
+
+    const createOptions = {
+      webhookUrl: 'https://arnoldow.app.n8n.cloud/webhook/ee61227d-70ff-4cbb-8869-421d70b6f730/chat',
+      showWelcomeScreen: false,
+      defaultLanguage: 'es',
+      initialMessages: [
+        '¡Hola! Soy PAWS Assistant 🐾',
+        'Puedo ayudarte con dudas generales sobre el cuidado de tu mascota o cómo usar nuestra plataforma. Recuerda que mis sugerencias no reemplazan la valoración de tu veterinario.'
+      ],
+      i18n: {
+        es: {
+          title: 'PAWS Assistant 🐾',
+          subtitle: 'Pregúntame sobre el cuidado de tu mascota o cómo usar PAWS.',
+          getStarted: ['¿Cómo reservo una cita?', 'Vacunas y desparasitaciones', 'Mi mascota no come bien'],
+          inputPlaceholder: 'Escribe tu pregunta aquí...',
+          footer: 'PAWS · Información orientativa, no sustituye a un profesional'
+        },
+        en: {
+          title: 'PAWS Assistant 🐾',
+          subtitle: 'Ask me about pet care or how to use PAWS.',
+          getStarted: ['How do I book an appointment?', 'Vaccines & deworming', "My pet won't eat"],
+          inputPlaceholder: 'Type your question here...',
+          footer: 'PAWS · Guidance only, not a substitute for veterinary care'
+        }
+      }
+    };
+
+    // Load library (ESM preferred) and create chat if needed
+    async function ensureN8nChat() {
+      // Try ESM import
+      try {
+        const mod = await import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js');
+        const createChat = mod.createChat ?? mod.default?.createChat ?? mod.default;
+        window.n8nChatLibLoaded = true;
+        if (typeof createChat === 'function' && !isChatMounted()) {
+          createChat(createOptions);
+          window.n8nChatInstance = true;
+          console.log('[healthTipsEvents] created n8n chat via ESM import');
+        }
+        return;
+      } catch (e) {
+        console.warn('[healthTipsEvents] ESM import failed, falling back to UMD', e);
+      }
+
+      // Fallback: load UMD script if not already loaded
+      try {
+        const src = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.umd.js';
+        if (!document.querySelector(`script[src="${src}"]`)) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.async = true;
+            s.onload = resolve;
+            s.onerror = reject;
+            document.body.appendChild(s);
+          });
+        }
+        const createChatGlobal = window.createChat ?? window.n8n?.createChat ?? window['@n8n']?.createChat;
+        window.n8nChatLibLoaded = true;
+        if (typeof createChatGlobal === 'function' && !isChatMounted()) {
+          createChatGlobal(createOptions);
+          window.n8nChatInstance = true;
+          console.log('[healthTipsEvents] created n8n chat via UMD script');
+        }
+      } catch (err) {
+        console.error('[healthTipsEvents] could not load n8n chat library', err);
+      }
+    }
+
+    // Ensure chat is present now (or recreate if library already loaded but instance missing)
+    try {
+      await ensureN8nChat();
+      if (window.n8nChatLibLoaded && !isChatMounted()) {
+        // attempt once more using globals if available
+        try {
+          const createChatGlobal = window.createChat ?? window.n8n?.createChat ?? window['@n8n']?.createChat;
+          if (typeof createChatGlobal === 'function') {
+            createChatGlobal(createOptions);
+            window.n8nChatInstance = true;
+            console.log('[healthTipsEvents] recreated n8n chat via global createChat');
+          }
+        } catch (e) { /* ignore */ }
+      }
+    } catch (e) {
+      console.warn('[healthTipsEvents] unexpected error ensuring n8n chat', e);
+    }
+  } catch (err) {
+    console.error('[healthTipsEvents] unexpected error initializing n8n chat', err);
+  }
 
   // Load personalized tips for the logged-in user's first pet
   const user = JSON.parse(localStorage.getItem('user'));
