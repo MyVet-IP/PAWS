@@ -17,6 +17,10 @@ export function loginPage() {
                             </svg>
                         </div>
                         <span class="text-2xl font-poppins font-bold text-text-primary">PAWS</span>
+                        <button onclick="window.location.hash='/'" class="contact-back-btn ms-20">
+                            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
+                            Back to home
+                        </button>
                     </div>
                     
                     <h2 class="text-3xl font-poppins font-bold text-text-primary mb-4 text-balance">
