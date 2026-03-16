@@ -220,9 +220,9 @@ function modal(id, title, subtitle, body) {
 }
 
 // ─────────────────────────────────────────────
-//  vetDashboardPage
+//  bussinesDashboardPage
 // ─────────────────────────────────────────────
-export function vetDashboardPage() {
+export function bussinesDashboardPage() {
   const data = getVetData();
   const bgOptions = ["bg-paws-green/20", "bg-paws-blue/20", "bg-paws-pink/20", "bg-paws-purple/20", "bg-paws-yellow/30"];
   const iconOptions = ["syringe", "clipboard", "document", "lab", "heart", "plus"];
@@ -513,9 +513,9 @@ export function vetDashboardPage() {
 }
 
 // ─────────────────────────────────────────────
-//  vetDashboardEvents
+//  bussinesDashboardEvents
 // ─────────────────────────────────────────────
-export function vetDashboardEvents() {
+export function bussinesDashboardEvents() {
   let data = getVetData();
   // Cargar datos reales desde la API en segundo plano
   loadBusinessFromAPI().then(apiData => { if (apiData) data = apiData; });
