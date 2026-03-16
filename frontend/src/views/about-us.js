@@ -140,7 +140,7 @@ export function aboutUsPage() {
           <h2 class="about-cta-title">Want to Be Part of PAWS?</h2>
           <p class="about-cta-text">We're always looking for passionate people - whether you're a vet, a developer, or just a pet lover.</p>
           <div class="about-cta-buttons">
-            <button onclick="window.location.hash='/#/work-with-us'" class="about-cta-btn-primary">
+            <button onclick="window.location.hash='/work-with-us'" class="about-cta-btn-primary">
               Work With Us
             </button>
             <button onclick="window.location.hash='#/contact'" class="about-cta-btn-secondary">

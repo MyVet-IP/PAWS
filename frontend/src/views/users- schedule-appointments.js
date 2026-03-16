@@ -454,7 +454,7 @@ export function userScheduleAppointmentsEvents() {
       container.innerHTML = `
         <div class="col-span-2 text-center py-8">
           <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">No pets found. Please add a pet first.</p>
-          <button onclick="window.location.hash='/#/user-dashboard'" style="margin-top:12px; background:#6A4C93; color:white; border:none; padding:10px 20px; border-radius:10px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer;">
+          <button onclick="window.location.hash='/user-dashboard'" style="margin-top:12px; background:#6A4C93; color:white; border:none; padding:10px 20px; border-radius:10px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer;">
             Add Pet
           </button>
         </div>

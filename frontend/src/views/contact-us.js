@@ -29,7 +29,7 @@ export function contactUsPage() {
             <h1 class="contact-page-title">Contact Us</h1>
             <p class="contact-page-subtitle">We're here to help - and we actually reply.</p>
           </div>
-          <button onclick="window.location.hash='/#/'" class="contact-back-btn">
+          <button onclick="window.location.hash='/'" class="contact-back-btn">
             <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
             Back to home
           </button>
