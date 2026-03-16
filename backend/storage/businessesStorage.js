@@ -90,7 +90,7 @@ module.exports = {
         if (city) { conditions.push(`b.city ILIKE $${i++}`); values.push(`%${city}%`); }
 
         const businesses = await db.all(
-            `SELECT b.*, c.is_24h, c.rating, c.service_type
+            `SELECT b.*, c.is_24h, c.service_type
             FROM businesses b
             LEFT JOIN clinics c ON c.business_id = b.business_id
             WHERE ${conditions.join(' AND ')}
@@ -108,7 +108,7 @@ module.exports = {
 
     async getById(business_id) {
         const biz = await db.get(
-            `SELECT b.*, c.is_24h, c.rating, c.service_type, c.clinic_id
+            `SELECT b.*, c.is_24h, c.service_type, c.clinic_id
             FROM businesses b
             LEFT JOIN clinics c ON c.business_id = b.business_id
             WHERE b.business_id = $1`,
@@ -123,10 +123,12 @@ module.exports = {
     },
 
     async getByUser(user_id) {
-        return db.get(
-            `SELECT * FROM businesses WHERE user_id = $1`,
+        const row = await db.get(
+            `SELECT business_id FROM businesses WHERE user_id = $1`,
             [user_id]
         );
+        if (!row) return null;
+        return this.getById(row.business_id);
     },
 
     // ─── SCHEDULE ─────────────────────────────────────────────────────────────
@@ -184,7 +186,7 @@ module.exports = {
 
     async update(business_id, data) {
         const allowed = ['name', 'address', 'phone', 'whatsapp', 'email',
-            'zone', 'latitude', 'longitude', 'image_url', 'status'];
+            'zone', 'latitude', 'longitude', 'image_url', 'status', 'description'];
         const fields = [];
         const values = [];
         let i = 1;

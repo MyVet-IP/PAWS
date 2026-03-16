@@ -115,6 +115,18 @@ export function petProfilepage({ pet_id } = {}) {
                 <span class="text-text-muted text-sm">Pet ID</span>
                 <span id="pet-display-id" class="font-medium text-sm text-text-highlight">—</span>
               </div>
+              <div class="flex justify-between items-center py-2 border-t border-gray-100">
+                <span class="text-text-muted text-sm">Gender</span>
+                <span id="pet-display-gender" class="font-medium text-sm text-text-primary">—</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-t border-gray-100">
+                <span class="text-text-muted text-sm">Color</span>
+                <span id="pet-display-color" class="font-medium text-sm text-text-primary">—</span>
+              </div>
+            </div>
+            <div id="pet-notes-row" class="mt-3 pt-3 border-t border-gray-100" style="display:none">
+              <p class="text-text-muted text-xs mb-1">Notes</p>
+              <p id="pet-display-notes" class="text-text-soft text-sm leading-relaxed"></p>
             </div>
 
             <button id="btn-edit-pet-full"
@@ -210,6 +222,34 @@ export function petProfilepage({ pet_id } = {}) {
                 style="padding:9px 12px;font-size:13px;"
                 onfocus="this.style.borderColor='#6A4C93'" onblur="this.style.borderColor='#E5E7EB'"/>
             </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold font-poppins mb-1.5 text-text-soft" style="font-size:11px;">Gender</label>
+              <select id="pet-edit-gender"
+                class="w-full border border-gray-200 rounded-xl font-roboto text-text-primary outline-none"
+                style="padding:9px 12px;font-size:13px;"
+                onfocus="this.style.borderColor='#6A4C93'" onblur="this.style.borderColor='#E5E7EB'">
+                <option value="">— select —</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="unknown">Unknown</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold font-poppins mb-1.5 text-text-soft" style="font-size:11px;">Color</label>
+              <input id="pet-edit-color" type="text" placeholder="e.g. Brown and white"
+                class="w-full border border-gray-200 rounded-xl font-roboto text-text-primary outline-none"
+                style="padding:9px 12px;font-size:13px;"
+                onfocus="this.style.borderColor='#6A4C93'" onblur="this.style.borderColor='#E5E7EB'"/>
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold font-poppins mb-1.5 text-text-soft" style="font-size:11px;">Notes</label>
+            <textarea id="pet-edit-notes" rows="3" placeholder="e.g. Allergic to chicken, takes daily medication..."
+              class="w-full border border-gray-200 rounded-xl font-roboto text-text-primary outline-none resize-none"
+              style="padding:9px 12px;font-size:13px;"
+              onfocus="this.style.borderColor='#6A4C93'" onblur="this.style.borderColor='#E5E7EB'"></textarea>
           </div>
           <div class="flex gap-3 mt-2">
             <button id="btn-pet-cancel"
@@ -308,6 +348,14 @@ function _renderPet(pet) {
   document.getElementById('pet-display-birthday').textContent = fmtDate(pet.birth_date);
   document.getElementById('pet-display-owner').textContent = pet.owner_name || '—';
   document.getElementById('pet-display-id').textContent = `#${pet.pet_id}`;
+  document.getElementById('pet-display-gender').textContent = pet.gender || '—';
+  document.getElementById('pet-display-color').textContent = pet.color || '—';
+  if (pet.notes) {
+    document.getElementById('pet-notes-row').style.display = '';
+    document.getElementById('pet-display-notes').textContent = pet.notes;
+  } else {
+    document.getElementById('pet-notes-row').style.display = 'none';
+  }
 }
 
 function _renderHistory(records) {
@@ -366,6 +414,11 @@ function _initEditModal() {
     document.getElementById('pet-edit-breed').value = document.getElementById('pet-display-breed')?.textContent.trim() || '';
     const w = document.getElementById('pet-display-weight')?.textContent.replace(' kg', '').trim();
     document.getElementById('pet-edit-weight').value = w !== '—' ? w : '';
+    const g = document.getElementById('pet-display-gender')?.textContent.trim();
+    document.getElementById('pet-edit-gender').value = g !== '—' ? g : '';
+    const col = document.getElementById('pet-display-color')?.textContent.trim();
+    document.getElementById('pet-edit-color').value = col !== '—' ? col : '';
+    document.getElementById('pet-edit-notes').value = document.getElementById('pet-display-notes')?.textContent.trim() || '';
     modal.style.display = 'flex';
   };
 
@@ -383,10 +436,16 @@ function _initEditModal() {
     const breed = document.getElementById('pet-edit-breed').value.trim();
     const weight = document.getElementById('pet-edit-weight').value.trim();
     const bday = document.getElementById('pet-edit-birthday').value;
+    const gender = document.getElementById('pet-edit-gender').value;
+    const color = document.getElementById('pet-edit-color').value.trim();
+    const notes = document.getElementById('pet-edit-notes').value.trim();
     if (name) body.name = name;
     if (breed) body.breed = breed;
     if (weight) body.weight_kg = parseFloat(weight);
     if (bday) body.birth_date = bday;
+    if (gender) body.gender = gender;
+    if (color) body.color = color;
+    body.notes = notes;
     if (!Object.keys(body).length) { close(); return; }
 
     try {

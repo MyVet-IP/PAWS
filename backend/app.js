@@ -77,6 +77,10 @@ app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/contact', require('./routes/contact'));
 
+app.get('/api/config', (req, res) => {
+  res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
+});
+
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
     res.sendFile(path.join(__dirname, '..', 'index.html'))
@@ -97,10 +101,50 @@ app.post("/api/register", async (req, res) => {
             return res.status(400).json({ message: "Este correo ya está registrado" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.run(
-            "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4)",
+        const userResult = await db.get(
+            "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4) RETURNING user_id",
             [name, email, hashedPassword, dbRole]
         );
+
+        // Auto-create business profile for vet/business roles
+        if (dbRole === 'business' && userResult?.user_id) {
+            const userId = userResult.user_id;
+            const businessType = role === 'vet' ? 'clinic' : 'clinic'; // Default to clinic
+
+            // Create business with status='draft' (no NIT required for drafts)
+            const bizResult = await db.get(
+                `INSERT INTO businesses (user_id, business_type, name, status, city)
+                 VALUES ($1, $2, $3, 'draft', 'Medellín') RETURNING business_id`,
+                [userId, businessType, name]
+            );
+
+            if (bizResult?.business_id) {
+                // Create clinic record
+                await db.run(
+                    `INSERT INTO clinics (business_id) VALUES ($1)`,
+                    [bizResult.business_id]
+                );
+
+                // Create default schedule (Mon-Sat open, Sun closed)
+                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                for (const day of days) {
+                    const isSunday = day === 'Sunday';
+                    const isSaturday = day === 'Saturday';
+                    await db.run(
+                        `INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open)
+                         VALUES ($1, $2, $3, $4, $5)`,
+                        [
+                            bizResult.business_id,
+                            day,
+                            isSunday ? null : '09:00',
+                            isSunday ? null : (isSaturday ? '14:00' : '18:00'),
+                            !isSunday
+                        ]
+                    );
+                }
+            }
+        }
+
         res.status(201).json({ message: "Usuario registrado correctamente" });
     } catch (error) {
         console.error(error);

@@ -98,7 +98,7 @@ async function saveProfileToAPI(data) {
     await fetch(`/api/businesses/${businessId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: data.clinicName, phone: data.phone, address: data.address })
+      body: JSON.stringify({ name: data.clinicName, phone: data.phone, address: data.address, description: data.description })
     });
   } catch (err) {
     console.error("Error saving profile to API:", err);

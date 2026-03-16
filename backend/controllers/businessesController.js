@@ -55,6 +55,16 @@ exports.getById = async (req, res, next) => {
     }
 };
 
+exports.getByUser = async (req, res, next) => {
+    try {
+        const business = await businessesStorage.getByUser(req.params.user_id);
+        if (!business) return res.status(404).json({ error: 'Negocio no encontrado para este usuario' });
+        res.json(business);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.create = async (req, res, next) => {
     try {
         const { user_id, business_type, name, address } = req.body;

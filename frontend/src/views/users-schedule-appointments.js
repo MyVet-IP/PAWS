@@ -454,7 +454,7 @@ export function userScheduleAppointmentsEvents() {
       container.innerHTML = `
         <div class="col-span-2 text-center py-8">
           <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">No pets found. Please add a pet first.</p>
-          <button onclick="window.location.hash='/#/user-dashboard'" style="margin-top:12px; background:#6A4C93; color:white; border:none; padding:10px 20px; border-radius:10px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer;">
+          <button onclick="window.location.hash='/user-dashboard'" style="margin-top:12px; background:#6A4C93; color:white; border:none; padding:10px 20px; border-radius:10px; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer;">
             Add Pet
           </button>
         </div>
@@ -748,7 +748,13 @@ export function userScheduleAppointmentsEvents() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
     try {
-      // API call to cancel
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+      if (!res.ok) throw new Error('Failed to cancel');
+
       const apt = allAppointments.find(a => a.appointment_id === id);
       if (apt) apt.status = 'cancelled';
       renderAppointments();
@@ -756,6 +762,7 @@ export function userScheduleAppointmentsEvents() {
       window.closeDetailModal();
     } catch (err) {
       console.error('Error cancelling appointment:', err);
+      alert('Could not cancel the appointment. Please try again.');
     }
   };
 

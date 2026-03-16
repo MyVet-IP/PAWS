@@ -64,7 +64,7 @@ export function workWithUsPage() {
             <h1 class="work-page-title">Work With Us</h1>
             <p class="work-page-subtitle">Join the veterinary ecosystem that's changing pet care in Medellin</p>
           </div>
-          <button onclick="window.location.hash='/#/'" class="work-back-btn">
+          <button onclick="window.location.hash='/'" class="work-back-btn">
             <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">arrow_back</span>
             Back to home
           </button>
