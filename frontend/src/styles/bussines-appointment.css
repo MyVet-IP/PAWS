@@ -1,0 +1,293 @@
+.appointment-row {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.appointment-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.status-pending {
+    background: #FBF8CC;
+    color: #d97706;
+}
+
+.status-confirmed {
+    background: #B9FBC0;
+    color: #059669;
+}
+
+.status-completed {
+    background: #90BDF4;
+    color: #2563eb;
+}
+
+.status-cancelled {
+    background: #FFCFD2;
+    color: #dc2626;
+}
+
+.status-in-progress {
+    background: #F1C0E8;
+    color: #6A4C93;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.filter-chip {
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1.5px solid #e5e7eb;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+    background: #6A4C93;
+    border-color: #6A4C93;
+    color: white;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-nav button {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.calendar-nav button:hover {
+    border-color: #6A4C93;
+    background: #faf5ff;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #9ca3af;
+    padding: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.calendar-day:hover {
+    background: #f3f4f6;
+}
+
+.calendar-day.today {
+    border-color: #6A4C93;
+}
+
+.calendar-day.selected {
+    background: #6A4C93;
+    color: white;
+}
+
+.calendar-day.other-month {
+    color: #d1d5db;
+}
+
+.calendar-day .dot-indicator {
+    position: absolute;
+    bottom: 4px;
+    display: flex;
+    gap: 2px;
+}
+
+.calendar-day .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+.time-slot-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.time-block {
+    padding: 16px;
+    border-radius: 12px;
+    background: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.time-block-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mini-appointment {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 4px solid #B9FBC0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 560px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: scale(0.95);
+    transition: transform 0.2s;
+}
+
+.modal-overlay.open .modal-content {
+    transform: scale(1);
+}
+
+.action-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+}
+
+.action-btn-confirm {
+    background: #B9FBC0;
+    color: #059669;
+}
+
+.action-btn-confirm:hover {
+    background: #9FEFA8;
+}
+
+.action-btn-complete {
+    background: #90BDF4;
+    color: #2563eb;
+}
+
+.action-btn-complete:hover {
+    background: #7AAEE8;
+}
+
+.action-btn-cancel {
+    background: #FFCFD2;
+    color: #dc2626;
+}
+
+.action-btn-cancel:hover {
+    background: #FFB8BD;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-up {
+    animation: fadeUp 0.4s ease forwards;
+}
