@@ -300,25 +300,18 @@ export async function healthTipsEvents() {
     const createOptions = {
       webhookUrl: 'https://arnoldow.app.n8n.cloud/webhook/ee61227d-70ff-4cbb-8869-421d70b6f730/chat',
       showWelcomeScreen: false,
-      defaultLanguage: 'es',
+      defaultLanguage: 'en',
       initialMessages: [
-        '¡Hola! Soy PAWS Assistant 🐾',
-        'Puedo ayudarte con dudas generales sobre el cuidado de tu mascota o cómo usar nuestra plataforma. Recuerda que mis sugerencias no reemplazan la valoración de tu veterinario.'
+        'Hi there! I\'m PAWS Assistant 🐾',
+        'I can help you with general pet care questions or how to use our platform. Remember, my suggestions don\'t replace a professional veterinary assessment.'
       ],
       i18n: {
-        es: {
-          title: 'PAWS Assistant 🐾',
-          subtitle: 'Pregúntame sobre el cuidado de tu mascota o cómo usar PAWS.',
-          getStarted: ['¿Cómo reservo una cita?', 'Vacunas y desparasitaciones', 'Mi mascota no come bien'],
-          inputPlaceholder: 'Escribe tu pregunta aquí...',
-          footer: 'PAWS · Información orientativa, no sustituye a un profesional'
-        },
         en: {
           title: 'PAWS Assistant 🐾',
           subtitle: 'Ask me about pet care or how to use PAWS.',
-          getStarted: ['How do I book an appointment?', 'Vaccines & deworming', "My pet won't eat"],
+          getStarted: ['How do I book an appointment?', 'Vaccines & deworming', 'My pet won\'t eat'],
           inputPlaceholder: 'Type your question here...',
-          footer: 'PAWS · Guidance only, not a substitute for veterinary care'
+          footer: 'PAWS · For guidance only, does not replace professional advice'
         }
       }
     };
