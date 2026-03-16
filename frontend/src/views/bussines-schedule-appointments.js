@@ -1,4 +1,3 @@
-
 export function businessScheduleAppointmentsPage() {
   return `
     <div class="min-h-screen" style="background: linear-gradient(160deg, #fef9ff 0%, #f8f6ff 60%, #f0fdf4 100%); font-family: 'Poppins', sans-serif;">
@@ -162,75 +161,6 @@ export function businessScheduleAppointmentsEvents() {
   let selectedDate = new Date();
   let calendarMonth = new Date();
 
-  // Mock appointments for demo
-  const mockAppointments = [
-    {
-      appointment_id: 1,
-      client_name: 'Carlos Rodriguez',
-      client_phone: '+57 300 123 4567',
-      pet_name: 'Max',
-      pet_species: 'Dog',
-      pet_breed: 'Golden Retriever',
-      date: new Date().toISOString().split('T')[0],
-      time: '09:00 AM',
-      reason: 'Annual Checkup',
-      status: 'confirmed',
-      notes: 'First visit, needs general health assessment'
-    },
-    {
-      appointment_id: 2,
-      client_name: 'Maria Lopez',
-      client_phone: '+57 301 234 5678',
-      pet_name: 'Luna',
-      pet_species: 'Cat',
-      pet_breed: 'Persian',
-      date: new Date().toISOString().split('T')[0],
-      time: '10:30 AM',
-      reason: 'Vaccination',
-      status: 'pending',
-      notes: 'Annual vaccination due'
-    },
-    {
-      appointment_id: 3,
-      client_name: 'Juan Martinez',
-      client_phone: '+57 302 345 6789',
-      pet_name: 'Rocky',
-      pet_species: 'Dog',
-      pet_breed: 'Bulldog',
-      date: new Date().toISOString().split('T')[0],
-      time: '02:00 PM',
-      reason: 'Dental Cleaning',
-      status: 'confirmed',
-      notes: ''
-    },
-    {
-      appointment_id: 4,
-      client_name: 'Ana Garcia',
-      client_phone: '+57 303 456 7890',
-      pet_name: 'Milo',
-      pet_species: 'Dog',
-      pet_breed: 'Beagle',
-      date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      time: '11:00 AM',
-      reason: 'Follow-up',
-      status: 'pending',
-      notes: 'Post-surgery checkup'
-    },
-    {
-      appointment_id: 5,
-      client_name: 'Sofia Hernandez',
-      client_phone: '+57 304 567 8901',
-      pet_name: 'Coco',
-      pet_species: 'Cat',
-      pet_breed: 'Siamese',
-      date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-      time: '03:30 PM',
-      reason: 'Emergency',
-      status: 'completed',
-      notes: 'Treated for minor injury'
-    }
-  ];
-
   // Initialize
   loadAppointments();
   renderCalendar();
@@ -266,9 +196,10 @@ export function businessScheduleAppointmentsEvents() {
 
   async function loadAppointments() {
     try {
-      // Obtener el business_id del usuario logueado como negocio
-      const businessRes = await fetch('/api/businesses');
+      // Get the business_id of the logged-in user
+      const businessRes = await fetch('/api/businesses', { credentials: 'include' });
       let businessId = null;
+
       if (businessRes.ok) {
         const businesses = await businessRes.json();
         const userId = user?.user_id || user?.id;
@@ -276,26 +207,46 @@ export function businessScheduleAppointmentsEvents() {
         businessId = myBusiness?.business_id;
       }
 
-      if (businessId) {
-        const res = await fetch(`/api/businesses/${businessId}/appointments`);
-        if (res.ok) {
-          allAppointments = await res.json();
-          updateStats();
-          renderAppointments();
-          renderDaySchedule();
-          return;
-        }
+      if (!businessId) {
+        // User has no registered business yet
+        allAppointments = [];
+        renderEmptyState('No business registered for your account yet.');
+        updateStats();
+        renderCalendar();
+        return;
       }
-      // Fallback a mock mientras no haya negocio registrado
-      allAppointments = mockAppointments;
+
+      const res = await fetch(`/api/businesses/${businessId}/appointments`, { credentials: 'include' });
+      if (res.ok) {
+        allAppointments = await res.json();
+      } else {
+        allAppointments = [];
+      }
     } catch (err) {
       console.error('Error loading appointments:', err);
-      allAppointments = mockAppointments;
+      allAppointments = [];
     }
 
     updateStats();
     renderAppointments();
     renderDaySchedule();
+    renderCalendar();
+  }
+
+  function renderEmptyState(message) {
+    const container = document.getElementById('appointments-list');
+    if (!container) return;
+    container.innerHTML = `
+      <div style="text-align:center; padding:60px 20px; background:white; border-radius:20px;">
+        <div style="font-size:3.5rem; margin-bottom:16px;">🏥</div>
+        <h3 style="font-size:1.1rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif; margin-bottom:8px;">
+          ${message}
+        </h3>
+        <p style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.9rem;">
+          Register your business to start managing appointments.
+        </p>
+      </div>
+    `;
   }
 
   // ─── Stats ──────────────────────────────────────────────────
@@ -468,7 +419,7 @@ export function businessScheduleAppointmentsEvents() {
                 <span class="status-badge status-${apt.status}" style="font-size:0.65rem; padding:3px 8px;">${apt.status}</span>
               </div>
               <p style="font-size:0.82rem; color:#4A4A4A; font-family:'Roboto',sans-serif;">${apt.pet_name} - ${apt.reason}</p>
-              <p style="font-size:0.75rem; color:#9ca3af; font-family:'Roboto',sans-serif;">${apt.client_name}</p>
+              <p style="font-size:0.75rem; color:#9ca3af; font-family:'Roboto',sans-serif;">${apt.owner_name || apt.client_name}</p>
             </div>
           `;
     }).join('')}
@@ -500,10 +451,11 @@ export function businessScheduleAppointmentsEvents() {
 
     // Apply search filter
     if (searchQuery) {
-      filtered = filtered.filter(a =>
-        a.client_name.toLowerCase().includes(searchQuery) ||
-        a.pet_name.toLowerCase().includes(searchQuery)
-      );
+      filtered = filtered.filter(a => {
+        const client = (a.owner_name || a.client_name || '').toLowerCase();
+        const pet = (a.pet_name || '').toLowerCase();
+        return client.includes(searchQuery) || pet.includes(searchQuery);
+      });
     }
 
     // Sort by date and time
@@ -557,7 +509,7 @@ export function businessScheduleAppointmentsEvents() {
                   <span style="font-size:0.8rem; color:#6b7280; font-family:'Roboto',sans-serif;">(${apt.pet_breed || apt.pet_species})</span>
                 </div>
                 <p style="font-size:0.85rem; color:#4A4A4A; font-family:'Roboto',sans-serif; margin-bottom:4px;">
-                  ${apt.reason} - ${apt.client_name}
+                  ${apt.reason} - ${apt.owner_name || apt.client_name}
                 </p>
                 <div class="flex items-center gap-3" style="font-size:0.8rem; color:#9ca3af; font-family:'Roboto',sans-serif;">
                   <span>&#128197; ${isToday ? 'Today' : aptDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
@@ -605,11 +557,11 @@ export function businessScheduleAppointmentsEvents() {
         <div style="display:grid; gap:8px;">
           <div style="display:flex; justify-content:space-between;">
             <span style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Name</span>
-            <span style="color:#333; font-family:'Poppins',sans-serif; font-weight:500; font-size:0.85rem;">${apt.client_name}</span>
+            <span style="color:#333; font-family:'Poppins',sans-serif; font-weight:500; font-size:0.85rem;">${apt.owner_name || apt.client_name}</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Phone</span>
-            <a href="tel:${apt.client_phone}" style="color:#6A4C93; font-family:'Poppins',sans-serif; font-weight:500; font-size:0.85rem; text-decoration:none;">${apt.client_phone}</a>
+            <a href="tel:${apt.owner_phone || apt.client_phone}" style="color:#6A4C93; font-family:'Poppins',sans-serif; font-weight:500; font-size:0.85rem; text-decoration:none;">${apt.owner_phone || apt.client_phone}</a>
           </div>
         </div>
       </div>
@@ -692,7 +644,7 @@ export function businessScheduleAppointmentsEvents() {
 
     // Add WhatsApp button
     actionsHtml += `
-      <a href="https://wa.me/${apt.client_phone?.replace(/\D/g, '')}" target="_blank" style="text-decoration:none;">
+      <a href="https://wa.me/${apt.owner_phone || apt.client_phone?.replace(/\D/g, '')}" target="_blank" style="text-decoration:none;">
         <button class="action-btn" style="background:#25D366; color:white;">
           &#128172; WhatsApp
         </button>
@@ -703,16 +655,29 @@ export function businessScheduleAppointmentsEvents() {
     modal.classList.add('open');
   };
 
-  window.updateAppointmentStatus = function (id, newStatus) {
-    const apt = allAppointments.find(a => a.appointment_id === id);
-    if (apt) {
-      apt.status = newStatus;
+  window.updateAppointmentStatus = async function (id, newStatus) {
+    try {
+      const res = await fetch(`/api/appointments/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!res.ok) {
+        alert('Failed to update appointment status. Please try again.');
+        return;
+      }
+
+      // Update local state to avoid a full reload
+      const apt = allAppointments.find(a => a.appointment_id === id);
+      if (apt) apt.status = newStatus;
+
       updateStats();
       renderAppointments();
       renderDaySchedule();
       renderCalendar();
 
-      // Update modal status badge
       const statusClasses = {
         pending: 'status-pending',
         confirmed: 'status-confirmed',
@@ -720,10 +685,13 @@ export function businessScheduleAppointmentsEvents() {
         completed: 'status-completed',
         cancelled: 'status-cancelled'
       };
-      document.getElementById('modal-status').innerHTML = `<span class="status-badge ${statusClasses[newStatus]}">${newStatus}</span>`;
+      document.getElementById('modal-status').innerHTML =
+        `<span class="status-badge ${statusClasses[newStatus]}">${newStatus}</span>`;
 
-      // Refresh modal actions
       window.viewAppointmentDetail(id);
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Connection error. Please try again.');
     }
   };
 

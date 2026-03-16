@@ -201,7 +201,7 @@ export function Aside() {
           <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">
             Phone
           </label>
-          <input id="edit-phone" type="tel" placeholder="+57 300 000 0000"
+          <input id="edit-phone" type="tel" placeholder="+57 302 226 6234"
                  class="w-full border border-surface-muted rounded-md font-roboto text-text-primary
                         transition-all outline-none"
                  style="padding:9px 14px;font-size:13px;"
