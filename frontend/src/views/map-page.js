@@ -628,8 +628,19 @@ export async function loadMapEvents() {
     const focusBtn = el("dc-focus");
     focusBtn?.replaceWith(focusBtn.cloneNode(true));
     document.getElementById("dc-focus")?.addEventListener("click", () => {
-      closeDetail();
-      if (typeof window.focusVet === "function") window.focusVet(id);
+      // Abre Google Maps en nueva pestaña con coordenadas exactas (si existen)
+      // o busca por nombre + dirección como fallback
+      const lat = c.lat;
+      const lng = c.lng;
+      let gmapUrl;
+      if (lat && lng) {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      } else if (c.address) {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ' ' + c.address)}`;
+      } else {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ' Medellín')}`;
+      }
+      window.open(gmapUrl, '_blank', 'noopener');
     });
 
     openDetail();
