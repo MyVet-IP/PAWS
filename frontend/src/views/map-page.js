@@ -75,6 +75,7 @@ const ALL_SERVICES = [...new Set(CLINICS_SAMPLE.flatMap(c => c.services))];
 // Google Maps instance — shared between render and events
 let _googleMap = null;
 let _mapMarkers = [];
+let _userMarker = null;   // marcador verde de la ubicación del usuario
 
 // ─────────────────────────────────────────────
 //  loadMapPage
@@ -399,6 +400,52 @@ function _addMarkers(clinics) {
 }
 
 // ─────────────────────────────────────────────
+//  _askUserLocation — pide permiso y pone un pin verde
+// ─────────────────────────────────────────────
+function _askUserLocation() {
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      // Quitar marcador anterior si existía
+      if (_userMarker) _userMarker.setMap(null);
+
+      // Pin verde con borde blanco — diferente a los morados/rojos de las clínicas
+      _userMarker = new google.maps.Marker({
+        position: { lat, lng },
+        map: _googleMap,
+        title: 'Your location',
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: '#16a34a',      // verde
+          fillOpacity: 1,
+          strokeColor: 'white',
+          strokeWeight: 3,
+        },
+        zIndex: 999,                 // siempre encima de los otros marcadores
+      });
+
+      // Tooltip al hacer clic
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
+                  </div>`,
+      });
+      _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
+
+      // Centrar el mapa en el usuario (opcional — comenta si prefieres dejarlo en Medellín)
+      _googleMap.panTo({ lat, lng });
+    },
+    () => {
+      // El usuario denegó el permiso — no hacer nada, el mapa sigue igual
+    }
+  );
+}
+
+// ─────────────────────────────────────────────
 //  loadMapEvents
 // ─────────────────────────────────────────────
 export function loadMapEvents() {
@@ -426,12 +473,14 @@ export function loadMapEvents() {
     script.defer = true;
     window.__initMap = () => {
       initGoogleMap(CLINICS_SAMPLE);
+      _askUserLocation();
       delete window.__initMap;
     };
     document.head.appendChild(script);
   } else {
     // Maps already loaded
     initGoogleMap(CLINICS_SAMPLE);
+    _askUserLocation();
   }
 
   // ── Expose updateMapMarkers for filters ───
@@ -660,8 +709,19 @@ export function loadMapEvents() {
     const focusBtn = el("dc-focus");
     focusBtn?.replaceWith(focusBtn.cloneNode(true));
     document.getElementById("dc-focus")?.addEventListener("click", () => {
-      closeDetail();
-      if (typeof window.focusVet === "function") window.focusVet(id);
+      // Abre Google Maps en nueva pestaña con coordenadas exactas (si existen)
+      // o busca por nombre + dirección como fallback
+      const lat = c.lat;
+      const lng = c.lng;
+      let gmapUrl;
+      if (lat && lng) {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      } else if (c.address) {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ' ' + c.address)}`;
+      } else {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ' Medellín')}`;
+      }
+      window.open(gmapUrl, '_blank', 'noopener');
     });
 
     openDetail();

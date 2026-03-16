@@ -20,9 +20,10 @@ import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
 import { specialistsPage, specialistsEvents } from "../views/specialists.js";
 import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
+import { vetClinicProfilePage, vetClinicProfileEvents } from "../views/vet-clinic-profile.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
 import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
-import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
+import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users-schedule-appointments.js";
 import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
 import { forgotPasswordPage, forgotPasswordEvents } from "../views/forgot-password.js";
 import { resetPasswordPage, resetPasswordEvents } from "../views/reset-password.js";
@@ -30,7 +31,16 @@ import { resetPasswordPage, resetPasswordEvents } from "../views/reset-password.
 const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
 
 const routes = {
-  "/": landingPage,
+  "/": () => {
+    const user = getUser();
+    if (user) {
+      if (user.role === 'business') window.location.hash = '/veterinary';
+      else if (user.role === 'admin') window.location.hash = '/admin-dashboard';
+      else window.location.hash = '/user-dashboard';
+      return "";
+    }
+    return landingPage();
+  },
   "/login": () => {
     const user = getUser();
     if (user) {
@@ -51,6 +61,7 @@ const routes = {
   "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
   "/veterinary": vetDashboardPage,
+  "/vet-profile": vetClinicProfilePage,
   "/services": servicesPage,
 
   "/tips": healthTipsPage,
@@ -106,6 +117,7 @@ const PROTECTED = {
   "/pet-profile": "user",
   "/appointments": "user",
   "/veterinary": "business",
+  "/vet-profile": "business",
   "/business-appointments": "business",
   "/medical-records": "user",
   "/admin-dashboard": "admin",
@@ -214,6 +226,10 @@ function runPageEvents(path, params = {}) {
       vetDashboardEvents();
       break;
 
+    case "/vet-profile":
+      vetClinicProfileEvents();
+      break;
+
     case "/services":
       servicesPageEvents();
       break;
@@ -258,24 +274,6 @@ function runPageEvents(path, params = {}) {
 
 // Function to initialize navigation events
 function pageEvents() {
-  // Landing page navigation buttons
-  const loginBtn = document.querySelector('.btn-primary');
-  const searchBtn = document.querySelector('button[class*="btn-primary"]:has(svg)');
-
-  if (loginBtn && loginBtn.textContent.includes('Sign In')) {
-    loginBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = '/login';
-    });
-  }
-
-  if (searchBtn) {
-    searchBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = '/clinics';
-    });
-  }
-
   // Navbar links
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
 

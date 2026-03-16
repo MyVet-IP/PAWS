@@ -3,7 +3,7 @@ export function healthTipsPage() {
     {
       category: 'Nutrition',
       color: '#B9FBC0',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3a5 5 0 015 5c0 2-1 3.5-2.5 4.5M12 3a5 5 0 00-5 5c0 2 1 3.5 2.5 4.5M12 12.5V21M9 21h6"/></svg>',
+      icon: '🥦',
       accent: '#6A4C93',
       title: 'Balanced Diet for Your Pet',
       description: 'A proper diet is the foundation of your pet\'s health. Make sure to provide age-appropriate food with the right balance of proteins, carbohydrates, and fats.',
@@ -12,7 +12,7 @@ export function healthTipsPage() {
     {
       category: 'Exercise',
       color: '#90BDF4',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 5a2 2 0 100-4 2 2 0 000 4zm-2 4l-2 9M9 9l4 2 3-3M7 14l2-1M15 9l2 5"/></svg>',
+      icon: '🏃',
       accent: '#2563eb',
       title: 'Keep Them Active & Happy',
       description: 'Regular physical activity prevents obesity, strengthens muscles, and improves your pet\'s mental wellbeing. Each species has different needs.',
@@ -21,7 +21,7 @@ export function healthTipsPage() {
     {
       category: 'Preventive Care',
       color: '#F1C0E8',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4"/></svg>',
+      icon: '💉',
       accent: '#6A4C93',
       title: 'Vaccines & Deworming',
       description: 'Prevention is always better than cure. Keeping your pet\'s vaccination schedule up to date protects them and the whole family.',
@@ -30,7 +30,7 @@ export function healthTipsPage() {
     {
       category: 'Dental Health',
       color: '#FBF8CC',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z"/></svg>',
+      icon: '🦷',
       accent: '#d97706',
       title: 'Don\'t Ignore Their Teeth',
       description: 'Dental disease affects over 80% of pets by age 3. Good oral hygiene prevents pain, infections, and even heart disease.',
@@ -39,7 +39,7 @@ export function healthTipsPage() {
     {
       category: 'Mental Wellbeing',
       color: '#FFCFD2',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 5a7 7 0 00-7 7c0 2.4 1.2 4.5 3 5.7V20h8v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 00-7-7zM9 20h6"/></svg>',
+      icon: '🧠',
       accent: '#dc2626',
       title: 'Emotional Health Matters Too',
       description: 'Pets experience stress, anxiety, and boredom. A stimulating environment and quality time with you are essential for their emotional balance.',
@@ -48,7 +48,7 @@ export function healthTipsPage() {
     {
       category: 'Grooming',
       color: '#B9FBC0',
-      icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9"/></svg>',
+      icon: '✂️',
       accent: '#059669',
       title: 'Grooming is Health Care',
       description: 'Regular grooming does more than keep your pet looking great. It helps you detect lumps, skin issues, or parasites before they become serious.',
@@ -64,11 +64,11 @@ export function healthTipsPage() {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div class="flex items-center justify-between">
             <div>
-              <div class="tips-hero-badge mb-2"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg> Expert Advice</div>
+              <div class="tips-hero-badge mb-2">🐾 Expert Advice</div>
               <h1 class="text-3xl font-bold" style="color: #333333; font-family: 'Poppins', sans-serif;">Health Tips</h1>
               <p class="mt-1" style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.95rem;">Evidence-based advice to keep your furry friends thriving</p>
             </div>
-            <button onclick="window.location.hash='/#/'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
+            <button onclick="window.location.hash='/'" class="font-medium hover:opacity-75 transition" style="color: #6A4C93; font-family: 'Poppins', sans-serif;">
               ← Back to home
             </button>
           </div>
@@ -81,12 +81,12 @@ export function healthTipsPage() {
           <div class="flex gap-3 flex-wrap items-center">
             <span style="font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Filter by:</span>
             <button class="filter-pill active" data-filter="all" onclick="filterTips(this, 'all')">All Topics</button>
-            <button class="filter-pill" data-filter="Nutrition" onclick="filterTips(this, 'Nutrition')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3a5 5 0 015 5c0 2-1 3.5-2.5 4.5M12 3a5 5 0 00-5 5c0 2 1 3.5 2.5 4.5M12 12.5V21M9 21h6"/></svg> Nutrition</button>
-            <button class="filter-pill" data-filter="Exercise" onclick="filterTips(this, 'Exercise')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 5a2 2 0 100-4 2 2 0 000 4zm-2 4l-2 9M9 9l4 2 3-3M7 14l2-1M15 9l2 5"/></svg> Exercise</button>
-            <button class="filter-pill" data-filter="Preventive Care" onclick="filterTips(this, 'Preventive Care')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4"/></svg> Prevention</button>
-            <button class="filter-pill" data-filter="Dental Health" onclick="filterTips(this, 'Dental Health')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z"/></svg> Dental</button>
-            <button class="filter-pill" data-filter="Mental Wellbeing" onclick="filterTips(this, 'Mental Wellbeing')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 5a7 7 0 00-7 7c0 2.4 1.2 4.5 3 5.7V20h8v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 00-7-7zM9 20h6"/></svg> Mental Health</button>
-            <button class="filter-pill" data-filter="Grooming" onclick="filterTips(this, 'Grooming')"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9"/></svg> Grooming</button>
+            <button class="filter-pill" data-filter="Nutrition" onclick="filterTips(this, 'Nutrition')">🥦 Nutrition</button>
+            <button class="filter-pill" data-filter="Exercise" onclick="filterTips(this, 'Exercise')">🏃 Exercise</button>
+            <button class="filter-pill" data-filter="Preventive Care" onclick="filterTips(this, 'Preventive Care')">💉 Prevention</button>
+            <button class="filter-pill" data-filter="Dental Health" onclick="filterTips(this, 'Dental Health')">🦷 Dental</button>
+            <button class="filter-pill" data-filter="Mental Wellbeing" onclick="filterTips(this, 'Mental Wellbeing')">🧠 Mental Health</button>
+            <button class="filter-pill" data-filter="Grooming" onclick="filterTips(this, 'Grooming')">✂️ Grooming</button>
           </div>
         </div>
       </section>
@@ -96,7 +96,7 @@ export function healthTipsPage() {
         <!-- Personalized AI Tips (loaded via API if user has pets) -->
         <div id="ai-tips-section" style="display:none;" class="mb-10">
           <div class="flex items-center gap-3 mb-5">
-            <span class="text-2xl"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 3l1.5 4.5L11 9l-4.5 1.5L5 15l-1.5-4.5L-1 9l4.5-1.5L5 3zM19 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z"/></svg></span>
+            <span class="text-2xl">✨</span>
             <div>
               <h2 class="text-xl font-bold font-poppins" style="color:#333;">Personalized for <span id="ai-tips-pet-name">your pet</span></h2>
               <p class="text-sm" style="color:#6B7280;font-family:'Roboto',sans-serif;">Generated by AI based on your pet's profile</p>
@@ -147,10 +147,10 @@ export function healthTipsPage() {
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             ${[
-      { season: 'Spring', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 12a2 2 0 100-4 2 2 0 000 4zm0 0c0 4-3 6-3 6m3-6c0 4 3 6 3 6m-3-6c-4 0-6-3-6-3m6 3c-4 0-6 3-6 3m6-6c4 0 6-3 6-3m-6 3c4 0 6 3 6 3"/></svg>', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
-      { season: 'Summer', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v2m0 14v2M3 12h2m14 0h2m-3.22-5.78l-1.42 1.42M6.64 17.36l-1.42 1.42M17.36 17.36l1.42 1.42M6.64 6.64L5.22 5.22M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
-      { season: 'Rainy Season', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 17.58A5 5 0 0018 8h-1.26A8 8 0 103 16.29M8 19v2m4-4v2m4-2v2"/></svg>', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
-      { season: 'Year-Round', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 22V12m0 0C12 6 6 4 3 3c0 3 2 9 9 9zm0 0c0-6 6-8 9-9 0 3-2 9-9 9z"/></svg>', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
+      { season: 'Spring', icon: '🌸', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
+      { season: 'Summer', icon: '☀️', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
+      { season: 'Rainy Season', icon: '🌧️', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
+      { season: 'Year-Round', icon: '🌿', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
     ].map(s => `
               <div class="seasonal-card">
                 <div class="text-3xl mb-3">${s.icon}</div>
@@ -195,7 +195,7 @@ export function healthTipsPage() {
           alert('Please enter a valid email address.');
           return;
         }
-        alert('Thanks for subscribing! Check your inbox soon <svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg>');
+        alert('Thanks for subscribing! Check your inbox soon 🐾');
         document.getElementById('newsletter-email').value = '';
       }
       <!-- N8N Chatbot CSS -->
@@ -391,7 +391,7 @@ export async function healthTipsEvents() {
   if (!user) return;
 
   const TOPICS = ['Nutrition', 'Exercise', 'Preventive Care', 'Dental Health', 'Grooming', 'Mental Wellbeing'];
-  const TOPIC_ICONS = { Nutrition: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3a5 5 0 015 5c0 2-1 3.5-2.5 4.5M12 3a5 5 0 00-5 5c0 2 1 3.5 2.5 4.5M12 12.5V21M9 21h6"/></svg>', Exercise: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 5a2 2 0 100-4 2 2 0 000 4zm-2 4l-2 9M9 9l4 2 3-3M7 14l2-1M15 9l2 5"/></svg>', 'Preventive Care': '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4"/></svg>', 'Dental Health': '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z"/></svg>', Grooming: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9"/></svg>', 'Mental Wellbeing': '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 5a7 7 0 00-7 7c0 2.4 1.2 4.5 3 5.7V20h8v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 00-7-7zM9 20h6"/></svg>' };
+  const TOPIC_ICONS = { Nutrition: '🥦', Exercise: '🏃', 'Preventive Care': '💉', 'Dental Health': '🦷', Grooming: '✂️', 'Mental Wellbeing': '🧠' };
   const TOPIC_COLORS = { Nutrition: '#B9FBC0', Exercise: '#90BDF4', 'Preventive Care': '#F1C0E8', 'Dental Health': '#FBF8CC', Grooming: '#B9FBC0', 'Mental Wellbeing': '#FFCFD2' };
 
   try {
@@ -446,7 +446,7 @@ export async function healthTipsEvents() {
           <div class="tip-card fade-up" style="animation-delay:${i * 0.08}s;">
             <div class="tip-card-accent" style="background:${color};"></div>
             <div class="tip-category-badge" style="background:${color};color:${accent};">
-              ${TOPIC_ICONS[topic] || '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 3l1.5 4.5L11 9l-4.5 1.5L5 15l-1.5-4.5L-1 9l4.5-1.5L5 3zM19 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z"/></svg>'} ${topic}
+              ${TOPIC_ICONS[topic] || '✨'} ${topic}
             </div>
             <div class="tip-list-item mt-3">
               <div class="tip-check" style="background:${color};color:${accent};">✓</div>
