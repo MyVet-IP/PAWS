@@ -56,6 +56,7 @@ export function emergencyPage() {
     </div>
 
     <!-- ── URGENCY SELECTOR ──────────────────── -->
+    <!-- COMMENTED OUT — urgency selection removed, button shown directly
     <div class="bg-white rounded-2xl shadow-card p-6 mb-6">
       <h2 class="text-lg font-bold text-text-primary font-poppins mb-1">
         How urgent is the situation?
@@ -64,75 +65,52 @@ export function emergencyPage() {
 
       <div class="flex flex-col gap-3" id="urgencyOptions">
 
-        <!-- CRITICAL -->
+        CRITICAL
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition group"
-               style="border:2px solid #FECACA; background:#FEF2F2;"
-               onmouseenter="this.style.borderColor='#dc2626'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;10&quot;]').checked?'#dc2626':'#FECACA'">
-          <input type="radio" name="urgency" value="10" class="mt-1 flex-shrink-0"
-                 style="width:18px;height:18px;accent-color:#dc2626;"
-                 onchange="document.querySelectorAll('.urgency-label').forEach(l=>l.style.borderColor='');
-                           this.closest('label').style.borderColor='#dc2626'"/>
+               style="border:2px solid #FECACA; background:#FEF2F2;">
+          <input type="radio" name="urgency" value="10" style="width:18px;height:18px;accent-color:#dc2626;"/>
           <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500 flex-shrink-0"></span>
-              <p class="font-bold text-text-primary font-poppins text-sm">
-                Critical — Bleeding / Unresponsive / Seizures
-              </p>
-              <span class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-                    style="background:#dc2626;color:white;">URGENT</span>
-            </div>
+            <p class="font-bold text-text-primary font-poppins text-sm">
+              Critical — Bleeding / Unresponsive / Seizures
+            </p>
             <p class="text-xs text-text-muted">Go to emergency immediately. Life or death situation.</p>
           </div>
         </label>
 
-        <!-- URGENT -->
+        URGENT
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
-               style="border:2px solid #FED7AA; background:#FFF7ED;"
-               onmouseenter="this.style.borderColor='#ea580c'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;5&quot;]').checked?'#ea580c':'#FED7AA'">
-          <input type="radio" name="urgency" value="5" class="mt-1 flex-shrink-0"
-                 style="width:18px;height:18px;accent-color:#ea580c;"
-                 onchange="document.querySelectorAll('label[onmouseenter]').forEach(l=>l.style.borderColor=l.querySelector('input')?.checked?'':''); this.closest('label').style.borderColor='#ea580c'"/>
+               style="border:2px solid #FED7AA; background:#FFF7ED;">
+          <input type="radio" name="urgency" value="5" style="width:18px;height:18px;accent-color:#ea580c;"/>
           <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:#ea580c;"></span>
-              <p class="font-bold text-text-primary font-poppins text-sm">
-                Urgent — Vomiting / Diarrhea / Moderate pain
-              </p>
-              <span class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-                    style="background:#ea580c;color:white;">SAME DAY</span>
-            </div>
+            <p class="font-bold text-text-primary font-poppins text-sm">
+              Urgent — Vomiting / Diarrhea / Moderate pain
+            </p>
             <p class="text-xs text-text-muted">Requires same-day attention. Cannot wait.</p>
           </div>
         </label>
 
-        <!-- CONSULTATION -->
+        CONSULTATION
         <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
-               style="border:2px solid #BBF7D0; background:#F0FDF4;"
-               onmouseenter="this.style.borderColor='#16a34a'"
-               onmouseleave="this.style.borderColor=document.querySelector('input[name=urgency][value=&quot;2&quot;]').checked?'#16a34a':'#BBF7D0'">
-          <input type="radio" name="urgency" value="2" class="mt-1 flex-shrink-0"
-                 style="width:18px;height:18px;accent-color:#16a34a;"
-                 onchange="this.closest('label').style.borderColor='#16a34a'"/>
+               style="border:2px solid #BBF7D0; background:#F0FDF4;">
+          <input type="radio" name="urgency" value="2" style="width:18px;height:18px;accent-color:#16a34a;"/>
           <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0"></span>
-              <p class="font-bold text-text-primary font-poppins text-sm">
-                Consultation — Check-up / Vaccines / Examination
-              </p>
-              <span class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-                    style="background:#16a34a;color:white;">SCHEDULE</span>
-            </div>
+            <p class="font-bold text-text-primary font-poppins text-sm">
+              Consultation — Check-up / Vaccines / Examination
+            </p>
             <p class="text-xs text-text-muted">Can be scheduled. Not urgent.</p>
           </div>
         </label>
 
       </div>
+    END COMMENTED OUT -->
 
-      <!-- Find button -->
+    <!-- Find button — shown directly without urgency selection -->
+    <div class="bg-white rounded-2xl shadow-card p-6 mb-6">
+      <p class="text-text-muted text-sm mb-4 text-center">
+        We'll use your location to find the nearest emergency clinics
+      </p>
       <button id="btn-find-emergency"
-        class="w-full mt-5 font-bold py-3.5 rounded-xl font-poppins text-sm transition flex items-center justify-center gap-2"
+        class="w-full font-bold py-3.5 rounded-xl font-poppins text-sm transition flex items-center justify-center gap-2"
         style="background:linear-gradient(135deg,#dc2626,#ea580c);color:white;"
         onmouseenter="this.style.opacity='0.90'"
         onmouseleave="this.style.opacity='1'">
@@ -141,7 +119,7 @@ export function emergencyPage() {
             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
-        Find Emergency Clinics Now
+        Find Emergency Clinics Near Me
       </button>
     </div>
 
@@ -200,30 +178,8 @@ export async function emergencyEvents() {
   if (!btnFind) return;
 
   btnFind.addEventListener('click', async () => {
-    const selected = document.querySelector('input[name="urgency"]:checked');
-
-    if (!selected) {
-      // Visual shake instead of alert
-      btnFind.style.animation = 'none';
-      btnFind.style.outline = '3px solid #fca5a5';
-      setTimeout(() => { btnFind.style.outline = 'none'; }, 1200);
-
-      // Show inline message
-      let msg = document.getElementById('urgency-error');
-      if (!msg) {
-        msg = document.createElement('p');
-        msg.id = 'urgency-error';
-        msg.className = 'text-center text-sm font-medium font-poppins mt-3';
-        msg.style.color = '#dc2626';
-        msg.textContent = '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Please select the urgency level first';
-        btnFind.parentNode.insertBefore(msg, btnFind.nextSibling);
-      }
-      setTimeout(() => msg?.remove(), 2500);
-      return;
-    }
-
-    // Remove error if present
-    document.getElementById('urgency-error')?.remove();
+    // ── urgency validation removed — no longer needed ──
+    // (selector is commented out in HTML, button works directly)
 
     // Show loading state
     btnFind.disabled = true;
@@ -240,15 +196,55 @@ export async function emergencyEvents() {
     }
 
     try {
+      // ── Ask user for location to sort by distance ─────────────────────────
+      let userLat = null;
+      let userLng = null;
+
+      // Try to get location — resolves immediately if already granted,
+      // shows browser prompt if not yet decided, skips silently if denied
+      await new Promise((resolve) => {
+        if (!navigator.geolocation) { resolve(); return; }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            resolve();
+          },
+          () => resolve(),   // denied or error — just skip, still show all clinics
+          { timeout: 5000 }
+        );
+      });
+
+      // ── Haversine distance in km ──────────────────────────────────────────
+      function haversine(lat1, lng1, lat2, lng2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
       const response = await fetch('/api/businesses?type=clinic');
       if (!response.ok) throw new Error('Error fetching clinics');
       const clinics = await response.json();
 
       // Filtrar clínicas 24h o que tengan especialidad de emergencia
-      const emergencyClinics = clinics.filter(c =>
+      let emergencyClinics = clinics.filter(c =>
         c.is_24h === true ||
         (c.specialties || []).some(s => s.name.toLowerCase().includes('emergenc') || s.name.toLowerCase().includes('urgenc'))
       );
+
+      // ── Sort by distance if we have user location ─────────────────────────
+      if (userLat && userLng) {
+        emergencyClinics = emergencyClinics.map(c => ({
+          ...c,
+          _distKm: (c.latitude && c.longitude)
+            ? haversine(userLat, userLng, parseFloat(c.latitude), parseFloat(c.longitude))
+            : 9999,
+        })).sort((a, b) => a._distKm - b._distKm);
+      }
 
       if (countEl) countEl.textContent = `${emergencyClinics.length} found`;
 
@@ -268,8 +264,10 @@ export async function emergencyEvents() {
           <div class="p-5">
             <div class="flex items-start justify-between mb-3">
               <h3 class="font-bold text-text-primary font-poppins">${clinic.name}</h3>
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0 ml-2"
-                    style="background:#dc2626;color:white;">24/7</span>
+              <div class="flex gap-1.5 flex-shrink-0 ml-2">
+                ${clinic.is_24h ? '<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#dc2626;color:white;">24/7</span>' : ''}
+                ${(clinic._distKm && clinic._distKm < 9999) ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#FEF2F2;color:#dc2626;">📍 ${clinic._distKm < 1 ? Math.round(clinic._distKm * 1000) + ' m' : clinic._distKm.toFixed(1) + ' km'}</span>` : ''}
+              </div>
             </div>
             <p class="text-text-muted text-sm mb-4 flex items-start gap-2">
               <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color:#ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,13 +290,26 @@ export async function emergencyEvents() {
                   </svg>
                   Call Now
                 </a>` : ''}
-              <button onclick="window.location.hash='#/clinics'"
-                class="flex-1 py-2 rounded-xl font-poppins font-semibold text-sm transition"
-                style="border:2px solid #FCA5A5;color:#dc2626;"
-                onmouseenter="this.style.background='#FEF2F2'"
-                onmouseleave="this.style.background='transparent'">
-                View Details
-              </button>
+              <!-- View Details → opens Google Maps with clinic location -->
+              <a href="${(clinic.latitude && clinic.longitude)
+          ? `https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}`
+          : clinic.address
+            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinic.name + ' ' + clinic.address)}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinic.name + ' Medellin')}`
+        }"
+                 target="_blank"
+                 rel="noopener"
+                 class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl font-poppins font-semibold text-sm transition"
+                 style="border:2px solid #FCA5A5;color:#dc2626;"
+                 onmouseenter="this.style.background='#FEF2F2'"
+                 onmouseleave="this.style.background='transparent'">
+                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                View on Maps
+              </a>
             </div>
             ${clinic.whatsapp ? `
             <a href="https://api.whatsapp.com/send/?phone=%2B${clinic.whatsapp}&text=Hola%20tengo%20una%20emergencia%20con%20mi%20mascota&type=phone_number"

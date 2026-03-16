@@ -1,16 +1,84 @@
 // ─────────────────────────────────────────────
 //  map-page.js
-//  ✅ Real data from /api/businesses?type=clinic
-//  ✅ Google Maps key from /api/config
-//  ✅ Dynamic zone filter chips
+//   Inline styles → map-page.css
+//   <style> tag removed
+//   Google Maps API integration
+//   Sidebar max-height for mobile
 // ─────────────────────────────────────────────
 
-let _allClinics = [];
-let _googleMap  = null;
+const CLINICS_SAMPLE = [
+  {
+    id: 1, name: "Clínica San Juan Pet",
+    location: "El Poblado, Medellín",
+    address: "Calle 10 # 43D-50, El Poblado",
+    rating: 4.9, reviews: 128,
+    services: ["Urgencias", "Cirugía", "Vacunación"],
+    zone: "Poblado", open24: true, emergency: true,
+    phone: "+57 300 111 2222", whatsapp: "573001112222",
+    hours: "Lunes a Domingo — 24 horas", verified: true,
+    description: "Clínica veterinaria de alta complejidad con más de 15 años de experiencia. UCI veterinaria, laboratorio clínico y especialistas certificados.",
+    lat: 6.2100, lng: -75.5680,
+  },
+  {
+    id: 2, name: "VetCare Laureles",
+    location: "Laureles, Medellín",
+    address: "Carrera 76 # 39-12, Laureles",
+    rating: 4.7, reviews: 89,
+    services: ["Consulta", "Vacunación", "Dermatología"],
+    zone: "Laureles", open24: false, emergency: false,
+    phone: "+57 300 333 4444", whatsapp: "573003334444",
+    hours: "Lun–Vie 8am–6pm · Sáb 8am–2pm", verified: true,
+    description: "Atención integral con enfoque en medicina preventiva y bienestar animal. Ambiente tranquilo y equipo especializado.",
+    lat: 6.2444, lng: -75.5963,
+  },
+  {
+    id: 3, name: "Animal House Envigado",
+    location: "Envigado, Medellín",
+    address: "Calle 37 Sur # 43B-10, Envigado",
+    rating: 4.8, reviews: 203,
+    services: ["Urgencias", "Ortopedia", "Laboratorio"],
+    zone: "Envigado", open24: true, emergency: true,
+    phone: "+57 300 555 6666", whatsapp: "573005556666",
+    hours: "Lunes a Domingo — 24 horas", verified: false,
+    description: "Especialistas en ortopedia y traumatología animal. Atención de urgencias 24/7 con equipos de diagnóstico de última generación.",
+    lat: 6.1695, lng: -75.5924,
+  },
+  {
+    id: 4, name: "PetSalud Belén",
+    location: "Belén, Medellín",
+    address: "Carrera 76 # 33-40, Belén",
+    rating: 4.5, reviews: 64,
+    services: ["Consulta", "Cirugía", "Odontología"],
+    zone: "Belén", open24: false, emergency: false,
+    phone: "+57 300 777 8888", whatsapp: null,
+    hours: "Lunes a Sábado 9am–7pm", verified: true,
+    description: "Clínica veterinaria con ambiente familiar y atención personalizada. Servicio de odontología veterinaria especializada.",
+    lat: 6.2305, lng: -75.6122,
+  },
+  {
+    id: 5, name: "Vet 24 Sabaneta",
+    location: "Sabaneta, Medellín",
+    address: "Calle 75 Sur # 45-20, Sabaneta",
+    rating: 4.6, reviews: 47,
+    services: ["Urgencias", "Vacunación", "Consulta"],
+    zone: "Sabaneta", open24: true, emergency: true,
+    phone: "+57 300 999 0000", whatsapp: "573009990000",
+    hours: "Lunes a Domingo — 24 horas", verified: true,
+    description: "Urgencias veterinarias disponibles las 24 horas. Equipo de guardia permanente para atender cualquier emergencia de tu mascota.",
+    lat: 6.1510, lng: -75.6170,
+  },
+];
+
+const ALL_ZONES = [...new Set(CLINICS_SAMPLE.map(c => c.zone))];
+const ALL_SERVICES = [...new Set(CLINICS_SAMPLE.flatMap(c => c.services))];
+
+// Google Maps instance — shared between render and events
+let _googleMap = null;
 let _mapMarkers = [];
+let _userMarker = null;   // marcador verde de la ubicación del usuario
 
 // ─────────────────────────────────────────────
-//  loadMapPage — returns HTML string
+//  loadMapPage
 // ─────────────────────────────────────────────
 export function loadMapPage() {
   return `
@@ -43,7 +111,9 @@ export function loadMapPage() {
       <!-- Results count -->
       <div class="map-results-bar">
         <p class="text-xs font-roboto" style="color:var(--text-muted);">
-          <span id="map-count" class="font-semibold" style="color:var(--text-primary);">...</span> clinics found
+          <span id="map-count" class="font-semibold" style="color:var(--text-primary);">
+            ${CLINICS_SAMPLE.length}
+          </span> clinics found
         </p>
         <button id="btn-clear-filters" class="hidden text-xs font-semibold font-poppins"
                 style="color:var(--text-highlight);">
@@ -52,13 +122,11 @@ export function loadMapPage() {
       </div>
 
       <!-- Clinic cards -->
-      <div id="clinic-list">
-        <div class="p-4 text-center text-xs" style="color:var(--text-muted);">Loading clinics...</div>
-      </div>
+      <div id="clinic-list"></div>
 
       <!-- Empty state -->
       <div id="clinic-empty">
-        <p class="text-4xl mb-3">🔍</p>
+        <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></p>
         <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">No clinics found</p>
         <p class="text-xs mt-1" style="color:var(--text-muted);">Try adjusting your search or filters</p>
       </div>
@@ -68,6 +136,7 @@ export function loadMapPage() {
     <!-- ══════════════════════════ MAP ══════ -->
     <div class="map-container">
       <div id="mapContainer">
+        <!-- Placeholder shown until Google Maps loads -->
         <div class="map-placeholder" id="map-placeholder">
           <div class="map-placeholder-icon">
             <svg class="w-8 h-8" style="color:var(--text-highlight);"
@@ -109,14 +178,26 @@ export function loadMapPage() {
           <p class="filter-section-label">Quick</p>
           <div class="flex flex-wrap gap-1.5">
             <button class="fchip fchip-active" data-type="quick" data-value="all">All</button>
-            <button class="fchip" data-type="quick" data-value="24h">🕐 24h only</button>
-            <button class="fchip" data-type="quick" data-value="emergency">🚨 Emergency</button>
-            <button class="fchip" data-type="quick" data-value="verified">✅ Verified</button>
+            <button class="fchip" data-type="quick" data-value="24h"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 24h only</button>
+            <button class="fchip" data-type="quick" data-value="emergency"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Emergency</button>
+            <button class="fchip" data-type="quick" data-value="verified"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Verified</button>
           </div>
         </div>
         <div>
           <p class="filter-section-label">Zone</p>
-          <div id="zone-chips" class="flex flex-wrap gap-1.5"></div>
+          <div class="flex flex-wrap gap-1.5">
+            ${ALL_ZONES.map(z => `
+              <button class="fchip" data-type="zone" data-value="${z}">${z}</button>
+            `).join('')}
+          </div>
+        </div>
+        <div>
+          <p class="filter-section-label">Services</p>
+          <div class="flex flex-wrap gap-1.5">
+            ${ALL_SERVICES.map(s => `
+              <button class="fchip" data-type="service" data-value="${s}">${s}</button>
+            `).join('')}
+          </div>
         </div>
         <button id="btn-apply-filters"
           class="w-full py-2 rounded-xl font-poppins font-semibold text-sm text-white transition"
@@ -142,7 +223,7 @@ export function loadMapPage() {
         </button>
         <div class="flex items-start gap-3">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-               style="background:rgba(255,255,255,0.20);">🏥</div>
+               style="background:rgba(255,255,255,0.20);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 id="dc-name" class="font-bold text-white font-poppins text-base leading-tight"></h2>
@@ -202,18 +283,9 @@ export function loadMapPage() {
           </div>
         </div>
 
-        <div id="dc-website-row" class="hidden flex items-start gap-3">
-          <div class="detail-info-icon">
-            <svg class="w-4 h-4" style="color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-xs font-poppins" style="color:var(--text-muted);">Website</p>
-            <a id="dc-website" href="#" target="_blank" rel="noopener"
-               class="text-sm font-medium" style="color:var(--text-highlight);"></a>
-          </div>
+        <div>
+          <p class="filter-section-label">Services</p>
+          <div id="dc-services" class="flex flex-wrap gap-2"></div>
         </div>
 
         <div style="height:1px;background:var(--bg-muted);"></div>
@@ -264,9 +336,11 @@ export function loadMapPage() {
 //  initGoogleMap — loads the map with markers
 // ─────────────────────────────────────────────
 function initGoogleMap(clinics) {
+  // Hide placeholder
   const placeholder = document.getElementById('map-placeholder');
   if (placeholder) placeholder.style.display = 'none';
 
+  // Center on Medellín
   const center = { lat: 6.2442, lng: -75.5812 };
 
   _googleMap = new google.maps.Map(document.getElementById('mapContainer'), {
@@ -276,7 +350,7 @@ function initGoogleMap(clinics) {
       { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', stylers: [{ visibility: 'off' }] },
     ],
-    mapTypeControl:    false,
+    mapTypeControl: false,
     fullscreenControl: false,
     streetViewControl: false,
   });
@@ -285,18 +359,19 @@ function initGoogleMap(clinics) {
 }
 
 function _addMarkers(clinics) {
+  // Clear existing markers
   _mapMarkers.forEach(m => m.setMap(null));
   _mapMarkers = [];
 
   clinics.forEach(c => {
     const marker = new google.maps.Marker({
       position: { lat: c.lat, lng: c.lng },
-      map:      _googleMap,
-      title:    c.name,
+      map: _googleMap,
+      title: c.name,
       icon: {
-        path:        google.maps.SymbolPath.CIRCLE,
-        scale:       10,
-        fillColor:   c.emergency ? '#dc2626' : '#6A4C93',
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 10,
+        fillColor: c.emergency ? '#dc2626' : '#6A4C93',
         fillOpacity: 1,
         strokeColor: 'white',
         strokeWeight: 2,
@@ -325,99 +400,97 @@ function _addMarkers(clinics) {
 }
 
 // ─────────────────────────────────────────────
+//  _askUserLocation — pide permiso y pone un pin verde
+// ─────────────────────────────────────────────
+function _askUserLocation() {
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      // Quitar marcador anterior si existía
+      if (_userMarker) _userMarker.setMap(null);
+
+      // Pin verde con borde blanco — diferente a los morados/rojos de las clínicas
+      _userMarker = new google.maps.Marker({
+        position: { lat, lng },
+        map: _googleMap,
+        title: 'Your location',
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: '#16a34a',      // verde
+          fillOpacity: 1,
+          strokeColor: 'white',
+          strokeWeight: 3,
+        },
+        zIndex: 999,                 // siempre encima de los otros marcadores
+      });
+
+      // Tooltip al hacer clic
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
+                  </div>`,
+      });
+      _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
+
+      // Centrar el mapa en el usuario (opcional — comenta si prefieres dejarlo en Medellín)
+      _googleMap.panTo({ lat, lng });
+    },
+    () => {
+      // El usuario denegó el permiso — no hacer nada, el mapa sigue igual
+    }
+  );
+}
+
+// ─────────────────────────────────────────────
 //  loadMapEvents
 // ─────────────────────────────────────────────
-export async function loadMapEvents() {
-  let filtered     = [];
-  let searchQuery  = "";
+export function loadMapEvents() {
+  let filtered = [...CLINICS_SAMPLE];
+  let searchQuery = "";
   let activeCardId = null;
 
-  let pendingFilters = { quick: "all", zones: [] };
-  let activeFilters  = { quick: "all", zones: [] };
+  let pendingFilters = { quick: "all", zones: [], services: [] };
+  let activeFilters = { quick: "all", zones: [], services: [] };
 
   const filterModal = document.getElementById("modal-filters");
   const detailModal = document.getElementById("modal-clinic-detail");
-  const openFilter  = () => filterModal?.classList.add("open");
+  const openFilter = () => filterModal?.classList.add("open");
   const closeFilter = () => filterModal?.classList.remove("open");
-  const openDetail  = () => detailModal?.classList.add("open");
+  const openDetail = () => detailModal?.classList.add("open");
   const closeDetail = () => detailModal?.classList.remove("open");
 
-  // ── Fetch config + clinics in parallel ────
-  let mapsKey = '';
-  try {
-    const [configRes, clinicsRes] = await Promise.all([
-      fetch('/api/config'),
-      fetch('/api/businesses?type=clinic'),
-    ]);
-
-    if (configRes.ok) {
-      const cfg = await configRes.json();
-      mapsKey = cfg.mapsKey || '';
-    }
-
-    if (clinicsRes.ok) {
-      const businesses = await clinicsRes.json();
-      _allClinics = businesses
-        .map(b => ({
-          id:          b.business_id,
-          name:        b.name,
-          location:    b.zone ? `${b.zone}, Medellín` : (b.city || 'Medellín'),
-          address:     b.address || '',
-          rating:      parseFloat(b.rating_average) || 0,
-          reviews:     b.rating_count || 0,
-          zone:        b.zone || '',
-          open24:      !!b.is_24h,
-          emergency:   !!b.is_24h,
-          phone:       b.phone || null,
-          whatsapp:    b.whatsapp || null,
-          website:     b.website || null,
-          hours:       b.is_24h
-                         ? 'Monday to Sunday — 24 hours'
-                         : 'Mon–Fri 8am–6pm · Sat 8am–2pm',
-          verified:    b.nit_verified === 'verified',
-          description: b.address || 'Veterinary clinic in Medellín.',
-          lat:         parseFloat(b.latitude),
-          lng:         parseFloat(b.longitude),
-        }))
-        .filter(c => !isNaN(c.lat) && !isNaN(c.lng));
-    }
-  } catch (err) {
-    console.error('Error loading map data:', err);
-  }
-
-  filtered = [..._allClinics];
-
-  // ── Build zone chips dynamically ──────────
-  const zones = [...new Set(_allClinics.map(c => c.zone).filter(Boolean))].sort();
-  const zoneChipsEl = document.getElementById('zone-chips');
-  if (zoneChipsEl && zones.length > 0) {
-    zoneChipsEl.innerHTML = zones.map(z =>
-      `<button class="fchip" data-type="zone" data-value="${z}">${z}</button>`
-    ).join('');
-  }
-
   // ── Init Google Maps ──────────────────────
+  // Load the Maps script dynamically if not already loaded
   if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${mapsKey}&callback=window.__initMap`;
+    // TODO: Replace YOUR_API_KEY with the actual Google Maps API key
+    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=window.__initMap`;
     script.async = true;
     script.defer = true;
     window.__initMap = () => {
-      initGoogleMap(_allClinics);
+      initGoogleMap(CLINICS_SAMPLE);
+      _askUserLocation();
       delete window.__initMap;
     };
     document.head.appendChild(script);
   } else {
-    initGoogleMap(_allClinics);
+    // Maps already loaded
+    initGoogleMap(CLINICS_SAMPLE);
+    _askUserLocation();
   }
 
-  // ── Expose helpers ────────────────────────
+  // ── Expose updateMapMarkers for filters ───
   window.updateMapMarkers = (clinicList) => {
     if (_googleMap) _addMarkers(clinicList);
   };
 
+  // ── Expose focusVet for card click ────────
   window.focusVet = (id) => {
-    const c = _allClinics.find(cl => cl.id === id);
+    const c = CLINICS_SAMPLE.find(cl => cl.id === id);
     if (!c || !_googleMap) return;
     _googleMap.panTo({ lat: c.lat, lng: c.lng });
     _googleMap.setZoom(15);
@@ -434,27 +507,32 @@ export async function loadMapEvents() {
   document.getElementById("modal-detail-close")?.addEventListener("click", closeDetail);
   detailModal?.addEventListener("click", e => { if (e.target === detailModal) closeDetail(); });
 
-  // ── Filter chips (event delegation) ───────
-  filterModal?.addEventListener("click", e => {
-    const chip = e.target.closest(".fchip");
-    if (!chip) return;
-    const { type, value } = chip.dataset;
-    if (type === "quick") {
-      filterModal.querySelectorAll(".fchip[data-type='quick']")
-        .forEach(c => c.classList.remove("fchip-active"));
-      chip.classList.add("fchip-active");
-      pendingFilters.quick = value;
-    } else if (type === "zone") {
-      chip.classList.toggle("fchip-active");
-      if (chip.classList.contains("fchip-active")) pendingFilters.zones.push(value);
-      else pendingFilters.zones = pendingFilters.zones.filter(z => z !== value);
-    }
+  // ── Filter chips ──────────────────────────
+  document.querySelectorAll(".fchip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const { type, value } = chip.dataset;
+      if (type === "quick") {
+        document.querySelectorAll(".fchip[data-type='quick']")
+          .forEach(c => c.classList.remove("fchip-active"));
+        chip.classList.add("fchip-active");
+        pendingFilters.quick = value;
+      } else if (type === "zone") {
+        chip.classList.toggle("fchip-active");
+        if (chip.classList.contains("fchip-active")) pendingFilters.zones.push(value);
+        else pendingFilters.zones = pendingFilters.zones.filter(z => z !== value);
+      } else if (type === "service") {
+        chip.classList.toggle("fchip-active");
+        if (chip.classList.contains("fchip-active")) pendingFilters.services.push(value);
+        else pendingFilters.services = pendingFilters.services.filter(s => s !== value);
+      }
+    });
   });
 
   document.getElementById("btn-apply-filters")?.addEventListener("click", () => {
     activeFilters = {
-      quick: pendingFilters.quick,
+      ...pendingFilters,
       zones: [...pendingFilters.zones],
+      services: [...pendingFilters.services],
     };
     applyAll();
     updateFilterDot();
@@ -462,8 +540,8 @@ export async function loadMapEvents() {
   });
 
   document.getElementById("btn-clear-filters")?.addEventListener("click", () => {
-    activeFilters  = { quick: "all", zones: [] };
-    pendingFilters = { quick: "all", zones: [] };
+    activeFilters = { quick: "all", zones: [], services: [] };
+    pendingFilters = { quick: "all", zones: [], services: [] };
     const search = document.getElementById("map-search");
     if (search) { search.value = ""; searchQuery = ""; }
     syncChipsToActive();
@@ -479,18 +557,20 @@ export async function loadMapEvents() {
 
   // ── Filter + search logic ─────────────────
   function applyAll() {
-    filtered = _allClinics.filter(c => {
+    filtered = CLINICS_SAMPLE.filter(c => {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         if (!c.name.toLowerCase().includes(q) &&
-            !c.location.toLowerCase().includes(q) &&
-            !c.address.toLowerCase().includes(q)) return false;
+          !c.location.toLowerCase().includes(q) &&
+          !c.services.some(s => s.toLowerCase().includes(q))) return false;
       }
-      if (activeFilters.quick === "24h"       && !c.open24)    return false;
+      if (activeFilters.quick === "24h" && !c.open24) return false;
       if (activeFilters.quick === "emergency" && !c.emergency) return false;
-      if (activeFilters.quick === "verified"  && !c.verified)  return false;
+      if (activeFilters.quick === "verified" && !c.verified) return false;
       if (activeFilters.zones.length > 0 &&
-          !activeFilters.zones.includes(c.zone)) return false;
+        !activeFilters.zones.includes(c.zone)) return false;
+      if (activeFilters.services.length > 0 &&
+        !activeFilters.services.every(s => c.services.includes(s))) return false;
       return true;
     });
     renderCards(filtered);
@@ -498,9 +578,11 @@ export async function loadMapEvents() {
   }
 
   function updateFilterDot() {
-    const dot      = document.getElementById("filter-dot");
+    const dot = document.getElementById("filter-dot");
     const clearBtn = document.getElementById("btn-clear-filters");
-    const hasActive = activeFilters.quick !== "all" || activeFilters.zones.length > 0;
+    const hasActive = activeFilters.quick !== "all"
+      || activeFilters.zones.length > 0
+      || activeFilters.services.length > 0;
     dot?.classList.toggle("hidden", !hasActive);
     clearBtn?.classList.toggle("hidden", !hasActive);
   }
@@ -509,17 +591,20 @@ export async function loadMapEvents() {
     pendingFilters = {
       quick: activeFilters.quick,
       zones: [...activeFilters.zones],
+      services: [...activeFilters.services],
     };
-    filterModal?.querySelectorAll(".fchip[data-type='quick']").forEach(c =>
+    document.querySelectorAll(".fchip[data-type='quick']").forEach(c =>
       c.classList.toggle("fchip-active", c.dataset.value === activeFilters.quick));
-    filterModal?.querySelectorAll(".fchip[data-type='zone']").forEach(c =>
+    document.querySelectorAll(".fchip[data-type='zone']").forEach(c =>
       c.classList.toggle("fchip-active", activeFilters.zones.includes(c.dataset.value)));
+    document.querySelectorAll(".fchip[data-type='service']").forEach(c =>
+      c.classList.toggle("fchip-active", activeFilters.services.includes(c.dataset.value)));
   }
 
   // ── Render cards ──────────────────────────
   function renderCards(clinics) {
-    const list    = document.getElementById("clinic-list");
-    const empty   = document.getElementById("clinic-empty");
+    const list = document.getElementById("clinic-list");
+    const empty = document.getElementById("clinic-empty");
     const countEl = document.getElementById("map-count");
     if (!list) return;
 
@@ -537,18 +622,17 @@ export async function loadMapEvents() {
 
     list.innerHTML = clinics.map(c => `
       <div class="clinic-card ${activeCardId === c.id ? 'active' : ''}" data-id="${c.id}">
-        <div class="clinic-card-icon">🏥</div>
+        <div class="clinic-card-icon"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-1 mb-0.5">
             <p class="font-semibold font-poppins leading-tight truncate"
                style="font-size:13px;color:var(--text-primary);">${c.name}</p>
-            ${c.rating > 0 ? `
             <div class="flex items-center gap-0.5 flex-shrink-0">
               <svg class="w-3 h-3" style="color:#f59e0b;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
               </svg>
-              <span class="font-bold font-poppins" style="font-size:11px;color:var(--text-primary);">${c.rating.toFixed(1)}</span>
-            </div>` : ''}
+              <span class="font-bold font-poppins" style="font-size:11px;color:var(--text-primary);">${c.rating}</span>
+            </div>
           </div>
           <p class="flex items-center gap-1 mb-1.5" style="font-size:11px;color:var(--text-muted);">
             <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -561,8 +645,11 @@ export async function loadMapEvents() {
           </p>
           <div class="flex items-center justify-between">
             <div class="flex flex-wrap gap-1">
-              ${c.open24   ? `<span class="badge-24h-small">24/7</span>` : ''}
+              ${c.open24 ? `<span class="badge-24h-small">24/7</span>` : ''}
               ${c.verified ? `<span class="badge-verified">✓</span>` : ''}
+              ${c.services.slice(0, 1).map(s =>
+      `<span class="badge-service">${s}</span>`
+    ).join('')}
             </div>
             <button class="btn-clinic-detail" data-id="${c.id}">Details →</button>
           </div>
@@ -590,29 +677,23 @@ export async function loadMapEvents() {
 
   // ── Clinic detail modal ───────────────────
   function openClinicDetail(id) {
-    const c = _allClinics.find(cl => cl.id === id);
+    const c = CLINICS_SAMPLE.find(cl => cl.id === id);
     if (!c) return;
 
     const el = id => document.getElementById(id);
-    el("dc-name").textContent        = c.name;
-    el("dc-location").textContent    = c.location;
-    el("dc-address").textContent     = c.address;
-    el("dc-hours").textContent       = c.hours;
+    el("dc-name").textContent = c.name;
+    el("dc-location").textContent = c.location;
+    el("dc-address").textContent = c.address;
+    el("dc-hours").textContent = c.hours;
     el("dc-description").textContent = c.description;
-    el("dc-rating").textContent      = c.rating > 0 ? c.rating.toFixed(1) : '—';
-    el("dc-reviews").textContent     = c.reviews > 0 ? `(${c.reviews} reviews)` : '';
+    el("dc-rating").textContent = c.rating;
+    el("dc-reviews").textContent = `(${c.reviews} reviews)`;
     el("dc-verified").classList.toggle("hidden", !c.verified);
     el("dc-24h").classList.toggle("hidden", !c.open24);
 
-    const websiteRow = el("dc-website-row");
-    const websiteLink = el("dc-website");
-    if (c.website && websiteRow && websiteLink) {
-      websiteRow.classList.remove("hidden");
-      websiteLink.href        = c.website;
-      websiteLink.textContent = c.website.replace(/^https?:\/\//, '');
-    } else if (websiteRow) {
-      websiteRow.classList.add("hidden");
-    }
+    el("dc-services").innerHTML = c.services.map(s =>
+      `<span class="detail-service-tag">${s}</span>`
+    ).join('');
 
     const callBtn = el("dc-call");
     if (callBtn) callBtn.href = c.phone ? `tel:${c.phone}` : "#";
@@ -649,5 +730,5 @@ export async function loadMapEvents() {
   window.openClinicDetail = openClinicDetail;
 
   // ── Initial render ────────────────────────
-  renderCards(_allClinics);
+  renderCards(CLINICS_SAMPLE);
 }
