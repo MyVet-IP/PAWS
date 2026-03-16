@@ -171,10 +171,10 @@ export function emergencyPage() {
 
       <div class="grid sm:grid-cols-2 gap-3">
         ${[
-      { icon: "🐾", tip: "Keep your pet calm and in a safe, warm place" },
-      { icon: "📞", tip: "Call ahead so the clinic will be ready for you" },
-      { icon: "📋", tip: "Bring medical history and vaccination records" },
-      { icon: "🚫", tip: "Do not give food or water until the vet says so" },
+      { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg>", tip: "Keep your pet calm and in a safe, warm place" },
+      { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'/></svg>", tip: "Call ahead so the clinic will be ready for you" },
+      { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'/></svg>", tip: "Bring medical history and vaccination records" },
+      { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636'/></svg>", tip: "Do not give food or water until the vet says so" },
     ].map(t => `
           <div class="flex items-start gap-3 p-3 bg-white rounded-xl shadow-card">
             <span class="text-lg flex-shrink-0">${t.icon}</span>
@@ -215,7 +215,7 @@ export async function emergencyEvents() {
         msg.id = 'urgency-error';
         msg.className = 'text-center text-sm font-medium font-poppins mt-3';
         msg.style.color = '#dc2626';
-        msg.textContent = '⚠️ Please select the urgency level first';
+        msg.textContent = '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Please select the urgency level first';
         btnFind.parentNode.insertBefore(msg, btnFind.nextSibling);
       }
       setTimeout(() => msg?.remove(), 2500);
@@ -255,7 +255,7 @@ export async function emergencyEvents() {
       if (emergencyClinics.length === 0) {
         clinicsList.innerHTML = `
           <div class="col-span-2 text-center py-10">
-            <p class="text-4xl mb-3">🏥</p>
+            <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></p>
             <p class="text-text-muted font-poppins font-medium">No emergency clinics found at this time.</p>
             <p class="text-text-muted text-sm mt-1">Try calling 123 for veterinary emergencies.</p>
           </div>`;
@@ -320,7 +320,7 @@ export async function emergencyEvents() {
       console.error('Error loading emergency clinics:', error);
       clinicsList.innerHTML = `
         <div class="col-span-2 text-center py-10">
-          <p class="text-4xl mb-3">⚠️</p>
+          <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></p>
           <p class="font-medium font-poppins" style="color:#dc2626;">Error loading clinics.</p>
           <p class="text-text-muted text-sm mt-1">Please try again or call 123.</p>
         </div>`;

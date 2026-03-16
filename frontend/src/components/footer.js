@@ -17,7 +17,7 @@ export function Footer() {
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
             <div style="display:none;width:48px;height:48px;border-radius:12px;
                         background:linear-gradient(135deg,#F1C0E8,#90BDF4);
-                        align-items:center;justify-content:center;font-size:22px;">🐾</div>
+                        align-items:center;justify-content:center;font-size:22px;"><svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg></div>
             <div>
               <p style="font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;
                         background:linear-gradient(135deg,#6A4C93,#2563eb);
@@ -109,7 +109,7 @@ export function Footer() {
                       box-shadow:0 4px 12px rgba(106,76,147,0.30);"
                onmouseenter="this.style.opacity='0.90'"
                onmouseleave="this.style.opacity='1'">
-              ✨ Create free account
+              <svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M5 3l1.5 4.5L11 9l-4.5 1.5L5 15l-1.5-4.5L-1 9l4.5-1.5L5 3zM19 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z'/></svg> Create free account
             </a>
           </div>
         </div>

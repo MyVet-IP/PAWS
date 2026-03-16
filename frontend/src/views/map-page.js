@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────
 //  map-page.js
-//  ✅ Inline styles → map-page.css
-//  ✅ <style> tag removed
-//  ✅ Google Maps API integration
-//  ✅ Sidebar max-height for mobile
+//   Inline styles → map-page.css
+//   <style> tag removed
+//   Google Maps API integration
+//   Sidebar max-height for mobile
 // ─────────────────────────────────────────────
 
 const CLINICS_SAMPLE = [
@@ -69,12 +69,12 @@ const CLINICS_SAMPLE = [
   },
 ];
 
-const ALL_ZONES    = [...new Set(CLINICS_SAMPLE.map(c => c.zone))];
+const ALL_ZONES = [...new Set(CLINICS_SAMPLE.map(c => c.zone))];
 const ALL_SERVICES = [...new Set(CLINICS_SAMPLE.flatMap(c => c.services))];
 
 // Google Maps instance — shared between render and events
-let _googleMap     = null;
-let _mapMarkers    = [];
+let _googleMap = null;
+let _mapMarkers = [];
 
 // ─────────────────────────────────────────────
 //  loadMapPage
@@ -125,7 +125,7 @@ export function loadMapPage() {
 
       <!-- Empty state -->
       <div id="clinic-empty">
-        <p class="text-4xl mb-3">🔍</p>
+        <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></p>
         <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">No clinics found</p>
         <p class="text-xs mt-1" style="color:var(--text-muted);">Try adjusting your search or filters</p>
       </div>
@@ -177,9 +177,9 @@ export function loadMapPage() {
           <p class="filter-section-label">Quick</p>
           <div class="flex flex-wrap gap-1.5">
             <button class="fchip fchip-active" data-type="quick" data-value="all">All</button>
-            <button class="fchip" data-type="quick" data-value="24h">🕐 24h only</button>
-            <button class="fchip" data-type="quick" data-value="emergency">🚨 Emergency</button>
-            <button class="fchip" data-type="quick" data-value="verified">✅ Verified</button>
+            <button class="fchip" data-type="quick" data-value="24h"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 24h only</button>
+            <button class="fchip" data-type="quick" data-value="emergency"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Emergency</button>
+            <button class="fchip" data-type="quick" data-value="verified"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Verified</button>
           </div>
         </div>
         <div>
@@ -222,7 +222,7 @@ export function loadMapPage() {
         </button>
         <div class="flex items-start gap-3">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-               style="background:rgba(255,255,255,0.20);">🏥</div>
+               style="background:rgba(255,255,255,0.20);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 id="dc-name" class="font-bold text-white font-poppins text-base leading-tight"></h2>
@@ -349,7 +349,7 @@ function initGoogleMap(clinics) {
       { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', stylers: [{ visibility: 'off' }] },
     ],
-    mapTypeControl:    false,
+    mapTypeControl: false,
     fullscreenControl: false,
     streetViewControl: false,
   });
@@ -365,12 +365,12 @@ function _addMarkers(clinics) {
   clinics.forEach(c => {
     const marker = new google.maps.Marker({
       position: { lat: c.lat, lng: c.lng },
-      map:      _googleMap,
-      title:    c.name,
+      map: _googleMap,
+      title: c.name,
       icon: {
-        path:        google.maps.SymbolPath.CIRCLE,
-        scale:       10,
-        fillColor:   c.emergency ? '#dc2626' : '#6A4C93',
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 10,
+        fillColor: c.emergency ? '#dc2626' : '#6A4C93',
         fillOpacity: 1,
         strokeColor: 'white',
         strokeWeight: 2,
@@ -402,18 +402,18 @@ function _addMarkers(clinics) {
 //  loadMapEvents
 // ─────────────────────────────────────────────
 export function loadMapEvents() {
-  let filtered     = [...CLINICS_SAMPLE];
-  let searchQuery  = "";
+  let filtered = [...CLINICS_SAMPLE];
+  let searchQuery = "";
   let activeCardId = null;
 
   let pendingFilters = { quick: "all", zones: [], services: [] };
-  let activeFilters  = { quick: "all", zones: [], services: [] };
+  let activeFilters = { quick: "all", zones: [], services: [] };
 
   const filterModal = document.getElementById("modal-filters");
   const detailModal = document.getElementById("modal-clinic-detail");
-  const openFilter  = () => filterModal?.classList.add("open");
+  const openFilter = () => filterModal?.classList.add("open");
   const closeFilter = () => filterModal?.classList.remove("open");
-  const openDetail  = () => detailModal?.classList.add("open");
+  const openDetail = () => detailModal?.classList.add("open");
   const closeDetail = () => detailModal?.classList.remove("open");
 
   // ── Init Google Maps ──────────────────────
@@ -482,7 +482,7 @@ export function loadMapEvents() {
   document.getElementById("btn-apply-filters")?.addEventListener("click", () => {
     activeFilters = {
       ...pendingFilters,
-      zones:    [...pendingFilters.zones],
+      zones: [...pendingFilters.zones],
       services: [...pendingFilters.services],
     };
     applyAll();
@@ -491,7 +491,7 @@ export function loadMapEvents() {
   });
 
   document.getElementById("btn-clear-filters")?.addEventListener("click", () => {
-    activeFilters  = { quick: "all", zones: [], services: [] };
+    activeFilters = { quick: "all", zones: [], services: [] };
     pendingFilters = { quick: "all", zones: [], services: [] };
     const search = document.getElementById("map-search");
     if (search) { search.value = ""; searchQuery = ""; }
@@ -512,16 +512,16 @@ export function loadMapEvents() {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         if (!c.name.toLowerCase().includes(q) &&
-            !c.location.toLowerCase().includes(q) &&
-            !c.services.some(s => s.toLowerCase().includes(q))) return false;
+          !c.location.toLowerCase().includes(q) &&
+          !c.services.some(s => s.toLowerCase().includes(q))) return false;
       }
-      if (activeFilters.quick === "24h"       && !c.open24)    return false;
+      if (activeFilters.quick === "24h" && !c.open24) return false;
       if (activeFilters.quick === "emergency" && !c.emergency) return false;
-      if (activeFilters.quick === "verified"  && !c.verified)  return false;
+      if (activeFilters.quick === "verified" && !c.verified) return false;
       if (activeFilters.zones.length > 0 &&
-          !activeFilters.zones.includes(c.zone)) return false;
+        !activeFilters.zones.includes(c.zone)) return false;
       if (activeFilters.services.length > 0 &&
-          !activeFilters.services.every(s => c.services.includes(s))) return false;
+        !activeFilters.services.every(s => c.services.includes(s))) return false;
       return true;
     });
     renderCards(filtered);
@@ -529,19 +529,19 @@ export function loadMapEvents() {
   }
 
   function updateFilterDot() {
-    const dot      = document.getElementById("filter-dot");
+    const dot = document.getElementById("filter-dot");
     const clearBtn = document.getElementById("btn-clear-filters");
     const hasActive = activeFilters.quick !== "all"
-                   || activeFilters.zones.length > 0
-                   || activeFilters.services.length > 0;
+      || activeFilters.zones.length > 0
+      || activeFilters.services.length > 0;
     dot?.classList.toggle("hidden", !hasActive);
     clearBtn?.classList.toggle("hidden", !hasActive);
   }
 
   function syncChipsToActive() {
     pendingFilters = {
-      quick:    activeFilters.quick,
-      zones:    [...activeFilters.zones],
+      quick: activeFilters.quick,
+      zones: [...activeFilters.zones],
       services: [...activeFilters.services],
     };
     document.querySelectorAll(".fchip[data-type='quick']").forEach(c =>
@@ -554,8 +554,8 @@ export function loadMapEvents() {
 
   // ── Render cards ──────────────────────────
   function renderCards(clinics) {
-    const list    = document.getElementById("clinic-list");
-    const empty   = document.getElementById("clinic-empty");
+    const list = document.getElementById("clinic-list");
+    const empty = document.getElementById("clinic-empty");
     const countEl = document.getElementById("map-count");
     if (!list) return;
 
@@ -573,7 +573,7 @@ export function loadMapEvents() {
 
     list.innerHTML = clinics.map(c => `
       <div class="clinic-card ${activeCardId === c.id ? 'active' : ''}" data-id="${c.id}">
-        <div class="clinic-card-icon">🏥</div>
+        <div class="clinic-card-icon"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-1 mb-0.5">
             <p class="font-semibold font-poppins leading-tight truncate"
@@ -596,11 +596,11 @@ export function loadMapEvents() {
           </p>
           <div class="flex items-center justify-between">
             <div class="flex flex-wrap gap-1">
-              ${c.open24   ? `<span class="badge-24h-small">24/7</span>` : ''}
+              ${c.open24 ? `<span class="badge-24h-small">24/7</span>` : ''}
               ${c.verified ? `<span class="badge-verified">✓</span>` : ''}
-              ${c.services.slice(0,1).map(s =>
-                `<span class="badge-service">${s}</span>`
-              ).join('')}
+              ${c.services.slice(0, 1).map(s =>
+      `<span class="badge-service">${s}</span>`
+    ).join('')}
             </div>
             <button class="btn-clinic-detail" data-id="${c.id}">Details →</button>
           </div>
@@ -632,13 +632,13 @@ export function loadMapEvents() {
     if (!c) return;
 
     const el = id => document.getElementById(id);
-    el("dc-name").textContent        = c.name;
-    el("dc-location").textContent    = c.location;
-    el("dc-address").textContent     = c.address;
-    el("dc-hours").textContent       = c.hours;
+    el("dc-name").textContent = c.name;
+    el("dc-location").textContent = c.location;
+    el("dc-address").textContent = c.address;
+    el("dc-hours").textContent = c.hours;
     el("dc-description").textContent = c.description;
-    el("dc-rating").textContent      = c.rating;
-    el("dc-reviews").textContent     = `(${c.reviews} reviews)`;
+    el("dc-rating").textContent = c.rating;
+    el("dc-reviews").textContent = `(${c.reviews} reviews)`;
     el("dc-verified").classList.toggle("hidden", !c.verified);
     el("dc-24h").classList.toggle("hidden", !c.open24);
 
