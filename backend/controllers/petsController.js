@@ -30,13 +30,13 @@ exports.getByUser = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const { name, animal_type_id, breed, birth_date, weight_kg, user_id } = req.body;
+        const { name, animal_type_id, breed, birth_date, weight_kg, user_id, gender, color, notes } = req.body;
 
         if (!name || !animal_type_id || !user_id) {
             return res.status(400).json({ error: 'name, animal_type_id y user_id son requeridos' });
         }
 
-        const pet = await petsStorage.create({ name, animal_type_id, breed, birth_date, weight_kg, user_id });
+        const pet = await petsStorage.create({ name, animal_type_id, breed, birth_date, weight_kg, user_id, gender, color, notes });
         res.status(201).json(pet);
     } catch (err) {
         next(err);

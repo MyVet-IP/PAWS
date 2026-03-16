@@ -32,12 +32,12 @@ module.exports = {
 
     // ─── CREATE ───────────────────────────────────────────────────────────────
 
-    async create({ name, animal_type_id, breed = null, birth_date = null, weight_kg = null, user_id }) {
+    async create({ name, animal_type_id, breed = null, birth_date = null, weight_kg = null, user_id, gender = null, color = null, notes = null }) {
         const result = await db.get(
-            `INSERT INTO pets (name, animal_type_id, breed, birth_date, weight_kg, user_id)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            `INSERT INTO pets (name, animal_type_id, breed, birth_date, weight_kg, user_id, gender, color, notes)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING pet_id`,
-            [name, animal_type_id, breed, birth_date, weight_kg, user_id]
+            [name, animal_type_id, breed, birth_date, weight_kg, user_id, gender, color, notes]
         );
         return this.getById(result.pet_id);
     },
@@ -45,7 +45,7 @@ module.exports = {
     // ─── UPDATE ───────────────────────────────────────────────────────────────
 
     async update(pet_id, data) {
-        const allowed = ['name', 'animal_type_id', 'breed', 'birth_date', 'weight_kg'];
+        const allowed = ['name', 'animal_type_id', 'breed', 'birth_date', 'weight_kg', 'gender', 'color', 'notes'];
         const fields = [];
         const values = [];
         let i = 1;

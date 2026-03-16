@@ -20,6 +20,7 @@ import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
 import { specialistsPage, specialistsEvents } from "../views/specialists.js";
 import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
+import { vetClinicProfilePage, vetClinicProfileEvents } from "../views/vet-clinic-profile.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
 import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
 import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users-schedule-appointments.js";
@@ -58,6 +59,7 @@ const routes = {
   "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
   "/veterinary": vetDashboardPage,
+  "/vet-profile": vetClinicProfilePage,
   "/services": servicesPage,
 
   "/tips": healthTipsPage,
@@ -111,6 +113,7 @@ const PROTECTED = {
   "/pet-profile": "user",
   "/appointments": "user",
   "/veterinary": "business",
+  "/vet-profile": "business",
   "/business-appointments": "business",
   "/medical-records": "user",
   "/admin-dashboard": "admin",
@@ -217,6 +220,10 @@ function runPageEvents(path, params = {}) {
 
     case "/veterinary":
       vetDashboardEvents();
+      break;
+
+    case "/vet-profile":
+      vetClinicProfileEvents();
       break;
 
     case "/services":

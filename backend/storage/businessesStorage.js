@@ -123,10 +123,12 @@ module.exports = {
     },
 
     async getByUser(user_id) {
-        return db.get(
-            `SELECT * FROM businesses WHERE user_id = $1`,
+        const row = await db.get(
+            `SELECT business_id FROM businesses WHERE user_id = $1`,
             [user_id]
         );
+        if (!row) return null;
+        return this.getById(row.business_id);
     },
 
     // ─── SCHEDULE ─────────────────────────────────────────────────────────────
@@ -184,7 +186,7 @@ module.exports = {
 
     async update(business_id, data) {
         const allowed = ['name', 'address', 'phone', 'whatsapp', 'email',
-            'zone', 'latitude', 'longitude', 'image_url', 'status'];
+            'zone', 'latitude', 'longitude', 'image_url', 'status', 'description'];
         const fields = [];
         const values = [];
         let i = 1;
