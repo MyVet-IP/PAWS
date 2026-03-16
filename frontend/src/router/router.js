@@ -22,7 +22,7 @@ import { specialistsPage, specialistsEvents } from "../views/specialists.js";
 import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
 import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
-import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
+import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users-schedule-appointments.js";
 import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
 
 const PUBLIC_PATHS = ["/", "/login", "/register"];
