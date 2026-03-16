@@ -76,6 +76,10 @@ app.use('/api/emergencies', require('./routes/emergencies'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
 
+app.get('/api/config', (req, res) => {
+  res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
+});
+
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
 app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
     res.sendFile(path.join(__dirname, '..', 'index.html'))
