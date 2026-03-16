@@ -4,7 +4,7 @@ import { AuthLayout } from "../layout/auth-layout.js";
 import { Aside, asideEvents } from "../components/aside.js";
 import { notFoundPage } from "../components/404-not-found.js";
 
-import { clinicsPage } from "../views/clinics-view.js";
+import { clinicsPage, clinicsEvents } from "../views/clinics-view.js";
 import { healthTipsPage, healthTipsEvents } from "../views/health-tips.js";
 import { loginPage, loginEvents } from "../views/login.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
@@ -220,6 +220,10 @@ function runPageEvents(path, params = {}) {
 
     case "/pet-profile":
       petProfileEvents(params.pet_id);
+      break
+
+    case "/clinics":
+      clinicsEvents();
       break
 
     case "/veterinary":
