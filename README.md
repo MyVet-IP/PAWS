@@ -1,13 +1,12 @@
-# 🐾 PAWS — Veterinary Management Platform
+# 🐾 PAWS — Pets Management Platform
 
 <div align="center">
 
 ![PAWS Logo](./frontend/assets/images/paws.png)
 
-**Connecting pet owners with veterinary care in Medellín, Colombia**
+**Connecting pet owners with pet care in Medellín, Colombia**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Available-brightgreen?style=for-the-badge)](https://paws-app-bjfydtcsh6g4djcg.centralus-01.azurewebsites.net/)
-[![License](https://img.shields.io/badge/License-Academic-blue?style=for-the-badge)](#)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?style=for-the-badge&logo=postgresql)](https://postgresql.org)
 
@@ -15,7 +14,7 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -44,7 +43,7 @@ PAWS is a full-stack **Single Page Application (SPA)** that bridges the gap betw
 
 ## Features
 
-### 🐕 For Pet Owners
+### For Pet Owners
 - Register and log in with email/password or Google OAuth
 - Create and manage pet profiles (species, breed, age, weight)
 - Book veterinary appointments at registered clinics
@@ -53,18 +52,18 @@ PAWS is a full-stack **Single Page Application (SPA)** that bridges the gap betw
 - AI symptom triage — get urgency classification (HIGH / MEDIUM / LOW)
 - AI care tips personalized to your pet's profile
 
-### 🏥 For Veterinary Businesses
+### For Veterinary Businesses
 - Register clinic with NIT verification
 - Manage appointment requests (confirm, cancel, complete)
 - Create and update medical records for patients
 - Configure business profile, schedule and services
 
-### 🤖 AI Features (Google Gemini)
+### AI Features (Google Gemini)
 - **Symptom Triage**: Classifies urgency based on species and symptoms
 - **Clinic Recommendation**: Suggests top 3 clinics matching the symptoms
 - **Care Tips**: Returns 5 personalized tips (cached 24h)
 
-### 🗺️ Discovery
+### Discovery
 - Interactive map with all registered clinics (Google Maps API)
 - Search and filter by zone, specialty, services, 24h availability
 - Emergency module with direct WhatsApp links to 24/7 clinics
@@ -121,8 +120,8 @@ Edit `.env` with your credentials (see [Environment Variables](#environment-vari
 
 ```bash
 # Connect to PostgreSQL and run the schema
-psql -U postgres -c "CREATE DATABASE myvet_db;"
-psql -U postgres -d myvet_db -f database/db.sql
+psql -U postgres -c "CREATE DATABASE paws_db;"
+psql -U postgres -d paws_db -f database/db.sql
 ```
 
 ### 5. Start the development server
@@ -145,7 +144,7 @@ Create a `.env` file in the root of the project:
 # ── Database ──────────────────────────────────────
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=myvet_db
+DB_NAME=paws
 DB_USER=postgres
 DB_PASSWORD=your_postgres_password
 
@@ -172,7 +171,7 @@ EMAIL_PASS=your_app_password
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 ```
 
-> ⚠️ Never commit `.env` to the repository. It is already listed in `.gitignore`.
+> Never commit `.env` to the repository. It is already listed in `.gitignore`.
 
 ---
 
@@ -192,7 +191,7 @@ The ER diagram is available at `database/ER_Diagram.png`.
 To apply the latest migration:
 
 ```bash
-psql -U postgres -d myvet_db -f database/migration_v3.sql
+psql -U postgres -d paws_db -f database/migration_v3.sql
 ```
 
 ---
@@ -271,10 +270,11 @@ PAWS-develop/
 
 | Name | Role | GitHub |
 |------|------|--------|
-| [Name 1] | Scrum Master / Backend Lead | [@username](https://github.com/username) |
-| [Name 2] | Product Owner / Frontend Lead | [@username](https://github.com/username) |
-| [Name 3] | Developer / AI Integration | [@username](https://github.com/username) |
-| [Name 4] | Developer / User Features | [@username](https://github.com/username) |
-| [Name 5] | Developer / Admin & Deployment | [@username](https://github.com/username) |
+| Ulith Giraldo Echavarría | Scrum Master / Backend Lead | [@UlithG18](https://github.com/UlithG18) |
+| Andreina Arevalo Pidiache | Product Owner / Frontend Lead | [@NinaArevalo](https://github.com/NinaArevalo) |
+| Faiber Andres Camacho Regino | Developer / AI Integration | [@FaiberCamachoDev](https://github.com/FaiberCamachoDev) |
+| Anderson Guzman Ochoa | Developer / General Features | [@andguz8a](https://github.com/andguz8a) |
+| Jose Miguel Rivera Quiroz | Developer / Admin Features | [@JoseRivera-07](https://github.com/JoseRivera-07) |
+| Ximena Jaramillo Cardenas | Developer / Data Base & Deployment | [@Jaramc](https://github.com/Jaramc) |
 
-> RIWI Basic Route — Cohort 2025-2026 — Medellín, Colombia
+> RIWI Basic Route — Cohorte 6 — Medellín, Colombia
