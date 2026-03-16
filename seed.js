@@ -80,11 +80,10 @@ BEGIN
       (user_id, business_type, name, address, phone, whatsapp,
        zone, city, latitude, longitude, status,
        nit, nit_verified, website, rating_average, rating_count)
-    VALUES
-      (uid, r.business_type, r.name, r.address, r.phone, r.whatsapp,
+    SELECT uid, r.business_type, r.name, r.address, r.phone, r.whatsapp,
        r.zone, 'Medellín', r.lat, r.lng, 'active',
-       r.nit, 'verified', r.website, r.rating_avg, r.rating_count)
-    ON CONFLICT DO NOTHING;
+       r.nit, 'verified', r.website, r.rating_avg, r.rating_count
+    WHERE NOT EXISTS (SELECT 1 FROM businesses WHERE user_id = uid);
   END LOOP;
 END $$;
 
