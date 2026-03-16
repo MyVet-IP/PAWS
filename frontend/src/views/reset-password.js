@@ -50,10 +50,26 @@ export function resetPasswordPage() {
     const tokenInput = document.getElementById('reset-token');
   
     if (!form) return;
-  
-    // Retrieve the token from URL
-    const urlParams = new URLSearchParams(window.location.hash.split("?")[1] || "");
-    const token = urlParams.get('token');
+    // Retrieve the token from URL — try multiple parsing strategies
+    // Email clients may format the URL differently
+    let token = null;
+    
+    // Strategy 1: Token in hash query string — /#/reset-password?token=xxx
+    const hashParts = window.location.hash.split("?");
+    if (hashParts.length > 1) {
+        token = new URLSearchParams(hashParts[1]).get('token');
+    }
+    
+    // Strategy 2: Token in main query string — /?token=xxx#/reset-password
+    if (!token) {
+        token = new URLSearchParams(window.location.search).get('token');
+    }
+    
+    // Strategy 3: Full URL regex fallback — catch any token= pattern
+    if (!token) {
+        const match = window.location.href.match(/[?&]token=([^&#]+)/);
+        if (match) token = decodeURIComponent(match[1]);
+    }
     
     if (tokenInput) {
         tokenInput.value = token || "";
