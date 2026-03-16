@@ -1,85 +1,4 @@
 export function specialistsPage() {
-  const specialists = [
-    {
-      name: 'Dr. Camila Torres',
-      role: 'Veterinary Cardiologist',
-      clinic: 'Clinica Veterinaria El Poblado',
-      neighborhood: 'El Poblado, Medellin',
-      experience: '12 years',
-      rating: 4.9,
-      reviews: 143,
-      animals: ['Dogs', 'Cats'],
-      color: 'purple',
-      availability: 'Mon - Fri',
-      badge: 'Top Rated'
-    },
-    {
-      name: 'Dr. Andres Mejia',
-      role: 'Exotic Animal Specialist',
-      clinic: 'Centro Medico Veterinario Laureles',
-      neighborhood: 'Laureles, Medellin',
-      experience: '8 years',
-      rating: 4.8,
-      reviews: 89,
-      animals: ['Birds', 'Reptiles', 'Rabbits'],
-      color: 'blue',
-      availability: 'Tue - Sat',
-      badge: 'Exotic Expert'
-    },
-    {
-      name: 'Dra. Valentina Rios',
-      role: 'Veterinary Surgeon',
-      clinic: 'Veterinaria Envigado',
-      neighborhood: 'Envigado, Antioquia',
-      experience: '15 years',
-      rating: 5.0,
-      reviews: 201,
-      animals: ['Dogs', 'Cats', 'Rabbits'],
-      color: 'green',
-      availability: 'Mon - Sat',
-      badge: 'Perfect Score'
-    },
-    {
-      name: 'Dr. Felipe Castro',
-      role: 'Veterinary Dermatologist',
-      clinic: 'Clinica Animal Belen',
-      neighborhood: 'Belen, Medellin',
-      experience: '6 years',
-      rating: 4.7,
-      reviews: 67,
-      animals: ['Dogs', 'Cats'],
-      color: 'yellow',
-      availability: 'Mon - Thu',
-      badge: 'Specialist'
-    },
-    {
-      name: 'Dra. Mariana Ospina',
-      role: 'Veterinary Dentist',
-      clinic: 'VetSalud Sabaneta',
-      neighborhood: 'Sabaneta, Antioquia',
-      experience: '9 years',
-      rating: 4.6,
-      reviews: 112,
-      animals: ['Dogs', 'Cats'],
-      color: 'pink',
-      availability: 'Wed - Sun',
-      badge: 'Dental Expert'
-    },
-    {
-      name: 'Dr. Juan Pablo Velez',
-      role: 'Veterinary Neurologist',
-      clinic: 'Veterinaria La Candelaria',
-      neighborhood: 'La Candelaria, Medellin',
-      experience: '11 years',
-      rating: 4.8,
-      reviews: 78,
-      animals: ['Dogs', 'Cats'],
-      color: 'purple',
-      availability: 'Mon - Fri',
-      badge: 'Neuro Expert'
-    }
-  ];
-
   const specialties = ['All', 'Cardiology', 'Surgery', 'Dermatology', 'Dentistry', 'Neurology', 'Exotic Animals'];
   const animals = ['All Animals', 'Dogs', 'Cats', 'Birds', 'Reptiles', 'Rabbits'];
 
@@ -89,11 +8,6 @@ export function specialistsPage() {
     { number: '4.8', label: 'Average Rating', icon: 'star' },
     { number: '2,000+', label: 'Consultations Done', icon: 'assignment' }
   ];
-
-  const getStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    return '★'.repeat(fullStars);
-  };
 
   return `
     <div class="specialists-page">
@@ -155,75 +69,13 @@ export function specialistsPage() {
 
         <!-- Specialists Grid -->
         <div id="specialists-grid" class="specialists-grid">
-          ${specialists.map((sp, i) => `
-            <div class="specialist-card specialists-fade-up specialists-fade-up-delay-${Math.min(i + 1, 5)}">
-              <!-- Color top bar -->
-              <div class="specialist-card-accent specialist-card-accent--${sp.color}"></div>
-              <div class="specialist-card-content">
-                <!-- Header row -->
-                <div class="specialist-card-header">
-                  <div class="specialist-avatar specialist-avatar--${sp.color}">
-                    <span class="material-symbols-outlined" style="font-size: 1.8rem;">person</span>
-                  </div>
-                  <div class="specialist-info">
-                    <div class="specialist-info-header">
-                      <div>
-                        <h3 class="specialist-name">${sp.name}</h3>
-                        <p class="specialist-role specialist-role--${sp.color}">${sp.role}</p>
-                      </div>
-                      <span class="specialist-badge specialist-badge--${sp.color}">${sp.badge}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Clinic & location -->
-                <div class="specialist-location">
-                  <p class="specialist-location-item specialist-clinic">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">local_hospital</span>
-                    <span>${sp.clinic}</span>
-                  </p>
-                  <p class="specialist-location-item specialist-neighborhood">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">location_on</span>
-                    <span>${sp.neighborhood}</span>
-                  </p>
-                </div>
-
-                <!-- Rating -->
-                <div class="specialist-rating">
-                  <span class="specialist-stars">${getStars(sp.rating)}</span>
-                  <span class="specialist-rating-number">${sp.rating}</span>
-                  <span class="specialist-reviews">(${sp.reviews} reviews)</span>
-                </div>
-
-                <!-- Meta -->
-                <div class="specialist-meta">
-                  <span>
-                    <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">schedule</span>
-                    ${sp.availability}
-                  </span>
-                  <span>
-                    <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">work_history</span>
-                    ${sp.experience} exp.
-                  </span>
-                </div>
-
-                <!-- Animal tags -->
-                <div class="specialist-animals">
-                  ${sp.animals.map(a => `<span class="specialist-animal-tag">${a}</span>`).join('')}
-                </div>
-
-                <!-- Actions -->
-                <div class="specialist-actions">
-                  <button class="specialist-btn-primary specialist-btn-primary--${sp.color}">
-                    Book Appointment
-                  </button>
-                  <button class="specialist-btn-secondary specialist-btn-secondary--${sp.color}">
-                    View Profile
-                  </button>
-                </div>
-              </div>
-            </div>
-          `).join('')}
+          <!-- Filled dynamically by specialistsEvents() via GET /api/businesses?type=vet -->
+          <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:10px;padding:60px 0;color:#888;">
+            <svg style="width:20px;height:20px;animation:spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span style="font-family:'Poppins',sans-serif;font-size:14px;">Loading specialists...</span>
+          </div>
         </div>
 
         <!-- CTA: Are you a vet? -->
@@ -279,16 +131,28 @@ export function specialistsEvents() {
         });
       }
 
+      allSpecialists = businesses;
+
       if (businesses.length === 0) {
-        // Mantener datos de demo si no hay datos reales aún
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#888;">
+            <span class="material-symbols-outlined" style="font-size:3rem;display:block;margin-bottom:12px;">search_off</span>
+            <p style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:#444;">No specialists found</p>
+            <p style="font-family:'Roboto',sans-serif;font-size:13px;margin-top:4px;">Check back soon as new vets join the platform.</p>
+          </div>`;
         return;
       }
 
-      allSpecialists = businesses;
       renderSpecialists(businesses);
     } catch (err) {
       console.error('Error loading specialists:', err);
-      // Mantener datos de demo en caso de error
+      const grid = document.getElementById('specialists-grid');
+      if (grid) grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:60px 0;color:#888;">
+          <span class="material-symbols-outlined" style="font-size:3rem;display:block;margin-bottom:12px;">error</span>
+          <p style="font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:#dc2626;">Could not load specialists</p>
+          <p style="font-family:'Roboto',sans-serif;font-size:13px;margin-top:4px;">${err.message}</p>
+        </div>`;
     }
   }
 
@@ -349,8 +213,8 @@ export function specialistsEvents() {
     else activeAnimal = value;
 
     // Filtrar lista actual
-    let filtered = allSpecialists.length > 0 ? allSpecialists : [];
-    if (filtered.length === 0) return; // usar demo data si no hay API data
+    let filtered = [...allSpecialists];
+    if (filtered.length === 0) return;
 
     if (activeSpecialty !== 'All') {
       filtered = filtered.filter(b =>
@@ -365,6 +229,5 @@ export function specialistsEvents() {
     renderSpecialists(filtered.length > 0 ? filtered : allSpecialists);
   };
 
-  // Intentar cargar desde la API; si falla, mantiene los datos de demo del HTML
   loadSpecialists();
 }

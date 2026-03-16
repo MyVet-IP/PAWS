@@ -1,13 +1,13 @@
 //  user-dashboard.js
 
 const HEALTH_TIPS = [
-  { icon: "💧", tip: "Make sure your pet always has fresh water available — hydration is key to kidney health.", color: "var(--color-blue)" },
-  { icon: "🦷", tip: "Brush your pet's teeth 2–3 times a week to prevent tartar and gum disease.", color: "var(--color-green)" },
-  { icon: "🏃", tip: "Dogs need at least 30 minutes of exercise daily. A tired dog is a happy dog!", color: "var(--color-pink)" },
-  { icon: "🍽️", tip: "Measure your pet's food portions — obesity is the #1 preventable health issue in pets.", color: "var(--color-yellow)" },
-  { icon: "🔍", tip: "Check your pet's ears weekly for redness or odor — early detection prevents infections.", color: "var(--purple-pastel)" },
-  { icon: "💉", tip: "Keep vaccinations up to date. Annual boosters protect against serious diseases.", color: "var(--color-green)" },
-  { icon: "🐛", tip: "Deworm your pet every 3 months — internal parasites can affect the whole family.", color: "var(--color-blue)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 3C12 3 6 9.5 6 14a6 6 0 0012 0c0-4.5-6-11-6-11z'/></svg>", tip: "Make sure your pet always has fresh water available — hydration is key to kidney health.", color: "var(--color-blue)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z'/></svg>", tip: "Brush your pet\'s teeth 2–3 times a week to prevent tartar and gum disease.", color: "var(--color-green)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M13 5a2 2 0 100-4 2 2 0 000 4zm-2 4l-2 9M9 9l4 2 3-3M7 14l2-1M15 9l2 5'/></svg>", tip: "Dogs need at least 30 minutes of exercise daily. A tired dog is a happy dog!", color: "var(--color-pink)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M3 3v18M7 3v5a4 4 0 01-4 4m14-9v18m0 0a4 4 0 004-4V7a4 4 0 00-4-4'/></svg>", tip: "Measure your pet\'s food portions — obesity is the #1 preventable health issue in pets.", color: "var(--color-yellow)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/></svg>", tip: "Check your pet\'s ears weekly for redness or odor — early detection prevents infections.", color: "var(--purple-pastel)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4'/></svg>", tip: "Keep vaccinations up to date. Annual boosters protect against serious diseases.", color: "var(--color-green)" },
+  { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 12a3 3 0 106 0v3a3 3 0 01-6 0v-3zM6 9a3 3 0 00-3 3M18 9a3 3 0 013 3M9 9V7a3 3 0 016 0v2'/></svg>", tip: "Deworm your pet every 3 months — internal parasites can affect the whole family.", color: "var(--color-blue)" },
 ];
 
 const NEARBY_CLINICS = [
@@ -29,7 +29,7 @@ export function dashboardPage() {
     <div class="flex items-start justify-between">
       <div>
         <h1 id="dash-username" class="text-2xl font-bold text-text-primary font-poppins">
-          Welcome! 👋
+          Welcome! 
         </h1>
         <p class="text-sm mt-1 flex items-center gap-1.5" style="color:var(--text-muted);">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ export function dashboardPage() {
       <div class="bg-white rounded-2xl p-5 flex items-center gap-4"
            style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);">
         <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-             style="background:rgba(185,251,192,0.35);">🐾</div>
+             style="background:rgba(185,251,192,0.35);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg></div>
         <div>
           <p class="text-xs font-poppins" style="color:var(--text-muted);">My Pets</p>
           <h3 id="pets-count" class="text-2xl font-bold font-poppins" style="color:var(--text-primary);">0</h3>
@@ -75,7 +75,7 @@ export function dashboardPage() {
         <div class="absolute right-0 top-0 bottom-0 w-1.5 rounded-r-2xl"
              style="background:linear-gradient(180deg,var(--text-highlight),var(--purple-pastel));"></div>
         <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-             style="background:rgba(241,192,232,0.35);">📅</div>
+             style="background:rgba(241,192,232,0.35);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
         <div class="flex-1 min-w-0">
           <p class="text-xs font-poppins" style="color:var(--text-muted);">Next Appointment</p>
           <h3 id="next-appointment-text"
@@ -151,7 +151,7 @@ export function dashboardPage() {
                  onmouseenter="this.style.borderColor='var(--text-highlight)'"
                  onmouseleave="this.style.borderColor='var(--bg-muted)'">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                     style="background:rgba(144,189,244,0.25);">🏥</div>
+                     style="background:rgba(144,189,244,0.25);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
                 <div class="flex-1 min-w-0">
                   <p class="font-semibold font-poppins text-sm truncate" style="color:var(--text-primary);">${c.name}</p>
                   <p class="text-xs" style="color:var(--text-muted);">${c.zone}</p>
@@ -199,7 +199,7 @@ export function dashboardPage() {
                style="background:#FEF2F2;color:#dc2626;transition:var(--transition-fast);"
                onmouseenter="this.style.background='#FEE2E2'"
                onmouseleave="this.style.background='#FEF2F2'">
-              <span>🚨</span> Emergency
+              <span><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span> Emergency
             </a>
 
             <a href="#/appointments"
@@ -208,7 +208,7 @@ export function dashboardPage() {
                       transition:var(--transition-fast);"
                onmouseenter="this.style.background='rgba(144,189,244,0.35)'"
                onmouseleave="this.style.background='rgba(144,189,244,0.20)'">
-              <span>📅</span> Book appointment
+              <span><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></span> Book appointment
             </a>
 
             <a href="#/map-page"
@@ -217,7 +217,7 @@ export function dashboardPage() {
                       transition:var(--transition-fast);"
                onmouseenter="this.style.background='rgba(185,251,192,0.45)'"
                onmouseleave="this.style.background='rgba(185,251,192,0.25)'">
-              <span>🗺️</span> Find clinic on map
+              <span><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></span> Find clinic on map
             </a>
 
             <a href="#/medical-records"
@@ -226,7 +226,7 @@ export function dashboardPage() {
                       transition:var(--transition-fast);"
                onmouseenter="this.style.background='rgba(241,192,232,0.45)'"
                onmouseleave="this.style.background='rgba(241,192,232,0.25)'">
-              <span>📋</span> Medical records
+              <span><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></span> Medical records
             </a>
 
           </div>
@@ -333,13 +333,20 @@ export function dashboardPage() {
 // ─────────────────────────────────────────────
 export function dashboardEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  // Agregar esto antes de cualquier fetch:
+  if (!user || !user.user_id) {
+    console.error('No user_id found in localStorage', user);
+    return;
+  }
+
   const modal = document.getElementById('modal-add-pet');
 
   // ── Username ──────────────────────────────
   const nameEl = document.getElementById('dash-username');
   if (nameEl && user) {
     const first = (user.name || user.nombre || 'there').split(' ')[0];
-    nameEl.textContent = `Welcome, ${first}! 👋`;
+    nameEl.textContent = `Welcome, ${first}! `;
   }
 
   // ── Modal ─────────────────────────────────
@@ -439,7 +446,7 @@ async function loadPets(user) {
         <div class="bg-white rounded-2xl p-6 flex items-center gap-4"
              style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);">
           <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-               style="background:rgba(185,251,192,0.30);">🐾</div>
+               style="background:rgba(185,251,192,0.30);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg></div>
           <div class="flex-1">
             <p class="font-bold font-poppins text-sm" style="color:var(--text-primary);">No pets yet</p>
             <p class="text-xs mt-0.5" style="color:var(--text-muted);">Add your first pet to track their health</p>
@@ -453,7 +460,7 @@ async function loadPets(user) {
     const cards = pets.map(p => {
       const species = p.species_name || '';
       const isCat = species.toLowerCase().includes('cat');
-      const emoji = isCat ? '🐱' : species.toLowerCase().includes('dog') ? '🐶' : '🐾';
+      const emoji = isCat ? '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg>' : species.toLowerCase().includes('dog') ? '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg>' : '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg>';
       const bg = isCat ? 'rgba(241,192,232,0.30)' : 'rgba(185,251,192,0.30)';
       const records = (p.medical_records || []).length;
       let ageText = '';
@@ -481,7 +488,7 @@ async function loadPets(user) {
                     style="background:rgba(185,251,192,0.35);color:var(--color-green-dark);">${ageText}</span>`
           : '<span></span>'}
           ${records > 0
-          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);">📋 ${records} record${records !== 1 ? 's' : ''}</span>`
+          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> ${records} record${records !== 1 ? 's' : ''}</span>`
           : `<span class="text-xs font-semibold font-poppins" style="color:var(--text-highlight);">View →</span>`}
         </div>
       </div>`;

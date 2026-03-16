@@ -75,6 +75,7 @@ app.use('/api/businesses', require('./routes/businesses'));
 app.use('/api/emergencies', require('./routes/emergencies'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/medical-records', require('./routes/medicalRecords'));
+app.use('/api/contact', require('./routes/contact'));
 
 app.get('/api/config', (req, res) => {
   res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });

@@ -102,7 +102,7 @@ export function medicalRecordsPage() {
 
       <div id="records-container" class="mr-records-list">
         <div class="mr-empty">
-          <div class="mr-empty-icon">📋</div>
+          <div class="mr-empty-icon"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
           <p class="mr-empty-text">Loading medical records...</p>
         </div>
       </div>
@@ -308,7 +308,7 @@ export function medicalRecordsEvents() {
       const petName = pet.nombre || pet.name;
       const species = pet.especie || pet.species || '';
       const bg = species === 'Cat' ? 'var(--color-pink)' : 'var(--color-green)';
-      const emoji = species === 'Cat' ? '🐱' : species === 'Dog' ? '🐶' : '🐾';
+      const emoji = species === 'Cat' ? '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg>' : species === 'Dog' ? '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg>' : '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg>';
       return `
         <div class="pet-selector ${selectedPetId === petId ? 'active' : ''}"
              data-pet-id="${petId}" onclick="window.selectPet(${petId})">
@@ -411,7 +411,7 @@ export function medicalRecordsEvents() {
 
               ${record.next_visit_date ? `
                 <div class="mr-next-visit">
-                  <span>📅</span>
+                  <span><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></span>
                   <span>Next visit: ${new Date(record.next_visit_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 </div>` : ''}
             </div>
@@ -425,7 +425,7 @@ export function medicalRecordsEvents() {
     if (!container) return;
     container.innerHTML = `
       <div class="mr-empty-full">
-        <div class="mr-empty-icon-lg">📋</div>
+        <div class="mr-empty-icon-lg"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
         <h3 class="mr-empty-title">No Medical Records Yet</h3>
         <p class="mr-empty-sub">Start tracking your pet's health history by adding their first medical record.</p>
         <button onclick="document.getElementById('modal-add-record').classList.add('open')"
@@ -477,7 +477,7 @@ export function medicalRecordsEvents() {
         </div>` : ''}
       ${record.next_visit_date ? `
         <div class="mr-next-visit-detail">
-          <span style="font-size:1.4rem;">📅</span>
+          <span style="font-size:1.4rem;"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></span>
           <div>
             <p class="mr-next-visit-label">Next Scheduled Visit</p>
             <p class="mr-next-visit-value">${new Date(record.next_visit_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
@@ -606,9 +606,9 @@ export function medicalRecordsEvents() {
       status.classList.remove('hidden', 'mr-status--loading', 'mr-status--success', 'mr-status--error');
       status.classList.add(`mr-status--${type}`);
       const icons = {
-        loading: '⏳',
-        success: '✅',
-        error: '❌'
+        loading: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3M6.343 6.343A8 8 0 1017.657 17.657"/></svg>',
+        success: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        error: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
       };
       status.textContent = `${icons[type]} ${message}`;
     }

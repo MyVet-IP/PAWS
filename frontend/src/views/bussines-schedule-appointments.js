@@ -238,7 +238,7 @@ export function businessScheduleAppointmentsEvents() {
     if (!container) return;
     container.innerHTML = `
       <div style="text-align:center; padding:60px 20px; background:white; border-radius:20px;">
-        <div style="font-size:3.5rem; margin-bottom:16px;">🏥</div>
+        <div style="font-size:3.5rem; margin-bottom:16px;"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
         <h3 style="font-size:1.1rem; font-weight:600; color:#333; font-family:'Poppins',sans-serif; margin-bottom:8px;">
           ${message}
         </h3>

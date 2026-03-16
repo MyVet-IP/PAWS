@@ -479,3 +479,19 @@
 .contact-fade-up-delay-3 {
     animation-delay: 0.21s;
 }
+
+/* Spinner for submit button */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.contact-submit-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}

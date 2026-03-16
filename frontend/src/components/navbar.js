@@ -7,42 +7,42 @@ import { getUser } from "../utils.js";
 // ─────────────────────────────────────────────
 const SEARCH_INDEX = [
   // Clinics (hardcoded — see TODO above)
-  { label: "Clínica San Juan Pet", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "El Poblado, Medellín" },
-  { label: "VetCare Laureles", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Laureles, Medellín" },
-  { label: "Animal House Envigado", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Envigado, Medellín" },
-  { label: "PetSalud Belén", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Belén, Medellín" },
-  { label: "Vet 24 Sabaneta", category: "Clinics", icon: "🏥", hash: "#/map-page", desc: "Sabaneta, Medellín" },
+  { label: "Clínica San Juan Pet", category: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", hash: "#/map-page", desc: "El Poblado, Medellín" },
+  { label: "VetCare Laureles", category: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", hash: "#/map-page", desc: "Laureles, Medellín" },
+  { label: "Animal House Envigado", category: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", hash: "#/map-page", desc: "Envigado, Medellín" },
+  { label: "PetSalud Belén", category: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", hash: "#/map-page", desc: "Belén, Medellín" },
+  { label: "Vet 24 Sabaneta", category: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", hash: "#/map-page", desc: "Sabaneta, Medellín" },
 
   // Services
-  { label: "Vaccination", category: "Services", icon: "💉", hash: "#/services", desc: "Preventive vaccines for your pet" },
-  { label: "Surgery", category: "Services", icon: "🔬", hash: "#/services", desc: "Specialized surgical procedures" },
-  { label: "Consultation", category: "Services", icon: "🩺", hash: "#/services", desc: "General veterinary consultation" },
-  { label: "Dental Cleaning", category: "Services", icon: "🦷", hash: "#/services", desc: "Professional dental hygiene" },
-  { label: "Deworming", category: "Services", icon: "💊", hash: "#/services", desc: "Internal and external deworming" },
-  { label: "X-Ray", category: "Services", icon: "📋", hash: "#/services", desc: "Diagnostic imaging" },
-  { label: "Laboratory", category: "Services", icon: "🧪", hash: "#/services", desc: "Blood and urine tests" },
-  { label: "Pet Shop", category: "Services", icon: "🛍️", hash: "#/services", desc: "Food, accessories and toys" },
-  { label: "Grooming", category: "Services", icon: "✂️", hash: "#/services", desc: "Bath, cut and styling" },
-  { label: "Dermatology", category: "Services", icon: "🐾", hash: "#/services", desc: "Skin and coat care" },
+  { label: "Vaccination", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4'/></svg>", hash: "#/services", desc: "Preventive vaccines for your pet" },
+  { label: "Surgery", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3l2 4-5 9h14L15 7l2-4M5 20h14M12 3v4'/></svg>", hash: "#/services", desc: "Specialized surgical procedures" },
+  { label: "Consultation", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z'/></svg>", hash: "#/services", desc: "General veterinary consultation" },
+  { label: "Dental Cleaning", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z'/></svg>", hash: "#/services", desc: "Professional dental hygiene" },
+  { label: "Deworming", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M10.5 6.5l7 7a5 5 0 01-7-7zm0 0a5 5 0 00-7 7l7-7zM8 12l4 4'/></svg>", hash: "#/services", desc: "Internal and external deworming" },
+  { label: "X-Ray", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'/></svg>", hash: "#/services", desc: "Diagnostic imaging" },
+  { label: "Laboratory", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3v8l-4 7a1 1 0 001 1h12a1 1 0 001-1l-4-7V3M9 3h6M7 16h10'/></svg>", hash: "#/services", desc: "Blood and urine tests" },
+  { label: "Pet Shop", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'/></svg>", hash: "#/services", desc: "Food, accessories and toys" },
+  { label: "Grooming", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9'/></svg>", hash: "#/services", desc: "Bath, cut and styling" },
+  { label: "Dermatology", category: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg>", hash: "#/services", desc: "Skin and coat care" },
 
   // Pages
-  { label: "Clinics near me", category: "Pages", icon: "📍", hash: "#/clinics", desc: "Find all clinics in Medellín" },
-  { label: "Emergency", category: "Pages", icon: "🚨", hash: "#/emergency", desc: "24/7 urgent veterinary care" },
-  { label: "Map", category: "Pages", icon: "🗺️", hash: "#/map-page", desc: "Interactive clinic map" },
-  { label: "Tips & Health", category: "Pages", icon: "💡", hash: "#/tips", desc: "Care tips for your pet" },
-  { label: "Specialists", category: "Pages", icon: "👨‍⚕️", hash: "#/specialists", desc: "Certified veterinary specialists" },
-  { label: "About us", category: "Pages", icon: "🐾", hash: "#/about-us", desc: "Know the PAWS team" },
-  { label: "Work with us", category: "Pages", icon: "💼", hash: "#/work-with-us", desc: "Join the PAWS network" },
-  { label: "Contact", category: "Pages", icon: "📩", hash: "#/contact", desc: "Get in touch with us" },
-  { label: "Register", category: "Pages", icon: "✨", hash: "#/register", desc: "Create your free account" },
+  { label: "Clinics near me", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/></svg>", hash: "#/clinics", desc: "Find all clinics in Medellín" },
+  { label: "Emergency", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z'/></svg>", hash: "#/emergency", desc: "24/7 urgent veterinary care" },
+  { label: "Map", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'/></svg>", hash: "#/map-page", desc: "Interactive clinic map" },
+  { label: "Tips & Health", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/></svg>", hash: "#/tips", desc: "Care tips for your pet" },
+  { label: "Specialists", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'/></svg>", hash: "#/specialists", desc: "Certified veterinary specialists" },
+  { label: "About us", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg>", hash: "#/about-us", desc: "Know the PAWS team" },
+  { label: "Work with us", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'/></svg>", hash: "#/work-with-us", desc: "Join the PAWS network" },
+  { label: "Contact", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'/></svg>", hash: "#/contact", desc: "Get in touch with us" },
+  { label: "Register", category: "Pages", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M5 3l1.5 4.5L11 9l-4.5 1.5L5 15l-1.5-4.5L-1 9l4.5-1.5L5 3zM19 13l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z'/></svg>", hash: "#/register", desc: "Create your free account" },
 ];
 
 // Nav links — defined once, reused for desktop and mobile
 const NAV_LINKS = [
-  { href: "#/clinics", label: "Clinics", icon: "🏥" },
-  { href: "#/emergency", label: "Emergencies", icon: "✴️" },
-  { href: "#/services", label: "Services", icon: "🧼" },
-  { href: "#/tips", label: "Tips", icon: "💡" },
+  { href: "#/clinics", label: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>" },
+  { href: "#/emergency", label: "Emergencies", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z'/></svg>" },
+  { href: "#/services", label: "Services", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M7 10h10M7 14h6m-9 4h14a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2zM9 6V4a1 1 0 011-1h4a1 1 0 011 1v2'/></svg>" },
+  { href: "#/tips", label: "Tips", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'/></svg>" },
 ];
 
 // ─────────────────────────────────────────────
@@ -87,7 +87,7 @@ export function navbarController() {
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
         <!-- Fallback if image not found -->
         <div class="navbar-logo-fallback" style="display:none;">
-          <span style="font-size:28px;">🐾</span>
+          <span style="font-size:28px;"><svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg></span>
         </div>
         <div class="navbar-logo-text">
           <span class="navbar-logo-title">PAWS</span>
@@ -111,7 +111,7 @@ export function navbarController() {
             type="text"
             placeholder="Search clinics, services..."
             autocomplete="off"/>
-          <button id="search-clear" class="navbar-search-clear hidden">✕</button>
+          <button id="search-clear" class="navbar-search-clear hidden">×</button>
         </div>
 
         <!-- Search dropdown -->
@@ -320,7 +320,7 @@ export function navbarEvents() {
     if (results.length === 0) {
       dropdown.innerHTML = `
         <div style="padding:24px;text-align:center;">
-          <p style="font-size:24px;margin-bottom:8px;">🔍</p>
+          <p style="font-size:24px;margin-bottom:8px;"><svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/></svg></p>
           <p style="font-size:13px;font-weight:600;color:var(--text-primary);font-family:'Poppins',sans-serif;">
             No results for "<strong>${query}</strong>"
           </p>
@@ -338,12 +338,12 @@ export function navbarEvents() {
       grouped[r.category].push(r);
     });
 
-    const categoryIcons = { Clinics: "🏥", Services: "🧼", Pages: "📄" };
+    const categoryIcons = { Clinics: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>", Services: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M7 10h10M7 14h6m-9 4h14a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2zM9 6V4a1 1 0 011-1h4a1 1 0 011 1v2'/></svg>", Pages: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z'/></svg>" };
 
     dropdown.innerHTML = Object.entries(grouped).map(([cat, items]) => `
       <div>
         <div class="dropdown-category-header">
-          <span>${categoryIcons[cat] || "📌"}</span>
+          <span>${categoryIcons[cat] || "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/></svg>"}</span>
           <span>${cat}</span>
         </div>
         ${items.map(item => `

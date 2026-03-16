@@ -157,7 +157,7 @@ export function workWithUsPage() {
             </div>
             <div class="work-form-group">
               <label class="work-form-label">Phone / WhatsApp</label>
-              <input type="tel" id="ww-phone" class="work-form-input" placeholder="+57 300 000 0000">
+              <input type="tel" id="ww-phone" class="work-form-input" placeholder="+57 302 226 6234">
             </div>
             <div class="work-form-group">
               <label class="work-form-label">I'm interested in *</label>

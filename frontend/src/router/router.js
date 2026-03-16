@@ -88,6 +88,7 @@ const routes = {
       const user = JSON.parse(decodeURIComponent(params.get("user") || "{}"));
       if (user && user.email) {
         localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user_id", user.id);
         if (user.role === 'business') {
           window.location.hash = "/veterinary";
         } else if (user.role === 'admin') {
