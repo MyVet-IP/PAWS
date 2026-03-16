@@ -40,9 +40,11 @@ CREATE TABLE IF NOT EXISTS businesses (
   nit_verified_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  -- NIT constraint enforced
+  -- NIT constraint enforced (draft status allows NULL NIT for onboarding)
   CONSTRAINT chk_nit_required CHECK (
     (business_type = 'dog_walker' AND nit IS NULL AND nit_verified IS NULL)
+    OR
+    (status = 'draft')
     OR
     (business_type <> 'dog_walker' AND nit IS NOT NULL)
   ),
@@ -185,6 +187,9 @@ CREATE TABLE IF NOT EXISTS pets (
   breed VARCHAR(100),
   birth_date DATE,
   weight_kg DECIMAL(5,2),
+  gender VARCHAR(10),
+  color VARCHAR(80),
+  notes TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
   FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE

@@ -9,6 +9,7 @@ router.get('/animal-types', businessesController.getAllAnimalTypes);
 
 // CRUD business
 router.get('/', businessesController.getAll);
+router.get('/user/:user_id', businessesController.getByUser);
 router.get('/:id', businessesController.getById);
 router.post('/',
     validateBody(['user_id', 'business_type', 'name', 'address']),
