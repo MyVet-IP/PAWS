@@ -19,7 +19,7 @@ import { petProfilepage, petProfileEvents } from "../views/pet-profile.js";
 import { dashboardPage, dashboardEvents } from "../views/user-dashboard.js";
 import { workWithUsPage, workWithUsEvents } from "../views/work-with-us.js";
 import { specialistsPage, specialistsEvents } from "../views/specialists.js";
-import { bussinesDashboardPage, bussinesDashboardEvents } from "../views/bussines-dashboard.js";
+import { vetDashboardPage, vetDashboardEvents } from "../views/vet-dashboard.js";
 import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-records.js";
 import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
 import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
@@ -48,7 +48,7 @@ const routes = {
   "/register": registerPage,
   "/emergency": emergencyPage,
   "/pet-profile": petProfilepage,
-  "/bussines-dasboard": bussinesDashboardPage,
+  "/veterinary": vetDashboardPage,
   "/services": servicesPage,
 
   "/tips": healthTipsPage,
@@ -84,8 +84,6 @@ const routes = {
           window.location.hash = "/veterinary";
         } else if (user.role === 'admin') {
           window.location.hash = "/admin-dashboard";
-        } else if (user.role === 'bussines') {
-          window.location.hash = "/bussines-dashboard";
         } else {
           window.location.hash = "/user-dashboard";
         }
@@ -103,7 +101,7 @@ const PROTECTED = {
   "/user-dashboard": "user",
   "/pet-profile": "user",
   "/appointments": "user",
-  "/bussines-dashboard": "business",
+  "/veterinary": "business",
   "/business-appointments": "business",
   "/medical-records": "user",
   "/admin-dashboard": "admin",
@@ -208,8 +206,8 @@ function runPageEvents(path, params = {}) {
       petProfileEvents(params.pet_id);
       break
 
-    case "/bussiness-dashboard":
-      bussinesDashboardEvents();
+    case "/veterinary":
+      vetDashboardEvents();
       break;
 
     case "/services":
