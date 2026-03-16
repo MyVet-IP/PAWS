@@ -24,8 +24,10 @@ import { medicalRecordsPage, medicalRecordsEvents } from "../views/medical-recor
 import { adminDashboardPage, adminDashboardEvents } from "../views/admin-dashboard.js";
 import { userScheduleAppointmentsPage, userScheduleAppointmentsEvents } from "../views/users- schedule-appointments.js";
 import { businessScheduleAppointmentsPage, businessScheduleAppointmentsEvents } from "../views/bussines-schedule-appointments.js";
+import { forgotPasswordPage, forgotPasswordEvents } from "../views/forgot-password.js";
+import { resetPasswordPage, resetPasswordEvents } from "../views/reset-password.js";
 
-const PUBLIC_PATHS = ["/", "/login", "/register"];
+const PUBLIC_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
 
 const routes = {
   "/": landingPage,
@@ -62,6 +64,8 @@ const routes = {
   "/admin-dashboard": adminDashboardPage,
   "/appointments": userScheduleAppointmentsPage,
   "/business-appointments": businessScheduleAppointmentsPage,
+  "/forgot-password": forgotPasswordPage,
+  "/reset-password": resetPasswordPage,
 
 
   "/unauthorized": () => `
@@ -138,7 +142,7 @@ export function router() {
     const html = resolvedPath === '/pet-profile' ? viewFunction(routeParams) : viewFunction();
 
     // ===== Layout selector =====
-    if (path === "/login" || path === "/register") {
+    if (path === "/login" || path === "/register" || path === "/forgot-password" || path === "/reset-password") {
       app.innerHTML = AuthLayout(html);
     } else {
       app.innerHTML = Layout(html);
@@ -242,8 +246,12 @@ function runPageEvents(path, params = {}) {
       userScheduleAppointmentsEvents();
       break;
 
-    case "/business-appointments":
-      businessScheduleAppointmentsEvents();
+    case "/forgot-password":
+      forgotPasswordEvents();
+      break;
+
+    case "/reset-password":
+      resetPasswordEvents();
       break;
   }
 }
