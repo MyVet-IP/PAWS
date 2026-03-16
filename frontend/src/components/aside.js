@@ -25,7 +25,7 @@ export function Aside() {
     <!-- ── LOGO ──────────────────────────────── -->
     <div class="flex items-center gap-2 px-5 pt-4 pb-3 relative">
       <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm"
-           style="background:rgba(185,251,192,0.22);">🐾</div>
+           style="background:rgba(185,251,192,0.22);"><svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg></div>
       <span class="font-bold text-surface-light tracking-widest" style="font-size:15px;letter-spacing:0.18em;">
         PAWS
       </span>
@@ -78,7 +78,7 @@ export function Aside() {
       <!-- Role badge -->
       <span class="mt-1 font-medium rounded-full" style="font-size:10px;padding:2px 10px;
             background:rgba(185,251,192,0.20);color:#B9FBC0;">
-        ${isVet ? "🩺 Veterinarian" : "🐾 Pet Owner"}
+        ${isVet ? "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z'/></svg> Veterinarian" : "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg> Pet Owner"}
       </span>
 
       <!-- Hint -->
@@ -221,7 +221,7 @@ export function Aside() {
         <div id="profile-success"
              class="text-center font-semibold font-poppins rounded-md bg-paws-green text-text-primary"
              style="display:none;padding:10px;font-size:13px;">
-          ✅ Profile updated!
+          <svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'/></svg> Profile updated!
         </div>
 
       </div>
@@ -235,10 +235,10 @@ export function Aside() {
 // ─────────────────────────────────────────────
 function ownerMenu(currentHash) {
   const links = [
-    { href: "#/user-dashboard", label: "Dashboard", icon: "📊" },
-    { href: "#/pet-profile", label: "My Pets", icon: "🐾" },
-    { href: "#/appointments", label: "Appointments", icon: "📅" },
-    { href: "#/clinics", label: "Clinics", icon: "🏥" },
+    { href: "#/user-dashboard", label: "Dashboard", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
+    { href: "#/pet-profile", label: "My Pets", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg>" },
+    { href: "#/appointments", label: "Appointments", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>" },
+    { href: "#/clinics", label: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
 }
@@ -248,10 +248,10 @@ function ownerMenu(currentHash) {
 // ─────────────────────────────────────────────
 function vetMenu(currentHash) {
   const links = [
-    { href: "#/veterinary", label: "Dashboard", icon: "📊" },
-    { href: "#/business-appointments", label: "Appointments", icon: "📅" },
-    { href: "#/pet-profile", label: "Patients", icon: "🐾" },
-    { href: "#/medical-records", label: "Medical Records", icon: "📋" },
+    { href: "#/veterinary", label: "Dashboard", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
+    { href: "#/business-appointments", label: "Appointments", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>" },
+    { href: "#/pet-profile", label: "Patients", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg>" },
+    { href: "#/medical-records", label: "Medical Records", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'/></svg>" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
 }

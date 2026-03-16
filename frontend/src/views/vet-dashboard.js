@@ -252,7 +252,7 @@ export function vetDashboardPage() {
         <button class="btn-close-modal flex-1 py-2.5 border-2 border-gray-200 text-text-soft rounded-xl font-poppins font-semibold text-sm hover:border-gray-300 transition" data-modal="modal-vet-profile">Cancel</button>
         <button id="btn-save-profile" class="flex-1 py-2.5 bg-text-highlight text-white rounded-xl font-poppins font-semibold text-sm hover:opacity-90 transition">Save changes</button>
       </div>
-      <div id="profile-success" style="display:none;" class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary py-2.5 text-sm">✅ Profile updated!</div>
+      <div id="profile-success" style="display:none;" class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary py-2.5 text-sm"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Profile updated!</div>
     </div>
   `);
 
@@ -281,7 +281,7 @@ export function vetDashboardPage() {
       <button class="btn-close-modal flex-1 py-2.5 border-2 border-gray-200 text-text-soft rounded-xl font-poppins font-semibold text-sm" data-modal="modal-vet-schedule">Cancel</button>
       <button id="btn-save-schedule" class="flex-1 py-2.5 bg-text-highlight text-white rounded-xl font-poppins font-semibold text-sm hover:opacity-90 transition">Save schedule</button>
     </div>
-    <div id="schedule-success" style="display:none;margin-top:12px;" class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary py-2.5 text-sm">✅ Schedule updated!</div>
+    <div id="schedule-success" style="display:none;margin-top:12px;" class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary py-2.5 text-sm"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Schedule updated!</div>
   `);
 
   // ── Modal: Service ───────────────────────────

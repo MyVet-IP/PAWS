@@ -22,7 +22,7 @@ export function notFoundPage() {
                     font-size:0.72rem;font-weight:600;letter-spacing:0.06em;
                     text-transform:uppercase;padding:5px 14px;border-radius:999px;
                     margin-bottom:1.5rem;">
-          🐾 PAWS
+          <svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg> PAWS
         </div>
 
         <!-- Ilustración pata con ? -->

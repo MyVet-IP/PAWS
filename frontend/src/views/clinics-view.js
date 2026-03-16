@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────
 //  clinics-view.js
-//  ✅ Migrado al sistema de tokens PAWS
+//   Migrado al sistema de tokens PAWS
 //  Sin <script> ni <style> inline
 // ─────────────────────────────────────────────
 
@@ -61,11 +61,11 @@ export function clinicsPage() {
       <!-- Filter chips -->
       <div class="flex gap-2 flex-wrap">
         <button class="clinic-filter-btn clinic-filter-active" data-filter="all">All</button>
-        <button class="clinic-filter-btn" data-filter="emergency">🚨 24/7 Emergency</button>
-        <button class="clinic-filter-btn" data-filter="surgery">🔬 Surgery</button>
-        <button class="clinic-filter-btn" data-filter="cardiology">❤️ Cardiology</button>
-        <button class="clinic-filter-btn" data-filter="dental">🦷 Dental</button>
-        <button class="clinic-filter-btn" data-filter="lab">🧪 Laboratory</button>
+        <button class="clinic-filter-btn" data-filter="emergency"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> 24/7 Emergency</button>
+        <button class="clinic-filter-btn" data-filter="surgery"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3l2 4-5 9h14L15 7l2-4M5 20h14M12 3v4"/></svg> Surgery</button>
+        <button class="clinic-filter-btn" data-filter="cardiology"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> Cardiology</button>
+        <button class="clinic-filter-btn" data-filter="dental"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z"/></svg> Dental</button>
+        <button class="clinic-filter-btn" data-filter="lab"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3v8l-4 7a1 1 0 001 1h12a1 1 0 001-1l-4-7V3M9 3h6M7 16h10"/></svg> Laboratory</button>
       </div>
 
     </div>
@@ -176,7 +176,7 @@ function renderClinicCard(clinic) {
                style="background:var(--text-highlight);transition:var(--transition-fast);"
                onmouseenter="this.style.opacity='0.90'"
                onmouseleave="this.style.opacity='1'">
-              📞 Call
+              <svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> Call
             </a>` : ''}
           <button onclick="viewClinicDetails(${clinic.business_id})"
             class="flex-1 py-2 px-3 rounded-xl font-poppins font-semibold text-xs transition"
@@ -218,7 +218,7 @@ export async function initClinicsView() {
     if (clinics.length === 0) {
       grid.innerHTML = `
         <div class="col-span-3 text-center py-16">
-          <p class="text-4xl mb-3">🏥</p>
+          <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></p>
           <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
           <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p>
         </div>`;
@@ -231,7 +231,7 @@ export async function initClinicsView() {
   } catch (err) {
     grid.innerHTML = `
       <div class="col-span-3 text-center py-16">
-        <p class="text-4xl mb-3">⚠️</p>
+        <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></p>
         <p class="font-poppins font-medium" style="color:#dc2626;">Error loading clinics</p>
         <p class="text-sm mt-1" style="color:var(--text-muted);">${err.message}</p>
       </div>`;
@@ -316,7 +316,7 @@ export function clinicsEvents() {
 
       if (filtered.length === 0) {
         grid.innerHTML = `<div class="col-span-3 text-center py-16">
-          <p class="text-4xl mb-3">🏥</p>
+          <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></p>
           <p class="font-poppins font-medium" style="color:var(--text-primary);">No clinics found</p>
           <p class="text-sm mt-1" style="color:var(--text-muted);">Try a different search or filter</p></div>`;
         return;
@@ -324,7 +324,7 @@ export function clinicsEvents() {
       grid.innerHTML = filtered.map(renderClinicCard).join('');
     } catch (err) {
       grid.innerHTML = `<div class="col-span-3 text-center py-16">
-        <p class="text-4xl mb-3">⚠️</p>
+        <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></p>
         <p class="font-poppins font-medium" style="color:#dc2626;">Error loading clinics</p>
         <p class="text-sm mt-1" style="color:var(--text-muted);">${err.message}</p></div>`;
     }

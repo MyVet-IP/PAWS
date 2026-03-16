@@ -1,5 +1,5 @@
 export function adminDashboardPage() {
-    return `
+  return `
   <div class="admin-dashboard">
     <!-- Admin Header -->
     <div class="admin-header">
@@ -353,7 +353,7 @@ export function adminDashboardPage() {
                   <div class="admin-mini-stat-icon" style="background-color: rgba(185,251,192,0.4);">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label">🐶 Dogs</span>
+                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg> Dogs</span>
                 </div>
                 <span class="admin-mini-stat-value" id="dogs-count">0</span>
               </div>
@@ -362,7 +362,7 @@ export function adminDashboardPage() {
                   <div class="admin-mini-stat-icon" style="background-color: rgba(144,189,244,0.4);">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label">🐱 Cats</span>
+                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg> Cats</span>
                 </div>
                 <span class="admin-mini-stat-value" id="cats-count">0</span>
               </div>
@@ -371,7 +371,7 @@ export function adminDashboardPage() {
                   <div class="admin-mini-stat-icon" style="background-color: rgba(251,248,204,0.6);">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label">🐾 Other</span>
+                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg> Other</span>
                 </div>
                 <span class="admin-mini-stat-value" id="other-count">0</span>
               </div>
@@ -502,185 +502,185 @@ let deleteCallback = null;
 
 export function adminDashboardEvents() {
 
-    // Initialize tabs
-    initTabs();
+  // Initialize tabs
+  initTabs();
 
-    // Initialize modals
-    initModals();
+  // Initialize modals
+  initModals();
 
-    // Load initial data
-    loadStats();
-    loadUsers();
-    loadPets();
-    loadBusinesses();
-    loadAppointments();
+  // Load initial data
+  loadStats();
+  loadUsers();
+  loadPets();
+  loadBusinesses();
+  loadAppointments();
 
-    // Logout
-    const logoutBtn = document.getElementById('btn-admin-logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('user');
-            window.location.hash = '/';
-        });
-    }
+  // Logout
+  const logoutBtn = document.getElementById('btn-admin-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('user');
+      window.location.hash = '/';
+    });
+  }
 
-    // Global search
-    const searchInput = document.getElementById('global-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce((e) => {
-            const query = e.target.value.toLowerCase();
-            filterCurrentTab(query);
-        }, 300));
-    }
+  // Global search
+  const searchInput = document.getElementById('global-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce((e) => {
+      const query = e.target.value.toLowerCase();
+      filterCurrentTab(query);
+    }, 300));
+  }
 
-    // Quick actions
-    document.getElementById('qa-export-users')?.addEventListener('click', exportUsers);
-    document.getElementById('qa-send-notification')?.addEventListener('click', () => alert('Notification feature coming soon'));
-    document.getElementById('qa-view-reports')?.addEventListener('click', () => alert('Reports feature coming soon'));
-    document.getElementById('qa-system-settings')?.addEventListener('click', () => alert('Settings feature coming soon'));
+  // Quick actions
+  document.getElementById('qa-export-users')?.addEventListener('click', exportUsers);
+  document.getElementById('qa-send-notification')?.addEventListener('click', () => alert('Notification feature coming soon'));
+  document.getElementById('qa-view-reports')?.addEventListener('click', () => alert('Reports feature coming soon'));
+  document.getElementById('qa-system-settings')?.addEventListener('click', () => alert('Settings feature coming soon'));
 }
 
 function initTabs() {
-    const tabs = document.querySelectorAll('.admin-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+  const tabs = document.querySelectorAll('.admin-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
 
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
 
-            const tabId = tab.dataset.tab;
-            document.getElementById(`tab-${tabId}`)?.classList.add('active');
-        });
+      const tabId = tab.dataset.tab;
+      document.getElementById(`tab-${tabId}`)?.classList.add('active');
     });
+  });
 
-    // Filter listeners
-    document.getElementById('filter-species')?.addEventListener('change', (e) => {
-        loadPets(e.target.value);
-    });
+  // Filter listeners
+  document.getElementById('filter-species')?.addEventListener('change', (e) => {
+    loadPets(e.target.value);
+  });
 
-    document.getElementById('filter-business-type')?.addEventListener('change', (e) => {
-        loadBusinesses(e.target.value);
-    });
+  document.getElementById('filter-business-type')?.addEventListener('change', (e) => {
+    loadBusinesses(e.target.value);
+  });
 
-    document.getElementById('filter-appointment-status')?.addEventListener('change', (e) => {
-        loadAppointments(e.target.value);
-    });
+  document.getElementById('filter-appointment-status')?.addEventListener('change', (e) => {
+    loadAppointments(e.target.value);
+  });
 }
 
 function initModals() {
-    // User modal
-    const userModal = document.getElementById('modal-user');
-    const addUserBtn = document.getElementById('btn-add-user');
-    const userForm = document.getElementById('user-form');
+  // User modal
+  const userModal = document.getElementById('modal-user');
+  const addUserBtn = document.getElementById('btn-add-user');
+  const userForm = document.getElementById('user-form');
 
-    addUserBtn?.addEventListener('click', () => {
-        document.getElementById('modal-user-title').textContent = 'Add User';
-        userForm?.reset();
-        document.getElementById('user-id').value = '';
-        userModal?.classList.add('open');
-    });
+  addUserBtn?.addEventListener('click', () => {
+    document.getElementById('modal-user-title').textContent = 'Add User';
+    userForm?.reset();
+    document.getElementById('user-id').value = '';
+    userModal?.classList.add('open');
+  });
 
-    document.getElementById('close-user-modal')?.addEventListener('click', () => userModal?.classList.remove('open'));
-    document.getElementById('cancel-user-modal')?.addEventListener('click', () => userModal?.classList.remove('open'));
-    userModal?.addEventListener('click', (e) => { if (e.target === userModal) userModal.classList.remove('open'); });
+  document.getElementById('close-user-modal')?.addEventListener('click', () => userModal?.classList.remove('open'));
+  document.getElementById('cancel-user-modal')?.addEventListener('click', () => userModal?.classList.remove('open'));
+  userModal?.addEventListener('click', (e) => { if (e.target === userModal) userModal.classList.remove('open'); });
 
-    userForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await saveUser();
-        userModal?.classList.remove('open');
-    });
+  userForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveUser();
+    userModal?.classList.remove('open');
+  });
 
-    // Business modal
-    const businessModal = document.getElementById('modal-business');
-    const addBusinessBtn = document.getElementById('btn-add-business');
-    const businessForm = document.getElementById('business-form');
+  // Business modal
+  const businessModal = document.getElementById('modal-business');
+  const addBusinessBtn = document.getElementById('btn-add-business');
+  const businessForm = document.getElementById('business-form');
 
-    addBusinessBtn?.addEventListener('click', () => {
-        document.getElementById('modal-business-title').textContent = 'Add Business';
-        businessForm?.reset();
-        document.getElementById('business-id').value = '';
-        businessModal?.classList.add('open');
-    });
+  addBusinessBtn?.addEventListener('click', () => {
+    document.getElementById('modal-business-title').textContent = 'Add Business';
+    businessForm?.reset();
+    document.getElementById('business-id').value = '';
+    businessModal?.classList.add('open');
+  });
 
-    document.getElementById('close-business-modal')?.addEventListener('click', () => businessModal?.classList.remove('open'));
-    document.getElementById('cancel-business-modal')?.addEventListener('click', () => businessModal?.classList.remove('open'));
-    businessModal?.addEventListener('click', (e) => { if (e.target === businessModal) businessModal.classList.remove('open'); });
+  document.getElementById('close-business-modal')?.addEventListener('click', () => businessModal?.classList.remove('open'));
+  document.getElementById('cancel-business-modal')?.addEventListener('click', () => businessModal?.classList.remove('open'));
+  businessModal?.addEventListener('click', (e) => { if (e.target === businessModal) businessModal.classList.remove('open'); });
 
-    businessForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await saveBusiness();
-        businessModal?.classList.remove('open');
-    });
+  businessForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveBusiness();
+    businessModal?.classList.remove('open');
+  });
 
-    // Delete modal
-    const deleteModal = document.getElementById('modal-delete');
+  // Delete modal
+  const deleteModal = document.getElementById('modal-delete');
 
-    document.getElementById('close-delete-modal')?.addEventListener('click', () => deleteModal?.classList.remove('open'));
-    document.getElementById('cancel-delete')?.addEventListener('click', () => deleteModal?.classList.remove('open'));
-    deleteModal?.addEventListener('click', (e) => { if (e.target === deleteModal) deleteModal.classList.remove('open'); });
+  document.getElementById('close-delete-modal')?.addEventListener('click', () => deleteModal?.classList.remove('open'));
+  document.getElementById('cancel-delete')?.addEventListener('click', () => deleteModal?.classList.remove('open'));
+  deleteModal?.addEventListener('click', (e) => { if (e.target === deleteModal) deleteModal.classList.remove('open'); });
 
-    document.getElementById('confirm-delete')?.addEventListener('click', async () => {
-        if (deleteCallback) {
-            await deleteCallback();
-            deleteCallback = null;
-        }
-        deleteModal?.classList.remove('open');
-    });
+  document.getElementById('confirm-delete')?.addEventListener('click', async () => {
+    if (deleteCallback) {
+      await deleteCallback();
+      deleteCallback = null;
+    }
+    deleteModal?.classList.remove('open');
+  });
 }
 
 // Load stats
 async function loadStats() {
-    try {
-        const [usersRes, petsRes, businessesRes, appointmentsRes] = await Promise.all([
-            fetch('/api/users'),
-            fetch('/api/pets'),
-            fetch('/api/businesses'),
-            fetch('/api/appointments')
-        ]);
+  try {
+    const [usersRes, petsRes, businessesRes, appointmentsRes] = await Promise.all([
+      fetch('/api/users'),
+      fetch('/api/pets'),
+      fetch('/api/businesses'),
+      fetch('/api/appointments')
+    ]);
 
-        const users = await usersRes.json();
-        const pets = await petsRes.json();
-        const businesses = await businessesRes.json();
-        const appointments = await appointmentsRes.json();
+    const users = await usersRes.json();
+    const pets = await petsRes.json();
+    const businesses = await businessesRes.json();
+    const appointments = await appointmentsRes.json();
 
-        document.getElementById('stat-users').textContent = users.length || 0;
-        document.getElementById('stat-pets').textContent = pets.length || 0;
-        document.getElementById('stat-businesses').textContent = businesses.length || 0;
-        document.getElementById('stat-appointments').textContent = appointments.length || 0;
+    document.getElementById('stat-users').textContent = users.length || 0;
+    document.getElementById('stat-pets').textContent = pets.length || 0;
+    document.getElementById('stat-businesses').textContent = businesses.length || 0;
+    document.getElementById('stat-appointments').textContent = appointments.length || 0;
 
-        // Pet statistics
-        const dogs = pets.filter(p => p.species_name === 'Dog' || p.species_name === 'Perro').length;
-        const cats = pets.filter(p => p.species_name === 'Cat' || p.species_name === 'Gato').length;
-        const other = pets.length - dogs - cats;
+    // Pet statistics
+    const dogs = pets.filter(p => p.species_name === 'Dog' || p.species_name === 'Perro').length;
+    const cats = pets.filter(p => p.species_name === 'Cat' || p.species_name === 'Gato').length;
+    const other = pets.length - dogs - cats;
 
-        document.getElementById('dogs-count').textContent = dogs;
-        document.getElementById('cats-count').textContent = cats;
-        document.getElementById('other-count').textContent = other;
-    } catch (error) {
-        console.error('Error loading stats:', error);
-    }
+    document.getElementById('dogs-count').textContent = dogs;
+    document.getElementById('cats-count').textContent = cats;
+    document.getElementById('other-count').textContent = other;
+  } catch (error) {
+    console.error('Error loading stats:', error);
+  }
 }
 
 // Load users
 async function loadUsers() {
-    const tbody = document.getElementById('users-table-body');
-    if (!tbody) return;
+  const tbody = document.getElementById('users-table-body');
+  if (!tbody) return;
 
-    try {
-        const res = await fetch('/api/users');
-        const users = await res.json();
+  try {
+    const res = await fetch('/api/users');
+    const users = await res.json();
 
-        if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No users found</p></div></td></tr>';
-            return;
-        }
+    if (users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No users found</p></div></td></tr>';
+      return;
+    }
 
-        const avatarColors = ['green', 'blue', 'pink', 'purple', 'yellow'];
+    const avatarColors = ['green', 'blue', 'pink', 'purple', 'yellow'];
 
-        tbody.innerHTML = users.map((user, i) => `
+    tbody.innerHTML = users.map((user, i) => `
       <tr>
         <td>
           <div class="admin-user-cell">
@@ -710,39 +710,39 @@ async function loadUsers() {
         </td>
       </tr>
     `).join('');
-    } catch (error) {
-        console.error('Error loading users:', error);
-        tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading users</p></div></td></tr>';
-    }
+  } catch (error) {
+    console.error('Error loading users:', error);
+    tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading users</p></div></td></tr>';
+  }
 }
 
 // Load pets
 async function loadPets(filterSpecies = '') {
-    const tbody = document.getElementById('pets-table-body');
-    if (!tbody) return;
+  const tbody = document.getElementById('pets-table-body');
+  if (!tbody) return;
 
-    try {
-        const res = await fetch('/api/pets');
-        let pets = await res.json();
+  try {
+    const res = await fetch('/api/pets');
+    let pets = await res.json();
 
-        if (filterSpecies) {
-            pets = pets.filter(p => p.species_name === filterSpecies);
-        }
+    if (filterSpecies) {
+      pets = pets.filter(p => p.species_name === filterSpecies);
+    }
 
-        if (pets.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No pets found</p></div></td></tr>';
-            return;
-        }
+    if (pets.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No pets found</p></div></td></tr>';
+      return;
+    }
 
-        tbody.innerHTML = pets.map(pet => {
-            const isCat = pet.species_name === 'Cat' || pet.species_name === 'Gato';
-            const isDog = pet.species_name === 'Dog' || pet.species_name === 'Perro';
-            const speciesClass = isDog ? 'owner' : isCat ? 'vet' : 'business';
-            return `
+    tbody.innerHTML = pets.map(pet => {
+      const isCat = pet.species_name === 'Cat' || pet.species_name === 'Gato';
+      const isDog = pet.species_name === 'Dog' || pet.species_name === 'Perro';
+      const speciesClass = isDog ? 'owner' : isCat ? 'vet' : 'business';
+      return `
       <tr>
         <td>
           <div class="admin-user-cell">
-            <div class="admin-avatar ${isCat ? 'blue' : 'green'}" style="font-size:1.1rem;">${isCat ? '🐱' : '🐶'}</div>
+            <div class="admin-avatar ${isCat ? 'blue' : 'green'}" style="font-size:1.1rem;">${isCat ? '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg>' : '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg>'}</div>
             <div class="admin-user-info">
               <h4>${pet.name || 'Unknown'}</h4>
             </div>
@@ -769,33 +769,33 @@ async function loadPets(filterSpecies = '') {
         </td>
       </tr>
     `}).join('');
-    } catch (error) {
-        console.error('Error loading pets:', error);
-        tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading pets</p></div></td></tr>';
-    }
+  } catch (error) {
+    console.error('Error loading pets:', error);
+    tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading pets</p></div></td></tr>';
+  }
 }
 
 // Load businesses
 async function loadBusinesses(filterType = '') {
-    const tbody = document.getElementById('businesses-table-body');
-    if (!tbody) return;
+  const tbody = document.getElementById('businesses-table-body');
+  if (!tbody) return;
 
-    try {
-        const res = await fetch('/api/businesses');
-        let businesses = await res.json();
+  try {
+    const res = await fetch('/api/businesses');
+    let businesses = await res.json();
 
-        if (filterType) {
-            businesses = businesses.filter(b => b.business_type === filterType);
-        }
+    if (filterType) {
+      businesses = businesses.filter(b => b.business_type === filterType);
+    }
 
-        if (businesses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No businesses found</p></div></td></tr>';
-            return;
-        }
+    if (businesses.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>No businesses found</p></div></td></tr>';
+      return;
+    }
 
-        tbody.innerHTML = businesses.map(business => {
-            const typeClass = business.business_type === 'clinic' ? 'owner' : business.business_type === 'petshop' ? 'business' : 'vet';
-            return `
+    tbody.innerHTML = businesses.map(business => {
+      const typeClass = business.business_type === 'clinic' ? 'owner' : business.business_type === 'petshop' ? 'business' : 'vet';
+      return `
       <tr>
         <td>
           <div class="admin-user-cell">
@@ -834,28 +834,28 @@ async function loadBusinesses(filterType = '') {
         </td>
       </tr>
     `}).join('');
-    } catch (error) {
-        console.error('Error loading businesses:', error);
-        tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading businesses</p></div></td></tr>';
-    }
+  } catch (error) {
+    console.error('Error loading businesses:', error);
+    tbody.innerHTML = '<tr><td colspan="6"><div class="admin-empty-state"><p>Error loading businesses</p></div></td></tr>';
+  }
 }
 
 // Load appointments
 async function loadAppointments(filterStatus = '') {
-    const tbody = document.getElementById('appointments-table-body');
-    if (!tbody) return;
+  const tbody = document.getElementById('appointments-table-body');
+  if (!tbody) return;
 
-    try {
-        const url = filterStatus ? `/api/appointments?status=${filterStatus}` : '/api/appointments';
-        const res = await fetch(url);
-        let appointments = await res.json();
+  try {
+    const url = filterStatus ? `/api/appointments?status=${filterStatus}` : '/api/appointments';
+    const res = await fetch(url);
+    let appointments = await res.json();
 
-        if (appointments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7"><div class="admin-empty-state"><p>No appointments found</p></div></td></tr>';
-            return;
-        }
+    if (appointments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="admin-empty-state"><p>No appointments found</p></div></td></tr>';
+      return;
+    }
 
-        tbody.innerHTML = appointments.map(apt => `
+    tbody.innerHTML = appointments.map(apt => `
       <tr>
         <td>${formatDate(apt.date)}</td>
         <td>${apt.time || '-'}</td>
@@ -879,201 +879,201 @@ async function loadAppointments(filterStatus = '') {
         </td>
       </tr>
     `).join('');
-    } catch (error) {
-        console.error('Error loading appointments:', error);
-        tbody.innerHTML = '<tr><td colspan="7"><div class="admin-empty-state"><p>Error loading appointments</p></div></td></tr>';
-    }
+  } catch (error) {
+    console.error('Error loading appointments:', error);
+    tbody.innerHTML = '<tr><td colspan="7"><div class="admin-empty-state"><p>Error loading appointments</p></div></td></tr>';
+  }
 }
 
 // Save user
 async function saveUser() {
-    const id = document.getElementById('user-id').value;
-    const data = {
-        name: document.getElementById('user-nombre').value,
-        email: document.getElementById('user-email').value,
-        phone: document.getElementById('user-telefono').value
-    };
+  const id = document.getElementById('user-id').value;
+  const data = {
+    name: document.getElementById('user-nombre').value,
+    email: document.getElementById('user-email').value,
+    phone: document.getElementById('user-telefono').value
+  };
 
-    try {
-        const url = id ? `/api/users/${id}` : '/api/users';
-        const method = id ? 'PUT' : 'POST';
-        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        loadUsers();
-        loadStats();
-    } catch (error) {
-        console.error('Error saving user:', error);
-    }
+  try {
+    const url = id ? `/api/users/${id}` : '/api/users';
+    const method = id ? 'PUT' : 'POST';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    loadUsers();
+    loadStats();
+  } catch (error) {
+    console.error('Error saving user:', error);
+  }
 }
 
 // Save business
 async function saveBusiness() {
-    const id = document.getElementById('business-id').value;
-    const data = {
-        name: document.getElementById('business-nombre').value,
-        business_type: document.getElementById('business-tipo').value,
-        address: document.getElementById('business-direccion').value,
-        phone: document.getElementById('business-telefono').value
-    };
+  const id = document.getElementById('business-id').value;
+  const data = {
+    name: document.getElementById('business-nombre').value,
+    business_type: document.getElementById('business-tipo').value,
+    address: document.getElementById('business-direccion').value,
+    phone: document.getElementById('business-telefono').value
+  };
 
-    if (!id) {
-        // For new businesses, include user_id from logged-in admin
-        const adminUser = JSON.parse(localStorage.getItem('user') || '{}');
-        data.user_id = adminUser.id || adminUser.user_id;
-    }
+  if (!id) {
+    // For new businesses, include user_id from logged-in admin
+    const adminUser = JSON.parse(localStorage.getItem('user') || '{}');
+    data.user_id = adminUser.id || adminUser.user_id;
+  }
 
-    try {
-        const url = id ? `/api/businesses/${id}` : '/api/businesses';
-        const method = id ? 'PUT' : 'POST';
-        await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        loadBusinesses();
-        loadStats();
-    } catch (error) {
-        console.error('Error saving business:', error);
-    }
+  try {
+    const url = id ? `/api/businesses/${id}` : '/api/businesses';
+    const method = id ? 'PUT' : 'POST';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    loadBusinesses();
+    loadStats();
+  } catch (error) {
+    console.error('Error saving business:', error);
+  }
 }
 
 // Global functions for onclick handlers
 window.editUser = async function (id) {
-    try {
-        const res = await fetch(`/api/users/${id}`);
-        const user = await res.json();
-        document.getElementById('modal-user-title').textContent = 'Edit User';
-        document.getElementById('user-id').value = id;
-        document.getElementById('user-nombre').value = user.name || '';
-        document.getElementById('user-email').value = user.email || '';
-        document.getElementById('user-telefono').value = user.phone || '';
-        document.getElementById('user-direccion').value = '';
-        document.getElementById('modal-user')?.classList.add('open');
-    } catch (error) {
-        console.error('Error loading user:', error);
-    }
+  try {
+    const res = await fetch(`/api/users/${id}`);
+    const user = await res.json();
+    document.getElementById('modal-user-title').textContent = 'Edit User';
+    document.getElementById('user-id').value = id;
+    document.getElementById('user-nombre').value = user.name || '';
+    document.getElementById('user-email').value = user.email || '';
+    document.getElementById('user-telefono').value = user.phone || '';
+    document.getElementById('user-direccion').value = '';
+    document.getElementById('modal-user')?.classList.add('open');
+  } catch (error) {
+    console.error('Error loading user:', error);
+  }
 };
 
 window.confirmDeleteUser = function (id) {
-    document.getElementById('delete-message').textContent = 'Are you sure you want to delete this user? All associated data will be removed.';
-    deleteCallback = async () => {
-        await fetch(`/api/users/${id}`, { method: 'DELETE' });
-        loadUsers();
-        loadStats();
-    };
-    document.getElementById('modal-delete')?.classList.add('open');
+  document.getElementById('delete-message').textContent = 'Are you sure you want to delete this user? All associated data will be removed.';
+  deleteCallback = async () => {
+    await fetch(`/api/users/${id}`, { method: 'DELETE' });
+    loadUsers();
+    loadStats();
+  };
+  document.getElementById('modal-delete')?.classList.add('open');
 };
 
 window.viewPet = function (id) {
-    window.location.hash = `/pet-profile/${id}`;
+  window.location.hash = `/pet-profile/${id}`;
 };
 
 window.confirmDeletePet = function (id) {
-    document.getElementById('delete-message').textContent = 'Are you sure you want to delete this pet? All medical records will be removed.';
-    deleteCallback = async () => {
-        await fetch(`/api/pets/${id}`, { method: 'DELETE' });
-        loadPets();
-        loadStats();
-    };
-    document.getElementById('modal-delete')?.classList.add('open');
+  document.getElementById('delete-message').textContent = 'Are you sure you want to delete this pet? All medical records will be removed.';
+  deleteCallback = async () => {
+    await fetch(`/api/pets/${id}`, { method: 'DELETE' });
+    loadPets();
+    loadStats();
+  };
+  document.getElementById('modal-delete')?.classList.add('open');
 };
 
 window.editBusiness = async function (id) {
-    try {
-        const res = await fetch(`/api/businesses/${id}`);
-        const business = await res.json();
-        document.getElementById('modal-business-title').textContent = 'Edit Business';
-        document.getElementById('business-id').value = id;
-        document.getElementById('business-nombre').value = business.name || '';
-        document.getElementById('business-tipo').value = business.business_type || '';
-        document.getElementById('business-direccion').value = business.address || '';
-        document.getElementById('business-telefono').value = business.phone || '';
-        document.getElementById('business-horario').value = '';
-        document.getElementById('modal-business')?.classList.add('open');
-    } catch (error) {
-        console.error('Error loading business:', error);
-    }
+  try {
+    const res = await fetch(`/api/businesses/${id}`);
+    const business = await res.json();
+    document.getElementById('modal-business-title').textContent = 'Edit Business';
+    document.getElementById('business-id').value = id;
+    document.getElementById('business-nombre').value = business.name || '';
+    document.getElementById('business-tipo').value = business.business_type || '';
+    document.getElementById('business-direccion').value = business.address || '';
+    document.getElementById('business-telefono').value = business.phone || '';
+    document.getElementById('business-horario').value = '';
+    document.getElementById('modal-business')?.classList.add('open');
+  } catch (error) {
+    console.error('Error loading business:', error);
+  }
 };
 
 window.confirmDeleteBusiness = function (id) {
-    document.getElementById('delete-message').textContent = 'Are you sure you want to delete this business?';
-    deleteCallback = async () => {
-        await fetch(`/api/businesses/${id}`, { method: 'DELETE' });
-        loadBusinesses();
-        loadStats();
-    };
-    document.getElementById('modal-delete')?.classList.add('open');
+  document.getElementById('delete-message').textContent = 'Are you sure you want to delete this business?';
+  deleteCallback = async () => {
+    await fetch(`/api/businesses/${id}`, { method: 'DELETE' });
+    loadBusinesses();
+    loadStats();
+  };
+  document.getElementById('modal-delete')?.classList.add('open');
 };
 
 window.updateAppointmentStatus = async function (id) {
-    const newStatus = prompt('Enter new status (pending, confirmed, completed, cancelled):');
-    if (newStatus && ['pending', 'confirmed', 'completed', 'cancelled'].includes(newStatus)) {
-        try {
-            await fetch(`/api/appointments/${id}/status`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus })
-            });
-            loadAppointments();
-        } catch (error) {
-            console.error('Error updating appointment:', error);
-        }
+  const newStatus = prompt('Enter new status (pending, confirmed, completed, cancelled):');
+  if (newStatus && ['pending', 'confirmed', 'completed', 'cancelled'].includes(newStatus)) {
+    try {
+      await fetch(`/api/appointments/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadAppointments();
+    } catch (error) {
+      console.error('Error updating appointment:', error);
     }
+  }
 };
 
 window.confirmDeleteAppointment = function (id) {
-    document.getElementById('delete-message').textContent = 'Are you sure you want to cancel this appointment?';
-    deleteCallback = async () => {
-        await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
-        loadAppointments();
-        loadStats();
-    };
-    document.getElementById('modal-delete')?.classList.add('open');
+  document.getElementById('delete-message').textContent = 'Are you sure you want to cancel this appointment?';
+  deleteCallback = async () => {
+    await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
+    loadAppointments();
+    loadStats();
+  };
+  document.getElementById('modal-delete')?.classList.add('open');
 };
 
 // Export users to CSV
 function exportUsers() {
-    fetch('/api/users')
-        .then(res => res.json())
-        .then(users => {
-            const csv = [
-                ['Name', 'Email', 'Phone', 'Role', 'Joined'].join(','),
-                ...users.map(u => [u.name, u.email, u.phone, u.role, u.created_at].join(','))
-            ].join('\n');
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'users-export.csv';
-            a.click();
-        });
+  fetch('/api/users')
+    .then(res => res.json())
+    .then(users => {
+      const csv = [
+        ['Name', 'Email', 'Phone', 'Role', 'Joined'].join(','),
+        ...users.map(u => [u.name, u.email, u.phone, u.role, u.created_at].join(','))
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'users-export.csv';
+      a.click();
+    });
 }
 
 // Utility functions
 function formatDate(dateStr) {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function getStatusClass(status) {
-    const classes = {
-        pending: 'pending',
-        confirmed: 'verified',
-        completed: 'active',
-        cancelled: 'inactive'
-    };
-    return classes[status] || 'inactive';
+  const classes = {
+    pending: 'pending',
+    confirmed: 'verified',
+    completed: 'active',
+    cancelled: 'inactive'
+  };
+  return classes[status] || 'inactive';
 }
 
 function debounce(fn, delay) {
-    let timeout;
-    return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
-    };
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
 }
 
 function filterCurrentTab(query) {
-    const activeTab = document.querySelector('.admin-tab.active')?.dataset.tab;
-    const rows = document.querySelectorAll(`#tab-${activeTab} tbody tr`);
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
-    });
+  const activeTab = document.querySelector('.admin-tab.active')?.dataset.tab;
+  const rows = document.querySelectorAll(`#tab-${activeTab} tbody tr`);
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
 }

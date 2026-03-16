@@ -1,4 +1,3 @@
-
 //  pet-profile.js
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -14,18 +13,18 @@ function fmtDate(d) {
 }
 
 const VISIT_META = {
-  Checkup: { bg: '#F1C0E8', icon: '🩺' },
-  Vaccination: { bg: '#B9FBC0', icon: '💉' },
-  Surgery: { bg: '#FFCFD2', icon: '🔬' },
-  Dental: { bg: '#90BDF4', icon: '🦷' },
-  Deworming: { bg: '#FBF8CC', icon: '💊' },
-  Emergency: { bg: '#FFCFD2', icon: '🚨' },
-  'Follow-up': { bg: '#B9FBC0', icon: '📋' },
-  Grooming: { bg: '#90BDF4', icon: '✂️' },
-  Other: { bg: '#F3F4F6', icon: '📄' },
+  Checkup: { bg: '#F1C0E8', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z"/></svg>' },
+  Vaccination: { bg: '#B9FBC0', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 4.5l-15 15M16 3l5 5-1.5 1.5M12 7l4 4M5 15l-2 4 4-2M9 11l4 4"/></svg>' },
+  Surgery: { bg: '#FFCFD2', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3l2 4-5 9h14L15 7l2-4M5 20h14M12 3v4"/></svg>' },
+  Dental: { bg: '#90BDF4', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3c-2.5 0-5 2-5 5 0 2 .5 3 1 5 .5 2 1 5 2 8h1c.5-2 1-4 1-5s.5 3 1 5h1c1-3 1.5-6 2-8 .5-2 1-3 1-5 0-3-2.5-5-5-5z"/></svg>' },
+  Deworming: { bg: '#FBF8CC', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.5 6.5l7 7a5 5 0 01-7-7zm0 0a5 5 0 00-7 7l7-7zM8 12l4 4"/></svg>' },
+  Emergency: { bg: '#FFCFD2', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>' },
+  'Follow-up': { bg: '#B9FBC0', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>' },
+  Grooming: { bg: '#90BDF4', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9"/></svg>' },
+  Other: { bg: '#F3F4F6', icon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>' },
 };
 
-const SPECIES_EMOJI = { Dog: '🐶', Cat: '🐱', Bird: '🐦', Rabbit: '🐰' };
+const SPECIES_EMOJI = { Dog: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg>', Cat: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg>', Bird: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 4c-2 0-4 1-5 3H8a4 4 0 000 8h1l1 3h2l1-3h3c2.2 0 4-1.8 4-4V4zM8 11a1 1 0 110-2 1 1 0 010 2z"/></svg>', Rabbit: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 3c0 3-2 4-2 7a6 6 0 0012 0c0-3-2-4-2-7M9 17c0 1.5.5 3 3 3s3-1.5 3-3"/></svg>' };
 
 // ── Page skeleton ─────────────────────────────────────────────
 export function petProfilepage({ pet_id } = {}) {
@@ -68,7 +67,7 @@ export function petProfilepage({ pet_id } = {}) {
             <div class="relative mb-3">
               <div class="rounded-full overflow-hidden flex items-center justify-center bg-surface-soft"
                    style="width:88px;height:88px;border:3px solid #B9FBC0;box-shadow:0 0 0 5px rgba(185,251,192,0.18);">
-                <span id="pet-avatar-emoji" style="font-size:2.4rem;">🐾</span>
+                <span id="pet-avatar-emoji" style="font-size:2.4rem;"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg></span>
               </div>
               <button id="btn-edit-pet"
                 class="absolute flex items-center justify-center rounded-full border-2 border-white bg-text-highlight hover:opacity-90 transition"
@@ -225,7 +224,7 @@ export function petProfilepage({ pet_id } = {}) {
           <div id="pet-edit-success"
                class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary"
                style="display:none;padding:10px;font-size:13px;">
-            ✅ Pet profile updated!
+            <svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Pet profile updated!
           </div>
         </div>
       </div>
@@ -300,7 +299,7 @@ async function _loadProfile(petId, user) {
 
 function _renderPet(pet) {
   const species = pet.species_name || pet.animal_type_name || '—';
-  document.getElementById('pet-avatar-emoji').textContent = SPECIES_EMOJI[species] || '🐾';
+  document.getElementById('pet-avatar-emoji').textContent = SPECIES_EMOJI[species] || '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg>';
   document.getElementById('pet-display-name').textContent = pet.name || '—';
   document.getElementById('pet-display-breed').textContent = pet.breed || '—';
   document.getElementById('pet-display-age').textContent = calcAge(pet.birth_date);

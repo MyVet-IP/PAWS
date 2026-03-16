@@ -19,14 +19,14 @@ export function servicesPage() {
       </div>
 
       <div class="pp-filter-row mb-10" id="pp-filters">
-        <button class="pp-pill active" data-cat="all">🐾 All Services</button>
-        <button class="pp-pill" data-cat="grooming">✂️ Grooming &amp; Spa</button>
-        <button class="pp-pill" data-cat="petshops">🛒 Pet Shops</button>
-        <button class="pp-pill" data-cat="adoption">❤️ Adoption</button>
-        <button class="pp-pill" data-cat="walkers">🦮 Dog Walkers</button>
-        <button class="pp-pill" data-cat="homevet">🩺 Home Vet</button>
-        <button class="pp-pill" data-cat="paseadores">🐕 Paseadores</button>
-        <button class="pp-pill" data-cat="guarderias">🏠 Guarderías</button>
+        <button class="pp-pill active" data-cat="all"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg> All Services</button>
+        <button class="pp-pill" data-cat="grooming"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9a3 3 0 100-6 3 3 0 000 6zm0 0l12 6M6 9l6 3M18 15a3 3 0 100 6 3 3 0 000-6zm0 0L6 9"/></svg> Grooming &amp; Spa</button>
+        <button class="pp-pill" data-cat="petshops"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.6 5h11.2M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"/></svg> Pet Shops</button>
+        <button class="pp-pill" data-cat="adoption"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> Adoption</button>
+        <button class="pp-pill" data-cat="walkers"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5a3 3 0 11-6 0 3 3 0 016 0zM6 20v-3a6 6 0 1112 0v3M3 20h18"/></svg> Dog Walkers</button>
+        <button class="pp-pill" data-cat="homevet"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z"/></svg> Home Vet</button>
+        <button class="pp-pill" data-cat="paseadores"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5a3 3 0 11-6 0 3 3 0 016 0zM6 20v-3a6 6 0 1112 0v3M3 20h18"/></svg> Paseadores</button>
+        <button class="pp-pill" data-cat="guarderias"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg> Guarderías</button>
       </div>
 
       <div class="pp-cards-track" id="pp-cards">
@@ -72,16 +72,16 @@ const CAT_MAP = {
 };
 
 const CAT_META = {
-  clinic: { cat: 'clinic', catLabel: 'Clinic', catIcon: '🏥', badgeBg: '#E0F2FE', badgeColor: '#0284C7' },
-  vet: { cat: 'homevet', catLabel: 'Home Vet', catIcon: '🩺', badgeBg: '#EDE9FE', badgeColor: '#7C3AED' },
-  petshop: { cat: 'petshops', catLabel: 'Pet Shop', catIcon: '🛒', badgeBg: '#FEF9C3', badgeColor: '#B45309' },
-  shelter: { cat: 'adoption', catLabel: 'Adoption', catIcon: '❤️', badgeBg: '#FCE7F3', badgeColor: '#9D174D' },
-  dog_walker: { cat: 'walkers', catLabel: 'Dog Walker', catIcon: '🦮', badgeBg: '#DCFCE7', badgeColor: '#15803D' },
-  daycare: { cat: 'guarderias', catLabel: 'Guardería', catIcon: '🏠', badgeBg: '#FDF4FF', badgeColor: '#9333EA' },
+  clinic: { cat: 'clinic', catLabel: 'Clinic', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>', badgeBg: '#E0F2FE', badgeColor: '#0284C7' },
+  vet: { cat: 'homevet', catLabel: 'Home Vet', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z"/></svg>', badgeBg: '#EDE9FE', badgeColor: '#7C3AED' },
+  petshop: { cat: 'petshops', catLabel: 'Pet Shop', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.6 5h11.2M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"/></svg>', badgeBg: '#FEF9C3', badgeColor: '#B45309' },
+  shelter: { cat: 'adoption', catLabel: 'Adoption', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>', badgeBg: '#FCE7F3', badgeColor: '#9D174D' },
+  dog_walker: { cat: 'walkers', catLabel: 'Dog Walker', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5a3 3 0 11-6 0 3 3 0 016 0zM6 20v-3a6 6 0 1112 0v3M3 20h18"/></svg>', badgeBg: '#DCFCE7', badgeColor: '#15803D' },
+  daycare: { cat: 'guarderias', catLabel: 'Guardería', catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>', badgeBg: '#FDF4FF', badgeColor: '#9333EA' },
 };
 
 function renderServiceCard(biz) {
-  const meta = CAT_META[biz.business_type] || { cat: biz.business_type, catLabel: biz.business_type, catIcon: '🐾', badgeBg: '#F3F4F6', badgeColor: '#374151' };
+  const meta = CAT_META[biz.business_type] || { cat: biz.business_type, catLabel: biz.business_type, catIcon: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg>', badgeBg: '#F3F4F6', badgeColor: '#374151' };
   const location = biz.address || biz.zone || 'Medellín';
   const rating = biz.rating ? `★${parseFloat(biz.rating).toFixed(1)}` : '';
   const tags = (biz.specialties || []).map(s => s.name).slice(0, 3);
@@ -119,7 +119,7 @@ function renderServiceCard(biz) {
       : `<div style="height:120px;background:${meta.badgeBg};display:flex;align-items:center;justify-content:center;font-size:3rem;">${meta.catIcon}</div>`
     }
         <div class="pp-card-footer">
-          <span class="pp-price">${biz.phone ? `📞 ${biz.phone}` : location}</span>
+          <span class="pp-price">${biz.phone ? `<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg> ${biz.phone}` : location}</span>
           <button class="pp-card-cta" style="color:${meta.badgeColor};" data-id="${biz.business_id}">Book now →</button>
         </div>
       </div>
@@ -206,7 +206,7 @@ export async function servicesPageEvents() {
       renderFiltered(activeCat);
     } catch (err) {
       console.error('Error loading services:', err);
-      if (loading) loading.innerHTML = `<span style="font-family:'Poppins',sans-serif;font-size:14px;color:#dc2626;">⚠️ Could not load services</span>`;
+      if (loading) loading.innerHTML = `<span style="font-family:'Poppins',sans-serif;font-size:14px;color:#dc2626;"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Could not load services</span>`;
     }
   }
 
