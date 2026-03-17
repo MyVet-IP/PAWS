@@ -4,7 +4,7 @@ import { Topbar, topbarEvents } from "../components/topbar.js";
 import { getUser } from "../utils.js";
 import { Footer } from "../components/footer.js";
 
-export function Layout(content) {
+export function Layout(content, path = '/') {
 
   const user = getUser();
   const role = user ? user.role : "guest";
@@ -17,7 +17,7 @@ export function Layout(content) {
     const html = `
           ${navbarController()}
 
-          <main class="p-6">
+          <main class="${path === '/map-page' ? 'p-0' : 'p-6'}">
             ${content}
           </main>
           ${Footer()}
@@ -40,7 +40,7 @@ export function Layout(content) {
 
             ${Topbar(role, currentPath)}
 
-            <main class="flex-1 overflow-y-auto p-6">
+            <main class="flex-1 ${path === '/map-page' ? 'overflow-hidden p-0' : 'overflow-y-auto p-6'}" id="main-content">
               ${content}
             </main>
 
