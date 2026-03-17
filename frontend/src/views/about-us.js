@@ -1,7 +1,7 @@
 export function aboutUsPage() {
   const team = [
     { name: 'Ulith', role: 'Project Lead', emoji: '1', color: 'purple' },
-    { name: 'Ximena', role: 'Backend & Deployment', emoji: '2', color: 'blue' },
+    { name: 'Ximena', role: 'Data Base & Deployment', emoji: '2', color: 'blue' },
     { name: 'Anderson', role: 'Research & Field Work', emoji: '3', color: 'green' },
     { name: 'Andreina', role: 'UI/UX Design', emoji: '4', color: 'yellow' },
     { name: 'Faiber', role: 'AI Integration', emoji: '5', color: 'pink' },
