@@ -3,6 +3,58 @@ import { navbarController } from "./components/navbar.js";
 import { showToast, showLoading, hideLoading } from "./utils.js";
 import { showPageLoading, hidePageLoading } from "./utils.js";
 
+let lastValidationToastAt = 0;
+
+function getFieldLabel(field) {
+  const id = field?.id;
+  if (id) {
+    const label = document.querySelector(`label[for="${id}"]`);
+    if (label?.textContent?.trim()) {
+      return label.textContent.replace('*', '').trim();
+    }
+  }
+
+  return field?.getAttribute('name') || field?.getAttribute('placeholder') || 'Este campo';
+}
+
+function notifyValidationIssue(field) {
+  if (!field) return;
+
+  const now = Date.now();
+  if (now - lastValidationToastAt < 1200) return;
+
+  const label = getFieldLabel(field);
+  const reason = field.validationMessage || 'Completa este campo correctamente.';
+  showToast(`${label}: ${reason}`, 'error');
+  lastValidationToastAt = now;
+}
+
+function setupGlobalFormValidationFeedback() {
+  document.addEventListener('invalid', (event) => {
+    const field = event.target;
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) {
+      return;
+    }
+
+    // Keep browser validation behavior but also show a clear app-level toast.
+    notifyValidationIssue(field);
+  }, true);
+
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      const firstInvalid = form.querySelector(':invalid');
+      if (firstInvalid && typeof firstInvalid.focus === 'function') {
+        firstInvalid.focus();
+      }
+      notifyValidationIssue(firstInvalid);
+    }
+  }, true);
+}
+
 
 // Funciones globales para usar en HTML
 window.viewClinicDetails = function (clinicId) {
@@ -41,6 +93,7 @@ window.searchClinics = function () {
 // Inicializar aplicación
 function initApp() {
   console.log('PAWS App inicializated');
+  setupGlobalFormValidationFeedback();
   // Cargar router
   router();
 }
