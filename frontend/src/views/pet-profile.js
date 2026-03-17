@@ -1,6 +1,3 @@
-//  pet-profile.js
-
-// ── Helpers ──────────────────────────────────────────────────
 function calcAge(birthDate) {
   if (!birthDate) return '—';
   const years = Math.floor((Date.now() - new Date(birthDate)) / (1000 * 60 * 60 * 24 * 365.25));
@@ -26,7 +23,6 @@ const VISIT_META = {
 
 const SPECIES_EMOJI = { Dog: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg>', Cat: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg>', Bird: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 4c-2 0-4 1-5 3H8a4 4 0 000 8h1l1 3h2l1-3h3c2.2 0 4-1.8 4-4V4zM8 11a1 1 0 110-2 1 1 0 010 2z"/></svg>', Rabbit: '<svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 3c0 3-2 4-2 7a6 6 0 0012 0c0-3-2-4-2-7M9 17c0 1.5.5 3 3 3s3-1.5 3-3"/></svg>' };
 
-// ── Page skeleton ─────────────────────────────────────────────
 export function petProfilepage({ pet_id } = {}) {
   return `
   <div class="font-roboto" id="pet-profile-root" data-pet-id="${pet_id || ''}">
@@ -58,7 +54,6 @@ export function petProfilepage({ pet_id } = {}) {
     <!-- Content grid (hidden until data arrives) -->
     <div id="pet-profile-content" class="grid lg:grid-cols-3 gap-6" style="display:none">
 
-      <!-- ═══ LEFT ══════════════════════════════ -->
       <div class="lg:col-span-1 flex flex-col gap-5">
 
         <!-- Pet card -->
@@ -66,7 +61,7 @@ export function petProfilepage({ pet_id } = {}) {
           <div class="flex flex-col items-center pt-7 pb-4 px-5">
             <div class="relative mb-3">
               <div class="rounded-full overflow-hidden flex items-center justify-center bg-surface-soft"
-                   style="width:88px;height:88px;border:3px solid #B9FBC0;box-shadow:0 0 0 5px rgba(185,251,192,0.18);">
+                  style="width:88px;height:88px;border:3px solid #B9FBC0;box-shadow:0 0 0 5px rgba(185,251,192,0.18);">
                 <span id="pet-avatar-emoji" style="font-size:2.4rem;"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg></span>
               </div>
               <button id="btn-edit-pet"
@@ -131,7 +126,7 @@ export function petProfilepage({ pet_id } = {}) {
 
             <button id="btn-edit-pet-full"
               class="w-full mt-5 py-2.5 border-2 border-text-highlight text-text-highlight rounded-xl
-                     font-poppins font-semibold text-sm hover:bg-text-highlight hover:text-white transition flex items-center justify-center gap-2">
+                    font-poppins font-semibold text-sm hover:bg-text-highlight hover:text-white transition flex items-center justify-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z"/>
