@@ -376,6 +376,16 @@ export function registerEvents() {
     confirmInput?.addEventListener('input', validateConfirmPassword);
 
 
+    function redirectByRole(userData) {
+        if (userData.role === 'business') {
+            window.location.hash = '/veterinary';
+        } else if (userData.role === 'admin') {
+            window.location.hash = '/admin-dashboard';
+        } else {
+            window.location.hash = '/user-dashboard';
+        }
+    }
+
     // ── Form submission ───────────────────────
     if (registerForm) {
         registerForm.addEventListener("submit", async (e) => {
@@ -417,8 +427,25 @@ export function registerEvents() {
                     showToast(data.message || data.error || "Registration failed", "error");
                     return;
                 }
-                showToast("Account created successfully! Redirecting...", "success");
-                setTimeout(() => { window.location.hash = "/login"; }, 1500);
+
+                // Auto-login right after successful registration.
+                const loginRes = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const loginData = await loginRes.json().catch(() => ({}));
+                if (!loginRes.ok) {
+                    showMessage('Account created, but automatic login failed. Please sign in manually.', false);
+                    setTimeout(() => { window.location.hash = '/login'; }, 1400);
+                    return;
+                }
+
+                const userData = loginData.user || loginData;
+                localStorage.setItem('user', JSON.stringify(userData));
+                showMessage('Account created successfully! Welcome to PAWS.', true);
+                setTimeout(() => { redirectByRole(userData); }, 900);
             } catch {
                 showToast("Connection error. Please try again.", "error");
             }

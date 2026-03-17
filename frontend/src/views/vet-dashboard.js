@@ -53,10 +53,10 @@ async function loadBusinessFromAPI() {
     if (!user) return;
     const userId = user.user_id || user.id;
 
-    const res = await fetch("/api/businesses");
+    // Prefer user-specific endpoint to avoid status/type filters from generic list.
+    const res = await fetch(`/api/businesses/user/${userId}`);
     if (!res.ok) return;
-    const businesses = await res.json();
-    const biz = businesses.find(b => b.user_id === userId);
+    const biz = await res.json();
     if (!biz) return;
 
     // Mapear campos de la API al formato local
@@ -94,14 +94,125 @@ async function loadBusinessFromAPI() {
 async function saveProfileToAPI(data) {
   try {
     const businessId = data._business_id;
-    if (!businessId) return;
-    await fetch(`/api/businesses/${businessId}`, {
+    if (!businessId) {
+      return { ok: false, error: "No business profile found for this account." };
+    }
+
+    const res = await fetch(`/api/businesses/${businessId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: data.clinicName, phone: data.phone, address: data.address, description: data.description })
     });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { ok: false, error: payload.error || "Could not save clinic profile." };
+    }
+
+    return { ok: true, business: payload };
   } catch (err) {
     console.error("Error saving profile to API:", err);
+    return { ok: false, error: "Connection error while saving clinic profile." };
+  }
+}
+
+function toHourMinute(value) {
+  if (!value) return null;
+  const trimmed = String(value).trim();
+  const match = trimmed.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return null;
+  const hh = Number(match[1]);
+  const mm = Number(match[2]);
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+}
+
+function parseScheduleHours(hoursText) {
+  if (!hoursText) return { open_time: null, close_time: null };
+  const parts = String(hoursText).split('-').map(p => p.trim());
+  if (parts.length !== 2) return { open_time: null, close_time: null };
+
+  const open_time = toHourMinute(parts[0]);
+  const close_time = toHourMinute(parts[1]);
+  if (!open_time || !close_time) return { open_time: null, close_time: null };
+
+  return { open_time, close_time };
+}
+
+async function saveScheduleToAPI(data) {
+  try {
+    const businessId = data._business_id;
+    if (!businessId) {
+      return { ok: false, error: "No business profile found for this account." };
+    }
+
+    const days = data.schedule.map(s => {
+      if (s.closed) {
+        return { day_of_week: s.day, open_time: null, close_time: null, is_open: false };
+      }
+
+      const parsed = parseScheduleHours(s.hours);
+      return {
+        day_of_week: s.day,
+        open_time: parsed.open_time,
+        close_time: parsed.close_time,
+        is_open: true
+      };
+    });
+
+    const invalidOpenDay = days.find(d => d.is_open && (!d.open_time || !d.close_time));
+    if (invalidOpenDay) {
+      return { ok: false, error: `Invalid hours format for ${invalidOpenDay.day_of_week}. Use HH:mm - HH:mm` };
+    }
+
+    const res = await fetch(`/api/businesses/${businessId}/schedule`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ days })
+    });
+
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { ok: false, error: payload.error || 'Could not save clinic schedule.' };
+    }
+
+    return { ok: true, schedule: payload };
+  } catch (err) {
+    console.error('Error saving schedule to API:', err);
+    return { ok: false, error: 'Connection error while saving schedule.' };
+  }
+}
+
+function showActionAlert({ icon = 'info', title = '', text = '', timer = 1800 }) {
+  if (window.Swal && typeof window.Swal.fire === 'function') {
+    return window.Swal.fire({
+      icon,
+      title,
+      text,
+      timer,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      confirmButtonColor: '#6A4C93'
+    });
+  }
+  alert(text || title);
+  return Promise.resolve();
+}
+
+function showSavingAlert(title = 'Saving changes...') {
+  if (window.Swal && typeof window.Swal.fire === 'function') {
+    window.Swal.fire({
+      title,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => window.Swal.showLoading()
+    });
+  }
+}
+
+function closeSavingAlert() {
+  if (window.Swal && typeof window.Swal.close === 'function' && window.Swal.isVisible()) {
+    window.Swal.close();
   }
 }
 
@@ -554,14 +665,25 @@ export function vetDashboardEvents() {
     openModal("modal-vet-profile");
   });
 
-  document.getElementById("btn-save-profile")?.addEventListener("click", () => {
+  document.getElementById("btn-save-profile")?.addEventListener("click", async () => {
     data = getVetData();
     data.clinicName = document.getElementById("vp-name").value.trim() || data.clinicName;
     data.phone = document.getElementById("vp-phone").value.trim();
     data.address = document.getElementById("vp-address").value.trim() || data.address;
     data.description = document.getElementById("vp-description").value.trim() || data.description;
+
+    showSavingAlert('Saving clinic profile...');
+    const saveResult = await saveProfileToAPI(data);
+    closeSavingAlert();
+    if (!saveResult?.ok) {
+      showActionAlert({ icon: 'error', title: 'Could not save profile', text: saveResult?.error || 'Please try again.' });
+      return;
+    }
+
+    if (saveResult.business?.business_id) {
+      data._business_id = saveResult.business.business_id;
+    }
     saveVetData(data);
-    saveProfileToAPI(data);
 
     // Live DOM update
     const el = id => document.getElementById(id);
@@ -570,6 +692,7 @@ export function vetDashboardEvents() {
     if (el("vet-address")) el("vet-address").textContent = data.address;
 
     showSuccess("profile-success", "modal-vet-profile");
+    showActionAlert({ icon: 'success', title: 'Profile updated', text: 'Your clinic information was saved.' });
   });
 
   // ────────────────────────────────────────────
@@ -593,17 +716,27 @@ export function vetDashboardEvents() {
     });
   });
 
-  document.getElementById("btn-save-schedule")?.addEventListener("click", () => {
+  document.getElementById("btn-save-schedule")?.addEventListener("click", async () => {
     data = getVetData();
     data.schedule = data.schedule.map((s, i) => ({
       ...s,
       hours: document.querySelector(`.schedule-hours[data-index="${i}"]`)?.value.trim() || s.hours,
       closed: document.querySelector(`.schedule-closed[data-index="${i}"]`)?.checked ?? s.closed,
     }));
+
+    showSavingAlert('Saving schedule...');
+    const saveResult = await saveScheduleToAPI(data);
+    closeSavingAlert();
+    if (!saveResult?.ok) {
+      showActionAlert({ icon: 'error', title: 'Could not save schedule', text: saveResult?.error || 'Please review your hours format.' });
+      return;
+    }
+
     saveVetData(data);
     const display = document.getElementById("schedule-display");
     if (display) display.innerHTML = renderScheduleDisplay(data.schedule);
     showSuccess("schedule-success", "modal-vet-schedule");
+    showActionAlert({ icon: 'success', title: 'Schedule updated', text: 'Your clinic schedule was saved.' });
   });
 
   // ────────────────────────────────────────────
@@ -622,7 +755,10 @@ export function vetDashboardEvents() {
     const label = document.getElementById("svc-name").value.trim();
     const bg = document.getElementById("svc-bg").value;
     const icon = document.getElementById("svc-icon").value;
-    if (!label) return;
+    if (!label) {
+      showActionAlert({ icon: 'warning', title: 'Service name required', text: 'Please enter a name before saving.' });
+      return;
+    }
 
     data = getVetData();
     if (editId) {
@@ -657,7 +793,10 @@ export function vetDashboardEvents() {
     const initials = document.getElementById("tm-initials").value.trim().toUpperCase();
     const role = document.getElementById("tm-role").value.trim();
     const bg = document.getElementById("tm-bg").value;
-    if (!name) return;
+    if (!name) {
+      showActionAlert({ icon: 'warning', title: 'Member name required', text: 'Please enter the team member name.' });
+      return;
+    }
 
     data = getVetData();
     if (editId) {
@@ -685,12 +824,35 @@ export function vetDashboardEvents() {
       btn.replaceWith(fresh);
       fresh.addEventListener("click", e => {
         e.stopPropagation();
-        data = getVetData();
-        data.services = data.services.filter(s => s.id !== Number(fresh.dataset.id));
-        saveVetData(data);
-        const grid = document.getElementById("services-grid");
-        if (grid) grid.innerHTML = renderServices(data.services);
-        _bindServiceEvents();
+
+        const removeService = () => {
+          data = getVetData();
+          data.services = data.services.filter(s => s.id !== Number(fresh.dataset.id));
+          saveVetData(data);
+          const grid = document.getElementById("services-grid");
+          if (grid) grid.innerHTML = renderServices(data.services);
+          _bindServiceEvents();
+        };
+
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+          window.Swal.fire({
+            icon: 'warning',
+            title: 'Delete service?',
+            text: 'This action cannot be undone.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626'
+          }).then(result => {
+            if (result.isConfirmed) {
+              removeService();
+              showActionAlert({ icon: 'success', title: 'Service removed' });
+            }
+          });
+          return;
+        }
+
+        removeService();
       });
     });
   }
@@ -719,12 +881,34 @@ export function vetDashboardEvents() {
 
     document.querySelectorAll(".btn-delete-member").forEach(btn => {
       btn.addEventListener("click", () => {
-        data = getVetData();
-        data.team = data.team.filter(m => m.id !== Number(btn.dataset.id));
-        saveVetData(data);
-        const list = document.getElementById("team-list");
-        if (list) list.innerHTML = renderTeam(data.team);
-        _bindTeamEvents();
+        const removeMember = () => {
+          data = getVetData();
+          data.team = data.team.filter(m => m.id !== Number(btn.dataset.id));
+          saveVetData(data);
+          const list = document.getElementById("team-list");
+          if (list) list.innerHTML = renderTeam(data.team);
+          _bindTeamEvents();
+        };
+
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+          window.Swal.fire({
+            icon: 'warning',
+            title: 'Delete team member?',
+            text: 'This action cannot be undone.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626'
+          }).then(result => {
+            if (result.isConfirmed) {
+              removeMember();
+              showActionAlert({ icon: 'success', title: 'Member removed' });
+            }
+          });
+          return;
+        }
+
+        removeMember();
       });
     });
   }
