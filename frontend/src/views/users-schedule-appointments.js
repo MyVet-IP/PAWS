@@ -204,6 +204,19 @@ export function userScheduleAppointmentsPage() {
 
 export function userScheduleAppointmentsEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const TIME_SLOT_OPTIONS = [
+    { value: '08:00', label: '08:00 AM' },
+    { value: '09:00', label: '09:00 AM' },
+    { value: '10:00', label: '10:00 AM' },
+    { value: '11:00', label: '11:00 AM' },
+    { value: '12:00', label: '12:00 PM' },
+    { value: '13:00', label: '01:00 PM' },
+    { value: '14:00', label: '02:00 PM' },
+    { value: '15:00', label: '03:00 PM' },
+    { value: '16:00', label: '04:00 PM' },
+    { value: '17:00', label: '05:00 PM' },
+    { value: '18:00', label: '06:00 PM' }
+  ];
   let allAppointments = [];
   let allPets = [];
   let allClinics = [];
@@ -313,6 +326,47 @@ export function userScheduleAppointmentsEvents() {
         renderTimeSlots();
       });
     }
+  }
+
+  function formatTimeLabel(time24h) {
+    if (!time24h || typeof time24h !== 'string') return 'Not selected';
+    const [hoursRaw, minutesRaw] = time24h.split(':');
+    const hours = Number(hoursRaw);
+    const minutes = Number(minutesRaw);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return time24h;
+
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+    const h12 = hours % 12 || 12;
+    return `${String(h12).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${suffix}`;
+  }
+
+  function buildAppointmentDateTime(date, time) {
+    if (!date || !time) return null;
+    const [year, month, day] = date.split('-').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
+    if ([year, month, day, hours, minutes].some(Number.isNaN)) return null;
+
+    const appointmentDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    if (
+      appointmentDate.getFullYear() !== year ||
+      appointmentDate.getMonth() !== month - 1 ||
+      appointmentDate.getDate() !== day
+    ) {
+      return null;
+    }
+
+    return appointmentDate;
+  }
+
+  function validateFutureDateTime(date, time) {
+    const appointmentDate = buildAppointmentDateTime(date, time);
+    if (!appointmentDate) {
+      return 'Please select a valid date and time.';
+    }
+    if (appointmentDate <= new Date()) {
+      return 'Please choose a future time for your appointment.';
+    }
+    return null;
   }
 
   // ─── Stats & Render ─────────────────────────────────────────
@@ -529,24 +583,18 @@ export function userScheduleAppointmentsEvents() {
     const container = document.getElementById('booking-time-slots');
     if (!container) return;
 
-    const slots = [
-      '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM',
-      '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM',
-      '04:00 PM', '05:00 PM', '06:00 PM'
-    ];
+    // Simulate some unavailable slots.
+    const unavailable = ['12:00', '13:00'];
 
-    // Simulate some unavailable slots
-    const unavailable = ['12:00 PM', '01:00 PM'];
-
-    container.innerHTML = slots.map(slot => {
-      const isUnavailable = unavailable.includes(slot);
-      const isSelected = bookingData.time === slot;
+    container.innerHTML = TIME_SLOT_OPTIONS.map(slot => {
+      const isUnavailable = unavailable.includes(slot.value);
+      const isSelected = bookingData.time === slot.value;
 
       return `
         <button class="time-slot ${isSelected ? 'selected' : ''} ${isUnavailable ? 'unavailable' : ''}"
-                onclick="${isUnavailable ? '' : `window.selectBookingTime('${slot}')`}"
+                onclick="${isUnavailable ? '' : `window.selectBookingTime('${slot.value}')`}"
                 ${isUnavailable ? 'disabled' : ''}>
-          ${slot}
+          ${slot.label}
         </button>
       `;
     }).join('');
@@ -576,7 +624,7 @@ export function userScheduleAppointmentsEvents() {
         </div>
         <div style="display:flex; justify-content:space-between;">
           <span style="color:#6b7280; font-family:'Roboto',sans-serif; font-size:0.85rem;">Time</span>
-          <span style="color:#333; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem;">${bookingData.time || 'Not selected'}</span>
+          <span style="color:#333; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.85rem;">${formatTimeLabel(bookingData.time)}</span>
         </div>
       </div>
     `;
@@ -649,6 +697,13 @@ export function userScheduleAppointmentsEvents() {
     if (bookingStep === 3 && (!bookingData.date || !bookingData.time)) {
       alert('Please select a date and time.');
       return;
+    }
+    if (bookingStep === 3) {
+      const dateTimeError = validateFutureDateTime(bookingData.date, bookingData.time);
+      if (dateTimeError) {
+        alert(dateTimeError);
+        return;
+      }
     }
 
     if (bookingStep === 4) {
@@ -776,6 +831,12 @@ export function userScheduleAppointmentsEvents() {
     bookingData.reason = document.getElementById('booking-reason').value;
     bookingData.notes = document.getElementById('booking-notes').value;
 
+    const dateTimeError = validateFutureDateTime(bookingData.date, bookingData.time);
+    if (dateTimeError) {
+      alert(dateTimeError);
+      return;
+    }
+
     const userId = user.user_id || user.id;
     const body = {
       pet_id: bookingData.pet.id,
@@ -807,43 +868,12 @@ export function userScheduleAppointmentsEvents() {
         renderAppointments();
         alert('Appointment booked successfully!');
       } else {
-        // Fallback: add to local state
-        allAppointments.unshift({
-          appointment_id: Date.now(),
-          pet_id: bookingData.pet.id,
-          pet_name: bookingData.pet.name,
-          business_id: bookingData.clinic.id,
-          clinic_name: bookingData.clinic.name,
-          address: bookingData.clinic.address,
-          date: bookingData.date,
-          time: bookingData.time,
-          reason: bookingData.reason,
-          notes: bookingData.notes,
-          status: 'pending'
-        });
-        window.closeNewAppointmentModal();
-        updateStats();
-        renderAppointments();
+        const errorPayload = await res.json().catch(() => ({}));
+        alert(errorPayload.error || 'Could not book the appointment. Please verify date and time.');
       }
     } catch (err) {
       console.error('Error booking appointment:', err);
-      // Fallback: add to local state
-      allAppointments.unshift({
-        appointment_id: Date.now(),
-        pet_id: bookingData.pet.id,
-        pet_name: bookingData.pet.name,
-        clinic_id: bookingData.clinic.id,
-        clinic_name: bookingData.clinic.name,
-        address: bookingData.clinic.address,
-        date: bookingData.date,
-        time: bookingData.time,
-        reason: bookingData.reason,
-        notes: bookingData.notes,
-        status: 'pending'
-      });
-      window.closeNewAppointmentModal();
-      updateStats();
-      renderAppointments();
+      alert('Could not book the appointment right now. Please try again.');
     }
   }
 }

@@ -7,7 +7,7 @@
 
 export function emergencyPage() {
   return `
-  <div class="font-roboto" style="min-height:100%;">
+  <div class="font-roboto emergency-page" style="min-height:100%;">
 
     <!-- ── HERO BANNER ──────────────────────── -->
     <div class="relative rounded-2xl overflow-hidden mb-6"
