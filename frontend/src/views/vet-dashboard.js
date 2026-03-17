@@ -13,7 +13,7 @@ const VET_DEFAULTS = {
   phone: "",
   address: "Medellin, Colombia",
   schedule: [
-    { day: "Monday", hours: "09:00 - 20:00", closed: false },
+    { day: "Monday", hours: "09:00 - 20:00", closed: false }, // Añadir condicional que dependiendo la hora del dia el estado closed pase a true y al pasar 1h aparezca en false
     { day: "Tuesday", hours: "10:00 - 18:00", closed: false },
     { day: "Wednesday", hours: "10:00 - 18:00", closed: false },
     { day: "Thursday", hours: "10:00 - 18:00", closed: false },
@@ -229,31 +229,41 @@ export function vetDashboardPage() {
   const bgMembers = ["bg-paws-green", "bg-paws-pink", "bg-paws-blue", "bg-paws-purple", "bg-paws-yellow"];
 
   // ── Modal: Edit Profile + General Info ──────
-  const modalProfile = modal("modal-vet-profile", "Edit Clinic Profile", "Saved", `
-    <div class="flex flex-col gap-4">
+  const modalProfile = modal("modal-vet-profile", "Edit Clinic Profile", "Saved", 
+    `
+    <form id="edit-profile" class="flex flex-col gap-4"> 
+
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Clinic name</label>
         <input id="vp-name" type="text" value="${data.clinicName}" style="${INP}" onfocus="${FOCUS}" onblur="${BLUR}"/>
       </div>
+
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Phone</label>
         <input id="vp-phone" type="tel" placeholder="+57 302 226 6234" value="${data.phone}" style="${INP}" onfocus="${FOCUS}" onblur="${BLUR}"/>
       </div>
+
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">Address</label>
         <input id="vp-address" type="text" value="${data.address}" style="${INP}" onfocus="${FOCUS}" onblur="${BLUR}"/>
       </div>
+
       <div>
         <label class="block font-semibold font-poppins text-text-soft mb-1.5" style="font-size:11px;">General Information</label>
         <textarea id="vp-description" rows="4" style="${INP}resize:vertical;" onfocus="${FOCUS}" onblur="${BLUR}">${data.description}</textarea>
       </div>
+
       <div style="height:1px;background:#F3F4F6;"></div>
+
       <div class="flex gap-3">
+
         <button class="btn-close-modal flex-1 py-2.5 border-2 border-gray-200 text-text-soft rounded-xl font-poppins font-semibold text-sm hover:border-gray-300 transition" data-modal="modal-vet-profile">Cancel</button>
         <button id="btn-save-profile" class="flex-1 py-2.5 bg-text-highlight text-white rounded-xl font-poppins font-semibold text-sm hover:opacity-90 transition">Save changes</button>
+        
       </div>
+
       <div id="profile-success" style="display:none;" class="text-center font-semibold font-poppins rounded-xl bg-paws-green text-text-primary py-2.5 text-sm"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Profile updated!</div>
-    </div>
+    </form>
   `);
 
   // ── Modal: Schedule ──────────────────────────
@@ -554,7 +564,9 @@ export function vetDashboardEvents() {
     openModal("modal-vet-profile");
   });
 
-  document.getElementById("btn-save-profile")?.addEventListener("click", () => {
+  let saveChanges = document.getElementById("edit-profile")
+
+  saveChanges.addEventListener("submit", () => {
     data = getVetData();
     data.clinicName = document.getElementById("vp-name").value.trim() || data.clinicName;
     data.phone = document.getElementById("vp-phone").value.trim();
