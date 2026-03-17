@@ -1,3 +1,5 @@
+import { showToast } from "../utils.js";
+
 export function forgotPasswordPage() {
     return `
       <div class="h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);">
@@ -24,8 +26,6 @@ export function forgotPasswordPage() {
               </div>
             </div>
   
-            <div id="form-message" class="hidden text-sm text-center p-3 rounded-md"></div>
-  
             <div>
               <button type="submit" id="submit-btn" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200" style="background: linear-gradient(135deg, var(--color-purple, #6A4C93) 0%, var(--color-green, #B9FBC0) 100%);">
                 <span class="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -51,7 +51,6 @@ export function forgotPasswordPage() {
   
   export function forgotPasswordEvents() {
     const form = document.getElementById('forgot-password-form');
-    const msgDiv = document.getElementById('form-message');
     const btn = document.getElementById('submit-btn');
   
     if (!form) return;
@@ -63,7 +62,6 @@ export function forgotPasswordPage() {
         
         btn.disabled = true;
         btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...`;
-        msgDiv.classList.add('hidden');
   
         try {
             const res = await fetch('/api/auth/forgot-password', {
@@ -74,15 +72,13 @@ export function forgotPasswordPage() {
             
             const data = await res.json();
             
-            msgDiv.classList.remove('hidden', 'bg-red-50', 'text-red-600');
-            msgDiv.classList.add('bg-green-50', 'text-green-600');
-            msgDiv.textContent = data.message || "If the email exists, a password recovery link has been sent.";
+            if (!res.ok) throw new Error(data.error || "Error sending recovery link");
+
+            showToast(data.message || "If the email exists, a password recovery link has been sent.", "success");
             form.reset();
             
         } catch (error) {
-            msgDiv.classList.remove('hidden', 'bg-green-50', 'text-green-600');
-            msgDiv.classList.add('bg-red-50', 'text-red-600');
-            msgDiv.textContent = "Error sending the email. Please try again later.";
+            showToast(error.message || "Error sending the email. Please try again later.", "error");
             console.error(error);
         } finally {
             btn.disabled = false;

@@ -488,29 +488,50 @@ async function loadPets(user) {
                     style="background:rgba(185,251,192,0.35);color:var(--color-green-dark);">${ageText}</span>`
           : '<span></span>'}
           ${records > 0
-          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> ${records} record${records !== 1 ? 's' : ''}</span>`
-          : `<span class="text-xs font-semibold font-poppins" style="color:var(--text-highlight);">View →</span>`}
-        </div>
-      </div>`;
-    }).join('');
+          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColasync function loadNextAppointment(user) {
+  if (!user) return;
+  try {
+    const userId = user.user_id || user.id;
+    const res = await fetch(`/api/users/${userId}/appointments`);
+    if (!res.ok) return;
+    const appointments = await res.json();
+    
+    // Filter for future appointments
+    const now = new Date();
+    const upcoming = (Array.isArray(appointments) ? appointments : [])
+      .filter(a => new Date(a.date) >= now && a.status !== 'cancelled');
+    
+    // Sort by date to get the closest one
+    upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const next = upcoming[0] || null;
 
-    grid.innerHTML = cards + addCard;
+    const textEl = document.getElementById('next-appointment-text');
+    const subEl = document.getElementById('next-appointment-sub');
 
+    if (next && textEl) {
+      textEl.textContent = next.business_name || next.notes || 'Appointment scheduled';
+      const d = new Date(next.date);
+      const dateText = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const timeText = next.time || '';
+      if (subEl) {
+        subEl.textContent = `${dateText} at ${timeText}`;
+      }
+
+      // Check for 24h reminder
+      const diffMs = d - now;
+      const diffHours = diffMs / (1000 * 60 * 60);
+      
+      // If within 24 hours and hasn't been shown this session
+      if (diffHours > 0 && diffHours <= 24 && !sessionStorage.getItem('notified_appointment_' + next.appointment_id)) {
+        showToast(`Reminds: Appointment with ${next.business_name || 'the vet'} is coming up in less than 24h! (${dateText} ${timeText})`, 'warning');
+        sessionStorage.setItem('notified_appointment_' + next.appointment_id, 'true');
+      }
+    }
   } catch (err) {
-    console.error(err);
-    grid.innerHTML = `
-      <div class="col-span-2 text-center py-4">
-        <p class="text-sm" style="color:var(--text-muted);">Could not load pets.
-          <button onclick="window.location.reload()" class="underline"
-                  style="color:var(--text-highlight);">Retry</button>
-        </p>
-      </div>`;
+    console.error('Error loading next appointment:', err);
   }
 }
-
-// ─────────────────────────────────────────────
-//  loadNextAppointment
-// ─────────────────────────────────────────────
+�────────────────────────────────────────
 async function loadNextAppointment(user) {
   if (!user) return;
   try {

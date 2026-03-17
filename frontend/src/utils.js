@@ -39,20 +39,68 @@ export function debounce(func, wait) {
 }
 
 // Toast notifications
-export function showToast(message, type = 'success') {
+export function showToast(message, type = 'success', duration = 4000) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
   const toast = document.createElement('div');
-  toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 transition-opacity duration-300 ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-    }`;
-  toast.textContent = message;
+  const id = 'toast-' + Math.random().toString(36).substr(2, 9);
+  toast.id = id;
+  toast.className = `paws-toast toast-${type}`;
+  
+  const icons = {
+    success: 'check_circle',
+    error: 'error',
+    warning: 'warning',
+    info: 'info'
+  };
 
-  document.body.appendChild(toast);
+  const titles = {
+    success: 'Success',
+    error: 'Error',
+    warning: 'Warning',
+    info: 'Information'
+  };
 
+  toast.innerHTML = `
+    <div class="toast-icon">
+      <span class="material-symbols-outlined">${icons[type]}</span>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">${titles[type]}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.classList.add('toast-out'); setTimeout(() => this.parentElement.remove(), 400)">
+      <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+    </button>
+    <div class="toast-progress" style="animation: toast-progress ${duration}ms linear forwards;"></div>
+  `;
+
+  // Internal progress bar animation
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes toast-progress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  container.appendChild(toast);
+
+  // Auto-remove
   setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => {
-      document.body.removeChild(toast);
-    }, 300);
-  }, 3000);
+    if (document.getElementById(id)) {
+      toast.classList.add('toast-out');
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 400);
+    }
+  }, duration);
 }
 
 // Loading spinner
