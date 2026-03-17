@@ -138,28 +138,6 @@ export function healthTipsPage() {
             </div>
           `).join('')}
         </div>
-
-        <!-- Seasonal Section -->
-        <section class="mb-16">
-          <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold mb-2" style="color: #333333; font-family: 'Poppins', sans-serif;">Seasonal Care Guide</h2>
-            <p style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.9rem;">Tips that change with the year, tailored to Medellín's climate</p>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            ${[
-      { season: 'Spring', icon: '🌸', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
-      { season: 'Summer', icon: '☀️', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
-      { season: 'Rainy Season', icon: '🌧️', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
-      { season: 'Year-Round', icon: '🌿', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
-    ].map(s => `
-              <div class="seasonal-card">
-                <div class="text-3xl mb-3">${s.icon}</div>
-                <div class="font-semibold mb-2" style="color: #333; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">${s.season}</div>
-                <p style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.8rem; line-height: 1.5;">${s.tip}</p>
-                <div style="height: 3px; background: ${s.color}; border-radius: 99px; margin-top: 16px;"></div>
-              </div>
-            `).join('')}
-          </div>
         </section>
 
         <!-- Newsletter -->
