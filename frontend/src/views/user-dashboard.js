@@ -43,7 +43,7 @@ export function dashboardPage() {
       </div>
       <button id="btn-add-pet"
         class="flex items-center gap-2 px-4 py-2 rounded-xl font-poppins font-semibold text-sm
-               text-white transition"
+              text-white transition"
         style="background:var(--text-highlight);transition:var(--transition-fast);"
         onmouseenter="this.style.opacity='0.90'"
         onmouseleave="this.style.opacity='1'">

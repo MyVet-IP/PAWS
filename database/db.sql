@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS businesses (
   business_id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL UNIQUE,
+  user_id INTEGER NOT NULL,
   business_type VARCHAR(20) NOT NULL CHECK (business_type IN ('clinic','daycare','shelter','petshop','vet','dog_walker')),
   name VARCHAR(140) NOT NULL,
   address VARCHAR(200),
@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS clinics (
   clinic_id SERIAL PRIMARY KEY,
   business_id INTEGER NOT NULL UNIQUE,
   service_type VARCHAR(20) DEFAULT 'private' CHECK (service_type IN ('public','private')),
+  rating DECIMAL(2,1),
   is_24h BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (business_id) REFERENCES businesses(business_id) ON DELETE CASCADE
 );
@@ -191,7 +192,7 @@ CREATE TABLE IF NOT EXISTS pets (
   color VARCHAR(80),
   notes TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (animal_type_id) REFERENCES animal_types(animal_type_id) ON DELETE CASCADE
 );
 
