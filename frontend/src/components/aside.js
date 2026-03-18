@@ -5,11 +5,12 @@ export function Aside() {
   if (!user) return "";
 
   const isVet = user.role === "business";
+  const isAdmin = user.role === "admin";
   const photo = user.photo || null;
   const initials = (user.name || "U")
     .split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
 
-  const currentHash = window.location.hash || "#/user-dashboard";
+  const currentHash = window.location.hash || (isAdmin ? "#/admin-dashboard" : "#/user-dashboard");
 
   return `
   <aside id="app-aside"
@@ -78,7 +79,11 @@ export function Aside() {
       <!-- Role badge -->
       <span class="mt-1 font-medium rounded-full" style="font-size:10px;padding:2px 10px;
             background:rgba(185,251,192,0.20);color:#B9FBC0;">
-        ${isVet ? "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z'/></svg> Veterinarian" : "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg> Pet Owner"}
+        ${isAdmin
+      ? "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 8c-1.657 0-3 1.343-3 3v6h6v-6c0-1.657-1.343-3-3-3z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M7 11V8a5 5 0 1110 0v3'/></svg> Admin"
+      : isVet
+        ? "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 3H7a2 2 0 00-2 2v4a6 6 0 006 6 6 6 0 006-6V5a2 2 0 00-2-2h-2M9 3V1m6 2V1m-3 16v3m0 0a2 2 0 100 4 2 2 0 000-4z'/></svg> Veterinarian"
+        : "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg> Pet Owner"}
       </span>
 
       <!-- Hint -->
@@ -93,7 +98,7 @@ export function Aside() {
 
     <!-- ── NAV MENU ──────────────────────────── -->
     <nav class="flex-1 px-2 flex flex-col gap-0.5 overflow-hidden">
-      ${isVet ? vetMenu(currentHash) : ownerMenu(currentHash)}
+      ${isAdmin ? adminMenu(currentHash) : (isVet ? vetMenu(currentHash) : ownerMenu(currentHash))}
     </nav>
 
     <!-- ── LOGOUT ────────────────────────────── -->
@@ -417,4 +422,11 @@ function _persistAndRefresh(user, name, phone, photo, closeModal, successMsg) {
   } else {
     closeModal();
   }
+}
+
+function adminMenu(currentHash) {
+  const links = [
+    { href: "#/admin-dashboard", label: "Admin Panel", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 7a2 2 0 012-2h12a2 2 0 012 2v2H4V7z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 9h16v8a2 2 0 01-2 2H6a2 2 0 01-2-2V9z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 13h8M8 16h5'/></svg>" },
+  ];
+  return links.map(l => navLink(l, currentHash)).join("");
 }

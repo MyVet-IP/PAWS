@@ -166,7 +166,8 @@ export function checkAuth(role) {
     return false;
   }
 
-  if (user.role !== role) {
+  const allowedRoles = Array.isArray(role) ? role : [role];
+  if (!allowedRoles.includes(user.role)) {
     window.location.hash = "/unauthorized";
     return false;
   }
