@@ -47,9 +47,9 @@ export function servicesPage() {
         <div class="pp-dot"></div>
       </div>
 
-      <div class="flex justify-center mt-10">
+      <!-- <div class="flex justify-center mt-10">
         <button class="pp-view-all">View All Services ›</button>
-      </div>
+      </div> -->
 
     </div>
   </section>
@@ -62,7 +62,6 @@ export function servicesPage() {
 
 // Mapeo: data-cat del pill → business_type de la DB (puede ser varios)
 const CAT_MAP = {
-  grooming: null,        // no tiene tipo propio aún; se mostrará vacío hasta que se agregue
   petshops: 'petshop',
   adoption: 'shelter',
   walkers: 'dog_walker',
