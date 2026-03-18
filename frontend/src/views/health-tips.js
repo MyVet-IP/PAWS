@@ -138,28 +138,6 @@ export function healthTipsPage() {
             </div>
           `).join('')}
         </div>
-
-        <!-- Seasonal Section -->
-        <section class="mb-16">
-          <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold mb-2" style="color: #333333; font-family: 'Poppins', sans-serif;">Seasonal Care Guide</h2>
-            <p style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.9rem;">Tips that change with the year, tailored to Medellín's climate</p>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            ${[
-      { season: 'Spring', icon: '🌸', tip: 'Watch for seasonal allergies and increase grooming frequency', color: '#FFCFD2' },
-      { season: 'Summer', icon: '☀️', tip: 'Hydration is critical. Never leave pets in parked cars', color: '#FBF8CC' },
-      { season: 'Rainy Season', icon: '🌧️', tip: 'Check for fungal infections and keep paws dry after walks', color: '#90BDF4' },
-      { season: 'Year-Round', icon: '🌿', tip: 'In Medellín\'s climate, mosquito prevention is always needed', color: '#B9FBC0' }
-    ].map(s => `
-              <div class="seasonal-card">
-                <div class="text-3xl mb-3">${s.icon}</div>
-                <div class="font-semibold mb-2" style="color: #333; font-family: 'Poppins', sans-serif; font-size: 0.9rem;">${s.season}</div>
-                <p style="color: #4A4A4A; font-family: 'Roboto', sans-serif; font-size: 0.8rem; line-height: 1.5;">${s.tip}</p>
-                <div style="height: 3px; background: ${s.color}; border-radius: 99px; margin-top: 16px;"></div>
-              </div>
-            `).join('')}
-          </div>
         </section>
 
         <!-- Newsletter -->
@@ -198,8 +176,6 @@ export function healthTipsPage() {
         alert('Thanks for subscribing! Check your inbox soon 🐾');
         document.getElementById('newsletter-email').value = '';
       }
-      <!-- N8N Chatbot CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   `;
 }
 
@@ -207,7 +183,10 @@ export async function healthTipsEvents() {
   // Events handled inline via onclick (filter + newsletter)
 
   // Initialize n8n chat widget (robust loader + diagnostics)
-  try {
+  if (window.n8nChatInstance) {
+    console.log('[healthTipsEvents] n8n chat already initialized, skipping...');
+  } else {
+    try {
     console.log('[healthTipsEvents] initializing n8n chat...');
 
     // Ensure stylesheet for n8n chat is present in <head>
@@ -221,57 +200,6 @@ export async function healthTipsEvents() {
         console.log('[healthTipsEvents] n8n chat stylesheet injected in head');
       }
     })();
-
-    // Inject theme overrides for the n8n chat widget using PAWS design tokens
-    (function injectN8nTheme() {
-      if (document.getElementById('paws-n8n-theme')) return;
-      try {
-        const docStyle = getComputedStyle(document.documentElement);
-        const colorPrimary = docStyle.getPropertyValue('--color-purple') || '#6A4C93';
-        const colorAccent = docStyle.getPropertyValue('--color-green') || '#B9FBC0';
-        const textPrimary = docStyle.getPropertyValue('--text-primary') || '#333333';
-        const textMuted = docStyle.getPropertyValue('--color-muted') || '#9CA3AF';
-        const radius = docStyle.getPropertyValue('--radius-md') || '12px';
-        const shadow = docStyle.getPropertyValue('--shadow-medium') || '0 8px 24px rgba(0,0,0,0.12)';
-        const zToast = docStyle.getPropertyValue('--z-toast') || '10000';
-
-        const css = `:root {
-          /* PAWS -> n8n chat theme overrides */
-          --chat--color--primary: ${colorPrimary};
-          --chat--color--accent: ${colorAccent};
-          --chat--heading--color: ${textPrimary};
-          --chat--text--color: ${textPrimary};
-          --chat--input--placeholder--color: ${textMuted};
-          --chat--window--border-radius: ${radius};
-          --chat--toggle--border-radius: ${radius};
-          /* border color matching PAWS branding */
-          --chat--window--border-color: ${colorPrimary};
-          --chat--window--border: 1px solid ${colorPrimary};
-          --chat--toggle--border-color: ${colorPrimary};
-          --chat--window--box-shadow: ${shadow};
-          /* Make window and overlay less transparent for better readability */
-          --chat--window--background: rgba(255,255,255,0.98);
-          --chat--overlay--background: rgba(0,0,0,0.28);
-          /* Toggle/button backgrounds use solid brand color to stand out */
-          --chat--toggle--background: ${colorPrimary};
-          --chat--toggle--background-hover: ${colorAccent};
-          --chat--toggle--icon-color: #ffffff;
-          --chat--window--z-index: ${zToast};
-          /* Position slightly above footer and to the right to match PAWS spacing */
-          --chat--window--bottom: 28px;
-          --chat--window--right: 28px;
-        }`;
-
-        const s = document.createElement('style');
-        s.id = 'paws-n8n-theme';
-        s.appendChild(document.createTextNode(css));
-        document.head.appendChild(s);
-        console.log('[healthTipsEvents] injected PAWS -> n8n theme overrides');
-      } catch (e) {
-        console.warn('[healthTipsEvents] failed to inject n8n theme overrides', e);
-      }
-    })();
-
     // Helper to detect if a chat DOM node is present
     function isChatMounted() {
       try {
@@ -377,6 +305,7 @@ export async function healthTipsEvents() {
     }
   } catch (err) {
     console.error('[healthTipsEvents] unexpected error initializing n8n chat', err);
+  }
   }
 
   // Load personalized tips for the logged-in user's first pet

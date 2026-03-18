@@ -1,3 +1,5 @@
+import { showToast } from "../utils.js";
+
 export function resetPasswordPage() {
     return `
       <div class="h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);">
@@ -30,8 +32,6 @@ export function resetPasswordPage() {
               </div>
             </div>
   
-            <div id="form-message" class="hidden text-sm text-center p-3 rounded-md"></div>
-  
             <div>
               <button type="submit" id="submit-btn" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200" style="background: linear-gradient(135deg, var(--color-purple, #6A4C93) 0%, var(--color-green, #B9FBC0) 100%);">
                 Update Password
@@ -45,13 +45,11 @@ export function resetPasswordPage() {
   
   export function resetPasswordEvents() {
     const form = document.getElementById('reset-password-form');
-    const msgDiv = document.getElementById('form-message');
     const btn = document.getElementById('submit-btn');
     const tokenInput = document.getElementById('reset-token');
   
     if (!form) return;
     // Retrieve the token from URL — try multiple parsing strategies
-    // Email clients may format the URL differently
     let token = null;
     
     // Strategy 1: Token in hash query string — /#/reset-password?token=xxx
@@ -76,9 +74,7 @@ export function resetPasswordPage() {
     }
   
     if (!token) {
-        msgDiv.classList.remove('hidden');
-        msgDiv.classList.add('bg-red-50', 'text-red-600');
-        msgDiv.textContent = "Invalid or missing recovery token in the URL.";
+        showToast("Invalid or missing recovery token in the URL.", "error");
         btn.disabled = true;
         btn.classList.add('opacity-50', 'cursor-not-allowed');
     }
@@ -91,15 +87,12 @@ export function resetPasswordPage() {
         const currentToken = tokenInput.value;
   
         if (password !== confirmPassword) {
-            msgDiv.classList.remove('hidden', 'bg-green-50', 'text-green-600');
-            msgDiv.classList.add('bg-red-50', 'text-red-600');
-            msgDiv.textContent = "Passwords do not match.";
+            showToast("Passwords do not match.", "error");
             return;
         }
         
         btn.disabled = true;
         btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Updating...`;
-        msgDiv.classList.add('hidden');
   
         try {
             const res = await fetch('/api/auth/reset-password', {
@@ -114,15 +107,12 @@ export function resetPasswordPage() {
                 throw new Error(data.error || "Error updating password");
             }
             
-            msgDiv.classList.remove('hidden', 'bg-red-50', 'text-red-600');
-            msgDiv.classList.add('bg-green-50', 'text-green-600');
-            msgDiv.innerHTML = `${data.message} <br> <a href="/#/login" class="underline font-bold mt-2 block">Go to Sign In</a>`;
+            showToast(data.message + " Redirecting in 3 seconds...", "success");
             form.reset();
+            setTimeout(() => { window.location.hash = "/login"; }, 3000);
             
         } catch (error) {
-            msgDiv.classList.remove('hidden', 'bg-green-50', 'text-green-600');
-            msgDiv.classList.add('bg-red-50', 'text-red-600');
-            msgDiv.textContent = error.message || "Error updating the password.";
+            showToast(error.message || "Error updating the password.", "error");
         } finally {
             btn.disabled = false;
             btn.innerHTML = `Update Password`;

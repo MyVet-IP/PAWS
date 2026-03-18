@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:3000/api/businesses/204/image -F image=@/tmp/test.jpg)",
+      "Bash(curl -s \"http://localhost:3000/api/config\")",
+      "Bash(python -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\(f''''lat={d[\"\"latitude\"\"]} lng={d[\"\"longitude\"\"]} address={d[\"\"address\"\"]} city={d[\"\"city\"\"]}''''\\)\")"
+    ]
+  }
+}
