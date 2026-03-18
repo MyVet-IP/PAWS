@@ -123,7 +123,6 @@ export function dashboardPage() {
             Loading your pets...
           </div>
         </div>
-
       </div>
 
       <!-- RIGHT SIDEBAR (1 col) -->
