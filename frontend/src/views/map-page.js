@@ -11,7 +11,9 @@ function normalizeClinic(raw) {
     name: raw.name || '',
     location: raw.zone ? `${raw.zone}, Medellín` : (raw.city || 'Medellín'),
     address: raw.address || raw.zone || '',
-    rating: raw.rating_average ? parseFloat(raw.rating_average).toFixed(1) : '—',
+    rating: (raw.rating || raw.rating_average)
+      ? parseFloat(raw.rating || raw.rating_average).toFixed(1)
+      : '—',
     reviews: raw.rating_count || 0,
     services: specs.length ? specs : [],
     zone: raw.zone || '',
@@ -323,7 +325,11 @@ function _askUserLocation() {
       _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
       _googleMap.panTo({ lat, lng });
     },
-    () => { }
+    (err) => {
+      console.warn('[PAWS] Geolocation error:', err.code, err.message);
+      // err.code: 1=PERMISSION_DENIED 2=POSITION_UNAVAILABLE 3=TIMEOUT
+    },
+    options
   );
 }
 
