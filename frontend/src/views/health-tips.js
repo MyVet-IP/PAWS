@@ -375,7 +375,7 @@ export async function healthTipsEvents() {
         `).join('');
 
         if (data.from_cache) {
-          container.insertAdjacentHTML('beforeend', '<p class="text-xs col-span-3 text-center mt-1" style="color:#9CA3AF;">From cache · ' + data.source + '</p>');
+          container.insertAdjacentHTML('beforeend', '<p class="text-xs col-span-3 text-center mt-1" style="color:#9CA3AF;">' + data.source + '</p>');
         }
       } catch (err) {
         loading.textContent = 'Could not load AI tips. Showing general advice below.';
