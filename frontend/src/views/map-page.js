@@ -234,13 +234,22 @@ export function loadMapPage() {
 }
 
 // ─── Google Maps helpers ────────────────────────────────────────────────────
-function initGoogleMap(clinics) {
+
+// FIX: initGoogleMap ahora recibe las coords del usuario para centrar el mapa
+// en la ubicación real en lugar del fallback hardcodeado de Medellín centro.
+function initGoogleMap(clinics, userLat, userLng) {
   const placeholder = document.getElementById('map-placeholder');
   if (placeholder) placeholder.style.display = 'none';
 
+  // Centrar en ubicación real si está disponible, si no en Medellín centro
+  const hasUserLocation = userLat && userLng;
+  const center = hasUserLocation
+    ? { lat: userLat, lng: userLng }
+    : { lat: 6.2442, lng: -75.5812 };
+
   _googleMap = new google.maps.Map(document.getElementById('mapContainer'), {
-    center: { lat: 6.2442, lng: -75.5812 },
-    zoom: 12,
+    center,
+    zoom: hasUserLocation ? 13 : 12,
     styles: [
       { featureType: 'poi', elementType: 'all', stylers: [{ visibility: 'off' }] },
       { featureType: 'poi.business', elementType: 'all', stylers: [{ visibility: 'off' }] },
@@ -253,6 +262,11 @@ function initGoogleMap(clinics) {
   });
 
   _addMarkers(clinics);
+
+  // Si ya tenemos ubicación, colocar el marcador del usuario de inmediato
+  if (hasUserLocation) {
+    _placeUserMarker(userLat, userLng);
+  }
 }
 
 function _addMarkers(clinics) {
@@ -292,45 +306,31 @@ function _addMarkers(clinics) {
   });
 }
 
-function _askUserLocation() {
-  if (!navigator.geolocation) return;
+// Coloca (o reemplaza) el marcador verde del usuario en el mapa
+function _placeUserMarker(lat, lng) {
+  if (_userMarker) _userMarker.setMap(null);
 
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude: lat, longitude: lng } = pos.coords;
-      if (_userMarker) _userMarker.setMap(null);
-      // Notify the map events scope so cards re-sort by distance
-      if (typeof window._onUserLocation === 'function') window._onUserLocation(lat, lng);
-
-      _userMarker = new google.maps.Marker({
-        position: { lat, lng },
-        map: _googleMap,
-        title: 'Your location',
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: '#16a34a',
-          fillOpacity: 1,
-          strokeColor: 'white',
-          strokeWeight: 3,
-        },
-        zIndex: 999,
-      });
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
-                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
-                  </div>`,
-      });
-      _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
-      _googleMap.panTo({ lat, lng });
+  _userMarker = new google.maps.Marker({
+    position: { lat, lng },
+    map: _googleMap,
+    title: 'Your location',
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 10,
+      fillColor: '#16a34a',
+      fillOpacity: 1,
+      strokeColor: 'white',
+      strokeWeight: 3,
     },
-    (err) => {
-      console.warn('[PAWS] Geolocation error:', err.code, err.message);
-      // err.code: 1=PERMISSION_DENIED 2=POSITION_UNAVAILABLE 3=TIMEOUT
-    },
-    options
-  );
+    zIndex: 999,
+  });
+
+  const infoWindow = new google.maps.InfoWindow({
+    content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
+                <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
+              </div>`,
+  });
+  _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
 }
 
 // ─── Events ─────────────────────────────────────────────────────────────────
@@ -342,8 +342,7 @@ export function loadMapEvents() {
   let pendingFilters = { quick: 'all', zones: [], services: [] };
   let activeFilters = { quick: 'all', zones: [], services: [] };
 
-  // Ubicación del usuario — se actualiza cuando el browser la concede
-  // Se usa para ordenar SIEMPRE por distancia
+  // Ubicación del usuario — se llena ANTES de renderizar
   let _userLat = null;
   let _userLng = null;
 
@@ -374,7 +373,6 @@ export function loadMapEvents() {
   const openDetail = () => detailModal?.classList.add('open');
   const closeDetail = () => detailModal?.classList.remove('open');
 
-  // Build zone + service chips from real data
   function populateFilterChips(clinics) {
     const zones = [...new Set(clinics.map(c => c.zone).filter(Boolean))];
     const services = [...new Set(clinics.flatMap(c => c.services))];
@@ -411,11 +409,10 @@ export function loadMapEvents() {
     }
   }
 
-  // Boot Google Maps — fetches key from /api/config
-  const bootGoogleMaps = async (clinics) => {
+  // Boot Google Maps — pasa las coords del usuario para centrar correctamente
+  const bootGoogleMaps = async (clinics, userLat, userLng) => {
     if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-      initGoogleMap(clinics);
-      _askUserLocation();
+      initGoogleMap(clinics, userLat, userLng);
       return;
     }
 
@@ -435,24 +432,24 @@ export function loadMapEvents() {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async&callback=window.__initMap`;
     script.async = true;
     script.defer = true;
+    // FIX: el callback ya tiene las coords reales — no necesita pedirlas de nuevo
     window.__initMap = () => {
-      initGoogleMap(clinics);
-      _askUserLocation();
+      initGoogleMap(clinics, userLat, userLng);
       delete window.__initMap;
     };
     document.head.appendChild(script);
   };
 
-  // Registrar callback ANTES de que arranque el mapa
-  // Si el permiso ya estaba concedido, el browser responde instantáneamente
-  // y el callback debe existir para cuando llegue la respuesta
+  // Callback para actualizaciones de ubicación en tiempo real (pan al mover)
   window._onUserLocation = (lat, lng) => {
     _userLat = lat;
     _userLng = lng;
-    applyAll(); // re-ordena las cards por distancia
+    applyAll();
+    // Actualizar marcador si el mapa ya está inicializado
+    if (_googleMap) _placeUserMarker(lat, lng);
   };
 
-  // Fetch clinics from real API
+  // ── Flujo principal secuencial: geoloc → fetch → render + mapa ───────────
   (async () => {
     const list = document.getElementById('clinic-list');
     if (list) list.innerHTML = `
@@ -460,6 +457,25 @@ export function loadMapEvents() {
         <p style="font-size:12px;font-family:'Poppins',sans-serif;">Loading clinics…</p>
       </div>`;
 
+    // PASO 1: esperar geolocalización ANTES de inicializar el mapa
+    await new Promise((resolve) => {
+      if (!navigator.geolocation) { resolve(); return; }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          _userLat = pos.coords.latitude;
+          _userLng = pos.coords.longitude;
+          console.log('[PAWS Map] Ubicación obtenida:', _userLat, _userLng);
+          resolve();
+        },
+        (err) => {
+          console.warn('[PAWS Map] Geolocation error:', err.code, err.message);
+          resolve(); // continúa sin ubicación — mapa centra en Medellín
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    });
+
+    // PASO 2: fetch clínicas
     try {
       const res = await fetch('/api/businesses?type=clinic');
       if (!res.ok) throw new Error(`Server error ${res.status}`);
@@ -470,10 +486,13 @@ export function loadMapEvents() {
       allClinics = [];
     }
 
+    // PASO 3: renderizar cards (ya con distancias reales)
     filtered = [...allClinics];
     populateFilterChips(allClinics);
     renderCards(filtered);
-    bootGoogleMaps(allClinics);
+
+    // PASO 4: inicializar mapa pasando las coords ya obtenidas
+    bootGoogleMaps(allClinics, _userLat, _userLng);
   })();
 
   window.updateMapMarkers = (clinicList) => { if (_googleMap) _addMarkers(clinicList); };
@@ -491,7 +510,6 @@ export function loadMapEvents() {
   document.getElementById('modal-detail-close')?.addEventListener('click', closeDetail);
   detailModal?.addEventListener('click', e => { if (e.target === detailModal) closeDetail(); });
 
-  // Quick filter chips
   document.querySelectorAll(".fchip[data-type='quick']").forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll(".fchip[data-type='quick']").forEach(c => c.classList.remove('fchip-active'));
@@ -536,7 +554,6 @@ export function loadMapEvents() {
       if (activeFilters.services.length > 0 && !activeFilters.services.every(s => c.services.includes(s))) return false;
       return true;
     });
-    // Always sort by distance last — if no location yet, order stays as-is
     filtered = _sortByDistance(filtered);
     renderCards(filtered);
     if (typeof window.updateMapMarkers === 'function') window.updateMapMarkers(filtered);

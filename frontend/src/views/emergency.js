@@ -55,55 +55,6 @@ export function emergencyPage() {
       </div>
     </div>
 
-    <!-- ── URGENCY SELECTOR ──────────────────── -->
-    <!-- COMMENTED OUT — urgency selection removed, button shown directly
-    <div class="bg-white rounded-2xl shadow-card p-6 mb-6">
-      <h2 class="text-lg font-bold text-text-primary font-poppins mb-1">
-        How urgent is the situation?
-      </h2>
-      <p class="text-text-muted text-sm mb-5">Select the level that best describes your pet's condition</p>
-
-      <div class="flex flex-col gap-3" id="urgencyOptions">
-
-        CRITICAL
-        <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition group"
-               style="border:2px solid #FECACA; background:#FEF2F2;">
-          <input type="radio" name="urgency" value="10" style="width:18px;height:18px;accent-color:#dc2626;"/>
-          <div class="flex-1">
-            <p class="font-bold text-text-primary font-poppins text-sm">
-              Critical — Bleeding / Unresponsive / Seizures
-            </p>
-            <p class="text-xs text-text-muted">Go to emergency immediately. Life or death situation.</p>
-          </div>
-        </label>
-
-        URGENT
-        <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
-               style="border:2px solid #FED7AA; background:#FFF7ED;">
-          <input type="radio" name="urgency" value="5" style="width:18px;height:18px;accent-color:#ea580c;"/>
-          <div class="flex-1">
-            <p class="font-bold text-text-primary font-poppins text-sm">
-              Urgent — Vomiting / Diarrhea / Moderate pain
-            </p>
-            <p class="text-xs text-text-muted">Requires same-day attention. Cannot wait.</p>
-          </div>
-        </label>
-
-        CONSULTATION
-        <label class="flex items-start gap-4 p-4 rounded-xl cursor-pointer transition urgency-label"
-               style="border:2px solid #BBF7D0; background:#F0FDF4;">
-          <input type="radio" name="urgency" value="2" style="width:18px;height:18px;accent-color:#16a34a;"/>
-          <div class="flex-1">
-            <p class="font-bold text-text-primary font-poppins text-sm">
-              Consultation — Check-up / Vaccines / Examination
-            </p>
-            <p class="text-xs text-text-muted">Can be scheduled. Not urgent.</p>
-          </div>
-        </label>
-
-      </div>
-    END COMMENTED OUT -->
-
     <!-- Find button — shown directly without urgency selection -->
     <div class="bg-white rounded-2xl shadow-card p-6 mb-6">
       <p class="text-text-muted text-sm mb-4 text-center">
@@ -168,6 +119,14 @@ export function emergencyPage() {
 
 // ─────────────────────────────────────────────
 //  emergencyEvents
+//
+//  FIX: el botón ya ejecuta el flujo correcto:
+//    1. await geoloc()  → obtiene coords reales o falla silenciosamente
+//    2. await fetch()   → trae clínicas
+//    3. render cards    → ya con distancias reales calculadas
+//
+//  El mapa/cards NUNCA se renderizan antes de
+//  recibir la respuesta del navegador (buena o mala).
 // ─────────────────────────────────────────────
 export async function emergencyEvents() {
   const btnFind = document.getElementById('btn-find-emergency');
@@ -178,10 +137,7 @@ export async function emergencyEvents() {
   if (!btnFind) return;
 
   btnFind.addEventListener('click', async () => {
-    // ── urgency validation removed — no longer needed ──
-    // (selector is commented out in HTML, button works directly)
-
-    // Show loading state
+    // Mostrar estado de carga
     btnFind.disabled = true;
     btnFind.innerHTML = `
       <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,31 +151,57 @@ export async function emergencyEvents() {
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // Mostrar spinner en la lista mientras esperamos
+    if (clinicsList) {
+      clinicsList.innerHTML = `
+        <div class="col-span-2 flex items-center justify-center gap-2 py-10" style="color:var(--text-muted);">
+          <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <span class="text-sm font-poppins">Obtaining your location...</span>
+        </div>`;
+    }
+
     try {
-      // ── Ask user for location to sort by distance ─────────────────────────
+      // ── PASO 1: esperar geolocalización ANTES de cualquier fetch o render ──
       let userLat = null;
       let userLng = null;
 
-      // Try to get location — resolves immediately if already granted,
-      // shows browser prompt if not yet decided, skips silently if denied
       await new Promise((resolve) => {
         if (!navigator.geolocation) { resolve(); return; }
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
-            console.log('[PAWS Emergency] Ubicación:', userLat, userLng);
+            console.log('[PAWS Emergency] Ubicación obtenida:', userLat, userLng);
             resolve();
           },
           (err) => {
             console.warn('[PAWS Emergency] Geolocation error:', err.code, err.message);
-            resolve(); // continúa sin ubicación
-          },   // denied or error — just skip, still show all clinics
+            resolve(); // continúa sin ubicación — se muestran igual las clínicas
+          },
           { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
         );
       });
 
-      // ── Haversine distance in km ──────────────────────────────────────────
+      // ── PASO 2: fetch clínicas (ya tenemos la ubicación definitiva) ────────
+      if (clinicsList) {
+        clinicsList.innerHTML = `
+          <div class="col-span-2 flex items-center justify-center gap-2 py-10" style="color:var(--text-muted);">
+            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span class="text-sm font-poppins">Loading clinics...</span>
+          </div>`;
+      }
+
+      const response = await fetch('/api/businesses?type=clinic');
+      if (!response.ok) throw new Error('Error fetching clinics');
+      const clinics = await response.json();
+
+      // ── PASO 3: filtrar y ordenar con coords ya disponibles ────────────────
       function haversine(lat1, lng1, lat2, lng2) {
         const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -230,17 +212,11 @@ export async function emergencyEvents() {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       }
 
-      const response = await fetch('/api/businesses?type=clinic');
-      if (!response.ok) throw new Error('Error fetching clinics');
-      const clinics = await response.json();
-
-      // Filtrar clínicas 24h o que tengan especialidad de emergencia
       let emergencyClinics = clinics.filter(c =>
         c.is_24h === true ||
         (c.specialties || []).some(s => s.name.toLowerCase().includes('emergenc') || s.name.toLowerCase().includes('urgenc'))
       );
 
-      // ── Sort by distance if we have user location ─────────────────────────
       if (userLat && userLng) {
         emergencyClinics = emergencyClinics.map(c => ({
           ...c,
@@ -262,6 +238,7 @@ export async function emergencyEvents() {
         return;
       }
 
+      // ── PASO 4: renderizar cards con distancias ya calculadas ──────────────
       clinicsList.innerHTML = emergencyClinics.map(clinic => `
         <div class="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-soft transition"
              style="border-left:4px solid #dc2626;">
@@ -294,7 +271,6 @@ export async function emergencyEvents() {
                   </svg>
                   Call Now
                 </a>` : ''}
-              <!-- View Details → opens Google Maps with clinic location -->
               <a href="${(clinic.latitude && clinic.longitude)
           ? `https://www.google.com/maps/search/?api=1&query=${clinic.latitude},${clinic.longitude}`
           : clinic.address
@@ -340,7 +316,7 @@ export async function emergencyEvents() {
           <p class="text-text-muted text-sm mt-1">Please try again or call 123.</p>
         </div>`;
     } finally {
-      // Restore button
+      // Restaurar botón
       btnFind.disabled = false;
       btnFind.innerHTML = `
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
