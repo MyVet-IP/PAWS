@@ -317,7 +317,7 @@ function _askUserLocation() {
 
       const infoWindow = new google.maps.InfoWindow({
         content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
-                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">You are here</p>
                   </div>`,
       });
       _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
