@@ -1,5 +1,6 @@
 services:
   app:
+    image: jaramc/paws-app:v2.3
     build: .
     container_name: paws-app
     restart: always
@@ -12,5 +13,15 @@ services:
       DB_SSL: ${DB_SSL:-true}
       PORT: ${PORT:-3000}
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GMAIL_USER: ${GMAIL_USER:-}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:3000/auth/google/callback}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      GROQ_PAWS_CHATBOT: ${GROQ_PAWS_CHATBOT:-}
     ports:
       - "3000:3000"

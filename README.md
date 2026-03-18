@@ -214,6 +214,10 @@ GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
 # ── Chatbot (Groq) ────────────────────────────────
 GROQ-PAWS-CHATBOT=your_groq_api_key
+
+# ── Azure Blob Storage (profile images) ───────────
+AZURE_STORAGE_CONNECTION_STRING=your_azure_blob_connection_string
+AZURE_STORAGE_CONTAINER=paws-media
 ```
 
 > **Never commit `.env` to the repository.** It is already listed in `.gitignore` and `.dockerignore`.

@@ -11,12 +11,6 @@ const HEALTH_TIPS = [
   { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 12a3 3 0 106 0v3a3 3 0 01-6 0v-3zM6 9a3 3 0 00-3 3M18 9a3 3 0 013 3M9 9V7a3 3 0 016 0v2'/></svg>", tip: "Deworm your pet every 3 months — internal parasites can affect the whole family.", color: "var(--color-blue)" },
 ];
 
-const NEARBY_CLINICS = [
-  { name: "Clínica San Juan Pet", zone: "El Poblado", open24: true, rating: 4.9, hash: "#/clinics" },
-  { name: "VetCare Laureles", zone: "Laureles", open24: false, rating: 4.7, hash: "#/clinics" },
-  { name: "Animal House Envigado", zone: "Envigado", open24: true, rating: 4.8, hash: "#/clinics" },
-];
-
 // ─────────────────────────────────────────────
 //  dashboardPage
 // ─────────────────────────────────────────────
@@ -129,45 +123,6 @@ export function dashboardPage() {
             Loading your pets...
           </div>
         </div>
-
-        <!-- Nearby clinics -->
-        <div class="mt-2">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-bold font-poppins" style="color:var(--text-primary);">Clinics near you</h2>
-            <a href="#/clinics"
-               class="text-xs font-semibold font-poppins flex items-center gap-1"
-               style="color:var(--text-highlight);">
-              See all
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-          <div class="flex flex-col gap-2">
-            ${NEARBY_CLINICS.map(c => `
-              <a href="${c.hash}"
-                 class="bg-white rounded-xl p-4 flex items-center gap-3 transition"
-                 style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);
-                        transition:var(--transition-fast);"
-                 onmouseenter="this.style.borderColor='var(--text-highlight)'"
-                 onmouseleave="this.style.borderColor='var(--bg-muted)'">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                     style="background:rgba(144,189,244,0.25);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
-                <div class="flex-1 min-w-0">
-                  <p class="font-semibold font-poppins text-sm truncate" style="color:var(--text-primary);">${c.name}</p>
-                  <p class="text-xs" style="color:var(--text-muted);">${c.zone}</p>
-                </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                  ${c.open24 ? `
-                    <span class="text-xs font-bold px-2 py-0.5 rounded-full"
-                          style="background:#FEE2E2;color:#dc2626;">24/7</span>` : ''}
-                  <span class="text-xs font-bold font-poppins" style="color:var(--text-primary);">★ ${c.rating}</span>
-                </div>
-              </a>
-            `).join('')}
-          </div>
-        </div>
-
       </div>
 
       <!-- RIGHT SIDEBAR (1 col) -->
@@ -459,10 +414,10 @@ async function loadPets(user) {
       const bg = isCat ? 'rgba(241,192,232,0.30)' : 'rgba(185,251,192,0.30)';
       const records = (p.medical_records || []).length;
       let ageText = '';
-          if (p.birth_date && !isNaN(new Date(p.birth_date))) {
-            const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
-            if (!isNaN(yrs)) ageText = `${yrs} ${yrs === 1 ? 'year' : 'years'}`;
-          }
+      if (p.birth_date && !isNaN(new Date(p.birth_date))) {
+        const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
+        if (!isNaN(yrs)) ageText = `${yrs} ${yrs === 1 ? 'year' : 'years'}`;
+      }
       return `
       <div class="bg-white rounded-2xl p-4 cursor-pointer transition"
            style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);transition:var(--transition-fast);"
@@ -529,7 +484,7 @@ async function loadNextAppointment(user) {
       const diffHours = (d - now) / (1000 * 60 * 60);
 
       if (diffHours > 0 && diffHours <= 24 &&
-          !sessionStorage.getItem('notified_appointment_' + next.appointment_id)) {
+        !sessionStorage.getItem('notified_appointment_' + next.appointment_id)) {
 
         showToast(`Reminder: Appointment with ${next.business_name || 'the vet'} in <24h`, 'warning');
         sessionStorage.setItem('notified_appointment_' + next.appointment_id, 'true');

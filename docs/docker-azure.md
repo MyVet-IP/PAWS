@@ -113,6 +113,8 @@ Dentro del App Service creado:
 | `DB_PASSWORD` | `TuPasswordSeguro123!` |
 | `DB_SSL` | `true` |
 | `PORT` | `3000` |
+| `AZURE_STORAGE_CONNECTION_STRING` | `DefaultEndpointsProtocol=...` |
+| `AZURE_STORAGE_CONTAINER` | `paws-media` |
 
 3. Guardar los cambios. Azure reinicia el contenedor automáticamente.
 

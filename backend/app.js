@@ -89,9 +89,10 @@ app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
 
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 app.post("/api/register", async (req, res) => {
-    const { name, email, password, role } = req.body;
-    const roleMap = { owner: 'user', vet: 'business', business: 'business', admin: 'admin' };
+    const { name, email, password, role, nit } = req.body;
+    const roleMap = { owner: 'user', vet: 'business', business: 'business' };
     const dbRole = roleMap[role] || 'user';
+    const normalizedEmail = String(email || '').toLowerCase().trim();
 
     // Use a transaction so user + business are created atomically
     const client = await db.pool.connect();
@@ -99,7 +100,7 @@ app.post("/api/register", async (req, res) => {
         await client.query('BEGIN');
 
         const existingUser = await client.query(
-            "SELECT user_id FROM users WHERE email = $1", [email]
+            "SELECT user_id FROM users WHERE email = $1", [normalizedEmail]
         );
         if (existingUser.rows[0]) {
             await client.query('ROLLBACK');
@@ -109,18 +110,24 @@ app.post("/api/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const userResult = await client.query(
             "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4) RETURNING user_id",
-            [name, email, hashedPassword, dbRole]
+            [name, normalizedEmail, hashedPassword, dbRole]
         );
         const userId = userResult.rows[0].user_id;
 
         // Auto-create business profile for vet/business roles
         if (dbRole === 'business') {
+            const normalizedNit = (nit || '').toString().trim();
+            if (!normalizedNit) {
+                await client.query('ROLLBACK');
+                return res.status(400).json({ message: "El NIT es obligatorio para cuentas de veterinaria" });
+            }
+
             const businessType = 'clinic';
 
             const bizResult = await client.query(
-                `INSERT INTO businesses (user_id, business_type, name, address, status, city)
-                 VALUES ($1, $2, $3, '', 'active', 'Medellín') RETURNING business_id`,
-                [userId, businessType, name]
+                `INSERT INTO businesses (user_id, business_type, name, address, status, city, nit, nit_verified)
+                 VALUES ($1, $2, $3, '', 'active', 'Medellín', $4, 'pending') RETURNING business_id`,
+                [userId, businessType, name, normalizedNit]
             );
             const businessId = bizResult.rows[0].business_id;
 
@@ -167,10 +174,8 @@ async function startServer() {
     try {
         await db.initialize();
         app.listen(PORT, () => {
-            console.log(`\n========================================`);
             console.log(` Server: http://localhost:${PORT}`);
             console.log(` API:    http://localhost:${PORT}/api/health`);
-            console.log(`========================================\n`);
         });
     } catch (err) {
         console.error('Failed to start server:', err.message);

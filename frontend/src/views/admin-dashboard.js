@@ -34,7 +34,6 @@ export function adminDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
             </svg>
           </div>
-          <span class="admin-stat-badge positive">+12%</span>
         </div>
         <p class="admin-stat-value" id="stat-users">0</p>
         <p class="admin-stat-label">Total Users</p>
@@ -47,7 +46,6 @@ export function adminDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg>
           </div>
-          <span class="admin-stat-badge positive">+8%</span>
         </div>
         <p class="admin-stat-value" id="stat-pets">0</p>
         <p class="admin-stat-label">Total Pets</p>
@@ -60,7 +58,6 @@ export function adminDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
           </div>
-          <span class="admin-stat-badge positive">+5%</span>
         </div>
         <p class="admin-stat-value" id="stat-businesses">0</p>
         <p class="admin-stat-label">Businesses</p>
@@ -73,24 +70,11 @@ export function adminDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
           </div>
-          <span class="admin-stat-badge positive">0%</span>
         </div>
         <p class="admin-stat-value" id="stat-appointments">0</p>
         <p class="admin-stat-label">Appointments</p>
       </div>
 
-      <div class="admin-stat-card">
-        <div class="admin-stat-header">
-          <div class="admin-stat-icon emergencies">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-          </div>
-          <span class="admin-stat-badge negative">-3%</span>
-        </div>
-        <p class="admin-stat-value" id="stat-emergencies">0</p>
-        <p class="admin-stat-label">Emergencies</p>
-      </div>
     </div>
 
     <!-- Main Content Grid -->
@@ -104,14 +88,11 @@ export function adminDashboardPage() {
             <button class="admin-tab" data-tab="businesses">Businesses</button>
             <button class="admin-tab" data-tab="appointments">Appointments</button>
           </div>
-          <div class="admin-panel-actions" id="tab-panel-actions">
-            <!-- Dynamic actions injected per tab -->
-          </div>
         </div>
 
         <!-- Tab Content: Users -->
         <div class="tab-content active admin-panel-body no-padding" id="tab-users">
-          <div class="admin-panel-header" style="border-top: 1px solid var(--bg-muted);">
+          <div class="admin-panel-header admin-subpanel-header">
             <h3 class="admin-panel-title">User Management</h3>
             <button class="admin-btn primary" id="btn-add-user">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
@@ -139,9 +120,9 @@ export function adminDashboardPage() {
 
         <!-- Tab Content: Pets -->
         <div class="tab-content admin-panel-body no-padding" id="tab-pets">
-          <div class="admin-panel-header" style="border-top: 1px solid var(--bg-muted);">
+          <div class="admin-panel-header admin-subpanel-header">
             <h3 class="admin-panel-title">Pet Management</h3>
-            <select id="filter-species" class="admin-form-select" style="width:auto;">
+            <select id="filter-species" class="admin-form-select admin-form-select-inline">
               <option value="">All Species</option>
               <option value="Dog">Dogs</option>
               <option value="Cat">Cats</option>
@@ -167,10 +148,10 @@ export function adminDashboardPage() {
 
         <!-- Tab Content: Businesses -->
         <div class="tab-content admin-panel-body no-padding" id="tab-businesses">
-          <div class="admin-panel-header" style="border-top: 1px solid var(--bg-muted);">
+          <div class="admin-panel-header admin-subpanel-header">
             <h3 class="admin-panel-title">Business Management</h3>
             <div class="admin-panel-actions">
-              <select id="filter-business-type" class="admin-form-select" style="width:auto;">
+              <select id="filter-business-type" class="admin-form-select admin-form-select-inline">
                 <option value="">All Types</option>
                 <option value="clinic">Veterinary Clinics</option>
                 <option value="petshop">Pet Shops</option>
@@ -203,9 +184,9 @@ export function adminDashboardPage() {
 
         <!-- Tab Content: Appointments -->
         <div class="tab-content admin-panel-body no-padding" id="tab-appointments">
-          <div class="admin-panel-header" style="border-top: 1px solid var(--bg-muted);">
+          <div class="admin-panel-header admin-subpanel-header">
             <h3 class="admin-panel-title">Appointments</h3>
-            <select id="filter-appointment-status" class="admin-form-select" style="width:auto;">
+            <select id="filter-appointment-status" class="admin-form-select admin-form-select-inline">
               <option value="">All Status</option>
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
@@ -233,109 +214,7 @@ export function adminDashboardPage() {
       </div>
 
       <!-- Right Column - Sidebar -->
-      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-
-        <!-- Quick Actions -->
-        <div class="admin-panel">
-          <div class="admin-panel-header">
-            <h3 class="admin-panel-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-              </svg>
-              Quick Actions
-            </h3>
-          </div>
-          <div class="admin-panel-body">
-            <div class="admin-quick-actions">
-              <button class="admin-quick-btn" id="qa-export-users">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span>Export Users</span>
-              </button>
-              <button class="admin-quick-btn" id="qa-send-notification">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                </svg>
-                <span>Send Notification</span>
-              </button>
-              <button class="admin-quick-btn" id="qa-view-reports">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                <span>View Reports</span>
-              </button>
-              <button class="admin-quick-btn" id="qa-system-settings">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span>Settings</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="admin-panel">
-          <div class="admin-panel-header">
-            <h3 class="admin-panel-title">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              Recent Activity
-            </h3>
-          </div>
-          <div class="admin-panel-body no-padding">
-            <div class="admin-activity-list" id="activity-list">
-              <div class="admin-activity-item">
-                <div class="admin-activity-icon new-user">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                  </svg>
-                </div>
-                <div class="admin-activity-content">
-                  <p>New user registered</p>
-                  <span class="admin-activity-time">2 minutes ago</span>
-                </div>
-              </div>
-              <div class="admin-activity-item">
-                <div class="admin-activity-icon new-pet">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                  </svg>
-                </div>
-                <div class="admin-activity-content">
-                  <p>New pet added: <strong>Max</strong></p>
-                  <span class="admin-activity-time">15 minutes ago</span>
-                </div>
-              </div>
-              <div class="admin-activity-item">
-                <div class="admin-activity-icon appointment">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                </div>
-                <div class="admin-activity-content">
-                  <p>Appointment scheduled</p>
-                  <span class="admin-activity-time">1 hour ago</span>
-                </div>
-              </div>
-              <div class="admin-activity-item">
-                <div class="admin-activity-icon business">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                  </svg>
-                </div>
-                <div class="admin-activity-content">
-                  <p>New clinic registered</p>
-                  <span class="admin-activity-time">3 hours ago</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div class="admin-sidebar-column">
         <!-- Pet Statistics -->
         <div class="admin-panel">
           <div class="admin-panel-header">
@@ -350,28 +229,28 @@ export function adminDashboardPage() {
             <div class="admin-mini-stats">
               <div class="admin-mini-stat">
                 <div class="admin-mini-stat-info">
-                  <div class="admin-mini-stat-icon" style="background-color: rgba(185,251,192,0.4);">
+                  <div class="admin-mini-stat-icon dogs">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg> Dogs</span>
+                  <span class="admin-mini-stat-label"><svg class="admin-inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.5 3.5c-1 0-2 .4-2.7 1.1L5 6.5H3a1 1 0 00-1 1v2a1 1 0 001 1h.5l1 7h11l1-7h.5a1 1 0 001-1v-2a1 1 0 00-1-1h-2l-1.8-1.9A3.8 3.8 0 0014.5 3.5h-5z"/></svg> Dogs</span>
                 </div>
                 <span class="admin-mini-stat-value" id="dogs-count">0</span>
               </div>
               <div class="admin-mini-stat">
                 <div class="admin-mini-stat-info">
-                  <div class="admin-mini-stat-icon" style="background-color: rgba(144,189,244,0.4);">
+                  <div class="admin-mini-stat-icon cats">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg> Cats</span>
+                  <span class="admin-mini-stat-label"><svg class="admin-inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 4l2 3.5M20 4l-2 3.5M8 7.5C8 6 9 5 12 5s4 1 4 2.5v1c0 4-2 7-4 8-2-1-4-4-4-8v-1z"/></svg> Cats</span>
                 </div>
                 <span class="admin-mini-stat-value" id="cats-count">0</span>
               </div>
               <div class="admin-mini-stat">
                 <div class="admin-mini-stat-info">
-                  <div class="admin-mini-stat-icon" style="background-color: rgba(251,248,204,0.6);">
+                  <div class="admin-mini-stat-icon other">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                   </div>
-                  <span class="admin-mini-stat-label"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg> Other</span>
+                  <span class="admin-mini-stat-label"><svg class="admin-inline-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z"/></svg> Other</span>
                 </div>
                 <span class="admin-mini-stat-value" id="other-count">0</span>
               </div>
@@ -392,9 +271,6 @@ export function adminDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
-        </div>
-        <div class="admin-modal-body">
-          <form id="user-form">
             <input type="hidden" id="user-id">
             <div class="admin-form-group">
               <label class="admin-form-label" for="user-nombre">Name</label>
@@ -408,10 +284,6 @@ export function adminDashboardPage() {
               <div class="admin-form-group">
                 <label class="admin-form-label" for="user-telefono">Phone</label>
                 <input type="tel" id="user-telefono" class="admin-form-input" placeholder="+57 300 123 4567">
-              </div>
-              <div class="admin-form-group">
-                <label class="admin-form-label" for="user-direccion">Address</label>
-                <input type="text" id="user-direccion" class="admin-form-input" placeholder="Street address">
               </div>
             </div>
           </form>
@@ -461,8 +333,6 @@ export function adminDashboardPage() {
               <input type="text" id="business-direccion" class="admin-form-input" required placeholder="Street address">
             </div>
             <div class="admin-form-group">
-              <label class="admin-form-label" for="business-horario">Hours</label>
-              <input type="text" id="business-horario" class="admin-form-input" placeholder="Mon-Fri 8am-6pm">
             </div>
           </form>
         </div>
@@ -475,7 +345,7 @@ export function adminDashboardPage() {
 
     <!-- Delete Confirmation Modal -->
     <div id="modal-delete" class="admin-modal-overlay">
-      <div class="admin-modal" style="max-width: 24rem;">
+      <div class="admin-modal admin-modal-sm">
         <div class="admin-modal-header">
           <h2 class="admin-modal-title">Confirm Delete</h2>
           <button class="admin-modal-close" id="close-delete-modal">
@@ -485,7 +355,7 @@ export function adminDashboardPage() {
           </button>
         </div>
         <div class="admin-modal-body">
-          <p id="delete-message" style="font-size: 0.875rem; color: var(--text-soft);">Are you sure you want to delete this item? This action cannot be undone.</p>
+          <p id="delete-message" class="admin-delete-message">Are you sure you want to delete this item? This action cannot be undone.</p>
         </div>
         <div class="admin-modal-footer">
           <button type="button" class="admin-btn secondary flex-1" id="cancel-delete">Cancel</button>
@@ -533,11 +403,6 @@ export function adminDashboardEvents() {
     }, 300));
   }
 
-  // Quick actions
-  document.getElementById('qa-export-users')?.addEventListener('click', exportUsers);
-  document.getElementById('qa-send-notification')?.addEventListener('click', () => alert('Notification feature coming soon'));
-  document.getElementById('qa-view-reports')?.addEventListener('click', () => alert('Reports feature coming soon'));
-  document.getElementById('qa-system-settings')?.addEventListener('click', () => alert('Settings feature coming soon'));
 }
 
 function initTabs() {
@@ -634,17 +499,24 @@ function initModals() {
 // Load stats
 async function loadStats() {
   try {
-    const [usersRes, petsRes, businessesRes, appointmentsRes] = await Promise.all([
-      fetch('/api/users'),
-      fetch('/api/pets'),
-      fetch('/api/businesses'),
-      fetch('/api/appointments')
-    ]);
+    const fetchCollection = async (url) => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
 
-    const users = await usersRes.json();
-    const pets = await petsRes.json();
-    const businesses = await businessesRes.json();
-    const appointments = await appointmentsRes.json();
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const [users, pets, businesses, appointments] = await Promise.all([
+      fetchCollection('/api/users'),
+      fetchCollection('/api/pets'),
+      fetchCollection('/api/businesses'),
+      fetchCollection('/api/appointments')
+    ]);
 
     document.getElementById('stat-users').textContent = users.length || 0;
     document.getElementById('stat-pets').textContent = pets.length || 0;
@@ -942,7 +814,6 @@ window.editUser = async function (id) {
     document.getElementById('user-nombre').value = user.name || '';
     document.getElementById('user-email').value = user.email || '';
     document.getElementById('user-telefono').value = user.phone || '';
-    document.getElementById('user-direccion').value = '';
     document.getElementById('modal-user')?.classList.add('open');
   } catch (error) {
     console.error('Error loading user:', error);
@@ -983,7 +854,6 @@ window.editBusiness = async function (id) {
     document.getElementById('business-tipo').value = business.business_type || '';
     document.getElementById('business-direccion').value = business.address || '';
     document.getElementById('business-telefono').value = business.phone || '';
-    document.getElementById('business-horario').value = '';
     document.getElementById('modal-business')?.classList.add('open');
   } catch (error) {
     console.error('Error loading business:', error);
@@ -1025,24 +895,6 @@ window.confirmDeleteAppointment = function (id) {
   };
   document.getElementById('modal-delete')?.classList.add('open');
 };
-
-// Export users to CSV
-function exportUsers() {
-  fetch('/api/users')
-    .then(res => res.json())
-    .then(users => {
-      const csv = [
-        ['Name', 'Email', 'Phone', 'Role', 'Joined'].join(','),
-        ...users.map(u => [u.name, u.email, u.phone, u.role, u.created_at].join(','))
-      ].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'users-export.csv';
-      a.click();
-    });
-}
 
 // Utility functions
 function formatDate(dateStr) {

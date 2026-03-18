@@ -30,7 +30,7 @@ export function landingPage() {
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="City or zip code" 
+                        placeholder="City or zone" 
                         class="flex-1 border-none outline-none py-3 font-roboto text-text-primary px-4 rounded-full bg-transparent"
                     >
                     <button 
@@ -47,7 +47,7 @@ export function landingPage() {
                         <div class="w-10 h-10 rounded-full border-2 border-white bg-paws-purple flex items-center justify-center text-xs font-medium shadow-soft">MA</div>
                         <div class="w-10 h-10 rounded-full border-2 border-white bg-paws-blue flex items-center justify-center text-xs font-medium shadow-soft">SC</div>
                     </div>
-                    <span class="text-sm text-text-soft font-medium font-roboto">+2k pets treated this month</span>
+                    <span class="text-sm text-text-soft font-medium font-roboto">Many pets treated this month</span>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@ export function landingPage() {
                             </div>
                             <span class="text-sm font-bold text-text-primary font-poppins">4.9/5</span>
                         </div>
-                        <p class="text-sm text-text-soft font-roboto italic">"The best service for my cat Luna"</p>
+                        <p class="text-sm text-text-soft font-roboto italic">"The best service for my dog Luna"</p>
                     </div>
                 </div>
             </div>
@@ -157,15 +157,15 @@ export function landingPage() {
         <div class="bg-white rounded-3xl shadow-card p-8 md:p-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="text-center">
-                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">500+</p>
+                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">50+</p>
                     <p class="text-text-soft text-sm font-roboto mt-1">Verified Clinics</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">50k+</p>
+                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">Many</p>
                     <p class="text-text-soft text-sm font-roboto mt-1">Happy Pets</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">4.9</p>
+                    <p class="text-3xl md:text-4xl font-bold text-text-highlight font-poppins">4.6</p>
                     <p class="text-text-soft text-sm font-roboto mt-1">Average Rating</p>
                 </div>
                 <div class="text-center">
