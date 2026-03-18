@@ -11,9 +11,12 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(180) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   phone VARCHAR(30),
+  photo_url VARCHAR(500),
   role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'business', 'admin')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS photo_url VARCHAR(500);
 
 
 --  BUSINESSES

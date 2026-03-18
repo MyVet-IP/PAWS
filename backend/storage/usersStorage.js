@@ -5,18 +5,18 @@ module.exports = {
 
     async getAll() {
         return db.all(
-            `SELECT u.user_id, u.name, u.email, u.phone, u.role, u.created_at,
+            `SELECT u.user_id, u.name, u.email, u.phone, u.photo_url, u.role, u.created_at,
                     COUNT(p.pet_id) AS pet_count
             FROM users u
             LEFT JOIN pets p ON p.user_id = u.user_id
-            GROUP BY u.user_id, u.name, u.email, u.phone, u.role, u.created_at
+            GROUP BY u.user_id, u.name, u.email, u.phone, u.photo_url, u.role, u.created_at
             ORDER BY u.user_id ASC`
         );
     },
 
     async getById(user_id) {
         return db.get(
-            `SELECT user_id, name, email, phone, role, created_at
+            `SELECT user_id, name, email, phone, photo_url, role, created_at
             FROM users WHERE user_id = $1`,
             [user_id]
         );
@@ -63,6 +63,14 @@ module.exports = {
         await db.run(
             `UPDATE users SET ${fields.join(', ')} WHERE user_id = $${i}`,
             values
+        );
+        return this.getById(user_id);
+    },
+
+    async updatePhoto(user_id, photo_url) {
+        await db.run(
+            `UPDATE users SET photo_url = $1 WHERE user_id = $2`,
+            [photo_url, user_id]
         );
         return this.getById(user_id);
     },

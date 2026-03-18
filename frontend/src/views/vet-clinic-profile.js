@@ -610,6 +610,11 @@ async function _initProfileMap(biz, el, canEdit = false) {
   const heroAddressEl = el('vcp-address');
   if (!mapEl) return;
 
+  const lat = Number.parseFloat(biz.latitude);
+  const lng = Number.parseFloat(biz.longitude);
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+  const fullAddress = [biz.address, biz.zone, biz.city].filter(Boolean).join(', ');
+
   let apiKey = '';
   try {
     const configRes = await fetch('/api/config');
@@ -618,12 +623,19 @@ async function _initProfileMap(biz, el, canEdit = false) {
   } catch { /* no key */ }
 
   if (!apiKey) {
-    if (biz.latitude && biz.longitude) {
+    if (hasCoords) {
       mapEl.innerHTML = `
         <iframe width="100%" height="100%" frameborder="0" style="border:0;border-radius:12px;"
-          src="https://maps.google.com/maps?q=${biz.latitude},${biz.longitude}&z=15&output=embed"
+          src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"
           allowfullscreen loading="lazy"></iframe>`;
-      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${biz.latitude},${biz.longitude}`;
+      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    } else if (fullAddress) {
+      const q = encodeURIComponent(fullAddress);
+      mapEl.innerHTML = `
+        <iframe width="100%" height="100%" frameborder="0" style="border:0;border-radius:12px;"
+          src="https://maps.google.com/maps?q=${q}&z=15&output=embed"
+          allowfullscreen loading="lazy"></iframe>`;
+      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
     }
     return;
   }
@@ -640,9 +652,8 @@ async function _initProfileMap(biz, el, canEdit = false) {
   await loadMaps();
   mapEl.innerHTML = '';
 
-  const hasCoords = biz.latitude && biz.longitude;
   const center = hasCoords
-    ? { lat: parseFloat(biz.latitude), lng: parseFloat(biz.longitude) }
+    ? { lat, lng }
     : { lat: 6.2442, lng: -75.5812 };
 
   const map = new google.maps.Map(mapEl, {
@@ -670,6 +681,34 @@ async function _initProfileMap(biz, el, canEdit = false) {
         title: biz.name || 'Clinic location',
       });
       directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
+    } else if (fullAddress) {
+      geocoder.geocode({ address: fullAddress }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const p = results[0].geometry.location;
+          const pos = { lat: p.lat(), lng: p.lng() };
+
+          map.setCenter(pos);
+          map.setZoom(16);
+
+          marker = new google.maps.Marker({
+            position: pos,
+            map,
+            draggable: false,
+            title: biz.name || 'Clinic location',
+          });
+
+          if (addressEl && !addressEl.textContent) addressEl.textContent = results[0].formatted_address;
+          if (heroAddressEl && !heroAddressEl.textContent) heroAddressEl.textContent = results[0].formatted_address;
+          if (cityEl && !cityEl.textContent) {
+            const cityComp = results[0].address_components.find(c =>
+              c.types.includes('locality') || c.types.includes('administrative_area_level_2')
+            );
+            cityEl.textContent = cityComp ? cityComp.long_name : '';
+          }
+
+          directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${pos.lat},${pos.lng}`;
+        }
+      });
     }
     return;
   }
