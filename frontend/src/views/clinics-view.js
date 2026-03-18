@@ -132,17 +132,16 @@ export function clinicsPage() {
 
 // ─────────────────────────────────────────────
 //  Placeholder gradient — varies by business_id
-//  so each clinic gets its own color
 // ─────────────────────────────────────────────
 const GRADIENTS = [
-  'background:linear-gradient(135deg,#6A4C93 0%,#8B5FBF 100%)',   // morado
-  'background:linear-gradient(135deg,#1D9E75 0%,#34D399 100%)',   // verde
-  'background:linear-gradient(135deg,#2563EB 0%,#60A5FA 100%)',   // azul
-  'background:linear-gradient(135deg,#dc2626 0%,#f97316 100%)',   // rojo-naranja
-  'background:linear-gradient(135deg,#7C3AED 0%,#EC4899 100%)',   // violeta-rosa
-  'background:linear-gradient(135deg,#0891B2 0%,#06B6D4 100%)',   // cian
-  'background:linear-gradient(135deg,#D97706 0%,#FBBF24 100%)',   // ámbar
-  'background:linear-gradient(135deg,#059669 0%,#6A4C93 100%)',   // verde-morado
+  'background:linear-gradient(135deg,#6A4C93 0%,#8B5FBF 100%)',
+  'background:linear-gradient(135deg,#1D9E75 0%,#34D399 100%)',
+  'background:linear-gradient(135deg,#2563EB 0%,#60A5FA 100%)',
+  'background:linear-gradient(135deg,#dc2626 0%,#f97316 100%)',
+  'background:linear-gradient(135deg,#7C3AED 0%,#EC4899 100%)',
+  'background:linear-gradient(135deg,#0891B2 0%,#06B6D4 100%)',
+  'background:linear-gradient(135deg,#D97706 0%,#FBBF24 100%)',
+  'background:linear-gradient(135deg,#059669 0%,#6A4C93 100%)',
 ];
 
 function _clinicGradient(id) {
@@ -167,7 +166,6 @@ function renderClinicCard(clinic) {
            style="${clinic.image_url ? 'background:var(--bg-muted)' : _clinicGradient(clinic.business_id)}">
 
         ${clinic.image_url ? `
-        <!-- Real photo — on error swaps to gradient placeholder via JS -->
         <img src="${clinic.image_url}"
              alt="${clinic.name}"
              class="w-full h-full object-cover"
@@ -177,7 +175,6 @@ function renderClinicCard(clinic) {
                this.parentElement.querySelector('.clinic-placeholder-content').style.display='flex';
              "/>` : ''}
 
-        <!-- Placeholder content — visible when no image or image fails -->
         <div class="clinic-placeholder-content absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none"
              style="${clinic.image_url ? 'display:none' : 'display:flex'}">
           <div class="absolute pointer-events-none" style="width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.08);top:-40px;right:-30px;"></div>
@@ -192,7 +189,6 @@ function renderClinicCard(clinic) {
              style="font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,0.25);">${clinic.zone || 'Medellín'}</p>
         </div>
 
-        <!-- Badges — always visible -->
         <div class="absolute top-3 left-3 flex gap-2 z-10">
           ${clinic.is_24h
       ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full"
@@ -333,30 +329,20 @@ function renderGrid(list) {
 
 // ─────────────────────────────────────────────
 //  clinicsEvents
-//  IMPORTANTE: los listeners se registran ANTES
-//  del fetch para que funcionen inmediatamente.
-//  El fetch llena allClinics y dispara refresh().
+//  FIX: espera geolocalización ANTES de hacer
+//  fetch y renderizar, para que las cards ya
+//  tengan la distancia real desde el primer render.
+//
+//  Flujo secuencial:
+//    1. await geoloc()  → obtiene lat/lng o falla silenciosamente
+//    2. await fetch()   → trae las clínicas
+//    3. refresh()       → renderiza con distancias ya calculadas
 // ─────────────────────────────────────────────
 export function clinicsEvents() {
   let allClinics = [];
   let activeFilter = 'all';
-  let loaded = false;
   let _userLat = null;
   let _userLng = null;
-
-  // Pedir ubicación al cargar — si está concedida responde inmediato
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        _userLat = pos.coords.latitude;
-        _userLng = pos.coords.longitude;
-        console.log('[PAWS Clinics] Ubicación:', _userLat, _userLng);
-        if (loaded) refresh(); // re-ordena las cards si los datos ya llegaron
-      },
-      (err) => console.warn('[PAWS Clinics] Geolocation error:', err.code),
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
-    );
-  }
 
   function _haversine(lat1, lng1, lat2, lng2) {
     const R = 6371;
@@ -381,13 +367,12 @@ export function clinicsEvents() {
   const getSearch = () => document.getElementById('clinic-search')?.value.trim() || '';
   const getSort = () => document.getElementById('sort-select')?.value || 'rating';
   const refresh = () => {
-    if (!loaded) return;
     let list = applyFilters(allClinics, activeFilter, getSearch(), getSort());
-    list = _sortByDistance(list); // siempre ordenar por distancia al final
+    list = _sortByDistance(list);
     renderGrid(list);
   };
 
-  // ── 1. Registrar todos los listeners PRIMERO ─
+  // ── Registrar listeners PRIMERO (independiente del fetch/geoloc) ──────────
   document.querySelectorAll('.clinic-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.clinic-filter-btn')
@@ -410,30 +395,47 @@ export function clinicsEvents() {
 
   document.getElementById('sort-select')?.addEventListener('change', refresh);
 
-  // ── 2. Fetch DESPUÉS de registrar listeners ──
-  const grid = document.getElementById('clinics-grid');
-  if (grid) {
-    grid.innerHTML = `
-      <div class="col-span-3 flex items-center justify-center gap-2 py-16" style="color:var(--text-muted);">
-        <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-        </svg>
-        <span class="text-sm font-poppins">Loading clinics...</span>
-      </div>`;
-  }
+  // ── Flujo principal secuencial: geoloc → fetch → render ──────────────────
+  (async () => {
+    // Mostrar spinner mientras esperamos geoloc + fetch
+    const grid = document.getElementById('clinics-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div class="col-span-3 flex items-center justify-center gap-2 py-16" style="color:var(--text-muted);">
+          <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <span class="text-sm font-poppins">Loading clinics...</span>
+        </div>`;
+    }
 
-  fetch('/api/businesses?type=clinic')
-    .then(res => {
+    // PASO 1: esperar respuesta de geolocalización (éxito o error)
+    // Nunca renderizamos antes de que esto resuelva
+    await new Promise((resolve) => {
+      if (!navigator.geolocation) { resolve(); return; }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          _userLat = pos.coords.latitude;
+          _userLng = pos.coords.longitude;
+          console.log('[PAWS Clinics] Ubicación obtenida:', _userLat, _userLng);
+          resolve();
+        },
+        (err) => {
+          console.warn('[PAWS Clinics] Geolocation denegada o error:', err.code, err.message);
+          resolve(); // continúa sin ubicación — las cards se muestran igual
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    });
+
+    // PASO 2: ahora sí, traer las clínicas
+    try {
+      const res = await fetch('/api/businesses?type=clinic');
       if (!res.ok) throw new Error(`Server error ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      allClinics = data;
-      loaded = true;
-      refresh();
-    })
-    .catch(err => {
+      allClinics = await res.json();
+    } catch (err) {
+      console.error('[PAWS Clinics] Error cargando clínicas:', err);
       if (grid) grid.innerHTML = `
         <div class="col-span-3 text-center py-16">
           <div style="margin-bottom:12px;color:#dc2626;">
@@ -445,7 +447,12 @@ export function clinicsEvents() {
           <p class="font-poppins font-medium" style="color:#dc2626;">Error loading clinics</p>
           <p class="text-sm mt-1" style="color:var(--text-muted);">${err.message}</p>
         </div>`;
-    });
+      return;
+    }
+
+    // PASO 3: renderizar — con _userLat/_userLng ya definidos (o null si se denegó)
+    refresh();
+  })();
 }
 
 export const initClinicsView = clinicsEvents;
