@@ -104,8 +104,8 @@ export function loadMapPage() {
           <p class="filter-section-label">Quick</p>
           <div class="flex flex-wrap gap-1.5">
             <button class="fchip fchip-active" data-type="quick" data-value="all">All</button>
-            <button class="fchip" data-type="quick" data-value="24h">24h only</button>
-            <button class="fchip" data-type="quick" data-value="emergency">Emergency</button>
+            <button class="fchip" data-type="quick" data-value="24h">🌙 24h only</button>
+            <button class="fchip" data-type="quick" data-value="emergency">🚨 Emergency</button>
             <button class="fchip" data-type="quick" data-value="verified">✓ Verified</button>
           </div>
         </div>
@@ -138,7 +138,7 @@ export function loadMapPage() {
         </button>
         <div class="flex items-start gap-3">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-               style="background:rgba(255,255,255,0.20);"></div>
+               style="background:rgba(255,255,255,0.20);">🏥</div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 id="dc-name" class="font-bold text-white font-poppins text-base leading-tight"></h2>
@@ -317,7 +317,7 @@ function _askUserLocation() {
 
       const infoWindow = new google.maps.InfoWindow({
         content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
-                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">You are here</p>
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
                   </div>`,
       });
       _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
@@ -437,6 +437,15 @@ export function loadMapEvents() {
     document.head.appendChild(script);
   };
 
+  // Registrar callback ANTES de que arranque el mapa
+  // Si el permiso ya estaba concedido, el browser responde instantáneamente
+  // y el callback debe existir para cuando llegue la respuesta
+  window._onUserLocation = (lat, lng) => {
+    _userLat = lat;
+    _userLng = lng;
+    applyAll(); // re-ordena las cards por distancia
+  };
+
   // Fetch clinics from real API
   (async () => {
     const list = document.getElementById('clinic-list');
@@ -459,14 +468,6 @@ export function loadMapEvents() {
     populateFilterChips(allClinics);
     renderCards(filtered);
     bootGoogleMaps(allClinics);
-
-    // Callback called by _askUserLocation when the browser grants location.
-    // Updates coords and immediately re-renders cards sorted by distance.
-    window._onUserLocation = (lat, lng) => {
-      _userLat = lat;
-      _userLng = lng;
-      applyAll(); // re-filter + re-sort with distance now available
-    };
   })();
 
   window.updateMapMarkers = (clinicList) => { if (_googleMap) _addMarkers(clinicList); };
