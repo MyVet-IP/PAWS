@@ -137,29 +137,6 @@ export function dashboardPage() {
               </svg>
             </a>
           </div>
-          <!-- <div class="flex flex-col gap-2">
-            ${NEARBY_CLINICS.map(c => `
-              <a href="${c.hash}"
-                 class="bg-white rounded-xl p-4 flex items-center gap-3 transition"
-                 style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);
-                        transition:var(--transition-fast);"
-                 onmouseenter="this.style.borderColor='var(--text-highlight)'"
-                 onmouseleave="this.style.borderColor='var(--bg-muted)'">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0"
-                     style="background:rgba(144,189,244,0.25);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
-                <div class="flex-1 min-w-0">
-                  <p class="font-semibold font-poppins text-sm truncate" style="color:var(--text-primary);">${c.name}</p>
-                  <p class="text-xs" style="color:var(--text-muted);">${c.zone}</p>
-                </div>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                  ${c.open24 ? `
-                    <span class="text-xs font-bold px-2 py-0.5 rounded-full"
-                          style="background:#FEE2E2;color:#dc2626;">24/7</span>` : ''}
-                  <span class="text-xs font-bold font-poppins" style="color:var(--text-primary);">★ ${c.rating}</span>
-                </div>
-              </a>
-            `).join('')}
-          </div> -->
         </div>
 
       </div>
