@@ -97,7 +97,7 @@ exports.refresh = async (req, res, next) => {
         const accessToken = createAccessToken({ id: payload.id, email: payload.email, role: payload.role });
         res.cookie('access_token', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: httpOnly,
             sameSite: 'lax',
             maxAge: 15 * 60 * 1000
         });
