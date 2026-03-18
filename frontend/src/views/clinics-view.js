@@ -205,44 +205,44 @@ function renderClinicCard(clinic) {
 // ─────────────────────────────────────────────
 //  Estado y lógica de filtros
 // ─────────────────────────────────────────────
-// const FILTER_MAP = {
-//   emergency: { terms: ['emergency', 'urgencia', 'urgencias'], field24h: true },
-//   surgery: { terms: ['surgery', 'cirugía', 'cirugia', 'surgical'] },
-//   cardiology: { terms: ['cardiology', 'cardiología', 'cardiologia', 'cardio'] },
-//   dental: { terms: ['dental', 'odontología', 'odontologia', 'dentistry'] },
-//   lab: { terms: ['laboratory', 'laboratorio', 'lab', 'diagnostics', 'diagnóstico'] },
-// };
+const FILTER_MAP = {
+  emergency: { terms: ['emergency', 'urgencia', 'urgencias'], field24h: true },
+  surgery: { terms: ['surgery', 'cirugía', 'cirugia', 'surgical'] },
+  cardiology: { terms: ['cardiology', 'cardiología', 'cardiologia', 'cardio'] },
+  dental: { terms: ['dental', 'odontología', 'odontologia', 'dentistry'] },
+  lab: { terms: ['laboratory', 'laboratorio', 'lab', 'diagnostics', 'diagnóstico'] },
+};
 
-// function applyFilters(allClinics, filter, search, sort) {
-//   let list = [...allClinics];
+function applyFilters(allClinics, filter, search, sort) {
+  let list = [...allClinics];
 
-//   if (filter !== 'all') {
-//     const rule = FILTER_MAP[filter];
-//     if (rule) {
-//       list = list.filter(c => {
-//         const specs = (c.specialties || []).map(s => s.name.toLowerCase());
-//         const matchesSpec = rule.terms.some(t => specs.some(s => s.includes(t)));
-//         const matches24h = rule.field24h && c.is_24h;
-//         return matchesSpec || matches24h;
-//       });
-//     }
-//   }
+  if (filter !== 'all') {
+    const rule = FILTER_MAP[filter];
+    if (rule) {
+      list = list.filter(c => {
+        const specs = (c.specialties || []).map(s => s.name.toLowerCase());
+        const matchesSpec = rule.terms.some(t => specs.some(s => s.includes(t)));
+        const matches24h = rule.field24h && c.is_24h;
+        return matchesSpec || matches24h;
+      });
+    }
+  }
 
-//   if (search) {
-//     const q = search.toLowerCase().trim();
-//     list = list.filter(c =>
-//       (c.name || '').toLowerCase().includes(q) ||
-//       (c.address || '').toLowerCase().includes(q) ||
-//       (c.zone || '').toLowerCase().includes(q) ||
-//       (c.specialties || []).some(s => s.name.toLowerCase().includes(q))
-//     );
-//   }
+  if (search) {
+    const q = search.toLowerCase().trim();
+    list = list.filter(c =>
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.address || '').toLowerCase().includes(q) ||
+      (c.zone || '').toLowerCase().includes(q) ||
+      (c.specialties || []).some(s => s.name.toLowerCase().includes(q))
+    );
+  }
 
-//   if (sort === 'rating') list.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
-//   else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  if (sort === 'rating') list.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+  else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-//   return list;
-// }
+  return list;
+}
 
 function renderGrid(list) {
   const grid = document.getElementById('clinics-grid');
