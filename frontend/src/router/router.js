@@ -117,7 +117,7 @@ const PROTECTED = {
   "/pet-profile": "user",
   "/appointments": "user",
   "/veterinary": "business",
-  "/vet-profile": "business",
+  "/vet-profile": ["business", "user"],
   "/business-appointments": "business",
   "/medical-records": "user",
   "/admin-dashboard": "admin",
@@ -128,6 +128,7 @@ export function router() {
   const path = fullHash.split("?")[0];
   console.log("Router ejecutado en path:", path);
   const app = document.getElementById("app");
+  const currentUser = getUser();
 
   // Dynamic segment support: /pet-profile/:id
   let resolvedPath = path;
@@ -135,6 +136,16 @@ export function router() {
   if (path.startsWith('/pet-profile/')) {
     const id = parseInt(path.split('/pet-profile/')[1]);
     if (id) { routeParams.pet_id = id; resolvedPath = '/pet-profile'; }
+  }
+  if (path.startsWith('/vet-profile/')) {
+    const id = parseInt(path.split('/vet-profile/')[1]);
+    if (id) { routeParams.business_id = id; resolvedPath = '/vet-profile'; }
+  }
+
+  // Admin accounts are limited to the admin panel only.
+  if (currentUser?.role === 'admin' && resolvedPath !== '/admin-dashboard') {
+    window.location.hash = '/admin-dashboard';
+    return;
   }
 
   const viewFunction = routes[resolvedPath] || routes[path];
@@ -151,7 +162,9 @@ export function router() {
       if (!checkAuth(PROTECTED[authKey])) return;
     }
 
-    const html = resolvedPath === '/pet-profile' ? viewFunction(routeParams) : viewFunction();
+    const html = (resolvedPath === '/pet-profile' || resolvedPath === '/vet-profile')
+      ? viewFunction(routeParams)
+      : viewFunction();
 
     // ===== Layout selector =====
     if (path === "/login" || path === "/register" || path === "/forgot-password" || path === "/reset-password") {
@@ -231,7 +244,7 @@ function runPageEvents(path, params = {}) {
       break;
 
     case "/vet-profile":
-      vetClinicProfileEvents();
+      vetClinicProfileEvents(params);
       break;
 
     case "/services":
