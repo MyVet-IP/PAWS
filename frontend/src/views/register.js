@@ -1,3 +1,5 @@
+import { showToast } from "../utils.js";
+
 export function registerPage() {
     return `
     <section class="register-section">
@@ -32,8 +34,6 @@ export function registerPage() {
                 </div>
             </div>
 
-            <!-- Error/Success Message -->
-            <div id="form-message" class="hidden rounded-xl p-4 mb-6 text-sm register-message"></div>
 
             <!-- Registration Form -->
             <form id="register-form" class="space-y-6">
@@ -375,16 +375,15 @@ export function registerEvents() {
 
     confirmInput?.addEventListener('input', validateConfirmPassword);
 
-    // ── Form message helper ───────────────────
-    function showMessage(message, success) {
-        if (!formMessage) return;
-        formMessage.classList.remove('hidden');
-        formMessage.textContent = message;
-        formMessage.style.background = success
-            ? 'rgba(185,251,192,0.30)' : 'rgba(255,207,210,0.40)';
-        formMessage.style.color = success ? 'var(--color-green-dark)' : '#dc2626';
-        formMessage.style.border = success
-            ? '1px solid var(--color-green)' : '1px solid var(--color-pink)';
+
+    function redirectByRole(userData) {
+        if (userData.role === 'business') {
+            window.location.hash = '/veterinary';
+        } else if (userData.role === 'admin') {
+            window.location.hash = '/admin-dashboard';
+        } else {
+            window.location.hash = '/user-dashboard';
+        }
     }
 
     // ── Form submission ───────────────────────
@@ -400,21 +399,21 @@ export function registerEvents() {
             const terms = document.getElementById("terms").checked;
 
             if (!name || !email || !password || !confirmPassword) {
-                showMessage("All fields are required", false); return;
+                showToast("All fields are required", "error"); return;
             }
             if (!role) {
-                showMessage("Please select an account type", false); return;
+                showToast("Please select an account type", "error"); return;
             }
             if (!terms) {
-                showMessage("Please accept the Terms of Service", false); return;
+                showToast("Please accept the Terms of Service", "error"); return;
             }
             if (password !== confirmPassword) {
-                showMessage("Passwords do not match", false);
+                showToast("Passwords do not match", "error");
                 validateConfirmPassword();
                 return;
             }
             if (password.length < 8) {
-                showMessage("Password must be at least 8 characters", false); return;
+                showToast("Password must be at least 8 characters", "error"); return;
             }
 
             try {
@@ -425,13 +424,30 @@ export function registerEvents() {
                 });
                 const data = await response.json();
                 if (!response.ok) {
-                    showMessage(data.message || data.error || "Registration failed", false);
+                    showToast(data.message || data.error || "Registration failed", "error");
                     return;
                 }
-                showMessage("Account created successfully! Redirecting...", true);
-                setTimeout(() => { window.location.hash = "/login"; }, 1500);
+
+                // Auto-login right after successful registration.
+                const loginRes = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const loginData = await loginRes.json().catch(() => ({}));
+                if (!loginRes.ok) {
+                    showMessage('Account created, but automatic login failed. Please sign in manually.', false);
+                    setTimeout(() => { window.location.hash = '/login'; }, 1400);
+                    return;
+                }
+
+                const userData = loginData.user || loginData;
+                localStorage.setItem('user', JSON.stringify(userData));
+                showMessage('Account created successfully! Welcome to PAWS.', true);
+                setTimeout(() => { redirectByRole(userData); }, 900);
             } catch {
-                showMessage("Connection error. Please try again.", false);
+                showToast("Connection error. Please try again.", "error");
             }
         });
     }

@@ -1,3 +1,5 @@
+import { showToast } from "../utils.js";
+
 export function loginPage() {
     return `
     <section class="min-h-screen flex items-center justify-center py-12 px-4 bg-gradient-to-br from-paws-yellow/30 via-white to-paws-purple/20">
@@ -316,9 +318,6 @@ export function loginEvents() {
         const email = document.getElementById(emailId).value.trim();
         const password = document.getElementById(passwordId).value;
 
-        errorBox.classList.add('hidden');
-        errorBox.textContent = '';
-
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -329,8 +328,7 @@ export function loginEvents() {
             const data = await res.json();
 
             if (!res.ok) {
-                errorBox.textContent = data.error || 'Login failed. Please try again.';
-                errorBox.classList.remove('hidden');
+                showToast(data.error || 'Login failed. Please try again.', 'error');
                 return;
             }
 
@@ -349,8 +347,7 @@ export function loginEvents() {
                 window.location.hash = '/user-dashboard';
             }
         } catch (error) {
-            errorBox.textContent = 'Connection error. Please try again.';
-            errorBox.classList.remove('hidden');
+            showToast('Connection error. Please try again.', 'error');
         }
     }
 

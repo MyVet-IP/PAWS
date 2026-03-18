@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s http://localhost:3000/api/health)",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/businesses\" -H \"Content-Type: application/json\" -d '{\"\"user_id\"\": 289, \"\"business_type\"\": \"\"clinic\"\", \"\"name\"\": \"\"Dereck Franco\"\", \"\"address\"\": \"\"Por definir\"\"}')",
+      "Bash(curl -s -X PUT \"http://localhost:3000/api/businesses/201/schedule\" -H \"Content-Type: application/json\" -d '{\"\"days\"\": [:*)"
+    ]
+  }
+}

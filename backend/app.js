@@ -51,6 +51,7 @@ const noCache = {
 };
 app.use(express.static(path.join(__dirname, '..'), noCache));
 app.use(express.static(path.join(__dirname, '..', 'frontend'), noCache));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ ok: true, message: 'API corriendo' }));
@@ -78,7 +79,7 @@ app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/contact', require('./routes/contact'));
 
 app.get('/api/config', (req, res) => {
-  res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
+    res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
 });
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
@@ -89,66 +90,71 @@ app.get(/^\/(?!api)(?:[^.]*)?$/, (req, res) =>
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 app.post("/api/register", async (req, res) => {
     const { name, email, password, role } = req.body;
-    // Map frontend role values to DB-valid values ('admin'|'user'|'business')
     const roleMap = { owner: 'user', vet: 'business', business: 'business', admin: 'admin' };
     const dbRole = roleMap[role] || 'user';
+
+    // Use a transaction so user + business are created atomically
+    const client = await db.pool.connect();
     try {
-        const existingUser = await db.get(
-            "SELECT user_id FROM users WHERE email = $1",
-            [email]
+        await client.query('BEGIN');
+
+        const existingUser = await client.query(
+            "SELECT user_id FROM users WHERE email = $1", [email]
         );
-        if (existingUser) {
+        if (existingUser.rows[0]) {
+            await client.query('ROLLBACK');
             return res.status(400).json({ message: "Este correo ya está registrado" });
         }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const userResult = await db.get(
+        const userResult = await client.query(
             "INSERT INTO users (name, email, password, role) VALUES ($1,$2,$3,$4) RETURNING user_id",
             [name, email, hashedPassword, dbRole]
         );
+        const userId = userResult.rows[0].user_id;
 
         // Auto-create business profile for vet/business roles
-        if (dbRole === 'business' && userResult?.user_id) {
-            const userId = userResult.user_id;
-            const businessType = role === 'vet' ? 'clinic' : 'clinic'; // Default to clinic
+        if (dbRole === 'business') {
+            const businessType = 'clinic';
 
-            // Create business with status='draft' (no NIT required for drafts)
-            const bizResult = await db.get(
-                `INSERT INTO businesses (user_id, business_type, name, status, city)
-                 VALUES ($1, $2, $3, 'draft', 'Medellín') RETURNING business_id`,
+            const bizResult = await client.query(
+                `INSERT INTO businesses (user_id, business_type, name, address, status, city)
+                 VALUES ($1, $2, $3, '', 'active', 'Medellín') RETURNING business_id`,
                 [userId, businessType, name]
             );
+            const businessId = bizResult.rows[0].business_id;
 
-            if (bizResult?.business_id) {
-                // Create clinic record
-                await db.run(
-                    `INSERT INTO clinics (business_id) VALUES ($1)`,
-                    [bizResult.business_id]
+            await client.query(
+                `INSERT INTO clinics (business_id) VALUES ($1)`, [businessId]
+            );
+
+            // Create default schedule (Mon-Sat open, Sun closed)
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            for (const day of days) {
+                const isSunday = day === 'Sunday';
+                const isSaturday = day === 'Saturday';
+                await client.query(
+                    `INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open)
+                     VALUES ($1, $2, $3, $4, $5)`,
+                    [
+                        businessId,
+                        day,
+                        isSunday ? null : '09:00',
+                        isSunday ? null : (isSaturday ? '14:00' : '18:00'),
+                        !isSunday
+                    ]
                 );
-
-                // Create default schedule (Mon-Sat open, Sun closed)
-                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-                for (const day of days) {
-                    const isSunday = day === 'Sunday';
-                    const isSaturday = day === 'Saturday';
-                    await db.run(
-                        `INSERT INTO schedules (business_id, day_of_week, open_time, close_time, is_open)
-                         VALUES ($1, $2, $3, $4, $5)`,
-                        [
-                            bizResult.business_id,
-                            day,
-                            isSunday ? null : '09:00',
-                            isSunday ? null : (isSaturday ? '14:00' : '18:00'),
-                            !isSunday
-                        ]
-                    );
-                }
             }
         }
 
+        await client.query('COMMIT');
         res.status(201).json({ message: "Usuario registrado correctamente" });
     } catch (error) {
+        await client.query('ROLLBACK');
         console.error(error);
-        res.status(500).json({ message: "Error en el servidor :P" });
+        res.status(500).json({ message: "Error en el servidor" });
+    } finally {
+        client.release();
     }
 });
 

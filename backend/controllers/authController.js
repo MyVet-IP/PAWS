@@ -1,4 +1,4 @@
-﻿const authStorage = require('../storage/authStorage');
+const authStorage = require('../storage/authStorage');
 const jwt = require('jsonwebtoken');
 
 const ACCESS_EXPIRES = '15m';
@@ -100,5 +100,84 @@ exports.me = async (req, res, next) => {
         if (!user) return res.status(404).json({ error: 'User not found' });
         const { password: _, ...safe } = user;
         res.json(safe);
+    } catch (err) { next(err); }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email is required' });
+
+        const user = await authStorage.getUserByEmail(email);
+        if (!user) {
+            // Return 200 even if user doesn't exist to prevent email enumeration
+            return res.json({ message: 'If the email exists, a password recovery link has been sent.' });
+        }
+
+        // Create a short-lived token specifically for password reset
+        const resetSecret = process.env.JWT_SECRET || 'dev-secret';
+        const resetToken = jwt.sign(
+            { id: user.user_id, email: user.email, purpose: 'password_reset' },
+            resetSecret,
+            { expiresIn: '15m' }
+        );
+
+        // Send to N8N Webhook (password-recovery workflow)
+        const n8nWebhookUrl = process.env.N8N_RECOVERY_WEBHOOK || 'https://arnoldow.app.n8n.cloud/webhook/password-recovery';
+        const appUrl = process.env.APP_URL || 'http://localhost:3000';
+        const resetLink = `${appUrl}/#/reset-password?token=${resetToken}`;
+
+        try {
+            await fetch(n8nWebhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: user.email,
+                    name: user.name,
+                    resetLink: resetLink
+                })
+            });
+        } catch (fetchErr) {
+            console.error("Error triggering current N8N webhook:", fetchErr);
+            // We do not return 500 here since the token was created successfully,
+            // but in production failing to trigger n8n means the email wasn't sent.
+            return res.status(500).json({ error: 'Internal error contacting the mail service.' });
+        }
+
+        res.json({ message: 'If the email exists, a password recovery link has been sent.' });
+    } catch (err) { next(err); }
+};
+
+exports.resetPassword = async (req, res, next) => {
+    try {
+        const { token, newPassword } = req.body;
+        if (!token || !newPassword) {
+            return res.status(400).json({ error: 'Token and new password are required' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+        }
+
+        const resetSecret = process.env.JWT_SECRET || 'dev-secret';
+        let payload;
+        try {
+            payload = jwt.verify(token, resetSecret);
+        } catch (err) {
+            return res.status(400).json({ error: 'The recovery link is invalid or has expired.' });
+        }
+
+        if (payload.purpose !== 'password_reset' || !payload.id) {
+            return res.status(400).json({ error: 'Invalid token' });
+        }
+
+        const user = await authStorage.getUserById(payload.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        await authStorage.updatePassword(user.user_id, newPassword);
+
+        res.json({ message: 'Password updated successfully. You can now sign in.' });
     } catch (err) { next(err); }
 };

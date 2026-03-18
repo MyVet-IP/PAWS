@@ -1,4 +1,5 @@
 //  user-dashboard.js
+import { showToast } from "../utils.js";
 
 const HEALTH_TIPS = [
   { icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M12 3C12 3 6 9.5 6 14a6 6 0 0012 0c0-4.5-6-11-6-11z'/></svg>", tip: "Make sure your pet always has fresh water available — hydration is key to kidney health.", color: "var(--color-blue)" },
@@ -43,7 +44,7 @@ export function dashboardPage() {
       </div>
       <button id="btn-add-pet"
         class="flex items-center gap-2 px-4 py-2 rounded-xl font-poppins font-semibold text-sm
-               text-white transition"
+              text-white transition"
         style="background:var(--text-highlight);transition:var(--transition-fast);"
         onmouseenter="this.style.opacity='0.90'"
         onmouseleave="this.style.opacity='1'">
@@ -334,22 +335,20 @@ export function dashboardPage() {
 export function dashboardEvents() {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
-  // Agregar esto antes de cualquier fetch:
-  if (!user || !user.user_id) {
+  const userId = user?.user_id || user?.id;
+  if (!userId) {
     console.error('No user_id found in localStorage', user);
     return;
   }
 
   const modal = document.getElementById('modal-add-pet');
 
-  // ── Username ──────────────────────────────
   const nameEl = document.getElementById('dash-username');
   if (nameEl && user) {
     const first = (user.name || user.nombre || 'there').split(' ')[0];
     nameEl.textContent = `Welcome, ${first}! `;
   }
 
-  // ── Modal ─────────────────────────────────
   const openModal = () => {
     if (modal) modal.style.display = 'flex';
     const errMsg = document.getElementById('pet-error-msg');
@@ -361,7 +360,6 @@ export function dashboardEvents() {
   document.getElementById('modal-close')?.addEventListener('click', closeModal);
   modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-  // ── Save pet ──────────────────────────────
   document.getElementById('btn-save-pet')?.addEventListener('click', async () => {
     const name = document.getElementById('pet-nombre')?.value.trim();
     const species = document.getElementById('pet-especie')?.value;
@@ -370,15 +368,13 @@ export function dashboardEvents() {
 
     if (!name || isNaN(age)) return;
 
-    // animal_type_id: 1=Dog, 2=Cat, 3=Other (según seed de la BD)
     const SPECIES_MAP = { Dog: 1, Cat: 2, Other: 3 };
     const animal_type_id = SPECIES_MAP[species] || 3;
 
-    // birth_date aproximada a partir de la edad en años
     const birthYear = new Date().getFullYear() - age;
     const birth_date = `${birthYear}-01-01`;
 
-    const body = { name, animal_type_id, breed: breed || null, birth_date, user_id: user?.user_id || user?.id };
+    const body = { name, animal_type_id, breed: breed || null, birth_date, user_id: userId };
 
     try {
       const res = await fetch('/api/pets', {
@@ -402,7 +398,6 @@ export function dashboardEvents() {
     }
   });
 
-  // ── Load data ─────────────────────────────
   loadPets(user);
   loadNextAppointment(user);
 }
@@ -464,10 +459,10 @@ async function loadPets(user) {
       const bg = isCat ? 'rgba(241,192,232,0.30)' : 'rgba(185,251,192,0.30)';
       const records = (p.medical_records || []).length;
       let ageText = '';
-      if (p.birth_date) {
-        const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
-        ageText = `${yrs} ${yrs === 1 ? 'year' : 'years'}`;
-      }
+          if (p.birth_date && !isNaN(new Date(p.birth_date))) {
+            const yrs = Math.floor((Date.now() - new Date(p.birth_date)) / (365.25 * 24 * 3600 * 1000));
+            if (!isNaN(yrs)) ageText = `${yrs} ${yrs === 1 ? 'year' : 'years'}`;
+          }
       return `
       <div class="bg-white rounded-2xl p-4 cursor-pointer transition"
            style="box-shadow:var(--shadow-card);border:1px solid var(--bg-muted);transition:var(--transition-fast);"
@@ -488,8 +483,8 @@ async function loadPets(user) {
                     style="background:rgba(185,251,192,0.35);color:var(--color-green-dark);">${ageText}</span>`
           : '<span></span>'}
           ${records > 0
-          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> ${records} record${records !== 1 ? 's' : ''}</span>`
-          : `<span class="text-xs font-semibold font-poppins" style="color:var(--text-highlight);">View →</span>`}
+          ? `<span class="text-xs font-poppins" style="color:var(--text-muted);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> ${records} recs</span>`
+          : '<span></span>'}
         </div>
       </div>`;
     }).join('');
@@ -497,31 +492,26 @@ async function loadPets(user) {
     grid.innerHTML = cards + addCard;
 
   } catch (err) {
-    console.error(err);
-    grid.innerHTML = `
-      <div class="col-span-2 text-center py-4">
-        <p class="text-sm" style="color:var(--text-muted);">Could not load pets.
-          <button onclick="window.location.reload()" class="underline"
-                  style="color:var(--text-highlight);">Retry</button>
-        </p>
-      </div>`;
+    console.error('Error loading pets:', err);
+    if (grid) grid.innerHTML = '<p class="text-xs py-4 text-center" style="color:var(--text-muted);">Error loading pets.</p>';
   }
 }
 
-// ─────────────────────────────────────────────
-//  loadNextAppointment
-// ─────────────────────────────────────────────
 async function loadNextAppointment(user) {
   if (!user) return;
+
   try {
     const userId = user.user_id || user.id;
     const res = await fetch(`/api/users/${userId}/appointments`);
     if (!res.ok) return;
+
     const appointments = await res.json();
-    // Filtrar solo citas futuras y tomar la primera
     const now = new Date();
+
     const upcoming = (Array.isArray(appointments) ? appointments : [])
-      .filter(a => new Date(a.date) >= now && a.status !== 'cancelled');
+      .filter(a => new Date(a.date) >= now && a.status !== 'cancelled')
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
     const next = upcoming[0] || null;
 
     const textEl = document.getElementById('next-appointment-text');
@@ -529,12 +519,23 @@ async function loadNextAppointment(user) {
 
     if (next && textEl) {
       textEl.textContent = next.business_name || next.notes || 'Appointment scheduled';
-      if (subEl) {
-        const d = new Date(next.date);
-        subEl.textContent = `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${next.time || ''}`;
+
+      const d = new Date(next.date);
+      const dateText = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const timeText = next.time || '';
+
+      if (subEl) subEl.textContent = `${dateText} at ${timeText}`;
+
+      const diffHours = (d - now) / (1000 * 60 * 60);
+
+      if (diffHours > 0 && diffHours <= 24 &&
+          !sessionStorage.getItem('notified_appointment_' + next.appointment_id)) {
+
+        showToast(`Reminder: Appointment with ${next.business_name || 'the vet'} in <24h`, 'warning');
+        sessionStorage.setItem('notified_appointment_' + next.appointment_id, 'true');
       }
     }
-  } catch {
-    // silently fail — default text already shown
+  } catch (err) {
+    console.error('Error loading next appointment:', err);
   }
 }

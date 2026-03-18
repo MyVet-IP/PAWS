@@ -1,4 +1,4 @@
-﻿const db = require('../db');
+const db = require('../db');
 const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
@@ -43,6 +43,12 @@ class AuthStorage {
 
     async deleteRefreshToken(token) {
         await db.run('DELETE FROM refresh_tokens WHERE token = $1', [token]);
+        return { success: true };
+    }
+
+    async updatePassword(userId, newPassword) {
+        const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        await db.run('UPDATE users SET password = $1 WHERE user_id = $2', [hashed, userId]);
         return { success: true };
     }
 }

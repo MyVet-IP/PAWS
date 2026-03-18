@@ -6,71 +6,33 @@
 //   Sidebar max-height for mobile
 // ─────────────────────────────────────────────
 
-const CLINICS_SAMPLE = [
-  {
-    id: 1, name: "Clínica San Juan Pet",
-    location: "El Poblado, Medellín",
-    address: "Calle 10 # 43D-50, El Poblado",
-    rating: 4.9, reviews: 128,
-    services: ["Urgencias", "Cirugía", "Vacunación"],
-    zone: "Poblado", open24: true, emergency: true,
-    phone: "+57 300 111 2222", whatsapp: "573001112222",
-    hours: "Lunes a Domingo — 24 horas", verified: true,
-    description: "Clínica veterinaria de alta complejidad con más de 15 años de experiencia. UCI veterinaria, laboratorio clínico y especialistas certificados.",
-    lat: 6.2100, lng: -75.5680,
-  },
-  {
-    id: 2, name: "VetCare Laureles",
-    location: "Laureles, Medellín",
-    address: "Carrera 76 # 39-12, Laureles",
-    rating: 4.7, reviews: 89,
-    services: ["Consulta", "Vacunación", "Dermatología"],
-    zone: "Laureles", open24: false, emergency: false,
-    phone: "+57 300 333 4444", whatsapp: "573003334444",
-    hours: "Lun–Vie 8am–6pm · Sáb 8am–2pm", verified: true,
-    description: "Atención integral con enfoque en medicina preventiva y bienestar animal. Ambiente tranquilo y equipo especializado.",
-    lat: 6.2444, lng: -75.5963,
-  },
-  {
-    id: 3, name: "Animal House Envigado",
-    location: "Envigado, Medellín",
-    address: "Calle 37 Sur # 43B-10, Envigado",
-    rating: 4.8, reviews: 203,
-    services: ["Urgencias", "Ortopedia", "Laboratorio"],
-    zone: "Envigado", open24: true, emergency: true,
-    phone: "+57 300 555 6666", whatsapp: "573005556666",
-    hours: "Lunes a Domingo — 24 horas", verified: false,
-    description: "Especialistas en ortopedia y traumatología animal. Atención de urgencias 24/7 con equipos de diagnóstico de última generación.",
-    lat: 6.1695, lng: -75.5924,
-  },
-  {
-    id: 4, name: "PetSalud Belén",
-    location: "Belén, Medellín",
-    address: "Carrera 76 # 33-40, Belén",
-    rating: 4.5, reviews: 64,
-    services: ["Consulta", "Cirugía", "Odontología"],
-    zone: "Belén", open24: false, emergency: false,
-    phone: "+57 300 777 8888", whatsapp: null,
-    hours: "Lunes a Sábado 9am–7pm", verified: true,
-    description: "Clínica veterinaria con ambiente familiar y atención personalizada. Servicio de odontología veterinaria especializada.",
-    lat: 6.2305, lng: -75.6122,
-  },
-  {
-    id: 5, name: "Vet 24 Sabaneta",
-    location: "Sabaneta, Medellín",
-    address: "Calle 75 Sur # 45-20, Sabaneta",
-    rating: 4.6, reviews: 47,
-    services: ["Urgencias", "Vacunación", "Consulta"],
-    zone: "Sabaneta", open24: true, emergency: true,
-    phone: "+57 300 999 0000", whatsapp: "573009990000",
-    hours: "Lunes a Domingo — 24 horas", verified: true,
-    description: "Urgencias veterinarias disponibles las 24 horas. Equipo de guardia permanente para atender cualquier emergencia de tu mascota.",
-    lat: 6.1510, lng: -75.6170,
-  },
-];
-
-const ALL_ZONES = [...new Set(CLINICS_SAMPLE.map(c => c.zone))];
-const ALL_SERVICES = [...new Set(CLINICS_SAMPLE.flatMap(c => c.services))];
+// ─────────────────────────────────────────────
+//  Normalizer — API response → map-friendly shape
+// ─────────────────────────────────────────────
+function normalizeClinic(raw) {
+  const specs = (raw.specialties || []).map(s => (s.name || s).toString());
+  return {
+    id:          raw.business_id,
+    name:        raw.name || '',
+    location:    raw.zone ? `${raw.zone}, Medellín` : (raw.city || 'Medellín'),
+    address:     raw.address || raw.zone || '',
+    rating:      raw.rating_average ? parseFloat(raw.rating_average).toFixed(1) : '—',
+    reviews:     raw.rating_count || 0,
+    services:    specs.length ? specs : [],
+    zone:        raw.zone || '',
+    open24:      raw.is_24h === true,
+    emergency:   raw.is_24h === true ||
+                 specs.some(s => /emerg|urgenc/i.test(s)),
+    phone:       raw.phone || null,
+    whatsapp:    raw.whatsapp || null,
+    hours:       raw.is_24h ? 'Lunes a Domingo — 24 horas' : 'Lun–Sáb 8am–6:30pm · Dom cerrado',
+    verified:    raw.nit_verified === 'verified',
+    description: raw.description ||
+                 (raw.website ? `Web: ${raw.website}` : ''),
+    lat:         raw.latitude  ? parseFloat(raw.latitude)  : null,
+    lng:         raw.longitude ? parseFloat(raw.longitude) : null,
+  };
+}
 
 // Google Maps instance — shared between render and events
 let _googleMap = null;
@@ -111,9 +73,7 @@ export function loadMapPage() {
       <!-- Results count -->
       <div class="map-results-bar">
         <p class="text-xs font-roboto" style="color:var(--text-muted);">
-          <span id="map-count" class="font-semibold" style="color:var(--text-primary);">
-            ${CLINICS_SAMPLE.length}
-          </span> clinics found
+          <span id="map-count" class="font-semibold" style="color:var(--text-primary);">…</span> clinics found
         </p>
         <button id="btn-clear-filters" class="hidden text-xs font-semibold font-poppins"
                 style="color:var(--text-highlight);">
@@ -185,19 +145,11 @@ export function loadMapPage() {
         </div>
         <div>
           <p class="filter-section-label">Zone</p>
-          <div class="flex flex-wrap gap-1.5">
-            ${ALL_ZONES.map(z => `
-              <button class="fchip" data-type="zone" data-value="${z}">${z}</button>
-            `).join('')}
-          </div>
+          <div id="filter-zones-container" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div>
           <p class="filter-section-label">Services</p>
-          <div class="flex flex-wrap gap-1.5">
-            ${ALL_SERVICES.map(s => `
-              <button class="fchip" data-type="service" data-value="${s}">${s}</button>
-            `).join('')}
-          </div>
+          <div id="filter-services-container" class="flex flex-wrap gap-1.5"></div>
         </div>
         <button id="btn-apply-filters"
           class="w-full py-2 rounded-xl font-poppins font-semibold text-sm text-white transition"
@@ -364,6 +316,7 @@ function _addMarkers(clinics) {
   _mapMarkers = [];
 
   clinics.forEach(c => {
+    if (!c.lat || !c.lng) return; // skip clinics without coordinates
     const marker = new google.maps.Marker({
       position: { lat: c.lat, lng: c.lng },
       map: _googleMap,
@@ -449,7 +402,8 @@ function _askUserLocation() {
 //  loadMapEvents
 // ─────────────────────────────────────────────
 export function loadMapEvents() {
-  let filtered = [...CLINICS_SAMPLE];
+  let allClinics = [];
+  let filtered = [];
   let searchQuery = "";
   let activeCardId = null;
 
@@ -463,25 +417,109 @@ export function loadMapEvents() {
   const openDetail = () => detailModal?.classList.add("open");
   const closeDetail = () => detailModal?.classList.remove("open");
 
+  // ── Populate zone/service chips from real data ─
+  function populateFilterChips(clinics) {
+    const zones    = [...new Set(clinics.map(c => c.zone).filter(Boolean))];
+    const services = [...new Set(clinics.flatMap(c => c.services))];
+
+    const zonesContainer    = document.getElementById('filter-zones-container');
+    const servicesContainer = document.getElementById('filter-services-container');
+
+    if (zonesContainer) {
+      zonesContainer.innerHTML = zones.map(z =>
+        `<button class="fchip" data-type="zone" data-value="${z}">${z}</button>`
+      ).join('');
+      // Re-attach listeners for new chips
+      zonesContainer.querySelectorAll('.fchip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          chip.classList.toggle('fchip-active');
+          const v = chip.dataset.value;
+          if (chip.classList.contains('fchip-active')) pendingFilters.zones.push(v);
+          else pendingFilters.zones = pendingFilters.zones.filter(z => z !== v);
+        });
+      });
+    }
+
+    if (servicesContainer) {
+      servicesContainer.innerHTML = services.map(s =>
+        `<button class="fchip" data-type="service" data-value="${s}">${s}</button>`
+      ).join('');
+      servicesContainer.querySelectorAll('.fchip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          chip.classList.toggle('fchip-active');
+          const v = chip.dataset.value;
+          if (chip.classList.contains('fchip-active')) pendingFilters.services.push(v);
+          else pendingFilters.services = pendingFilters.services.filter(s => s !== v);
+        });
+      });
+    }
+  }
+
   // ── Init Google Maps ──────────────────────
-  // Load the Maps script dynamically if not already loaded
-  if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+  const bootGoogleMaps = async (clinics) => {
+    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+      initGoogleMap(clinics);
+      _askUserLocation();
+      return;
+    }
+
+    let apiKey = '';
+    try {
+      const configRes = await fetch('/api/config');
+      const config = await configRes.json();
+      apiKey = config?.mapsKey || '';
+    } catch {
+      apiKey = '';
+    }
+
+    if (!apiKey) {
+      console.error('Google Maps API key not found. Set GOOGLE_MAPS_API_KEY in backend .env');
+      return;
+    }
+
     const script = document.createElement('script');
-    // TODO: Replace YOUR_API_KEY with the actual Google Maps API key
-    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=window.__initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async&callback=window.__initMap`;
     script.async = true;
     script.defer = true;
+    script.onerror = () => {
+      console.error('Failed to load Google Maps script');
+      delete window.__initMap;
+    };
     window.__initMap = () => {
-      initGoogleMap(CLINICS_SAMPLE);
+      initGoogleMap(clinics);
       _askUserLocation();
       delete window.__initMap;
     };
     document.head.appendChild(script);
-  } else {
-    // Maps already loaded
-    initGoogleMap(CLINICS_SAMPLE);
-    _askUserLocation();
-  }
+  };
+
+  // ── Fetch real clinics from API ───────────
+  (async () => {
+    const list = document.getElementById('clinic-list');
+    if (list) list.innerHTML = `
+      <div style="padding:24px;text-align:center;color:var(--text-muted);">
+        <svg style="width:20px;height:20px;animation:spin 1s linear infinite;display:inline-block;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <p style="font-size:12px;margin-top:8px;font-family:'Poppins',sans-serif;">Loading clinics…</p>
+      </div>`;
+
+    try {
+      const res = await fetch('/api/businesses?type=clinic');
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      const raw = await res.json();
+      allClinics = raw.map(normalizeClinic);
+    } catch (err) {
+      console.error('Error loading clinics:', err);
+      allClinics = [];
+    }
+
+    filtered = [...allClinics];
+    populateFilterChips(allClinics);
+    renderCards(filtered);
+    bootGoogleMaps(allClinics);
+  })();
 
   // ── Expose updateMapMarkers for filters ───
   window.updateMapMarkers = (clinicList) => {
@@ -490,7 +528,7 @@ export function loadMapEvents() {
 
   // ── Expose focusVet for card click ────────
   window.focusVet = (id) => {
-    const c = CLINICS_SAMPLE.find(cl => cl.id === id);
+    const c = allClinics.find(cl => cl.id === id);
     if (!c || !_googleMap) return;
     _googleMap.panTo({ lat: c.lat, lng: c.lng });
     _googleMap.setZoom(15);
@@ -507,24 +545,13 @@ export function loadMapEvents() {
   document.getElementById("modal-detail-close")?.addEventListener("click", closeDetail);
   detailModal?.addEventListener("click", e => { if (e.target === detailModal) closeDetail(); });
 
-  // ── Filter chips ──────────────────────────
-  document.querySelectorAll(".fchip").forEach(chip => {
+  // ── Filter chips (quick only — zone/service set up in populateFilterChips) ──
+  document.querySelectorAll(".fchip[data-type='quick']").forEach(chip => {
     chip.addEventListener("click", () => {
-      const { type, value } = chip.dataset;
-      if (type === "quick") {
-        document.querySelectorAll(".fchip[data-type='quick']")
-          .forEach(c => c.classList.remove("fchip-active"));
-        chip.classList.add("fchip-active");
-        pendingFilters.quick = value;
-      } else if (type === "zone") {
-        chip.classList.toggle("fchip-active");
-        if (chip.classList.contains("fchip-active")) pendingFilters.zones.push(value);
-        else pendingFilters.zones = pendingFilters.zones.filter(z => z !== value);
-      } else if (type === "service") {
-        chip.classList.toggle("fchip-active");
-        if (chip.classList.contains("fchip-active")) pendingFilters.services.push(value);
-        else pendingFilters.services = pendingFilters.services.filter(s => s !== value);
-      }
+      document.querySelectorAll(".fchip[data-type='quick']")
+        .forEach(c => c.classList.remove("fchip-active"));
+      chip.classList.add("fchip-active");
+      pendingFilters.quick = chip.dataset.value;
     });
   });
 
@@ -557,7 +584,7 @@ export function loadMapEvents() {
 
   // ── Filter + search logic ─────────────────
   function applyAll() {
-    filtered = CLINICS_SAMPLE.filter(c => {
+    filtered = allClinics.filter(c => {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         if (!c.name.toLowerCase().includes(q) &&
@@ -677,7 +704,7 @@ export function loadMapEvents() {
 
   // ── Clinic detail modal ───────────────────
   function openClinicDetail(id) {
-    const c = CLINICS_SAMPLE.find(cl => cl.id === id);
+    const c = allClinics.find(cl => cl.id === id);
     if (!c) return;
 
     const el = id => document.getElementById(id);
@@ -729,6 +756,5 @@ export function loadMapEvents() {
 
   window.openClinicDetail = openClinicDetail;
 
-  // ── Initial render ────────────────────────
-  renderCards(CLINICS_SAMPLE);
+  // Initial render happens after the async fetch above
 }

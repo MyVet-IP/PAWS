@@ -20,6 +20,7 @@
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
+- [Dependencies](#dependencies)
 - [Environment Variables](#environment-variables)
 - [Database Setup](#database-setup)
 - [Running with Docker](#running-with-docker)
@@ -80,7 +81,7 @@ PAWS is a full-stack **Single Page Application (SPA)** that bridges the gap betw
 | Database | PostgreSQL 14+ |
 | Authentication | JWT + Google OAuth 2.0 (Passport.js) |
 | AI | Google Gemini 2.5 Flash |
-| Chatbot | Groq SDK |
+| Chatbot | n8n |
 | Email | Nodemailer |
 | Containers | Docker + Docker Compose |
 | Deployment | Azure App Service + Azure Container Registry |
@@ -107,6 +108,8 @@ cd PAWS-develop
 ```bash
 npm install
 ```
+
+This single command installs all packages listed in `package.json`. See the [Dependencies](#dependencies) section for a full breakdown of what each package does.
 
 ### 3. Configure environment variables
 
@@ -136,6 +139,41 @@ The app will be available at **http://localhost:3000**
 
 ---
 
+## Dependencies
+
+All dependencies are managed via `package.json` and installed with `npm install`.
+
+### Production dependencies
+
+| Package | Version | What it does |
+|---------|---------|--------------|
+| `express` | ^4.18.2 | The web framework. Handles all HTTP routes, middleware and responses. The backbone of the entire backend. |
+| `pg` | ^8.11.3 | PostgreSQL client for Node.js. Provides the connection pool (`Pool`) that executes all SQL queries against the database. |
+| `dotenv` | ^16.6.1 | Loads the `.env` file into `process.env` at startup. Keeps all secrets out of the source code. |
+| `jsonwebtoken` | ^9.0.3 | Creates and verifies JWT tokens. Used for the access token (15 min) and refresh token (7 days) in the authentication flow. |
+| `bcryptjs` | ^3.0.3 | Hashes passwords before saving them to the database. Also used to compare a plain-text password against its hash during login — without ever decrypting it. |
+| `bcrypt` | ^6.0.0 | Same purpose as bcryptjs but uses a native C++ binding (faster). Both are present in the project; bcryptjs is the one actively used in `authStorage.js`. |
+| `cookie-parser` | ^1.4.7 | Parses cookies from incoming requests. Required so Express can read the `access_token` and `refresh_token` httpOnly cookies sent by the browser. |
+| `cors` | ^2.8.5 | Adds the `Access-Control-Allow-Origin` header. Allows the frontend (running in the browser) to make requests to the backend API. |
+| `express-session` | ^1.18.1 | Session middleware required by Passport.js to maintain the OAuth state during Google login. |
+| `passport` | ^0.7.0 | Authentication middleware. Manages the Google OAuth 2.0 strategy and integrates with Express sessions. |
+| `passport-google-oauth20` | ^2.0.0 | The Google-specific OAuth 2.0 strategy for Passport. Handles the redirect to Google, receives the user profile, and returns it to the callback. |
+| `@google/generative-ai` | ^0.24.1 | Official Google SDK for the Gemini API. Used for symptom triage, clinic recommendations, care tips, and medical record extraction from PDFs. |
+| `nodemailer` | ^8.0.2 | Sends emails via SMTP. Used by the contact form to deliver messages to the PAWS team via Gmail. |
+| `multer` | ^2.1.1 | Handles `multipart/form-data` file uploads. Used in the medical records module to receive PDF and image files from the frontend. |
+| `groq-sdk` | ^1.1.1 | SDK for the Groq API. Powers the PAWS chatbot (fast LLM inference). |
+| `@n8n/chat` | ^1.11.2 | Embeds the n8n chat widget in the frontend. Provides the chatbot UI that connects to the n8n workflow automation backend. |
+
+### Dev dependencies
+
+| Package | Version | What it does |
+|---------|---------|--------------|
+| `nodemon` | ^3.1.14 | Watches for file changes and automatically restarts the Node.js server during development. Only used with `npm run dev` — not included in the production Docker image. |
+
+> **Note:** `nodemon` is listed under `devDependencies` and is excluded from the Docker production build via `npm install --omit=dev` in the Dockerfile.
+
+---
+
 ## Environment Variables
 
 Create a `.env` file in the root of the project:
@@ -147,31 +185,40 @@ DB_PORT=5432
 DB_NAME=paws
 DB_USER=postgres
 DB_PASSWORD=your_postgres_password
+DB_SSL=false
 
 # ── Server ────────────────────────────────────────
 PORT=3000
+NODE_ENV=development
+APP_URL=http://localhost:3000
 
 # ── Authentication ────────────────────────────────
 JWT_SECRET=your_jwt_secret_here
+REFRESH_SECRET=your_refresh_secret_here
 SESSION_SECRET=your_session_secret_here
 
 # ── Google OAuth ──────────────────────────────────
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
 
 # ── AI (Google Gemini) ────────────────────────────
 GEMINI_API_KEY=your_gemini_api_key
 
-# ── Email (Nodemailer) ────────────────────────────
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
+# ── Email (Nodemailer / Gmail) ────────────────────
+GMAIL_USER=your_email@gmail.com
+GMAIL_APP_PASSWORD=your_gmail_app_password
 
-# ── Frontend ──────────────────────────────────────
+# ── Maps ──────────────────────────────────────────
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+
+# ── Chatbot (Groq) ────────────────────────────────
+GROQ-PAWS-CHATBOT=your_groq_api_key
 ```
 
-> Never commit `.env` to the repository. It is already listed in `.gitignore`.
+> **Never commit `.env` to the repository.** It is already listed in `.gitignore` and `.dockerignore`.
+>
+> For production on Azure, set these values in **App Service → Configuration → Application Settings** instead of using a `.env` file.
 
 ---
 
