@@ -131,6 +131,25 @@ export function clinicsPage() {
 }
 
 // ─────────────────────────────────────────────
+//  Placeholder gradient — varies by business_id
+//  so each clinic gets its own color
+// ─────────────────────────────────────────────
+const GRADIENTS = [
+  'background:linear-gradient(135deg,#6A4C93 0%,#8B5FBF 100%)',   // morado
+  'background:linear-gradient(135deg,#1D9E75 0%,#34D399 100%)',   // verde
+  'background:linear-gradient(135deg,#2563EB 0%,#60A5FA 100%)',   // azul
+  'background:linear-gradient(135deg,#dc2626 0%,#f97316 100%)',   // rojo-naranja
+  'background:linear-gradient(135deg,#7C3AED 0%,#EC4899 100%)',   // violeta-rosa
+  'background:linear-gradient(135deg,#0891B2 0%,#06B6D4 100%)',   // cian
+  'background:linear-gradient(135deg,#D97706 0%,#FBBF24 100%)',   // ámbar
+  'background:linear-gradient(135deg,#059669 0%,#6A4C93 100%)',   // verde-morado
+];
+
+function _clinicGradient(id) {
+  return GRADIENTS[(id || 0) % GRADIENTS.length];
+}
+
+// ─────────────────────────────────────────────
 //  renderClinicCard
 // ─────────────────────────────────────────────
 function renderClinicCard(clinic) {
@@ -144,22 +163,68 @@ function renderClinicCard(clinic) {
          style="box-shadow:var(--shadow-card);transition:var(--transition-fast);"
          onmouseenter="this.style.boxShadow='var(--shadow-medium)';this.style.transform='translateY(-2px)'"
          onmouseleave="this.style.boxShadow='var(--shadow-card)';this.style.transform='none'">
-      <div class="relative h-44 overflow-hidden" style="background:var(--bg-muted);">
-        <img src="${clinic.image_url || './frontend/assets/images/clinic-placeholder.jpg'}"
-             alt="${clinic.name}" class="w-full h-full object-cover"
-             onerror="this.style.display='none'"/>
-        <div class="absolute top-3 left-3 flex gap-2">
-          ${clinic.is_24h ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#fef9c3;color:#92400e;">24/7</span>` : ''}
-          ${clinic.status === 'active' ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:var(--color-green);color:var(--text-primary);">Open</span>` : ''}
+      <div class="relative h-44 overflow-hidden" id="card-img-${clinic.business_id}"
+           style="${clinic.image_url ? 'background:var(--bg-muted)' : _clinicGradient(clinic.business_id)}">
+
+        ${clinic.image_url ? `
+        <!-- Real photo — on error swaps to gradient placeholder via JS -->
+        <img src="${clinic.image_url}"
+             alt="${clinic.name}"
+             class="w-full h-full object-cover"
+             onerror="
+               this.style.display='none';
+               this.parentElement.style.cssText='${_clinicGradient(clinic.business_id)}';
+               this.parentElement.querySelector('.clinic-placeholder-content').style.display='flex';
+             "/>` : ''}
+
+        <!-- Placeholder content — visible when no image or image fails -->
+        <div class="clinic-placeholder-content absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none"
+             style="${clinic.image_url ? 'display:none' : 'display:flex'}">
+          <div class="absolute pointer-events-none" style="width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.08);top:-40px;right:-30px;"></div>
+          <div class="absolute pointer-events-none" style="width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.06);bottom:-20px;left:20px;"></div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center relative z-10" style="background:rgba(255,255,255,0.20);">
+            <svg style="width:28px;height:28px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <p class="font-poppins font-bold text-white text-center px-4 leading-tight relative z-10"
+             style="font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,0.25);">${clinic.zone || 'Medellín'}</p>
+        </div>
+
+        <!-- Badges — always visible -->
+        <div class="absolute top-3 left-3 flex gap-2 z-10">
+          ${clinic.is_24h
+      ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full"
+                     style="background:${clinic.image_url ? '#fef9c3' : 'rgba(255,255,255,0.25)'};
+                            color:${clinic.image_url ? '#92400e' : 'white'};
+                            backdrop-filter:blur(4px);">24/7</span>`
+      : ''}
+          ${clinic.status === 'active'
+      ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full"
+                     style="background:${clinic.image_url ? 'var(--color-green)' : 'rgba(185,251,192,0.30)'};
+                            color:${clinic.image_url ? 'var(--text-primary)' : '#B9FBC0'};
+                            backdrop-filter:blur(4px);">Open</span>`
+      : ''}
         </div>
         ${clinic.rating ? `
-        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full"
-             style="background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);">
-          <span class="text-xs font-bold" style="color:#d97706;">★ ${parseFloat(clinic.rating).toFixed(1)}</span>
+        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full z-10"
+             style="background:${clinic.image_url ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.22)'};backdrop-filter:blur(4px);">
+          <span class="text-xs font-bold" style="color:${clinic.image_url ? '#d97706' : 'white'};">
+            ★ ${parseFloat(clinic.rating).toFixed(1)}
+          </span>
         </div>` : ''}
       </div>
       <div class="p-5">
-        <h3 class="font-bold font-poppins mb-1" style="font-size:15px;color:var(--text-primary);">${clinic.name}</h3>
+        <div class="flex items-start justify-between mb-1">
+          <h3 class="font-bold font-poppins" style="font-size:15px;color:var(--text-primary);">${clinic.name}</h3>
+          ${clinic._distKm && clinic._distKm < 9999
+      ? `<span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                     style="background:#F0FDF4;color:#16a34a;">
+                 📍 ${clinic._distKm < 1 ? Math.round(clinic._distKm * 1000) + 'm' : clinic._distKm.toFixed(1) + 'km'}
+               </span>`
+      : ''}
+        </div>
         ${location ? `
         <div class="flex items-start gap-1.5 mb-3" style="color:var(--text-muted);">
           <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,17 +338,53 @@ function renderGrid(list) {
 //  El fetch llena allClinics y dispara refresh().
 // ─────────────────────────────────────────────
 export function clinicsEvents() {
-  // Estado local — no module-level para evitar
-  // bugs si la vista se monta más de una vez
   let allClinics = [];
   let activeFilter = 'all';
   let loaded = false;
+  let _userLat = null;
+  let _userLng = null;
+
+  // Pedir ubicación al cargar — si está concedida responde inmediato
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        _userLat = pos.coords.latitude;
+        _userLng = pos.coords.longitude;
+        console.log('[PAWS Clinics] Ubicación:', _userLat, _userLng);
+        if (loaded) refresh(); // re-ordena las cards si los datos ya llegaron
+      },
+      (err) => console.warn('[PAWS Clinics] Geolocation error:', err.code),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
+  }
+
+  function _haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function _sortByDistance(list) {
+    if (!_userLat || !_userLng) return list;
+    return [...list].map(c => ({
+      ...c,
+      _distKm: (c.latitude && c.longitude)
+        ? _haversine(_userLat, _userLng, parseFloat(c.latitude), parseFloat(c.longitude))
+        : 9999,
+    })).sort((a, b) => a._distKm - b._distKm);
+  }
 
   const getSearch = () => document.getElementById('clinic-search')?.value.trim() || '';
   const getSort = () => document.getElementById('sort-select')?.value || 'rating';
   const refresh = () => {
-    if (!loaded) return; // no hacer nada hasta que lleguen los datos
-    renderGrid(applyFilters(allClinics, activeFilter, getSearch(), getSort()));
+    if (!loaded) return;
+    let list = applyFilters(allClinics, activeFilter, getSearch(), getSort());
+    list = _sortByDistance(list); // siempre ordenar por distancia al final
+    renderGrid(list);
   };
 
   // ── 1. Registrar todos los listeners PRIMERO ─

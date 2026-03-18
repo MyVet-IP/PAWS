@@ -1,22 +1,57 @@
 ﻿const db = require('../db');
 
+let hasPhotoUrlColumnCache = null;
+
+async function hasPhotoUrlColumn() {
+    if (hasPhotoUrlColumnCache !== null) return hasPhotoUrlColumnCache;
+
+    try {
+        const row = await db.get(
+            `SELECT 1
+             FROM information_schema.columns
+             WHERE table_name = 'users' AND column_name = 'photo_url'
+             LIMIT 1`
+        );
+        hasPhotoUrlColumnCache = Boolean(row);
+    } catch {
+        hasPhotoUrlColumnCache = false;
+    }
+
+    return hasPhotoUrlColumnCache;
+}
+
+async function ensurePhotoUrlColumn() {
+    try {
+        await db.run(`ALTER TABLE users ADD COLUMN IF NOT EXISTS photo_url VARCHAR(500)`);
+        hasPhotoUrlColumnCache = true;
+    } catch {
+        // If migration cannot run here, caller should still avoid crashing.
+    }
+}
+
 module.exports = {
     // ─── READ ────────────────────────────────────────────────────────────────
 
     async getAll() {
+        const includePhoto = await hasPhotoUrlColumn();
+        const photoSelect = includePhoto ? 'u.photo_url,' : 'NULL::varchar AS photo_url,';
+
         return db.all(
-            `SELECT u.user_id, u.name, u.email, u.phone, u.role, u.created_at,
+            `SELECT u.user_id, u.name, u.email, u.phone, ${photoSelect} u.role, u.created_at,
                     COUNT(p.pet_id) AS pet_count
             FROM users u
             LEFT JOIN pets p ON p.user_id = u.user_id
-            GROUP BY u.user_id, u.name, u.email, u.phone, u.role, u.created_at
+            GROUP BY u.user_id, u.name, u.email, u.phone, ${includePhoto ? 'u.photo_url,' : ''} u.role, u.created_at
             ORDER BY u.user_id ASC`
         );
     },
 
     async getById(user_id) {
+        const includePhoto = await hasPhotoUrlColumn();
+        const photoSelect = includePhoto ? 'photo_url' : 'NULL::varchar AS photo_url';
+
         return db.get(
-            `SELECT user_id, name, email, phone, role, created_at
+            `SELECT user_id, name, email, phone, ${photoSelect}, role, created_at
             FROM users WHERE user_id = $1`,
             [user_id]
         );
@@ -63,6 +98,23 @@ module.exports = {
         await db.run(
             `UPDATE users SET ${fields.join(', ')} WHERE user_id = $${i}`,
             values
+        );
+        return this.getById(user_id);
+    },
+
+    async updatePhoto(user_id, photo_url) {
+        if (!(await hasPhotoUrlColumn())) {
+            await ensurePhotoUrlColumn();
+        }
+
+        if (!(await hasPhotoUrlColumn())) {
+            // Graceful fallback when schema migration is still pending.
+            return this.getById(user_id);
+        }
+
+        await db.run(
+            `UPDATE users SET photo_url = $1 WHERE user_id = $2`,
+            [photo_url, user_id]
         );
         return this.getById(user_id);
     },

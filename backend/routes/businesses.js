@@ -1,24 +1,12 @@
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 const router = require('express').Router();
 const { validateBody } = require('../middleware');
 const businessesController = require('../controllers/businessesController');
 const appointmentsController = require('../controllers/appointmentsController');
+const { uploadImage } = require('../services/blobStorageService');
 
-// Multer config for clinic images
-const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'businesses');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || '.jpg';
-    cb(null, `biz-${req.params.id}-${Date.now()}${ext}`);
-  }
-});
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
@@ -45,7 +33,13 @@ router.delete('/:id', businessesController.remove);
 router.post('/:id/image', upload.single('image'), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No image file provided' });
-    const image_url = `/uploads/businesses/${req.file.filename}`;
+
+    const image_url = await uploadImage({
+      file: req.file,
+      folder: 'businesses',
+      prefix: `biz-${req.params.id}`
+    });
+
     const businessesStorage = require('../storage/businessesStorage');
     const updated = await businessesStorage.update(req.params.id, { image_url });
     res.json(updated);

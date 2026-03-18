@@ -154,6 +154,13 @@ export function registerPage() {
                             </div>
                         </label>
                     </div>
+
+                    <div id="nit-field-wrap" style="display:none;" class="mt-5">
+                        <label for="nit" class="block text-sm font-medium text-text-primary mb-2">NIT (Tax ID)</label>
+                        <input id="nit" type="text" placeholder="901234567-8"
+                            class="input" autocomplete="organization">
+                        <p class="text-xs mt-1" style="color:var(--text-muted);">Required for clinic/business accounts</p>
+                    </div>
                 </div>
 
                 <!-- Terms -->
@@ -205,6 +212,8 @@ export function registerEvents() {
     const passwordInput = document.getElementById("password");
     const confirmInput = document.getElementById("confirmPassword");
     const confirmMsg = document.getElementById("confirm-password-msg");
+    const nitFieldWrap = document.getElementById('nit-field-wrap');
+    const nitInput = document.getElementById('nit');
 
     // ── Password visibility toggles ──────────
     function setupPasswordToggle(toggleId, inputId) {
@@ -276,9 +285,22 @@ export function registerEvents() {
     }
 
     // Activate step 2 when any role card is clicked or when name/email/pw are filled
+    function updateNitVisibility() {
+        const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
+        const requiresNit = selectedRole === 'vet' || selectedRole === 'business';
+        if (nitFieldWrap) nitFieldWrap.style.display = requiresNit ? '' : 'none';
+        if (nitInput) {
+            nitInput.required = requiresNit;
+            if (!requiresNit) nitInput.value = '';
+        }
+    }
+
     const roleInputs = document.querySelectorAll('input[name="role"]');
     roleInputs.forEach(input => {
-        input.addEventListener('change', () => setStep(2));
+        input.addEventListener('change', () => {
+            setStep(2);
+            updateNitVisibility();
+        });
     });
 
     // Also activate step 2 when the user scrolls/tabs into the Account Type section
@@ -312,6 +334,7 @@ export function registerEvents() {
 
     // Init
     setStep(1);
+    updateNitVisibility();
 
     // ── Password strength ─────────────────────
     const STRENGTH_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e'];
@@ -397,12 +420,18 @@ export function registerEvents() {
             const confirmPassword = document.getElementById("confirmPassword").value;
             const role = document.querySelector("input[name='role']:checked");
             const terms = document.getElementById("terms").checked;
+            const nit = nitInput?.value?.trim() || '';
 
             if (!name || !email || !password || !confirmPassword) {
                 showToast("All fields are required", "error"); return;
             }
             if (!role) {
                 showToast("Please select an account type", "error"); return;
+            }
+            if ((role.value === 'vet' || role.value === 'business') && !nit) {
+                showToast("NIT is required for enterprise accounts", "error");
+                nitInput?.focus();
+                return;
             }
             if (!terms) {
                 showToast("Please accept the Terms of Service", "error"); return;
@@ -420,7 +449,7 @@ export function registerEvents() {
                 const response = await fetch("/api/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, email, password, role: role.value }),
+                    body: JSON.stringify({ name, email, password, role: role.value, nit }),
                 });
                 const data = await response.json();
                 if (!response.ok) {
@@ -437,17 +466,18 @@ export function registerEvents() {
 
                 const loginData = await loginRes.json().catch(() => ({}));
                 if (!loginRes.ok) {
-                    showMessage('Account created, but automatic login failed. Please sign in manually.', false);
+                    showToast('Account created, but automatic login failed. Please sign in manually.', 'warning');
                     setTimeout(() => { window.location.hash = '/login'; }, 1400);
                     return;
                 }
 
                 const userData = loginData.user || loginData;
                 localStorage.setItem('user', JSON.stringify(userData));
-                showMessage('Account created successfully! Welcome to PAWS.', true);
+                showToast('Account created successfully! Welcome to PAWS.', 'success');
                 setTimeout(() => { redirectByRole(userData); }, 900);
-            } catch {
-                showToast("Connection error. Please try again.", "error");
+            } catch (err) {
+                console.error('Register flow failed:', err);
+                showToast(err?.message || "Connection error. Please try again.", "error");
             }
         });
     }

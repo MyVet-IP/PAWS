@@ -1,6 +1,8 @@
 const authStorage = require('../storage/authStorage');
 const jwt = require('jsonwebtoken');
 
+const ALLOWED_ADMIN_EMAIL = (process.env.ADMIN_LOGIN_EMAIL || 'adminpaws@crudzaso.com').toLowerCase();
+
 const ACCESS_EXPIRES = '15m';
 const REFRESH_EXPIRES_SECONDS = 60 * 60 * 24 * 7; // 7 días
 
@@ -19,11 +21,20 @@ exports.register = async (req, res, next) => {
         if (!name || !email || !password)
             return res.status(400).json({ error: 'name, email y password son requeridos' });
 
-        const existing = await authStorage.getUserByEmail(email);
+        const normalizedEmail = String(email).toLowerCase().trim();
+        const requestedRole = role === 'admin' ? 'user' : role;
+
+        const existing = await authStorage.getUserByEmail(normalizedEmail);
         if (existing)
             return res.status(400).json({ error: 'El email ya está registrado' });
 
-        const user = await authStorage.createUser({ name, email, password, phone, role });
+        const user = await authStorage.createUser({
+            name,
+            email: normalizedEmail,
+            password,
+            phone,
+            role: requestedRole
+        });
         res.status(201).json(user);
     } catch (err) { next(err); }
 };
@@ -34,8 +45,18 @@ exports.login = async (req, res, next) => {
         if (!email || !password)
             return res.status(400).json({ error: 'Email y password son requeridos' });
 
-        const user = await authStorage.getUserByEmail(email);
+        const normalizedEmail = String(email).toLowerCase().trim();
+
+        const user = await authStorage.getUserByEmail(normalizedEmail);
         if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
+
+        // Only this specific email is allowed to authenticate as admin.
+        if (user.role === 'admin' && user.email.toLowerCase() !== ALLOWED_ADMIN_EMAIL) {
+            return res.status(403).json({ error: 'Admin login is restricted' });
+        }
+        if (normalizedEmail === ALLOWED_ADMIN_EMAIL && user.role !== 'admin') {
+            return res.status(403).json({ error: 'This account is reserved for admin access' });
+        }
 
         const valid = await authStorage.verifyPassword(password, user.password);
         if (!valid) return res.status(401).json({ error: 'Credenciales inválidas' });
