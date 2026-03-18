@@ -183,7 +183,10 @@ export async function healthTipsEvents() {
   // Events handled inline via onclick (filter + newsletter)
 
   // Initialize n8n chat widget (robust loader + diagnostics)
-  try {
+  if (window.n8nChatInstance) {
+    console.log('[healthTipsEvents] n8n chat already initialized, skipping...');
+  } else {
+    try {
     console.log('[healthTipsEvents] initializing n8n chat...');
 
     // Ensure stylesheet for n8n chat is present in <head>
@@ -302,6 +305,7 @@ export async function healthTipsEvents() {
     }
   } catch (err) {
     console.error('[healthTipsEvents] unexpected error initializing n8n chat', err);
+  }
   }
 
   // Load personalized tips for the logged-in user's first pet
