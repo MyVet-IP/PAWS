@@ -1,4 +1,3 @@
-import { router } from "../router/router.js";
 import { showToast } from "../utils.js";
 
 export function loginPage() {
