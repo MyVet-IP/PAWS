@@ -182,7 +182,6 @@ export function healthTipsPage() {
 export async function healthTipsEvents() {
   // Events handled inline via onclick (filter + newsletter)
 
-  // Initialize n8n chat widget (robust loader + diagnostics)
   if (window.n8nChatInstance) {
     console.log('[healthTipsEvents] n8n chat already initialized, skipping...');
   } else {
