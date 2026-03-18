@@ -181,13 +181,11 @@ export function healthTipsPage() {
 
 export async function healthTipsEvents() {
   // Events handled inline via onclick (filter + newsletter)
-
   if (window.n8nChatInstance) {
     console.log('[healthTipsEvents] n8n chat already initialized, skipping...');
   } else {
     try {
     console.log('[healthTipsEvents] initializing n8n chat...');
-
     // Ensure stylesheet for n8n chat is present in <head>
     (function ensureN8nCss() {
       const href = 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css';
