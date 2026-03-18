@@ -7,7 +7,7 @@
 
 export function emergencyPage() {
   return `
-  <div class="font-roboto emergency-page" style="min-height:100%;">
+  <div class="font-roboto" style="min-height:100%;">
 
     <!-- ── HERO BANNER ──────────────────────── -->
     <div class="relative rounded-2xl overflow-hidden mb-6"
@@ -208,10 +208,14 @@ export async function emergencyEvents() {
           (pos) => {
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
+            console.log('[PAWS Emergency] Ubicación:', userLat, userLng);
             resolve();
           },
-          () => resolve(),   // denied or error — just skip, still show all clinics
-          { timeout: 5000 }
+          (err) => {
+            console.warn('[PAWS Emergency] Geolocation error:', err.code, err.message);
+            resolve(); // continúa sin ubicación
+          },   // denied or error — just skip, still show all clinics
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
         );
       });
 

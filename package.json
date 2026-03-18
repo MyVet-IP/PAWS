@@ -8,6 +8,7 @@
     "dev": "nodemon backend/app.js"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.31.0",
     "@google/generative-ai": "^0.24.1",
     "@n8n/chat": "^1.11.2",
     "bcrypt": "^6.0.0",

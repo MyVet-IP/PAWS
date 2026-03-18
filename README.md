@@ -9,6 +9,7 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Available-brightgreen?style=for-the-badge)](https://paws-app-bjfydtcsh6g4djcg.centralus-01.azurewebsites.net/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?style=for-the-badge&logo=postgresql)](https://postgresql.org)
+[![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?style=for-the-badge&logo=microsoft-azure)](https://azure.microsoft.com)
 
 </div>
 
@@ -26,6 +27,7 @@
 - [Running with Docker](#running-with-docker)
 - [API Reference](#api-reference)
 - [Project Structure](#project-structure)
+- [Admin Access](#admin-access)
 - [Team](#team)
 
 ---
@@ -57,17 +59,22 @@ PAWS is a full-stack **Single Page Application (SPA)** that bridges the gap betw
 - Register clinic with NIT verification
 - Manage appointment requests (confirm, cancel, complete)
 - Create and update medical records for patients
-- Configure business profile, schedule and services
+- Configure business profile, schedule, and services
 
-### AI Features (Google Gemini)
+### AI Features (Google Gemini 2.5 Flash)
 - **Symptom Triage**: Classifies urgency based on species and symptoms
 - **Clinic Recommendation**: Suggests top 3 clinics matching the symptoms
-- **Care Tips**: Returns 5 personalized tips (cached 24h)
+- **Care Tips**: Returns 5 personalized tips (cached 24 h to reduce API usage)
+- **Medical Record Extraction**: Upload a PDF or image of a medical document and Gemini auto-fills the record form
 
 ### Discovery
 - Interactive map with all registered clinics (Google Maps API)
-- Search and filter by zone, specialty, services, 24h availability
+- Search and filter by zone, specialty, services, 24 h availability
 - Emergency module with direct WhatsApp links to 24/7 clinics
+
+### For Administrators
+- Full CRUD over users, pets, businesses, and appointments
+- Restricted to a single authorized admin email (see [Admin Access](#admin-access))
 
 ---
 
@@ -79,10 +86,11 @@ PAWS is a full-stack **Single Page Application (SPA)** that bridges the gap betw
 | Styling | Tailwind CSS (CDN) |
 | Backend | Node.js 18+ / Express.js 4 |
 | Database | PostgreSQL 14+ |
-| Authentication | JWT + Google OAuth 2.0 (Passport.js) |
+| Authentication | JWT + Refresh Tokens + Google OAuth 2.0 (Passport.js) |
 | AI | Google Gemini 2.5 Flash |
-| Chatbot | n8n |
-| Email | Nodemailer |
+| Chatbot | Groq (fast LLM inference) + n8n workflow automation |
+| File Storage | Azure Blob Storage (profile images & medical documents) |
+| Email | Nodemailer (Gmail SMTP) |
 | Containers | Docker + Docker Compose |
 | Deployment | Azure App Service + Azure Container Registry |
 
@@ -109,30 +117,32 @@ cd PAWS-develop
 npm install
 ```
 
-This single command installs all packages listed in `package.json`. See the [Dependencies](#dependencies) section for a full breakdown of what each package does.
+This single command installs all packages listed in `package.json`. See the [Dependencies](#dependencies) section for a full breakdown.
 
 ### 3. Configure environment variables
 
 ```bash
-cp .env.example .env
+cp .env.example .env   # or create .env manually — see Environment Variables below
 ```
 
-Edit `.env` with your credentials (see [Environment Variables](#environment-variables)).
+Edit `.env` with your credentials.
 
 ### 4. Set up the database
 
 ```bash
-# Connect to PostgreSQL and run the schema
+# Create the database
 psql -U postgres -c "CREATE DATABASE paws_db;"
+
+# Apply the full schema
 psql -U postgres -d paws_db -f database/db.sql
 ```
 
 ### 5. Start the development server
 
 ```bash
-npm run dev      # with nodemon (auto-reload)
+npm run dev      # nodemon — auto-restarts on file changes
 # or
-npm start        # without auto-reload
+npm start        # plain node
 ```
 
 The app will be available at **http://localhost:3000**
@@ -141,28 +151,26 @@ The app will be available at **http://localhost:3000**
 
 ## Dependencies
 
-All dependencies are managed via `package.json` and installed with `npm install`.
-
 ### Production dependencies
 
 | Package | Version | What it does |
 |---------|---------|--------------|
-| `express` | ^4.18.2 | The web framework. Handles all HTTP routes, middleware and responses. The backbone of the entire backend. |
-| `pg` | ^8.11.3 | PostgreSQL client for Node.js. Provides the connection pool (`Pool`) that executes all SQL queries against the database. |
-| `dotenv` | ^16.6.1 | Loads the `.env` file into `process.env` at startup. Keeps all secrets out of the source code. |
-| `jsonwebtoken` | ^9.0.3 | Creates and verifies JWT tokens. Used for the access token (15 min) and refresh token (7 days) in the authentication flow. |
-| `bcryptjs` | ^3.0.3 | Hashes passwords before saving them to the database. Also used to compare a plain-text password against its hash during login — without ever decrypting it. |
-| `bcrypt` | ^6.0.0 | Same purpose as bcryptjs but uses a native C++ binding (faster). Both are present in the project; bcryptjs is the one actively used in `authStorage.js`. |
-| `cookie-parser` | ^1.4.7 | Parses cookies from incoming requests. Required so Express can read the `access_token` and `refresh_token` httpOnly cookies sent by the browser. |
-| `cors` | ^2.8.5 | Adds the `Access-Control-Allow-Origin` header. Allows the frontend (running in the browser) to make requests to the backend API. |
-| `express-session` | ^1.18.1 | Session middleware required by Passport.js to maintain the OAuth state during Google login. |
-| `passport` | ^0.7.0 | Authentication middleware. Manages the Google OAuth 2.0 strategy and integrates with Express sessions. |
-| `passport-google-oauth20` | ^2.0.0 | The Google-specific OAuth 2.0 strategy for Passport. Handles the redirect to Google, receives the user profile, and returns it to the callback. |
-| `@google/generative-ai` | ^0.24.1 | Official Google SDK for the Gemini API. Used for symptom triage, clinic recommendations, care tips, and medical record extraction from PDFs. |
-| `nodemailer` | ^8.0.2 | Sends emails via SMTP. Used by the contact form to deliver messages to the PAWS team via Gmail. |
-| `multer` | ^2.1.1 | Handles `multipart/form-data` file uploads. Used in the medical records module to receive PDF and image files from the frontend. |
+| `express` | ^4.18.2 | Web framework. Handles routing, middleware, and HTTP. |
+| `pg` | ^8.11.3 | PostgreSQL client for Node.js. All DB queries go through this. |
+| `dotenv` | ^16.6.1 | Loads `.env` into `process.env` at startup. |
+| `bcrypt` / `bcryptjs` | ^6.0.0 / ^3.0.3 | Password hashing. `bcrypt` is the primary library; `bcryptjs` is a pure-JS fallback. |
+| `jsonwebtoken` | ^9.0.3 | Signs and verifies JWT access tokens (15 min expiry) and refresh tokens (7 days). |
+| `cookie-parser` | ^1.4.7 | Parses cookies on incoming requests. Required for reading the refresh token cookie. |
+| `express-session` | ^1.18.1 | Session middleware. Required by Passport for the Google OAuth flow. |
+| `cors` | ^2.8.5 | Enables Cross-Origin Resource Sharing for the API. |
+| `passport` | ^0.7.0 | Authentication middleware. Orchestrates the Google OAuth strategy. |
+| `passport-google-oauth20` | ^2.0.0 | Google-specific OAuth 2.0 strategy. Handles the redirect to Google and returns the user profile. |
+| `@google/generative-ai` | ^0.24.1 | Official Google SDK for the Gemini API. Powers symptom triage, clinic recommendations, care tips, and medical record extraction from PDFs. |
 | `groq-sdk` | ^1.1.1 | SDK for the Groq API. Powers the PAWS chatbot (fast LLM inference). |
-| `@n8n/chat` | ^1.11.2 | Embeds the n8n chat widget in the frontend. Provides the chatbot UI that connects to the n8n workflow automation backend. |
+| `@n8n/chat` | ^1.11.2 | Embeds the n8n chat widget in the frontend. Connects the chatbot UI to the n8n workflow automation backend. |
+| `nodemailer` | ^8.0.2 | Sends emails via SMTP. Used by the contact form to deliver messages to the PAWS team via Gmail. |
+| `multer` | ^2.1.1 | Handles `multipart/form-data` file uploads. Used in the medical records module to receive PDF and image files. |
+| `@azure/storage-blob` | ^12.31.0 | Azure Blob Storage SDK. Stores profile images and uploaded medical documents in the cloud. |
 
 ### Dev dependencies
 
@@ -176,13 +184,13 @@ All dependencies are managed via `package.json` and installed with `npm install`
 
 ## Environment Variables
 
-Create a `.env` file in the root of the project:
+Create a `.env` file in the root of the project with the following variables:
 
 ```env
 # ── Database ──────────────────────────────────────
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=paws
+DB_NAME=paws_db
 DB_USER=postgres
 DB_PASSWORD=your_postgres_password
 DB_SSL=false
@@ -214,6 +222,13 @@ GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
 # ── Chatbot (Groq) ────────────────────────────────
 GROQ-PAWS-CHATBOT=your_groq_api_key
+
+# ── Azure Blob Storage (profile images & medical docs) ──
+AZURE_STORAGE_CONNECTION_STRING=your_azure_blob_connection_string
+AZURE_STORAGE_CONTAINER=paws-media
+
+# ── Admin ─────────────────────────────────────────
+ADMIN_LOGIN_EMAIL=adminpaws@crudzaso.com
 ```
 
 > **Never commit `.env` to the repository.** It is already listed in `.gitignore` and `.dockerignore`.
@@ -224,16 +239,7 @@ GROQ-PAWS-CHATBOT=your_groq_api_key
 
 ## Database Setup
 
-The database schema is in `database/db.sql`. It creates 26 tables covering:
-
-- **Identity**: `users`, `refresh_tokens`
-- **Businesses**: `businesses`, `clinics`, `vets`, `petshops`, `dog_walkers`, `daycares`, `shelters`
-- **Catalogs**: `specialties`, `animal_types`, `schedules`
-- **Pet Management**: `pets`, `medical_records`, `adoptions`, `shelter_pets`
-- **Operations**: `appointments`, `daycare_slots`, `daycare_bookings`, `reviews`
-- **Emergency**: `emergencies`, `emergency_messages`
-
-The ER diagram is available at `database/ER_Diagram.png`.
+The database schema is in `database/db.sql`.
 
 To apply the latest migration:
 
@@ -265,12 +271,12 @@ All API endpoints are prefixed with `/api`.
 
 | Module | Base Path | Description |
 |--------|-----------|-------------|
-| Auth | `/api/auth` | Login, register, logout, Google OAuth |
+| Auth | `/api/auth` | Login, register, logout, Google OAuth, token refresh |
 | Users | `/api/users` | User CRUD, dashboard, appointments |
 | Pets | `/api/pets` | Pet CRUD, query by user |
 | Businesses | `/api/businesses` | Business CRUD, specialties, schedule |
 | Appointments | `/api/appointments` | Create, update, status management |
-| Medical Records | `/api/medical-records` | Create, update, query by pet |
+| Medical Records | `/api/medical-records` | Create, update, query by pet; AI extraction from PDF/image |
 | Emergencies | `/api/emergencies` | Emergency events |
 | AI | `/api/ai` | Triage, clinic recommendation, care tips |
 | Contact | `/api/contact` | Send contact email |
@@ -288,7 +294,7 @@ PAWS-develop/
 │   ├── routes/                 # Route definitions (9 modules)
 │   ├── controllers/            # Business logic layer
 │   ├── storage/                # Data access layer (SQL queries)
-│   ├── services/               # Email, AI integrations
+│   ├── services/               # Email, AI integrations (Gemini, Groq)
 │   └── middleware/             # Auth, validation, error handling
 ├── frontend/
 │   ├── src/
@@ -307,9 +313,24 @@ PAWS-develop/
 │   ├── docker-azure.md         # Azure deployment guide
 │   └── dependencias.md         # Dependency notes
 ├── Dockerfile
+├── docker-compose.yml
 ├── package.json
-└── .env.example
+└── .gitignore
 ```
+
+---
+
+## Admin Access
+
+The platform has a single administrator role. Admin access is restricted to one specific email address, controlled via the `ADMIN_LOGIN_EMAIL` environment variable:
+
+```env
+ADMIN_LOGIN_EMAIL=adminpaws@crudzaso.com
+```
+
+Only this email can authenticate as `admin`. All other accounts that attempt to register with the `admin` role are automatically downgraded to `user`. The admin panel is available at `/#/admin-dashboard` and is inaccessible to all other roles — any navigation attempt by a non-admin is redirected.
+
+> To change the admin email, update `ADMIN_LOGIN_EMAIL` in your `.env` file (or in Azure App Service settings for production).
 
 ---
 

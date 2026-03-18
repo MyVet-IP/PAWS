@@ -14,7 +14,7 @@ export function vetClinicProfilePage() {
     <div id="vcp-content" style="display:none;">
 
       <div class="flex items-center justify-between mb-5">
-        <div class="flex items-center gap-3">
+        <div id="vcp-owner-nav" class="flex items-center gap-3">
           <a href="#/veterinary"
              class="flex items-center gap-1.5 text-sm font-medium font-poppins transition"
              style="color:var(--text-highlight);"
@@ -27,7 +27,7 @@ export function vetClinicProfilePage() {
           <span style="color:var(--text-muted);">/</span>
           <span class="text-sm font-poppins font-semibold" style="color:var(--text-primary);">Clinic Profile</span>
         </div>
-        <a href="#/veterinary"
+        <a id="vcp-edit-btn" href="#/veterinary"
            class="flex items-center gap-2 px-4 py-2 rounded-xl font-poppins font-semibold text-sm text-white transition"
            style="background:var(--text-highlight);"
            onmouseenter="this.style.opacity='0.88'" onmouseleave="this.style.opacity='1'">
@@ -320,7 +320,7 @@ export function vetClinicProfilePage() {
   `;
 }
 
-export async function vetClinicProfileEvents() {
+export async function vetClinicProfileEvents(params = {}) {
   const loading = document.getElementById('vcp-loading');
   const content = document.getElementById('vcp-content');
 
@@ -328,6 +328,8 @@ export async function vetClinicProfileEvents() {
     const user = JSON.parse(localStorage.getItem('user') || 'null');
     const userId = user?.user_id || user?.id;
     if (!userId) throw new Error('No user session found');
+    const requestedBusinessId = Number(params?.business_id) || null;
+    const canEdit = user?.role === 'business' && !requestedBusinessId;
 
     const VET_DEFAULTS = {
       schedule: [
@@ -347,7 +349,9 @@ export async function vetClinicProfileEvents() {
     })();
 
     let bizRes;
-    if (local._business_id) {
+    if (requestedBusinessId) {
+      bizRes = await fetch(`/api/businesses/${requestedBusinessId}`);
+    } else if (local._business_id) {
       bizRes = await fetch(`/api/businesses/${local._business_id}`);
     } else {
       bizRes = await fetch(`/api/businesses/user/${userId}`);
@@ -365,9 +369,9 @@ export async function vetClinicProfileEvents() {
               </svg>
             </div>
             <p class="font-poppins font-semibold text-lg" style="color:var(--text-primary);">No clinic profile found</p>
-            <p class="text-sm mt-1 mb-5" style="color:var(--text-muted);">Complete your registration to set up your clinic.</p>
-            <a href="#/veterinary" class="inline-block px-6 py-2.5 rounded-xl text-sm font-poppins font-semibold text-white"
-               style="background:var(--text-highlight);">Go to Dashboard</a>
+            <p class="text-sm mt-1 mb-5" style="color:var(--text-muted);">${canEdit ? 'Complete your registration to set up your clinic.' : 'This clinic profile is not available right now.'}</p>
+            <a href="${canEdit ? '#/veterinary' : '#/clinics'}" class="inline-block px-6 py-2.5 rounded-xl text-sm font-poppins font-semibold text-white"
+              style="background:var(--text-highlight);">${canEdit ? 'Go to Dashboard' : 'Back to clinics'}</a>
           </div>`;
         return;
       }
@@ -377,8 +381,31 @@ export async function vetClinicProfileEvents() {
 
     const el = id => document.getElementById(id);
 
+    if (!canEdit) {
+      const ownerNav = el('vcp-owner-nav');
+      const editBtn = el('vcp-edit-btn');
+      const photoInput = el('vcp-photo-input');
+      const imageOverlay = el('vcp-image-overlay');
+      const imageArea = el('vcp-image-area');
+
+      if (ownerNav) ownerNav.style.display = 'none';
+      if (editBtn) editBtn.style.display = 'none';
+      if (photoInput) photoInput.style.display = 'none';
+      if (imageOverlay) imageOverlay.style.display = 'none';
+      if (imageArea) imageArea.style.cursor = 'default';
+    }
+
     if (biz.image_url) {
-      el('vcp-image').src = biz.image_url;
+      const imgEl = el('vcp-image');
+      const placeholderEl = el('vcp-image-placeholder');
+      imgEl.onerror = () => {
+        imgEl.style.display = 'none';
+        if (placeholderEl) placeholderEl.style.display = 'flex';
+        console.warn('[VCP] Image URL is not publicly accessible:', biz.image_url);
+      };
+      imgEl.src = biz.image_url;
+      imgEl.style.display = '';
+      if (placeholderEl) placeholderEl.style.display = 'none';
     } else {
       el('vcp-image').style.display = 'none';
       el('vcp-image-placeholder').style.display = 'flex';
@@ -440,9 +467,14 @@ export async function vetClinicProfileEvents() {
       el('vcp-verified-badge').style.display = 'flex';
     }
 
-    _initProfileMap(biz, el);
+    _initProfileMap(biz, el, canEdit);
 
-    if (local.services && local.services.length > 0) {
+    const profileServicesRaw = (biz.services && biz.services.length > 0)
+      ? biz.services
+      : (canEdit ? (local.services || []) : []);
+    const profileServices = profileServicesRaw.map(s => (typeof s === 'string' ? { label: s } : s));
+
+    if (profileServices.length > 0) {
       const ICONS = {
         syringe:   `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
         clipboard: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>`,
@@ -451,7 +483,7 @@ export async function vetClinicProfileEvents() {
         plus:      `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>`,
         lab:       `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>`,
       };
-      el('vcp-services').innerHTML = local.services.map(s => `
+      el('vcp-services').innerHTML = profileServices.map(s => `
         <div class="rounded-2xl p-4 flex items-start gap-3 transition"
              style="background:var(--bg-muted);border:1px solid transparent;"
              onmouseenter="this.style.borderColor='rgba(106,76,147,0.15)';this.style.boxShadow='0 2px 8px rgba(106,76,147,0.08)'"
@@ -469,6 +501,10 @@ export async function vetClinicProfileEvents() {
           </div>
         </div>
       `).join('');
+    } else {
+      el('vcp-services').innerHTML = canEdit
+        ? `<p class="col-span-2 text-sm text-center py-6" style="color:var(--text-muted);">No services added yet. <a href="#/veterinary" class="font-semibold" style="color:var(--text-highlight);">Add them from your dashboard.</a></p>`
+        : `<p class="col-span-2 text-sm text-center py-6" style="color:var(--text-muted);">No services listed yet.</p>`;
     }
 
     const schedule = (biz.schedule && biz.schedule.length > 0)
@@ -501,16 +537,18 @@ export async function vetClinicProfileEvents() {
     const photoInput = el('vcp-photo-input');
     const uploadToast = el('vcp-upload-toast');
 
-    if (imageArea && imageOverlay) {
+    if (canEdit && imageArea && imageOverlay) {
       imageArea.addEventListener('mouseenter', () => { imageOverlay.style.opacity = '1'; });
       imageArea.addEventListener('mouseleave', () => { imageOverlay.style.opacity = '0'; });
     }
 
-    if (photoInput) {
+    if (canEdit && photoInput) {
       photoInput.addEventListener('change', async () => {
         const file = photoInput.files[0];
         if (!file) return;
 
+        const previousSrc = el('vcp-image')?.src || '';
+        const hadPlaceholder = el('vcp-image-placeholder')?.style.display !== 'none';
         const previewUrl = URL.createObjectURL(file);
         const img = el('vcp-image');
         const placeholder = el('vcp-image-placeholder');
@@ -549,6 +587,30 @@ export async function vetClinicProfileEvents() {
           }
         } catch (err) {
           console.error('Failed to save clinic photo:', err);
+
+          // Revert optimistic preview when persistence fails.
+          if (img) {
+            if (previousSrc) {
+              img.src = previousSrc;
+              img.style.display = '';
+            } else {
+              img.removeAttribute('src');
+              img.style.display = 'none';
+            }
+          }
+          if (placeholder) {
+            placeholder.style.display = hadPlaceholder || !previousSrc ? 'flex' : 'none';
+          }
+
+          const failToast = document.createElement('div');
+          failToast.className = 'font-poppins';
+          failToast.textContent = 'Could not save photo. Please try again.';
+          failToast.style.cssText =
+            'position:fixed;bottom:18px;right:18px;z-index:9999;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,0.12);';
+          document.body.appendChild(failToast);
+          setTimeout(() => failToast.remove(), 2600);
+        } finally {
+          URL.revokeObjectURL(previewUrl);
         }
       });
     }
@@ -575,13 +637,18 @@ function _formatTime(timeStr) {
   return `${String(h12).padStart(2, '0')}:${m} ${ampm}`;
 }
 
-async function _initProfileMap(biz, el) {
+async function _initProfileMap(biz, el, canEdit = false) {
   const mapEl = document.getElementById('vcp-map');
   const directionsEl = document.getElementById('vcp-directions');
   const addressEl = el('vcp-map-address');
   const cityEl = el('vcp-map-city');
   const heroAddressEl = el('vcp-address');
   if (!mapEl) return;
+
+  const lat = Number.parseFloat(biz.latitude);
+  const lng = Number.parseFloat(biz.longitude);
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+  const fullAddress = [biz.address, biz.zone, biz.city].filter(Boolean).join(', ');
 
   let apiKey = '';
   try {
@@ -591,12 +658,19 @@ async function _initProfileMap(biz, el) {
   } catch { /* no key */ }
 
   if (!apiKey) {
-    if (biz.latitude && biz.longitude) {
+    if (hasCoords) {
       mapEl.innerHTML = `
         <iframe width="100%" height="100%" frameborder="0" style="border:0;border-radius:12px;"
-          src="https://maps.google.com/maps?q=${biz.latitude},${biz.longitude}&z=15&output=embed"
+          src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"
           allowfullscreen loading="lazy"></iframe>`;
-      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${biz.latitude},${biz.longitude}`;
+      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    } else if (fullAddress) {
+      const q = encodeURIComponent(fullAddress);
+      mapEl.innerHTML = `
+        <iframe width="100%" height="100%" frameborder="0" style="border:0;border-radius:12px;"
+          src="https://maps.google.com/maps?q=${q}&z=15&output=embed"
+          allowfullscreen loading="lazy"></iframe>`;
+      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
     }
     return;
   }
@@ -613,9 +687,8 @@ async function _initProfileMap(biz, el) {
   await loadMaps();
   mapEl.innerHTML = '';
 
-  const hasCoords = biz.latitude && biz.longitude;
   const center = hasCoords
-    ? { lat: parseFloat(biz.latitude), lng: parseFloat(biz.longitude) }
+    ? { lat, lng }
     : { lat: 6.2442, lng: -75.5812 };
 
   const map = new google.maps.Map(mapEl, {
@@ -633,6 +706,47 @@ async function _initProfileMap(biz, el) {
 
   let marker = null;
   const geocoder = new google.maps.Geocoder();
+
+  if (!canEdit) {
+    if (hasCoords) {
+      marker = new google.maps.Marker({
+        position: center,
+        map,
+        draggable: false,
+        title: biz.name || 'Clinic location',
+      });
+      directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
+    } else if (fullAddress) {
+      geocoder.geocode({ address: fullAddress }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const p = results[0].geometry.location;
+          const pos = { lat: p.lat(), lng: p.lng() };
+
+          map.setCenter(pos);
+          map.setZoom(16);
+
+          marker = new google.maps.Marker({
+            position: pos,
+            map,
+            draggable: false,
+            title: biz.name || 'Clinic location',
+          });
+
+          if (addressEl && !addressEl.textContent) addressEl.textContent = results[0].formatted_address;
+          if (heroAddressEl && !heroAddressEl.textContent) heroAddressEl.textContent = results[0].formatted_address;
+          if (cityEl && !cityEl.textContent) {
+            const cityComp = results[0].address_components.find(c =>
+              c.types.includes('locality') || c.types.includes('administrative_area_level_2')
+            );
+            cityEl.textContent = cityComp ? cityComp.long_name : '';
+          }
+
+          directionsEl.href = `https://www.google.com/maps/dir/?api=1&destination=${pos.lat},${pos.lng}`;
+        }
+      });
+    }
+    return;
+  }
 
   function placeMarker(pos, shouldSave = true) {
     if (marker) {
