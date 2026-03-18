@@ -33,11 +33,7 @@ async function _uploadToAzure({ file, folder, prefix }) {
 
   // If container already existed as private, ensure blob-level public read when enabled.
   if (publicRead) {
-    try {
-      await containerClient.setAccessPolicy('blob');
-    } catch {
-      // If policy update is blocked, upload still works but public URL may not render.
-    }
+    await containerClient.setAccessPolicy('blob');
   }
 
   const ext = _safeExt(file);
@@ -69,7 +65,12 @@ async function uploadImage({ file, folder, prefix }) {
   if (!file || !file.buffer) throw new Error('Invalid file payload');
 
   if (_hasAzureConfig()) {
-    return _uploadToAzure({ file, folder, prefix });
+    try {
+      return await _uploadToAzure({ file, folder, prefix });
+    } catch (err) {
+      console.warn('[blobStorageService] Azure upload failed, falling back to local uploads:', err.message);
+      return _uploadToLocal({ file, folder, prefix });
+    }
   }
 
   return _uploadToLocal({ file, folder, prefix });

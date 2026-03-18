@@ -396,7 +396,16 @@ export async function vetClinicProfileEvents(params = {}) {
     }
 
     if (biz.image_url) {
-      el('vcp-image').src = biz.image_url;
+      const imgEl = el('vcp-image');
+      const placeholderEl = el('vcp-image-placeholder');
+      imgEl.onerror = () => {
+        imgEl.style.display = 'none';
+        if (placeholderEl) placeholderEl.style.display = 'flex';
+        console.warn('[VCP] Image URL is not publicly accessible:', biz.image_url);
+      };
+      imgEl.src = biz.image_url;
+      imgEl.style.display = '';
+      if (placeholderEl) placeholderEl.style.display = 'none';
     } else {
       el('vcp-image').style.display = 'none';
       el('vcp-image-placeholder').style.display = 'flex';
@@ -538,6 +547,8 @@ export async function vetClinicProfileEvents(params = {}) {
         const file = photoInput.files[0];
         if (!file) return;
 
+        const previousSrc = el('vcp-image')?.src || '';
+        const hadPlaceholder = el('vcp-image-placeholder')?.style.display !== 'none';
         const previewUrl = URL.createObjectURL(file);
         const img = el('vcp-image');
         const placeholder = el('vcp-image-placeholder');
@@ -576,6 +587,30 @@ export async function vetClinicProfileEvents(params = {}) {
           }
         } catch (err) {
           console.error('Failed to save clinic photo:', err);
+
+          // Revert optimistic preview when persistence fails.
+          if (img) {
+            if (previousSrc) {
+              img.src = previousSrc;
+              img.style.display = '';
+            } else {
+              img.removeAttribute('src');
+              img.style.display = 'none';
+            }
+          }
+          if (placeholder) {
+            placeholder.style.display = hadPlaceholder || !previousSrc ? 'flex' : 'none';
+          }
+
+          const failToast = document.createElement('div');
+          failToast.className = 'font-poppins';
+          failToast.textContent = 'Could not save photo. Please try again.';
+          failToast.style.cssText =
+            'position:fixed;bottom:18px;right:18px;z-index:9999;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,0.12);';
+          document.body.appendChild(failToast);
+          setTimeout(() => failToast.remove(), 2600);
+        } finally {
+          URL.revokeObjectURL(previewUrl);
         }
       });
     }
