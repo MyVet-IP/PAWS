@@ -79,7 +79,7 @@ app.use('/api/medical-records', require('./routes/medicalRecords'));
 app.use('/api/contact', require('./routes/contact'));
 
 app.get('/api/config', (req, res) => {
-  res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
+    res.json({ mapsKey: process.env.GOOGLE_MAPS_API_KEY || '' });
 });
 
 // ── SPA fallback — redirige todo lo que no sea /api al index.html ─────────────
