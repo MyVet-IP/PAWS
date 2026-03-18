@@ -25,10 +25,20 @@ function _hasAzureConfig() {
 async function _uploadToAzure({ file, folder, prefix }) {
   const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
   const containerName = process.env.AZURE_STORAGE_CONTAINER;
+  const publicRead = String(process.env.AZURE_STORAGE_PUBLIC_READ || 'true').toLowerCase() === 'true';
 
   const blobService = BlobServiceClient.fromConnectionString(connectionString);
   const containerClient = blobService.getContainerClient(containerName);
-  await containerClient.createIfNotExists({ access: 'blob' });
+  await containerClient.createIfNotExists({ access: publicRead ? 'blob' : undefined });
+
+  // If container already existed as private, ensure blob-level public read when enabled.
+  if (publicRead) {
+    try {
+      await containerClient.setAccessPolicy('blob');
+    } catch {
+      // If policy update is blocked, upload still works but public URL may not render.
+    }
+  }
 
   const ext = _safeExt(file);
   const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
