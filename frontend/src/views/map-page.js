@@ -11,7 +11,9 @@ function normalizeClinic(raw) {
     name: raw.name || '',
     location: raw.zone ? `${raw.zone}, Medellín` : (raw.city || 'Medellín'),
     address: raw.address || raw.zone || '',
-    rating: raw.rating_average ? parseFloat(raw.rating_average).toFixed(1) : '—',
+    rating: (raw.rating || raw.rating_average)
+      ? parseFloat(raw.rating || raw.rating_average).toFixed(1)
+      : '—',
     reviews: raw.rating_count || 0,
     services: specs.length ? specs : [],
     zone: raw.zone || '',
@@ -317,13 +319,17 @@ function _askUserLocation() {
 
       const infoWindow = new google.maps.InfoWindow({
         content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
-                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">You are here</p>
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
                   </div>`,
       });
       _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
       _googleMap.panTo({ lat, lng });
     },
-    () => { }
+    (err) => {
+      console.warn('[PAWS] Geolocation error:', err.code, err.message);
+      // err.code: 1=PERMISSION_DENIED 2=POSITION_UNAVAILABLE 3=TIMEOUT
+    },
+    options
   );
 }
 

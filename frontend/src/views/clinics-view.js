@@ -216,7 +216,15 @@ function renderClinicCard(clinic) {
         </div>` : ''}
       </div>
       <div class="p-5">
-        <h3 class="font-bold font-poppins mb-1" style="font-size:15px;color:var(--text-primary);">${clinic.name}</h3>
+        <div class="flex items-start justify-between mb-1">
+          <h3 class="font-bold font-poppins" style="font-size:15px;color:var(--text-primary);">${clinic.name}</h3>
+          ${clinic._distKm && clinic._distKm < 9999
+      ? `<span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                     style="background:#F0FDF4;color:#16a34a;">
+                 📍 ${clinic._distKm < 1 ? Math.round(clinic._distKm * 1000) + 'm' : clinic._distKm.toFixed(1) + 'km'}
+               </span>`
+      : ''}
+        </div>
         ${location ? `
         <div class="flex items-start gap-1.5 mb-3" style="color:var(--text-muted);">
           <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -330,17 +338,53 @@ function renderGrid(list) {
 //  El fetch llena allClinics y dispara refresh().
 // ─────────────────────────────────────────────
 export function clinicsEvents() {
-  // Estado local — no module-level para evitar
-  // bugs si la vista se monta más de una vez
   let allClinics = [];
   let activeFilter = 'all';
   let loaded = false;
+  let _userLat = null;
+  let _userLng = null;
+
+  // Pedir ubicación al cargar — si está concedida responde inmediato
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        _userLat = pos.coords.latitude;
+        _userLng = pos.coords.longitude;
+        console.log('[PAWS Clinics] Ubicación:', _userLat, _userLng);
+        if (loaded) refresh(); // re-ordena las cards si los datos ya llegaron
+      },
+      (err) => console.warn('[PAWS Clinics] Geolocation error:', err.code),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
+  }
+
+  function _haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function _sortByDistance(list) {
+    if (!_userLat || !_userLng) return list;
+    return [...list].map(c => ({
+      ...c,
+      _distKm: (c.latitude && c.longitude)
+        ? _haversine(_userLat, _userLng, parseFloat(c.latitude), parseFloat(c.longitude))
+        : 9999,
+    })).sort((a, b) => a._distKm - b._distKm);
+  }
 
   const getSearch = () => document.getElementById('clinic-search')?.value.trim() || '';
   const getSort = () => document.getElementById('sort-select')?.value || 'rating';
   const refresh = () => {
-    if (!loaded) return; // no hacer nada hasta que lleguen los datos
-    renderGrid(applyFilters(allClinics, activeFilter, getSearch(), getSort()));
+    if (!loaded) return;
+    let list = applyFilters(allClinics, activeFilter, getSearch(), getSort());
+    list = _sortByDistance(list); // siempre ordenar por distancia al final
+    renderGrid(list);
   };
 
   // ── 1. Registrar todos los listeners PRIMERO ─
