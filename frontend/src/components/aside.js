@@ -51,7 +51,7 @@ export function Aside() {
       : `<div class="w-full h-full flex items-center justify-center font-bold text-white"
                     style="font-size:1.2rem;background:linear-gradient(135deg,#B9FBC0,#6A4C93);">
                  ${initials}
-               </div>`
+          </div>`
     }
         </div>
 

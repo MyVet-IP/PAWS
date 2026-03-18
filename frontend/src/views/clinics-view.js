@@ -57,7 +57,7 @@ export function clinicsPage() {
       </div>
 
       <!-- Filter chips -->
-      <div class="flex gap-2 flex-wrap">
+      <!-- <div class="flex gap-2 flex-wrap">
         <button class="clinic-filter-btn clinic-filter-active" data-filter="all">All</button>
         <button class="clinic-filter-btn" data-filter="emergency">
           <svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
@@ -79,7 +79,7 @@ export function clinicsPage() {
           <svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 3v8l-4 7a1 1 0 001 1h12a1 1 0 001-1l-4-7V3M9 3h6M7 16h10"/></svg>
           Laboratory
         </button>
-      </div>
+      </div> -->
 
     </div>
 
@@ -205,44 +205,44 @@ function renderClinicCard(clinic) {
 // ─────────────────────────────────────────────
 //  Estado y lógica de filtros
 // ─────────────────────────────────────────────
-const FILTER_MAP = {
-  emergency: { terms: ['emergency', 'urgencia', 'urgencias'], field24h: true },
-  surgery: { terms: ['surgery', 'cirugía', 'cirugia', 'surgical'] },
-  cardiology: { terms: ['cardiology', 'cardiología', 'cardiologia', 'cardio'] },
-  dental: { terms: ['dental', 'odontología', 'odontologia', 'dentistry'] },
-  lab: { terms: ['laboratory', 'laboratorio', 'lab', 'diagnostics', 'diagnóstico'] },
-};
+// const FILTER_MAP = {
+//   emergency: { terms: ['emergency', 'urgencia', 'urgencias'], field24h: true },
+//   surgery: { terms: ['surgery', 'cirugía', 'cirugia', 'surgical'] },
+//   cardiology: { terms: ['cardiology', 'cardiología', 'cardiologia', 'cardio'] },
+//   dental: { terms: ['dental', 'odontología', 'odontologia', 'dentistry'] },
+//   lab: { terms: ['laboratory', 'laboratorio', 'lab', 'diagnostics', 'diagnóstico'] },
+// };
 
-function applyFilters(allClinics, filter, search, sort) {
-  let list = [...allClinics];
+// function applyFilters(allClinics, filter, search, sort) {
+//   let list = [...allClinics];
 
-  if (filter !== 'all') {
-    const rule = FILTER_MAP[filter];
-    if (rule) {
-      list = list.filter(c => {
-        const specs = (c.specialties || []).map(s => s.name.toLowerCase());
-        const matchesSpec = rule.terms.some(t => specs.some(s => s.includes(t)));
-        const matches24h = rule.field24h && c.is_24h;
-        return matchesSpec || matches24h;
-      });
-    }
-  }
+//   if (filter !== 'all') {
+//     const rule = FILTER_MAP[filter];
+//     if (rule) {
+//       list = list.filter(c => {
+//         const specs = (c.specialties || []).map(s => s.name.toLowerCase());
+//         const matchesSpec = rule.terms.some(t => specs.some(s => s.includes(t)));
+//         const matches24h = rule.field24h && c.is_24h;
+//         return matchesSpec || matches24h;
+//       });
+//     }
+//   }
 
-  if (search) {
-    const q = search.toLowerCase().trim();
-    list = list.filter(c =>
-      (c.name || '').toLowerCase().includes(q) ||
-      (c.address || '').toLowerCase().includes(q) ||
-      (c.zone || '').toLowerCase().includes(q) ||
-      (c.specialties || []).some(s => s.name.toLowerCase().includes(q))
-    );
-  }
+//   if (search) {
+//     const q = search.toLowerCase().trim();
+//     list = list.filter(c =>
+//       (c.name || '').toLowerCase().includes(q) ||
+//       (c.address || '').toLowerCase().includes(q) ||
+//       (c.zone || '').toLowerCase().includes(q) ||
+//       (c.specialties || []).some(s => s.name.toLowerCase().includes(q))
+//     );
+//   }
 
-  if (sort === 'rating') list.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
-  else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+//   if (sort === 'rating') list.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+//   else if (sort === 'name') list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-  return list;
-}
+//   return list;
+// }
 
 function renderGrid(list) {
   const grid = document.getElementById('clinics-grid');

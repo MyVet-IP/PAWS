@@ -38,7 +38,7 @@ export function debounce(func, wait) {
   };
 }
 
-// Toast notifications
+// Notifications
 export function showToast(message, type = 'success', duration = 4000) {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -51,7 +51,7 @@ export function showToast(message, type = 'success', duration = 4000) {
   const id = 'toast-' + Math.random().toString(36).substr(2, 9);
   toast.id = id;
   toast.className = `paws-toast toast-${type}`;
-  
+
   const icons = {
     success: 'check_circle',
     error: 'error',
