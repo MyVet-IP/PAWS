@@ -6,7 +6,7 @@ export function Aside() {
 
   const isVet = user.role === "business";
   const isAdmin = user.role === "admin";
-  const photo = user.photo || null;
+  const photo = user.photo_url || user.photo || null;
   const initials = (user.name || "U")
     .split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
 
@@ -343,18 +343,12 @@ export function asideEvents() {
   });
 
   // Guardar
-  saveBtn?.addEventListener("click", () => {
+  saveBtn?.addEventListener("click", async () => {
     user = JSON.parse(localStorage.getItem("user") || "null");
     const newName = document.getElementById("edit-name")?.value.trim();
     const newPhone = document.getElementById("edit-phone")?.value.trim();
 
-    if (fileInput?.files[0]) {
-      const reader = new FileReader();
-      reader.onload = e => _persistAndRefresh(user, newName, newPhone, e.target.result, closeModal, successMsg);
-      reader.readAsDataURL(fileInput.files[0]);
-    } else {
-      _persistAndRefresh(user, newName, newPhone, user.photo || null, closeModal, successMsg);
-    }
+    await _persistAndRefresh(user, newName, newPhone, fileInput?.files?.[0] || null, closeModal, successMsg);
   });
 
   // Logout
@@ -379,7 +373,7 @@ function _fillModal(user) {
   if (emailEl) emailEl.value = user.email || "";
   if (phoneEl) phoneEl.value = user.phone || "";
   if (success) success.style.display = "none";
-  if (preview) _renderAvatar(preview, user.photo || null, user.name);
+  if (preview) _renderAvatar(preview, user.photo_url || user.photo || null, user.name);
 }
 
 function _renderAvatar(el, photo, name = "") {
@@ -395,32 +389,70 @@ function _renderAvatar(el, photo, name = "") {
   }
 }
 
-function _persistAndRefresh(user, name, phone, photo, closeModal, successMsg) {
-  const updated = {
-    ...user,
-    ...(name ? { name } : {}),
-    ...(phone ? { phone } : {}),
-    ...(photo ? { photo } : {}),
-  };
-  localStorage.setItem("user", JSON.stringify(updated));
+async function _persistAndRefresh(user, name, phone, photoFile, closeModal, successMsg) {
+  const userId = user?.user_id || user?.id;
+  if (!userId) return;
 
-  // Actualizar avatar en sidebar
-  const wrapper = document.getElementById("aside-avatar-wrapper");
-  if (wrapper) _renderAvatar(wrapper, photo, name || user.name);
+  let updated = { ...user };
 
-  // Actualizar saludo en dashboard
-  const dashName = document.getElementById("dash-username");
-  if (dashName) dashName.textContent = `Welcome, ${(name || user.name)?.split(" ")[0]}!`;
+  try {
+    // Persist text fields to API
+    const body = {};
+    if (name && name !== user.name) body.name = name;
+    if (phone !== undefined && phone !== user.phone) body.phone = phone;
 
-  // Mostrar éxito y cerrar
-  if (successMsg) {
-    successMsg.style.display = "block";
-    setTimeout(() => {
-      successMsg.style.display = "none";
+    if (Object.keys(body).length > 0) {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        const persisted = await res.json();
+        updated = { ...updated, ...persisted };
+      }
+    }
+
+    // Persist photo file with multer endpoint
+    if (photoFile) {
+      const formData = new FormData();
+      formData.append("photo", photoFile);
+
+      const photoRes = await fetch(`/api/users/${userId}/photo`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (photoRes.ok) {
+        const photoPersisted = await photoRes.json();
+        updated = { ...updated, ...photoPersisted };
+      }
+    }
+
+    // Keep legacy frontend key `photo` in sync with backend `photo_url`
+    if (updated.photo_url) updated.photo = updated.photo_url;
+    localStorage.setItem("user", JSON.stringify(updated));
+
+    // Actualizar avatar en sidebar
+    const wrapper = document.getElementById("aside-avatar-wrapper");
+    if (wrapper) _renderAvatar(wrapper, updated.photo_url || updated.photo || null, updated.name || user.name);
+
+    // Actualizar saludo en dashboard
+    const dashName = document.getElementById("dash-username");
+    if (dashName) dashName.textContent = `Welcome, ${(updated.name || user.name)?.split(" ")[0]}!`;
+
+    // Mostrar éxito y cerrar
+    if (successMsg) {
+      successMsg.style.display = "block";
+      setTimeout(() => {
+        successMsg.style.display = "none";
+        closeModal();
+      }, 1600);
+    } else {
       closeModal();
-    }, 1600);
-  } else {
-    closeModal();
+    }
+  } catch (err) {
+    console.error("Error saving profile:", err);
   }
 }
 

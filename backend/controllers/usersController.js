@@ -28,6 +28,20 @@ exports.update = async (req, res, next) => {
     }
 };
 
+exports.uploadPhoto = async (req, res, next) => {
+    try {
+        const photo_url = req.body?.photo_url;
+        if (!photo_url) return res.status(400).json({ error: 'No photo URL generated' });
+
+        const user = await usersStorage.updatePhoto(req.params.id, photo_url);
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+        res.json(user);
+    } catch (err) {
+        next(err);
+    }
+};
+
 exports.getDashboard = async (req, res, next) => {
     try {
         const dashboard = await usersStorage.getDashboard(req.params.id);

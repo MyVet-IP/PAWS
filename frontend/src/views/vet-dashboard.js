@@ -491,9 +491,8 @@ export function vetDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg>
           </div>
-          <span class="text-xs text-green-500 font-medium bg-green-50 px-2 py-1 rounded-full">+12%</span>
         </div>
-        <p class="text-2xl font-bold text-text-primary font-poppins">156</p>
+        <p id="stat-total-patients" class="text-2xl font-bold text-text-primary font-poppins">-</p>
         <p class="text-sm text-text-muted">Total Patients</p>
       </div>
       <div class="bg-white rounded-2xl p-5 shadow-card">
@@ -503,9 +502,8 @@ export function vetDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
           </div>
-          <span class="text-xs text-green-500 font-medium bg-green-50 px-2 py-1 rounded-full">+5%</span>
         </div>
-        <p class="text-2xl font-bold text-text-primary font-poppins">24</p>
+        <p id="stat-this-week" class="text-2xl font-bold text-text-primary font-poppins">-</p>
         <p class="text-sm text-text-muted">This Week</p>
       </div>
       <div class="bg-white rounded-2xl p-5 shadow-card">
@@ -515,9 +513,8 @@ export function vetDashboardPage() {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
-          <span class="text-xs text-orange-500 font-medium bg-orange-50 px-2 py-1 rounded-full">3 pending</span>
         </div>
-        <p class="text-2xl font-bold text-text-primary font-poppins">8</p>
+        <p id="stat-today" class="text-2xl font-bold text-text-primary font-poppins">-</p>
         <p class="text-sm text-text-muted">Today</p>
       </div>
       <div class="bg-white rounded-2xl p-5 shadow-card">
@@ -528,7 +525,7 @@ export function vetDashboardPage() {
             </svg>
           </div>
         </div>
-        <p class="text-2xl font-bold text-text-primary font-poppins">4.9</p>
+        <p id="stat-rating" class="text-2xl font-bold text-text-primary font-poppins">-</p>
         <p class="text-sm text-text-muted">Average Rating</p>
       </div>
     </div>
@@ -623,6 +620,67 @@ export function vetDashboardPage() {
   `;
 }
 
+// ── Carga estadísticas del dashboard del veterinario ────────
+async function loadVetDashboardStats() {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user) return;
+    const userId = user.user_id || user.id;
+
+    // Obtener el negocio del usuario
+    const bizRes = await fetch(`/api/businesses/user/${userId}`);
+    if (!bizRes.ok) return;
+    const biz = await bizRes.json();
+    if (!biz) return;
+
+    // Obtener todas las citas del negocio
+    const appRes = await fetch(`/api/appointments`);
+    if (!appRes.ok) return;
+    const allAppointments = await appRes.json();
+    if (!Array.isArray(allAppointments)) return;
+
+    // Filtrar citas del negocio actual
+    const bizAppointments = allAppointments.filter(a => a.business_id === biz.business_id);
+
+    // Calcular estadísticas
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const weekStart = new Date(today);
+    weekStart.setDate(weekStart.getDate() - today.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+
+    const totalPatients = new Set(bizAppointments.map(a => a.pet_id)).size;
+    const thisWeekCount = bizAppointments.filter(a => {
+      const appDate = new Date(a.appointment_date);
+      appDate.setHours(0, 0, 0, 0);
+      return appDate >= weekStart && appDate < weekEnd;
+    }).length;
+    const todayCount = bizAppointments.filter(a => {
+      const appDate = new Date(a.appointment_date);
+      appDate.setHours(0, 0, 0, 0);
+      return appDate.getTime() === today.getTime();
+    }).length;
+
+    // Calcular rating promedio si existen reseñas
+    const ratingAvg = bizAppointments.length > 0 
+      ? (bizAppointments.reduce((sum, a) => sum + (a.rating || 0), 0) / bizAppointments.length).toFixed(1)
+      : "N/A";
+
+    // Actualizar DOM
+    const el = id => document.getElementById(id);
+    if (el("stat-total-patients")) el("stat-total-patients").textContent = totalPatients;
+    if (el("stat-this-week")) el("stat-this-week").textContent = thisWeekCount;
+    if (el("stat-today")) el("stat-today").textContent = todayCount;
+    if (el("stat-rating")) el("stat-rating").textContent = ratingAvg;
+  } catch (err) {
+    console.error("Error loading vet dashboard stats:", err);
+  }
+}
+
 // ─────────────────────────────────────────────
 //  vetDashboardEvents
 // ─────────────────────────────────────────────
@@ -630,6 +688,7 @@ export function vetDashboardEvents() {
   let data = getVetData();
   // Cargar datos reales desde la API en segundo plano
   loadBusinessFromAPI().then(apiData => { if (apiData) data = apiData; });
+  loadVetDashboardStats();
 
   const openModal = id => { const m = document.getElementById(id); if (m) m.style.display = "flex"; };
   const closeModal = id => { const m = document.getElementById(id); if (m) m.style.display = "none"; };
