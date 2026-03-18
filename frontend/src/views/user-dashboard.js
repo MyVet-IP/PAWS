@@ -123,22 +123,6 @@ export function dashboardPage() {
             Loading your pets...
           </div>
         </div>
-
-        <!-- Nearby clinics -->
-        <div class="mt-2">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-bold font-poppins" style="color:var(--text-primary);">Clinics near you</h2>
-            <a href="#/clinics"
-               class="text-xs font-semibold font-poppins flex items-center gap-1"
-               style="color:var(--text-highlight);">
-              See all
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
       </div>
 
       <!-- RIGHT SIDEBAR (1 col) -->
