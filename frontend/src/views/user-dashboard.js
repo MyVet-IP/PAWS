@@ -125,7 +125,7 @@ export function dashboardPage() {
         </div>
 
         <!-- Nearby clinics -->
-        <div class="mt-2">
+        <!-- <div class="mt-2">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-base font-bold font-poppins" style="color:var(--text-primary);">Clinics near you</h2>
             <a href="#/clinics"
@@ -160,7 +160,7 @@ export function dashboardPage() {
               </a>
             `).join('')}
           </div> -->
-        </div>
+        </div> -->
 
       </div>
 
