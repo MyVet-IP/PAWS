@@ -4,7 +4,7 @@ import { AuthLayout } from "../layout/auth-layout.js";
 import { Aside, asideEvents } from "../components/aside.js";
 import { notFoundPage } from "../components/404-not-found.js";
 
-import { clinicsPage, clinicsEvents } from "../views/clinics-view.js";
+import { clinicsPage } from "../views/clinics-view.js";
 import { healthTipsPage, healthTipsEvents } from "../views/health-tips.js";
 import { loginPage, loginEvents } from "../views/login.js";
 import { loadMapPage, loadMapEvents } from "../views/map-page.js";
@@ -170,7 +170,7 @@ export function router() {
     if (path === "/login" || path === "/register" || path === "/forgot-password" || path === "/reset-password") {
       app.innerHTML = AuthLayout(html);
     } else {
-      app.innerHTML = Layout(html);
+      app.innerHTML = Layout(html, resolvedPath);
     }
 
     // ===== Global components =====
@@ -233,10 +233,6 @@ function runPageEvents(path, params = {}) {
 
     case "/pet-profile":
       petProfileEvents(params.pet_id);
-      break
-
-    case "/clinics":
-      clinicsEvents();
       break
 
     case "/veterinary":

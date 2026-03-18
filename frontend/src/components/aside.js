@@ -56,11 +56,9 @@ export function Aside() {
     }
         </div>
 
-        <!-- Online dot — color dinámico necesita style -->
         <span class="absolute" style="bottom:2px;right:2px;width:10px;height:10px;border-radius:50%;
               background:#B9FBC0;border:2px solid #7A3FA0;"></span>
 
-        <!-- Edit badge -->
         <div class="absolute flex items-center justify-center"
              style="bottom:-2px;right:-4px;width:20px;height:20px;border-radius:50%;
                     background:#B9FBC0;border:2px solid #6A4C93;">
@@ -71,12 +69,10 @@ export function Aside() {
         </div>
       </div>
 
-      <!-- Nombre -->
       <p class="font-bold text-surface-light text-center" style="font-size:13px;">
         ${user.name?.split(" ")[0] || "User"}
       </p>
 
-      <!-- Role badge -->
       <span class="mt-1 font-medium rounded-full" style="font-size:10px;padding:2px 10px;
             background:rgba(185,251,192,0.20);color:#B9FBC0;">
         ${isAdmin
@@ -86,7 +82,6 @@ export function Aside() {
         : "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='currentColor' viewBox='0 0 24 24'><path d='M12 2a2 2 0 100 4 2 2 0 000-4zM6 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM4 11a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm16 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-8 1c-2.5 0-5 2-5 4 0 1.5 1 2 2.5 2s2-.5 2.5-.5.5.5 2.5.5S17 18 17 16c0-2-2.5-4-5-4z'/></svg> Pet Owner"}
       </span>
 
-      <!-- Hint -->
       <p style="margin-top:5px;font-size:10px;color:rgba(255,255,255,0.28);">Click to edit profile</p>
     </div>
 
@@ -129,7 +124,6 @@ export function Aside() {
     <div class="bg-white rounded-2xl shadow-medium w-full mx-4 overflow-hidden animate-scale-in"
          style="max-width:420px;">
 
-      <!-- Header -->
       <div class="flex items-center justify-between px-6 py-5"
            style="background:linear-gradient(135deg,#6A4C93,#8B5FBF);">
         <div>
@@ -152,15 +146,12 @@ export function Aside() {
         </button>
       </div>
 
-      <!-- Avatar upload -->
       <div class="flex flex-col items-center pt-5 pb-2">
         <div class="relative cursor-pointer" id="avatar-upload-wrapper">
           <div id="modal-avatar-preview"
                class="rounded-full overflow-hidden flex items-center justify-center"
                style="width:80px;height:80px;border:3px solid #F1C0E8;">
-            <!-- llenado por _fillModal -->
           </div>
-          <!-- Overlay cámara — opacity gestionado por JS -->
           <div id="avatar-overlay"
                class="absolute inset-0 rounded-full flex items-center justify-center pointer-events-none"
                style="background:rgba(106,76,147,0.60);opacity:0;transition:opacity 150ms ease;">
@@ -176,59 +167,40 @@ export function Aside() {
         <p class="text-text-muted mt-1" style="font-size:11px;">Click photo to change</p>
       </div>
 
-      <!-- Campos -->
       <div class="px-6 pb-6 flex flex-col gap-3 mt-1">
-
         <div>
-          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">
-            Full name
-          </label>
+          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">Full name</label>
           <input id="edit-name" type="text" placeholder="Your full name"
-                 class="w-full border border-surface-muted rounded-md font-roboto text-text-primary
-                        transition-all outline-none"
+                 class="w-full border border-surface-muted rounded-md font-roboto text-text-primary transition-all outline-none"
                  style="padding:9px 14px;font-size:13px;"
                  onfocus="this.style.borderColor='#F1C0E8';this.style.boxShadow='0 0 0 3px rgba(241,192,232,0.3)'"
                  onblur="this.style.borderColor='';this.style.boxShadow=''"/>
         </div>
-
         <div>
-          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">
-            Email
-          </label>
+          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">Email</label>
           <input id="edit-email" type="email" disabled
-                 class="w-full border border-surface-muted rounded-md font-roboto
-                        bg-surface-muted text-text-muted cursor-not-allowed"
+                 class="w-full border border-surface-muted rounded-md font-roboto bg-surface-muted text-text-muted cursor-not-allowed"
                  style="padding:9px 14px;font-size:13px;"/>
           <p class="text-text-muted mt-0.5" style="font-size:10px;">Email cannot be changed here</p>
         </div>
-
         <div>
-          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">
-            Phone
-          </label>
+          <label class="block font-semibold text-text-soft font-poppins mb-1" style="font-size:11px;">Phone</label>
           <input id="edit-phone" type="tel" placeholder="+57 302 226 6234"
-                 class="w-full border border-surface-muted rounded-md font-roboto text-text-primary
-                        transition-all outline-none"
+                 class="w-full border border-surface-muted rounded-md font-roboto text-text-primary transition-all outline-none"
                  style="padding:9px 14px;font-size:13px;"
                  onfocus="this.style.borderColor='#F1C0E8';this.style.boxShadow='0 0 0 3px rgba(241,192,232,0.3)'"
                  onblur="this.style.borderColor='';this.style.boxShadow=''"/>
         </div>
-
-        <!-- Save button — usa token paws-green de tu config -->
         <button id="btn-save-profile"
-          class="w-full font-semibold font-poppins rounded-md transition-all border-none cursor-pointer
-                 bg-paws-green hover:bg-paws-greenDark text-text-primary"
+          class="w-full font-semibold font-poppins rounded-md transition-all border-none cursor-pointer bg-paws-green hover:bg-paws-greenDark text-text-primary"
           style="padding:11px;font-size:14px;">
           Save changes
         </button>
-
-        <!-- Success -->
         <div id="profile-success"
              class="text-center font-semibold font-poppins rounded-md bg-paws-green text-text-primary"
              style="display:none;padding:10px;font-size:13px;">
           <svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'/></svg> Profile updated!
         </div>
-
       </div>
     </div>
   </div>
@@ -236,48 +208,49 @@ export function Aside() {
 }
 
 // ─────────────────────────────────────────────
-//  ownerMenu — sin Emergency
+//  ownerMenu — Dashboard, Appointments, Clinics, Medical Records
 // ─────────────────────────────────────────────
 function ownerMenu(currentHash) {
   const links = [
-    { href: "#/user-dashboard", label: "Dashboard", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
-    { href: "#/appointments", label: "Appointments", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>" },
-    { href: "#/clinics", label: "Clinics", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>" },
+    { href: "#/user-dashboard",  label: "Dashboard",       icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
+    { href: "#/appointments",    label: "Appointments",    icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>" },
+    { href: "#/clinics",         label: "Clinics",         icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>" },
+    { href: "#/medical-records", label: "Medical Records", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'/></svg>" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
 }
 
 // ─────────────────────────────────────────────
-//  vetMenu — sin Emergency
+//  vetMenu — solo Dashboard y My Profile
 // ─────────────────────────────────────────────
 function vetMenu(currentHash) {
   const links = [
-    { href: "#/veterinary", label: "Dashboard", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
-    { href: "#/business-appointments", label: "Appointments", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>" },
-    { href: "#/medical-records", label: "Medical Records", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'/></svg>" },
+    { href: "#/veterinary",  label: "Dashboard", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>" },
     { href: "#/vet-profile", label: "My Profile", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'/></svg>" },
   ];
   return links.map(l => navLink(l, currentHash)).join("");
 }
 
 // ─────────────────────────────────────────────
-//  navLink — clases Tailwind + style solo para
-//  los valores de color con opacidad custom
-//  que Tailwind CDN no puede generar dinámicamente
+//  adminMenu
+// ─────────────────────────────────────────────
+function adminMenu(currentHash) {
+  const links = [
+    { href: "#/admin-dashboard", label: "Admin Panel", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 7a2 2 0 012-2h12a2 2 0 012 2v2H4V7z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 9h16v8a2 2 0 01-2 2H6a2 2 0 01-2-2V9z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 13h8M8 16h5'/></svg>" },
+  ];
+  return links.map(l => navLink(l, currentHash)).join("");
+}
+
+// ─────────────────────────────────────────────
+//  navLink
 // ─────────────────────────────────────────────
 function navLink({ href, label, icon }, currentHash) {
   const isActive = currentHash === href;
-
-  // Base styles que NUNCA deben perderse en hover
   const base = `padding:9px 14px;font-size:13px;border-left:3px solid transparent;`;
-
-  // Solo cambian background, color y border-left-color — el base se preserva
   const activeStyle = `${base}background:rgba(185,251,192,0.20);color:#B9FBC0;border-left-color:#B9FBC0;`;
   const normalStyle = `${base}color:rgba(255,255,255,0.65);`;
-  const hoverStyle = `${base}color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.09);`;
-
-  // cssText ahora siempre incluye el base, así no se pierden padding ni font-size
-  const hOn = `this.style.cssText='${hoverStyle}'`;
+  const hoverStyle  = `${base}color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.09);`;
+  const hOn  = `this.style.cssText='${hoverStyle}'`;
   const hOff = `this.style.cssText='${isActive ? activeStyle : normalStyle}'`;
 
   return `
@@ -298,39 +271,33 @@ export function asideEvents() {
   let user = JSON.parse(localStorage.getItem("user") || "null");
   if (!user) return;
 
-  const modal = document.getElementById("modal-edit-profile");
-  const trigger = document.getElementById("aside-profile-trigger");
-  const closeBtn = document.getElementById("modal-profile-close");
-  const saveBtn = document.getElementById("btn-save-profile");
+  const modal     = document.getElementById("modal-edit-profile");
+  const trigger   = document.getElementById("aside-profile-trigger");
+  const closeBtn  = document.getElementById("modal-profile-close");
+  const saveBtn   = document.getElementById("btn-save-profile");
   const fileInput = document.getElementById("photo-file-input");
   const logoutBtn = document.getElementById("aside-logout-btn");
-  const successMsg = document.getElementById("profile-success");
+  const successMsg= document.getElementById("profile-success");
 
-  // Hover sobre avatar del modal
   const avatarWrapper = document.getElementById("avatar-upload-wrapper");
-  const overlay = document.getElementById("avatar-overlay");
+  const overlay       = document.getElementById("avatar-overlay");
   if (avatarWrapper && overlay) {
     avatarWrapper.addEventListener("mouseenter", () => overlay.style.opacity = "1");
     avatarWrapper.addEventListener("mouseleave", () => overlay.style.opacity = "0");
   }
 
-  const openModal = () => { if (modal) modal.style.display = "flex"; };
+  const openModal  = () => { if (modal) modal.style.display = "flex"; };
   const closeModal = () => { if (modal) modal.style.display = "none"; };
 
-  // Abrir modal
   trigger?.addEventListener("click", () => {
     user = JSON.parse(localStorage.getItem("user") || "null");
     _fillModal(user);
     openModal();
   });
 
-  // Cerrar — X
   closeBtn?.addEventListener("click", closeModal);
-
-  // Cerrar — backdrop
   modal?.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
-  // Preview foto en vivo
   fileInput?.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
@@ -342,16 +309,13 @@ export function asideEvents() {
     reader.readAsDataURL(file);
   });
 
-  // Guardar
   saveBtn?.addEventListener("click", async () => {
     user = JSON.parse(localStorage.getItem("user") || "null");
-    const newName = document.getElementById("edit-name")?.value.trim();
+    const newName  = document.getElementById("edit-name")?.value.trim();
     const newPhone = document.getElementById("edit-phone")?.value.trim();
-
     await _persistAndRefresh(user, newName, newPhone, fileInput?.files?.[0] || null, closeModal, successMsg);
   });
 
-  // Logout
   logoutBtn?.addEventListener("click", () => {
     localStorage.removeItem("user");
     window.location.hash = "/";
@@ -361,15 +325,14 @@ export function asideEvents() {
 // ─────────────────────────────────────────────
 //  Helpers privados
 // ─────────────────────────────────────────────
-
 function _fillModal(user) {
-  const nameEl = document.getElementById("edit-name");
+  const nameEl  = document.getElementById("edit-name");
   const emailEl = document.getElementById("edit-email");
   const phoneEl = document.getElementById("edit-phone");
   const preview = document.getElementById("modal-avatar-preview");
   const success = document.getElementById("profile-success");
 
-  if (nameEl) nameEl.value = user.name || "";
+  if (nameEl)  nameEl.value  = user.name  || "";
   if (emailEl) emailEl.value = user.email || "";
   if (phoneEl) phoneEl.value = user.phone || "";
   if (success) success.style.display = "none";
@@ -396,69 +359,42 @@ async function _persistAndRefresh(user, name, phone, photoFile, closeModal, succ
   let updated = { ...user };
 
   try {
-    // Persist text fields to API
     const body = {};
-    if (name && name !== user.name) body.name = name;
+    if (name  && name  !== user.name)  body.name  = name;
     if (phone !== undefined && phone !== user.phone) body.phone = phone;
 
     if (Object.keys(body).length > 0) {
       const res = await fetch(`/api/users/${userId}`, {
-        method: "PUT",
+        method:  "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body:    JSON.stringify(body),
       });
-      if (res.ok) {
-        const persisted = await res.json();
-        updated = { ...updated, ...persisted };
-      }
+      if (res.ok) { const persisted = await res.json(); updated = { ...updated, ...persisted }; }
     }
 
-    // Persist photo file with multer endpoint
     if (photoFile) {
       const formData = new FormData();
       formData.append("photo", photoFile);
-
-      const photoRes = await fetch(`/api/users/${userId}/photo`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (photoRes.ok) {
-        const photoPersisted = await photoRes.json();
-        updated = { ...updated, ...photoPersisted };
-      }
+      const photoRes = await fetch(`/api/users/${userId}/photo`, { method: "POST", body: formData });
+      if (photoRes.ok) { const photoPersisted = await photoRes.json(); updated = { ...updated, ...photoPersisted }; }
     }
 
-    // Keep legacy frontend key `photo` in sync with backend `photo_url`
     if (updated.photo_url) updated.photo = updated.photo_url;
     localStorage.setItem("user", JSON.stringify(updated));
 
-    // Actualizar avatar en sidebar
     const wrapper = document.getElementById("aside-avatar-wrapper");
     if (wrapper) _renderAvatar(wrapper, updated.photo_url || updated.photo || null, updated.name || user.name);
 
-    // Actualizar saludo en dashboard
     const dashName = document.getElementById("dash-username");
     if (dashName) dashName.textContent = `Welcome, ${(updated.name || user.name)?.split(" ")[0]}!`;
 
-    // Mostrar éxito y cerrar
     if (successMsg) {
       successMsg.style.display = "block";
-      setTimeout(() => {
-        successMsg.style.display = "none";
-        closeModal();
-      }, 1600);
+      setTimeout(() => { successMsg.style.display = "none"; closeModal(); }, 1600);
     } else {
       closeModal();
     }
   } catch (err) {
     console.error("Error saving profile:", err);
   }
-}
-
-function adminMenu(currentHash) {
-  const links = [
-    { href: "#/admin-dashboard", label: "Admin Panel", icon: "<svg style='width:1em;height:1em;display:inline-block;vertical-align:middle;' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 7a2 2 0 012-2h12a2 2 0 012 2v2H4V7z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M4 9h16v8a2 2 0 01-2 2H6a2 2 0 01-2-2V9z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='1.8' d='M8 13h8M8 16h5'/></svg>" },
-  ];
-  return links.map(l => navLink(l, currentHash)).join("");
 }
