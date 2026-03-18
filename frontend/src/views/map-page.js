@@ -1,60 +1,45 @@
 // ─────────────────────────────────────────────
-//  map-page.js
-//   Inline styles → map-page.css
-//   <style> tag removed
-//   Google Maps API integration
-//   Sidebar max-height for mobile
+//  map-page.js  (versión con API real — sin datos hardcodeados)
+//  Reemplaza frontend/src/views/map-page.js
 // ─────────────────────────────────────────────
 
-// ─────────────────────────────────────────────
-//  Normalizer — API response → map-friendly shape
-// ─────────────────────────────────────────────
+// ─── Normalizer: transforma la respuesta de /api/businesses → forma que usa el mapa ───
 function normalizeClinic(raw) {
   const specs = (raw.specialties || []).map(s => (s.name || s).toString());
   return {
-    id:          raw.business_id,
-    name:        raw.name || '',
-    location:    raw.zone ? `${raw.zone}, Medellín` : (raw.city || 'Medellín'),
-    address:     raw.address || raw.zone || '',
-    rating:      raw.rating_average ? parseFloat(raw.rating_average).toFixed(1) : '—',
-    reviews:     raw.rating_count || 0,
-    services:    specs.length ? specs : [],
-    zone:        raw.zone || '',
-    open24:      raw.is_24h === true,
-    emergency:   raw.is_24h === true ||
-                 specs.some(s => /emerg|urgenc/i.test(s)),
-    phone:       raw.phone || null,
-    whatsapp:    raw.whatsapp || null,
-    hours:       raw.is_24h ? 'Lunes a Domingo — 24 horas' : 'Lun–Sáb 8am–6:30pm · Dom cerrado',
-    verified:    raw.nit_verified === 'verified',
-    description: raw.description ||
-                 (raw.website ? `Web: ${raw.website}` : ''),
-    lat:         raw.latitude  ? parseFloat(raw.latitude)  : null,
-    lng:         raw.longitude ? parseFloat(raw.longitude) : null,
+    id: raw.business_id,
+    name: raw.name || '',
+    location: raw.zone ? `${raw.zone}, Medellín` : (raw.city || 'Medellín'),
+    address: raw.address || raw.zone || '',
+    rating: raw.rating_average ? parseFloat(raw.rating_average).toFixed(1) : '—',
+    reviews: raw.rating_count || 0,
+    services: specs.length ? specs : [],
+    zone: raw.zone || '',
+    open24: raw.is_24h === true,
+    emergency: raw.is_24h === true || specs.some(s => /emerg|urgenc/i.test(s)),
+    phone: raw.phone || null,
+    whatsapp: raw.whatsapp || null,
+    hours: raw.is_24h ? 'Lunes a Domingo — 24 horas' : 'Lun–Sáb 8am–6:30pm · Dom cerrado',
+    verified: raw.nit_verified === 'verified',
+    description: raw.description || (raw.website ? `Web: ${raw.website}` : ''),
+    lat: raw.latitude ? parseFloat(raw.latitude) : null,
+    lng: raw.longitude ? parseFloat(raw.longitude) : null,
   };
 }
 
-// Google Maps instance — shared between render and events
 let _googleMap = null;
 let _mapMarkers = [];
-let _userMarker = null;   // marcador verde de la ubicación del usuario
+let _userMarker = null;
 
-// ─────────────────────────────────────────────
-//  loadMapPage
-// ─────────────────────────────────────────────
+// ─── HTML skeleton ──────────────────────────────────────────────────────────
 export function loadMapPage() {
   return `
   <div class="map-wrapper font-roboto">
-
-    <!-- ════════════════════════ SIDEBAR ════ -->
     <aside class="map-sidebar">
-
-      <!-- Search + filter -->
       <div class="map-search-bar">
         <div class="relative flex-1">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-               style="color:var(--color-muted);"
-               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               style="color:var(--color-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
@@ -69,65 +54,46 @@ export function loadMapPage() {
                 style="background:var(--text-highlight);"></span>
         </button>
       </div>
-
-      <!-- Results count -->
       <div class="map-results-bar">
         <p class="text-xs font-roboto" style="color:var(--text-muted);">
           <span id="map-count" class="font-semibold" style="color:var(--text-primary);">…</span> clinics found
         </p>
         <button id="btn-clear-filters" class="hidden text-xs font-semibold font-poppins"
-                style="color:var(--text-highlight);">
-          Clear filters
-        </button>
+                style="color:var(--text-highlight);">Clear filters</button>
       </div>
-
-      <!-- Clinic cards -->
       <div id="clinic-list"></div>
-
-      <!-- Empty state -->
       <div id="clinic-empty">
-        <p class="text-4xl mb-3"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></p>
+        <p class="text-4xl mb-3">🔍</p>
         <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">No clinics found</p>
         <p class="text-xs mt-1" style="color:var(--text-muted);">Try adjusting your search or filters</p>
       </div>
-
     </aside>
 
-    <!-- ══════════════════════════ MAP ══════ -->
     <div class="map-container">
       <div id="mapContainer">
-        <!-- Placeholder shown until Google Maps loads -->
         <div class="map-placeholder" id="map-placeholder">
           <div class="map-placeholder-icon">
-            <svg class="w-8 h-8" style="color:var(--text-highlight);"
-                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-8" style="color:var(--text-highlight);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
             </svg>
           </div>
-          <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">
-            Map loading...
-          </p>
-          <p class="text-xs mt-1" style="color:var(--text-muted);">
-            Google Maps will render here
-          </p>
+          <p class="font-semibold font-poppins text-sm" style="color:var(--text-primary);">Map loading...</p>
+          <p class="text-xs mt-1" style="color:var(--text-muted);">Google Maps will render here</p>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ═══════════════════ MODAL: FILTERS ══ -->
+  <!-- MODAL: FILTERS -->
   <div id="modal-filters">
     <div class="filter-modal-card animate-scale-in">
       <div class="filter-modal-header">
         <h3 class="font-bold font-poppins text-sm" style="color:var(--text-primary);">Filters</h3>
         <button id="modal-filters-close"
           class="flex items-center justify-center rounded-full transition"
-          style="width:28px;height:28px;border:none;cursor:pointer;
-                 background:var(--bg-muted);color:var(--text-muted);"
-          onmouseenter="this.style.background='#E5E7EB'"
-          onmouseleave="this.style.background='var(--bg-muted)'">
+          style="width:28px;height:28px;border:none;cursor:pointer;background:var(--bg-muted);color:var(--text-muted);"
+          onmouseenter="this.style.background='#E5E7EB'" onmouseleave="this.style.background='var(--bg-muted)'">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -138,9 +104,9 @@ export function loadMapPage() {
           <p class="filter-section-label">Quick</p>
           <div class="flex flex-wrap gap-1.5">
             <button class="fchip fchip-active" data-type="quick" data-value="all">All</button>
-            <button class="fchip" data-type="quick" data-value="24h"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 24h only</button>
-            <button class="fchip" data-type="quick" data-value="emergency"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Emergency</button>
-            <button class="fchip" data-type="quick" data-value="verified"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Verified</button>
+            <button class="fchip" data-type="quick" data-value="24h">24h only</button>
+            <button class="fchip" data-type="quick" data-value="emergency">Emergency</button>
+            <button class="fchip" data-type="quick" data-value="verified">✓ Verified</button>
           </div>
         </div>
         <div>
@@ -154,19 +120,16 @@ export function loadMapPage() {
         <button id="btn-apply-filters"
           class="w-full py-2 rounded-xl font-poppins font-semibold text-sm text-white transition"
           style="background:var(--text-highlight);"
-          onmouseenter="this.style.opacity='0.90'"
-          onmouseleave="this.style.opacity='1'">
+          onmouseenter="this.style.opacity='0.90'" onmouseleave="this.style.opacity='1'">
           Apply filters
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════ MODAL: DETAIL ════ -->
+  <!-- MODAL: DETAIL -->
   <div id="modal-clinic-detail">
     <div class="detail-modal-card animate-scale-in">
-
-      <!-- Gradient header -->
       <div class="detail-modal-header">
         <button id="modal-detail-close" class="detail-modal-close">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +138,7 @@ export function loadMapPage() {
         </button>
         <div class="flex items-start gap-3">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-               style="background:rgba(255,255,255,0.20);"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+               style="background:rgba(255,255,255,0.20);"></div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h2 id="dc-name" class="font-bold text-white font-poppins text-base leading-tight"></h2>
@@ -185,35 +148,27 @@ export function loadMapPage() {
             <p id="dc-location" class="text-xs mt-0.5" style="color:rgba(255,255,255,0.70);"></p>
           </div>
         </div>
-        <!-- Rating badges -->
         <div class="absolute flex gap-2" style="bottom:-16px;left:24px;">
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white"
-               style="box-shadow:var(--shadow-soft);">
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white" style="box-shadow:var(--shadow-soft);">
             <svg class="w-3 h-3" style="color:#f59e0b;" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
             </svg>
             <span id="dc-rating" class="text-xs font-bold font-poppins" style="color:var(--text-primary);"></span>
             <span id="dc-reviews" class="text-xs" style="color:var(--text-muted);"></span>
           </div>
-          <div id="dc-24h" class="hidden px-3 py-1.5 rounded-xl"
-               style="background:#dc2626;box-shadow:var(--shadow-soft);">
+          <div id="dc-24h" class="hidden px-3 py-1.5 rounded-xl" style="background:#dc2626;box-shadow:var(--shadow-soft);">
             <span class="text-xs font-bold text-white">24/7</span>
           </div>
         </div>
       </div>
-
-      <!-- Body -->
       <div class="px-6 pt-8 pb-6 flex flex-col gap-4">
         <p id="dc-description" class="text-sm leading-relaxed" style="color:var(--text-soft);"></p>
-
         <div class="flex flex-col gap-2">
           <div class="flex items-start gap-3">
             <div class="detail-info-icon">
               <svg class="w-4 h-4" style="color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
             </div>
             <div>
@@ -224,8 +179,7 @@ export function loadMapPage() {
           <div class="flex items-start gap-3">
             <div class="detail-info-icon">
               <svg class="w-4 h-4" style="color:var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
             <div>
@@ -234,22 +188,17 @@ export function loadMapPage() {
             </div>
           </div>
         </div>
-
         <div>
           <p class="filter-section-label">Services</p>
           <div id="dc-services" class="flex flex-wrap gap-2"></div>
         </div>
-
         <div style="height:1px;background:var(--bg-muted);"></div>
-
         <div class="flex flex-col gap-2">
           <div class="flex gap-2">
             <a id="dc-call" href="#"
-               class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
-                      font-poppins font-semibold text-sm text-white transition"
+               class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-poppins font-semibold text-sm text-white transition"
                style="background:var(--text-highlight);"
-               onmouseenter="this.style.opacity='0.90'"
-               onmouseleave="this.style.opacity='1'">
+               onmouseenter="this.style.opacity='0.90'" onmouseleave="this.style.opacity='1'">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
@@ -257,21 +206,19 @@ export function loadMapPage() {
               Call
             </a>
             <button id="dc-focus"
-               class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
-                      font-poppins font-semibold text-sm transition">
+               class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-poppins font-semibold text-sm transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
               View on map
             </button>
           </div>
           <a id="dc-whatsapp" href="#" target="_blank"
-             class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl
-                    font-poppins font-semibold text-sm text-white transition"
+             class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-poppins font-semibold text-sm text-white transition"
              style="background:#16a34a;"
-             onmouseenter="this.style.opacity='0.90'"
-             onmouseleave="this.style.opacity='1'">
+             onmouseenter="this.style.opacity='0.90'" onmouseleave="this.style.opacity='1'">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
@@ -284,23 +231,19 @@ export function loadMapPage() {
   `;
 }
 
-// ─────────────────────────────────────────────
-//  initGoogleMap — loads the map with markers
-// ─────────────────────────────────────────────
+// ─── Google Maps helpers ────────────────────────────────────────────────────
 function initGoogleMap(clinics) {
-  // Hide placeholder
   const placeholder = document.getElementById('map-placeholder');
   if (placeholder) placeholder.style.display = 'none';
 
-  // Center on Medellín
-  const center = { lat: 6.2442, lng: -75.5812 };
-
   _googleMap = new google.maps.Map(document.getElementById('mapContainer'), {
-    center,
+    center: { lat: 6.2442, lng: -75.5812 },
     zoom: 12,
     styles: [
-      { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi', elementType: 'all', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.business', elementType: 'all', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.medical', elementType: 'all', stylers: [{ visibility: 'off' }] },
+      { featureType: 'transit', elementType: 'all', stylers: [{ visibility: 'off' }] },
     ],
     mapTypeControl: false,
     fullscreenControl: false,
@@ -311,12 +254,11 @@ function initGoogleMap(clinics) {
 }
 
 function _addMarkers(clinics) {
-  // Clear existing markers
   _mapMarkers.forEach(m => m.setMap(null));
   _mapMarkers = [];
 
   clinics.forEach(c => {
-    if (!c.lat || !c.lng) return; // skip clinics without coordinates
+    if (!c.lat || !c.lng) return;
     const marker = new google.maps.Marker({
       position: { lat: c.lat, lng: c.lng },
       map: _googleMap,
@@ -337,35 +279,27 @@ function _addMarkers(clinics) {
           <p style="font-weight:700;font-size:13px;margin:0 0 2px;">${c.name}</p>
           <p style="font-size:11px;color:#6b7280;margin:0 0 6px;">${c.location}</p>
           <button onclick="window.openClinicDetail(${c.id})"
-                  style="font-size:11px;color:#6A4C93;font-weight:600;
-                         background:none;border:none;cursor:pointer;padding:0;">
+                  style="font-size:11px;color:#6A4C93;font-weight:600;background:none;border:none;cursor:pointer;padding:0;">
             See details →
           </button>
         </div>`,
     });
 
-    marker.addListener('click', () => {
-      infoWindow.open(_googleMap, marker);
-    });
-
+    marker.addListener('click', () => infoWindow.open(_googleMap, marker));
     _mapMarkers.push(marker);
   });
 }
 
-// ─────────────────────────────────────────────
-//  _askUserLocation — pide permiso y pone un pin verde
-// ─────────────────────────────────────────────
 function _askUserLocation() {
   if (!navigator.geolocation) return;
 
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;
-
-      // Quitar marcador anterior si existía
       if (_userMarker) _userMarker.setMap(null);
+      // Notify the map events scope so cards re-sort by distance
+      if (typeof window._onUserLocation === 'function') window._onUserLocation(lat, lng);
 
-      // Pin verde con borde blanco — diferente a los morados/rojos de las clínicas
       _userMarker = new google.maps.Marker({
         position: { lat, lng },
         map: _googleMap,
@@ -373,64 +307,80 @@ function _askUserLocation() {
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 10,
-          fillColor: '#16a34a',      // verde
+          fillColor: '#16a34a',
           fillOpacity: 1,
           strokeColor: 'white',
           strokeWeight: 3,
         },
-        zIndex: 999,                 // siempre encima de los otros marcadores
+        zIndex: 999,
       });
 
-      // Tooltip al hacer clic
       const infoWindow = new google.maps.InfoWindow({
         content: `<div style="font-family:'Poppins',sans-serif;padding:4px;">
-                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">📍 You are here</p>
+                    <p style="font-weight:700;font-size:13px;margin:0;color:#16a34a;">You are here</p>
                   </div>`,
       });
       _userMarker.addListener('click', () => infoWindow.open(_googleMap, _userMarker));
-
-      // Centrar el mapa en el usuario (opcional — comenta si prefieres dejarlo en Medellín)
       _googleMap.panTo({ lat, lng });
     },
-    () => {
-      // El usuario denegó el permiso — no hacer nada, el mapa sigue igual
-    }
+    () => { }
   );
 }
 
-// ─────────────────────────────────────────────
-//  loadMapEvents
-// ─────────────────────────────────────────────
+// ─── Events ─────────────────────────────────────────────────────────────────
 export function loadMapEvents() {
   let allClinics = [];
   let filtered = [];
-  let searchQuery = "";
+  let searchQuery = '';
   let activeCardId = null;
+  let pendingFilters = { quick: 'all', zones: [], services: [] };
+  let activeFilters = { quick: 'all', zones: [], services: [] };
 
-  let pendingFilters = { quick: "all", zones: [], services: [] };
-  let activeFilters = { quick: "all", zones: [], services: [] };
+  // Ubicación del usuario — se actualiza cuando el browser la concede
+  // Se usa para ordenar SIEMPRE por distancia
+  let _userLat = null;
+  let _userLng = null;
 
-  const filterModal = document.getElementById("modal-filters");
-  const detailModal = document.getElementById("modal-clinic-detail");
-  const openFilter = () => filterModal?.classList.add("open");
-  const closeFilter = () => filterModal?.classList.remove("open");
-  const openDetail = () => detailModal?.classList.add("open");
-  const closeDetail = () => detailModal?.classList.remove("open");
+  function _haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
 
-  // ── Populate zone/service chips from real data ─
+  function _sortByDistance(list) {
+    if (!_userLat || !_userLng) return list;
+    return [...list].map(c => ({
+      ...c,
+      _distKm: (c.lat && c.lng)
+        ? _haversine(_userLat, _userLng, c.lat, c.lng)
+        : 9999,
+    })).sort((a, b) => a._distKm - b._distKm);
+  }
+
+  const filterModal = document.getElementById('modal-filters');
+  const detailModal = document.getElementById('modal-clinic-detail');
+  const openFilter = () => filterModal?.classList.add('open');
+  const closeFilter = () => filterModal?.classList.remove('open');
+  const openDetail = () => detailModal?.classList.add('open');
+  const closeDetail = () => detailModal?.classList.remove('open');
+
+  // Build zone + service chips from real data
   function populateFilterChips(clinics) {
-    const zones    = [...new Set(clinics.map(c => c.zone).filter(Boolean))];
+    const zones = [...new Set(clinics.map(c => c.zone).filter(Boolean))];
     const services = [...new Set(clinics.flatMap(c => c.services))];
 
-    const zonesContainer    = document.getElementById('filter-zones-container');
-    const servicesContainer = document.getElementById('filter-services-container');
+    const zC = document.getElementById('filter-zones-container');
+    const sC = document.getElementById('filter-services-container');
 
-    if (zonesContainer) {
-      zonesContainer.innerHTML = zones.map(z =>
+    if (zC) {
+      zC.innerHTML = zones.map(z =>
         `<button class="fchip" data-type="zone" data-value="${z}">${z}</button>`
       ).join('');
-      // Re-attach listeners for new chips
-      zonesContainer.querySelectorAll('.fchip').forEach(chip => {
+      zC.querySelectorAll('.fchip').forEach(chip => {
         chip.addEventListener('click', () => {
           chip.classList.toggle('fchip-active');
           const v = chip.dataset.value;
@@ -440,11 +390,11 @@ export function loadMapEvents() {
       });
     }
 
-    if (servicesContainer) {
-      servicesContainer.innerHTML = services.map(s =>
+    if (sC) {
+      sC.innerHTML = services.map(s =>
         `<button class="fchip" data-type="service" data-value="${s}">${s}</button>`
       ).join('');
-      servicesContainer.querySelectorAll('.fchip').forEach(chip => {
+      sC.querySelectorAll('.fchip').forEach(chip => {
         chip.addEventListener('click', () => {
           chip.classList.toggle('fchip-active');
           const v = chip.dataset.value;
@@ -455,7 +405,7 @@ export function loadMapEvents() {
     }
   }
 
-  // ── Init Google Maps ──────────────────────
+  // Boot Google Maps — fetches key from /api/config
   const bootGoogleMaps = async (clinics) => {
     if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
       initGoogleMap(clinics);
@@ -468,12 +418,10 @@ export function loadMapEvents() {
       const configRes = await fetch('/api/config');
       const config = await configRes.json();
       apiKey = config?.mapsKey || '';
-    } catch {
-      apiKey = '';
-    }
+    } catch { apiKey = ''; }
 
     if (!apiKey) {
-      console.error('Google Maps API key not found. Set GOOGLE_MAPS_API_KEY in backend .env');
+      console.error('Google Maps API key not found. Set GOOGLE_MAPS_API_KEY in .env');
       return;
     }
 
@@ -481,10 +429,6 @@ export function loadMapEvents() {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async&callback=window.__initMap`;
     script.async = true;
     script.defer = true;
-    script.onerror = () => {
-      console.error('Failed to load Google Maps script');
-      delete window.__initMap;
-    };
     window.__initMap = () => {
       initGoogleMap(clinics);
       _askUserLocation();
@@ -493,16 +437,12 @@ export function loadMapEvents() {
     document.head.appendChild(script);
   };
 
-  // ── Fetch real clinics from API ───────────
+  // Fetch clinics from real API
   (async () => {
     const list = document.getElementById('clinic-list');
     if (list) list.innerHTML = `
       <div style="padding:24px;text-align:center;color:var(--text-muted);">
-        <svg style="width:20px;height:20px;animation:spin 1s linear infinite;display:inline-block;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-        </svg>
-        <p style="font-size:12px;margin-top:8px;font-family:'Poppins',sans-serif;">Loading clinics…</p>
+        <p style="font-size:12px;font-family:'Poppins',sans-serif;">Loading clinics…</p>
       </div>`;
 
     try {
@@ -519,70 +459,61 @@ export function loadMapEvents() {
     populateFilterChips(allClinics);
     renderCards(filtered);
     bootGoogleMaps(allClinics);
+
+    // Callback called by _askUserLocation when the browser grants location.
+    // Updates coords and immediately re-renders cards sorted by distance.
+    window._onUserLocation = (lat, lng) => {
+      _userLat = lat;
+      _userLng = lng;
+      applyAll(); // re-filter + re-sort with distance now available
+    };
   })();
 
-  // ── Expose updateMapMarkers for filters ───
-  window.updateMapMarkers = (clinicList) => {
-    if (_googleMap) _addMarkers(clinicList);
-  };
-
-  // ── Expose focusVet for card click ────────
+  window.updateMapMarkers = (clinicList) => { if (_googleMap) _addMarkers(clinicList); };
   window.focusVet = (id) => {
     const c = allClinics.find(cl => cl.id === id);
-    if (!c || !_googleMap) return;
+    if (!c || !_googleMap || !c.lat) return;
     _googleMap.panTo({ lat: c.lat, lng: c.lng });
     _googleMap.setZoom(15);
   };
 
-  // ── Modal events ──────────────────────────
-  document.getElementById("btn-open-filters")?.addEventListener("click", () => {
-    syncChipsToActive();
-    openFilter();
-  });
+  // Modal controls
+  document.getElementById('btn-open-filters')?.addEventListener('click', () => { syncChipsToActive(); openFilter(); });
+  document.getElementById('modal-filters-close')?.addEventListener('click', closeFilter);
+  filterModal?.addEventListener('click', e => { if (e.target === filterModal) closeFilter(); });
+  document.getElementById('modal-detail-close')?.addEventListener('click', closeDetail);
+  detailModal?.addEventListener('click', e => { if (e.target === detailModal) closeDetail(); });
 
-  document.getElementById("modal-filters-close")?.addEventListener("click", closeFilter);
-  filterModal?.addEventListener("click", e => { if (e.target === filterModal) closeFilter(); });
-  document.getElementById("modal-detail-close")?.addEventListener("click", closeDetail);
-  detailModal?.addEventListener("click", e => { if (e.target === detailModal) closeDetail(); });
-
-  // ── Filter chips (quick only — zone/service set up in populateFilterChips) ──
+  // Quick filter chips
   document.querySelectorAll(".fchip[data-type='quick']").forEach(chip => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll(".fchip[data-type='quick']")
-        .forEach(c => c.classList.remove("fchip-active"));
-      chip.classList.add("fchip-active");
+    chip.addEventListener('click', () => {
+      document.querySelectorAll(".fchip[data-type='quick']").forEach(c => c.classList.remove('fchip-active'));
+      chip.classList.add('fchip-active');
       pendingFilters.quick = chip.dataset.value;
     });
   });
 
-  document.getElementById("btn-apply-filters")?.addEventListener("click", () => {
-    activeFilters = {
-      ...pendingFilters,
-      zones: [...pendingFilters.zones],
-      services: [...pendingFilters.services],
-    };
+  document.getElementById('btn-apply-filters')?.addEventListener('click', () => {
+    activeFilters = { ...pendingFilters, zones: [...pendingFilters.zones], services: [...pendingFilters.services] };
     applyAll();
     updateFilterDot();
     closeFilter();
   });
 
-  document.getElementById("btn-clear-filters")?.addEventListener("click", () => {
-    activeFilters = { quick: "all", zones: [], services: [] };
-    pendingFilters = { quick: "all", zones: [], services: [] };
-    const search = document.getElementById("map-search");
-    if (search) { search.value = ""; searchQuery = ""; }
+  document.getElementById('btn-clear-filters')?.addEventListener('click', () => {
+    activeFilters = pendingFilters = { quick: 'all', zones: [], services: [] };
+    const search = document.getElementById('map-search');
+    if (search) { search.value = ''; searchQuery = ''; }
     syncChipsToActive();
     applyAll();
     updateFilterDot();
   });
 
-  // ── Search ────────────────────────────────
-  document.getElementById("map-search")?.addEventListener("input", e => {
+  document.getElementById('map-search')?.addEventListener('input', e => {
     searchQuery = e.target.value.trim();
     applyAll();
   });
 
-  // ── Filter + search logic ─────────────────
   function applyAll() {
     filtered = allClinics.filter(c => {
       if (searchQuery) {
@@ -591,65 +522,58 @@ export function loadMapEvents() {
           !c.location.toLowerCase().includes(q) &&
           !c.services.some(s => s.toLowerCase().includes(q))) return false;
       }
-      if (activeFilters.quick === "24h" && !c.open24) return false;
-      if (activeFilters.quick === "emergency" && !c.emergency) return false;
-      if (activeFilters.quick === "verified" && !c.verified) return false;
-      if (activeFilters.zones.length > 0 &&
-        !activeFilters.zones.includes(c.zone)) return false;
-      if (activeFilters.services.length > 0 &&
-        !activeFilters.services.every(s => c.services.includes(s))) return false;
+      if (activeFilters.quick === '24h' && !c.open24) return false;
+      if (activeFilters.quick === 'emergency' && !c.emergency) return false;
+      if (activeFilters.quick === 'verified' && !c.verified) return false;
+      if (activeFilters.zones.length > 0 && !activeFilters.zones.includes(c.zone)) return false;
+      if (activeFilters.services.length > 0 && !activeFilters.services.every(s => c.services.includes(s))) return false;
       return true;
     });
+    // Always sort by distance last — if no location yet, order stays as-is
+    filtered = _sortByDistance(filtered);
     renderCards(filtered);
-    if (typeof window.updateMapMarkers === "function") window.updateMapMarkers(filtered);
+    if (typeof window.updateMapMarkers === 'function') window.updateMapMarkers(filtered);
   }
 
   function updateFilterDot() {
-    const dot = document.getElementById("filter-dot");
-    const clearBtn = document.getElementById("btn-clear-filters");
-    const hasActive = activeFilters.quick !== "all"
-      || activeFilters.zones.length > 0
-      || activeFilters.services.length > 0;
-    dot?.classList.toggle("hidden", !hasActive);
-    clearBtn?.classList.toggle("hidden", !hasActive);
+    const dot = document.getElementById('filter-dot');
+    const clearBtn = document.getElementById('btn-clear-filters');
+    const has = activeFilters.quick !== 'all' || activeFilters.zones.length > 0 || activeFilters.services.length > 0;
+    dot?.classList.toggle('hidden', !has);
+    clearBtn?.classList.toggle('hidden', !has);
   }
 
   function syncChipsToActive() {
-    pendingFilters = {
-      quick: activeFilters.quick,
-      zones: [...activeFilters.zones],
-      services: [...activeFilters.services],
-    };
+    pendingFilters = { quick: activeFilters.quick, zones: [...activeFilters.zones], services: [...activeFilters.services] };
     document.querySelectorAll(".fchip[data-type='quick']").forEach(c =>
-      c.classList.toggle("fchip-active", c.dataset.value === activeFilters.quick));
+      c.classList.toggle('fchip-active', c.dataset.value === activeFilters.quick));
     document.querySelectorAll(".fchip[data-type='zone']").forEach(c =>
-      c.classList.toggle("fchip-active", activeFilters.zones.includes(c.dataset.value)));
+      c.classList.toggle('fchip-active', activeFilters.zones.includes(c.dataset.value)));
     document.querySelectorAll(".fchip[data-type='service']").forEach(c =>
-      c.classList.toggle("fchip-active", activeFilters.services.includes(c.dataset.value)));
+      c.classList.toggle('fchip-active', activeFilters.services.includes(c.dataset.value)));
   }
 
-  // ── Render cards ──────────────────────────
   function renderCards(clinics) {
-    const list = document.getElementById("clinic-list");
-    const empty = document.getElementById("clinic-empty");
-    const countEl = document.getElementById("map-count");
+    const list = document.getElementById('clinic-list');
+    const empty = document.getElementById('clinic-empty');
+    const countEl = document.getElementById('map-count');
     if (!list) return;
 
     if (countEl) countEl.textContent = clinics.length;
 
     if (clinics.length === 0) {
-      list.innerHTML = "";
-      list.classList.add("hidden");
-      empty?.classList.add("visible");
+      list.innerHTML = '';
+      list.classList.add('hidden');
+      empty?.classList.add('visible');
       return;
     }
 
-    list.classList.remove("hidden");
-    empty?.classList.remove("visible");
+    list.classList.remove('hidden');
+    empty?.classList.remove('visible');
 
     list.innerHTML = clinics.map(c => `
       <div class="clinic-card ${activeCardId === c.id ? 'active' : ''}" data-id="${c.id}">
-        <div class="clinic-card-icon"><svg style="width:1em;height:1em;display:inline-block;vertical-align:middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+        <div class="clinic-card-icon">🏥</div>
         <div class="flex-1 min-w-0">
           <div class="flex items-start justify-between gap-1 mb-0.5">
             <p class="font-semibold font-poppins leading-tight truncate"
@@ -661,88 +585,75 @@ export function loadMapEvents() {
               <span class="font-bold font-poppins" style="font-size:11px;color:var(--text-primary);">${c.rating}</span>
             </div>
           </div>
-          <p class="flex items-center gap-1 mb-1.5" style="font-size:11px;color:var(--text-muted);">
-            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            ${c.location}
-          </p>
+          <p class="mb-1.5" style="font-size:11px;color:var(--text-muted);">${c.location}</p>
           <div class="flex items-center justify-between">
             <div class="flex flex-wrap gap-1">
               ${c.open24 ? `<span class="badge-24h-small">24/7</span>` : ''}
               ${c.verified ? `<span class="badge-verified">✓</span>` : ''}
-              ${c.services.slice(0, 1).map(s =>
-      `<span class="badge-service">${s}</span>`
-    ).join('')}
+              ${c.services.slice(0, 1).map(s => `<span class="badge-service">${s}</span>`).join('')}
             </div>
             <button class="btn-clinic-detail" data-id="${c.id}">Details →</button>
+            ${c._distKm && c._distKm < 9999
+        ? `<span style="font-size:10px;color:#6b7280;margin-left:4px;">📍 ${c._distKm < 1 ? Math.round(c._distKm * 1000) + 'm' : c._distKm.toFixed(1) + 'km'}</span>`
+        : ''}
           </div>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
 
-    list.querySelectorAll(".clinic-card").forEach(card => {
-      card.addEventListener("click", e => {
-        if (e.target.closest(".btn-clinic-detail")) return;
+    list.querySelectorAll('.clinic-card').forEach(card => {
+      card.addEventListener('click', e => {
+        if (e.target.closest('.btn-clinic-detail')) return;
         const id = Number(card.dataset.id);
         activeCardId = id;
         renderCards(filtered);
-        if (typeof window.focusVet === "function") window.focusVet(id);
+        if (typeof window.focusVet === 'function') window.focusVet(id);
       });
     });
 
-    list.querySelectorAll(".btn-clinic-detail").forEach(btn => {
-      btn.addEventListener("click", e => {
+    list.querySelectorAll('.btn-clinic-detail').forEach(btn => {
+      btn.addEventListener('click', e => {
         e.stopPropagation();
         openClinicDetail(Number(btn.dataset.id));
       });
     });
   }
 
-  // ── Clinic detail modal ───────────────────
   function openClinicDetail(id) {
     const c = allClinics.find(cl => cl.id === id);
     if (!c) return;
 
-    const el = id => document.getElementById(id);
-    el("dc-name").textContent = c.name;
-    el("dc-location").textContent = c.location;
-    el("dc-address").textContent = c.address;
-    el("dc-hours").textContent = c.hours;
-    el("dc-description").textContent = c.description;
-    el("dc-rating").textContent = c.rating;
-    el("dc-reviews").textContent = `(${c.reviews} reviews)`;
-    el("dc-verified").classList.toggle("hidden", !c.verified);
-    el("dc-24h").classList.toggle("hidden", !c.open24);
+    const el = (id) => document.getElementById(id);
+    el('dc-name').textContent = c.name;
+    el('dc-location').textContent = c.location;
+    el('dc-address').textContent = c.address;
+    el('dc-hours').textContent = c.hours;
+    el('dc-description').textContent = c.description;
+    el('dc-rating').textContent = c.rating;
+    el('dc-reviews').textContent = `(${c.reviews} reviews)`;
+    el('dc-verified').classList.toggle('hidden', !c.verified);
+    el('dc-24h').classList.toggle('hidden', !c.open24);
 
-    el("dc-services").innerHTML = c.services.map(s =>
+    el('dc-services').innerHTML = c.services.map(s =>
       `<span class="detail-service-tag">${s}</span>`
     ).join('');
 
-    const callBtn = el("dc-call");
-    if (callBtn) callBtn.href = c.phone ? `tel:${c.phone}` : "#";
+    const callBtn = el('dc-call');
+    if (callBtn) callBtn.href = c.phone ? `tel:${c.phone}` : '#';
 
-    const waBtn = el("dc-whatsapp");
+    const waBtn = el('dc-whatsapp');
     if (waBtn) {
       waBtn.href = c.whatsapp
         ? `https://api.whatsapp.com/send/?phone=%2B${c.whatsapp}&text=Hola%20quiero%20informacion`
-        : "#";
-      waBtn.style.display = c.whatsapp ? "flex" : "none";
+        : '#';
+      waBtn.style.display = c.whatsapp ? 'flex' : 'none';
     }
 
-    const focusBtn = el("dc-focus");
+    const focusBtn = el('dc-focus');
     focusBtn?.replaceWith(focusBtn.cloneNode(true));
-    document.getElementById("dc-focus")?.addEventListener("click", () => {
-      // Abre Google Maps en nueva pestaña con coordenadas exactas (si existen)
-      // o busca por nombre + dirección como fallback
-      const lat = c.lat;
-      const lng = c.lng;
+    document.getElementById('dc-focus')?.addEventListener('click', () => {
       let gmapUrl;
-      if (lat && lng) {
-        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      if (c.lat && c.lng) {
+        gmapUrl = `https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lng}`;
       } else if (c.address) {
         gmapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.name + ' ' + c.address)}`;
       } else {
@@ -755,6 +666,4 @@ export function loadMapEvents() {
   }
 
   window.openClinicDetail = openClinicDetail;
-
-  // Initial render happens after the async fetch above
 }
